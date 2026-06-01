@@ -10,10 +10,13 @@ import { useState } from "react";
 export default function Login() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // New Error State
 
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
+      setErrorMessage(""); // Clear any old errors
+
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
@@ -32,9 +35,10 @@ export default function Login() {
 
       router.push("/study-abroad");
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login Error:", error);
-      alert("Something went wrong during login. Please try again.");
+      // This forces the error to print directly on the phone screen
+      setErrorMessage(error.message || "An unknown error occurred while connecting.");
     } finally {
       setIsLoading(false);
     }
@@ -48,6 +52,13 @@ export default function Login() {
           <h1 className="font-heading text-3xl font-bold mb-2">Welcome Back</h1>
           <p className="text-gray-600">Login to save your roadmap progress.</p>
         </div>
+
+        {/* ON-SCREEN ERROR RENDERER */}
+        {errorMessage && (
+          <div className="mb-6 p-3 bg-red-100 border border-red-400 text-red-700 text-sm font-bold text-center">
+            {errorMessage}
+          </div>
+        )}
 
         <div className="space-y-4">
           <button 
