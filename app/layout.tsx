@@ -1,39 +1,46 @@
-import type { Metadata } from "next";
-import { Syne, DM_Sans } from "next/font/google";
-import "./globals.css";
-import Link from "next/link";
-import { Compass } from "lucide-react";
-
-const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
+import './globals.css'
+import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: "Career GPS | First Job India",
-    description: "India's first structured career guidance platform for students.",
-    };
+  title: 'Career GPS',
+  description: 'Your Roadmap to a Better Future',
+}
 
-    export default function RootLayout({
-      children,
-      }: Readonly<{
-        children: React.ReactNode;
-        }>) {
-          return (
-              <html lang="en">
-                    <body className={`${syne.variable} ${dmSans.variable} font-body bg-background text-foreground min-h-screen flex flex-col`}>
-                            <header className="sticky top-0 z-50 bg-primary text-white shadow-md px-8 py-4 flex justify-between items-center">
-                                      <Link href="/" className="flex items-center gap-2 text-primary font-heading font-bold text-xl tracking-tight">
-                                                  <Compass className="w-6 h-6" />
-                                                              <div>
-                                                                            Career GPS <span className="text-sm font-body text-gray-500 font-normal ml-2">by Employability Index</span>
-                                                                                        </div>
-                                                                                                  </Link>
-                                                                                                            <Link href="/login" className="text-sm font-bold border border-surfaceBorder px-4 py-2 hover:bg-surface transition-colors">
-                                                                                                                        Login
-                                                                                                                                  </Link>
-                                                                                                                                          </header>
-                                                                                                                                                  <main className="flex-grow">{children}</main>
-                                                                                                                                                        </body>
-                                                                                                                                                            </html>
-                                                                                                                                                              );
-                                                                                                                                                              }
-                                                                                                                                                              
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        {/* Updated Royal Green Header with Login & Sign Up */}
+        <header className="sticky top-0 z-50 bg-primary text-white shadow-md px-6 md:px-10 py-4 flex justify-between items-center">
+          <Link href="/" className="text-xs md:text-sm text-gray-300 hover:text-white transition-colors">
+            by Employability Index
+          </Link>
+          
+          <div className="flex items-center gap-4 md:gap-6">
+            <Link 
+              href="/login" 
+              className="text-white hover:text-success font-medium text-sm md:text-base transition-colors"
+            >
+              Login
+            </Link>
+            <Link 
+              href="/login" 
+              className="bg-white text-primary px-5 py-2 text-sm md:text-base font-bold hover:bg-gray-100 transition-colors shadow-sm"
+            >
+              Sign Up
+            </Link>
+          </div>
+        </header>
+
+        <main className="min-h-screen bg-background">
+          {children}
+        </main>
+      </body>
+    </html>
+  )
+}
