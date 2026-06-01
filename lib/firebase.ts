@@ -11,20 +11,22 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Initialize Firebase cleanly
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-
-// THE ULTIMATE FIX: Force Long Polling to bypass 5G network blocks
+// BULLETPROOF NEXT.JS INITIALIZATION
+let app;
 let firestoreDb;
-try {
+
+if (getApps().length === 0) {
+  // 1. First time loading: Initialize App AND force the Long Polling network armor
+  app = initializeApp(firebaseConfig);
   firestoreDb = initializeFirestore(app, {
     experimentalForceLongPolling: true
   });
-} catch (error) {
+} else {
+  // 2. Next.js reload: Grab the existing app and its already-armored database
+  app = getApp();
   firestoreDb = getFirestore(app);
 }
 
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
 export const db = firestoreDb;
