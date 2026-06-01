@@ -20,7 +20,7 @@ export const metadata: Metadata = {
           return (
               <html lang="en">
                     <body className={`${syne.variable} ${dmSans.variable} font-body bg-background text-foreground min-h-screen flex flex-col`}>
-                            <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-surfaceBorder px-8 py-4 flex justify-between items-center">
+                            <header className="sticky top-0 z-50 bg-primary text-white shadow-md px-8 py-4 flex justify-between items-center">
                                       <Link href="/" className="flex items-center gap-2 text-primary font-heading font-bold text-xl tracking-tight">
                                                   <Compass className="w-6 h-6" />
                                                               <div>
