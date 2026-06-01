@@ -35,10 +35,15 @@ export default function Login() {
 
       router.push("/study-abroad");
 
-    } catch (error: any) {
+        } catch (error: any) {
       console.error("Login Error:", error);
-      // This forces the error to print directly on the phone screen
-      setErrorMessage(error.message || "An unknown error occurred while connecting.");
+      
+      // We are forcing it to check if the environment variable exists
+      const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+      
+      setErrorMessage(
+        `Error: ${error.message} | Project ID: ${projectId ? "FOUND" : "BLANK!"}`
+      );
     } finally {
       setIsLoading(false);
     }
