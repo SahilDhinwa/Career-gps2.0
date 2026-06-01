@@ -5,21 +5,35 @@ import { auth, googleProvider, db } from "../../lib/firebase";
 import { signInWithPopup } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Login() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); // New Error State
+  const [errorMessage, setErrorMessage] = useState("");
+  const [envStatus, setEnvStatus] = useState(""); // The Key Scanner
+
+  // This runs instantly to check if Vercel successfully handed over the keys
+  useEffect(() => {
+    const checkKeys = {
+      API: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? "✅" : "❌",
+      DOM: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ? "✅" : "❌",
+      PROJ: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ? "✅" : "❌",
+      SEND: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ? "✅" : "❌",
+      APP: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ? "✅" : "❌",
+    };
+    setEnvStatus(`API:${checkKeys.API} DOM:${checkKeys.DOM} PROJ:${checkKeys.PROJ} SEND:${checkKeys.SEND} APP:${checkKeys.APP}`);
+  }, []);
 
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
-      setErrorMessage(""); // Clear any old errors
+      setErrorMessage(""); 
 
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
+      // Attempt database connection
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -35,22 +49,22 @@ export default function Login() {
 
       router.push("/study-abroad");
 
-        } catch (error: any) {
+    } catch (error: any) {
       console.error("Login Error:", error);
-      
-      // We are forcing it to check if the environment variable exists
-      const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-      
-      setErrorMessage(
-        `Error: ${error.message} | Project ID: ${projectId ? "FOUND" : "BLANK!"}`
-      );
+      setErrorMessage(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-6">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-6">
+      
+      {/* KEY SCANNER HUD */}
+      <div className="mb-6 text-xs font-mono bg-gray-900 text-green-400 p-3 rounded w-full max-w-md text-center shadow-lg tracking-wider">
+        {envStatus || "Scanning keys..."}
+      </div>
+
       <div className="bg-surface border border-surfaceBorder p-10 max-w-md w-full shadow-lg">
         <div className="text-center mb-8">
           <Compass className="w-12 h-12 text-primary mx-auto mb-4" />
@@ -58,7 +72,6 @@ export default function Login() {
           <p className="text-gray-600">Login to save your roadmap progress.</p>
         </div>
 
-        {/* ON-SCREEN ERROR RENDERER */}
         {errorMessage && (
           <div className="mb-6 p-3 bg-red-100 border border-red-400 text-red-700 text-sm font-bold text-center">
             {errorMessage}
