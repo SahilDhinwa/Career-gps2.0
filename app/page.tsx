@@ -16,7 +16,7 @@ export default function Home() {
           Career GPS — Your Roadmap to a Better Future
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          India's first structured career guidance platform for students. Select your destination and follow the roadmap.
+          India&apos;s first structured career guidance platform for students. Select your destination and follow the roadmap.
         </p>
       </div>
 
