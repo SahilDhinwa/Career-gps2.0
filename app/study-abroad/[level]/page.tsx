@@ -1,69 +1,74 @@
 import Link from "next/link";
-import { Lock, Unlock } from "lucide-react";
+import { Lock } from "lucide-react"; 
+import PremiumPaymentButton from "@/components/PremiumPaymentButton"; // Your new Gatekeeper!
 
 export default function ScholarshipList({ params }: { params: { level: string } }) {
   const levelName = params.level === "ug" ? "Undergraduate" : params.level === "masters" ? "Master's" : "PhD";
 
-    return (
-        <div className="max-w-5xl mx-auto px-6 py-16">
-              <div className="mb-12">
-                      <h1 className="font-heading text-4xl font-bold tracking-tight mb-2">Fully Funded Scholarships</h1>
-                              <p className="text-gray-600 font-medium">Showing: {levelName} Level Scholarships</p>
-                                    </div>
+  return (
+    <div className="max-w-5xl mx-auto px-6 py-16">
+      
+      {/* Header */}
+      <div className="mb-12">
+        <h1 className="font-heading text-4xl font-bold tracking-tight mb-2">Fully Funded Scholarships</h1>
+        <p className="text-gray-600 font-medium">Showing: {levelName} Level Scholarships</p>
+      </div>
 
-                                          <div className="space-y-6">
-                                                  {/* Unlocked Card 1 */}
-                                                          <div className="bg-surface border-l-4 border-l-primary border-y border-r border-surfaceBorder p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                                                    <div>
-                                                                                <h2 className="font-heading text-2xl font-bold">Global Excellence Scholarship</h2>
-                                                                                            <p className="text-gray-500 font-medium mb-2">United Kingdom • Oxford University</p>
-                                                                                                        <p className="text-gray-700 max-w-2xl">100% tuition coverage plus living stipend for exceptional Indian students demonstrating academic merit and leadership potential.</p>
-                                                                                                                  </div>
-                                                                                                                            <Link href="/roadmap/1" className="shrink-0 bg-primary text-white px-6 py-3 font-bold hover:bg-primaryHover transition-colors">
-                                                                                                                                        View Roadmap
-                                                                                                                                                  </Link>
-                                                                                                                                                          </div>
+      <div className="space-y-6">
+        {/* Unlocked Card 1 */}
+        <div className="bg-surface border-l-4 border-l-primary border-y border-r border-surfaceBorder p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 className="font-heading text-2xl font-bold">Global Excellence Scholarship</h2>
+            <p className="text-gray-500 font-medium mb-2">United Kingdom • Oxford University</p>
+            <p className="text-gray-700 max-w-2xl">100% tuition coverage plus living stipend for exceptional Indian students demonstrating academic merit and leadership potential.</p>
+          </div>
+          <Link href="/roadmap/1" className="shrink-0 bg-primary text-white px-6 py-3 font-bold hover:bg-primaryHover transition-colors">
+            View Roadmap
+          </Link>
+        </div>
 
-                                                                                                                                                                  {/* Unlocked Card 2 */}
-                                                                                                                                                                          <div className="bg-surface border border-surfaceBorder p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                                                                                                                                                                    <div>
-                                                                                                                                                                                                <h2 className="font-heading text-2xl font-bold text-gray-800">Future Leaders Award</h2>
-                                                                                                                                                                                                            <p className="text-gray-500 font-medium mb-2">Australia • Multiple Universities</p>
-                                                                                                                                                                                                                        <p className="text-gray-700 max-w-2xl">Partial to fully funded tuition waiver specifically targeting STEM and Social Sciences applicants from South Asia.</p>
-                                                                                                                                                                                                                                  </div>
-                                                                                                                                                                                                                                            <Link href="/roadmap/2" className="shrink-0 bg-white border-2 border-primary text-primary px-6 py-3 font-bold hover:bg-gray-50 transition-colors">
-                                                                                                                                                                                                                                                        View Roadmap
-                                                                                                                                                                                                                                                                  </Link>
-                                                                                                                                                                                                                                                                          </div>
+        {/* Unlocked Card 2 */}
+        <div className="bg-surface border border-surfaceBorder p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 className="font-heading text-2xl font-bold text-gray-800">Future Leaders Award</h2>
+            <p className="text-gray-500 font-medium mb-2">Australia • Multiple Universities</p>
+            <p className="text-gray-700 max-w-2xl">Partial to fully funded tuition waiver specifically targeting STEM and Social Sciences applicants from South Asia.</p>
+          </div>
+          <Link href="/roadmap/2" className="shrink-0 bg-white border-2 border-primary text-primary px-6 py-3 font-bold hover:bg-gray-50 transition-colors">
+            View Roadmap
+          </Link>
+        </div>
 
-                                                                                                                                                                                                                                                                                  {/* Locked Premium Cards Container */}
-                                                                                                                                                                                                                                                                                          <div className="relative mt-12">
-                                                                                                                                                                                                                                                                                                    {/* Overlay Lock UI */}
-                                                                                                                                                                                                                                                                                                              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/40 backdrop-blur-[6px]">
-                                                                                                                                                                                                                                                                                                                          <div className="bg-surface p-8 shadow-xl text-center max-w-md border border-surfaceBorder">
-                                                                                                                                                                                                                                                                                                                                        <Lock className="w-10 h-10 text-primary mx-auto mb-4" />
-                                                                                                                                                                                                                                                                                                                                                      <h3 className="font-heading text-2xl font-bold mb-2">Unlock Premium Access</h3>
-                                                                                                                                                                                                                                                                                                                                                                    <p className="text-gray-600 mb-6">Unlock all 5 scholarships, full stage-by-stage roadmaps, and detailed progress tracking.</p>
-                                                                                                                                                                                                                                                                                                                                                                                  <button className="w-full bg-primary text-white font-bold py-3 flex items-center justify-center gap-2 hover:bg-primaryHover transition-colors">
-                                                                                                                                                                                                                                                                                                                                                                                                  <Unlock className="w-4 h-4" /> Pay & Unlock — ₹999
-                                                                                                                                                                                                                                                                                                                                                                                                                </button>
-                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
+        {/* Locked Premium Cards Container */}
+        <div className="relative mt-12">
+          
+          {/* Overlay Lock UI */}
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/40 backdrop-blur-[6px]">
+            <div className="bg-surface p-8 shadow-xl text-center max-w-md border border-surfaceBorder rounded-sm">
+              <Lock className="w-10 h-10 text-primary mx-auto mb-4" />
+              <h3 className="font-heading text-2xl font-bold mb-2">Unlock Premium Access</h3>
+              <p className="text-gray-600 mb-6">Unlock all 5 scholarships, full stage-by-stage roadmaps, and detailed progress tracking.</p>
+              
+              {/* THE SMART GATEKEEPER BUTTON */}
+              <PremiumPaymentButton />
+              
+            </div>
+          </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                {/* Blurred Background Cards */}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                          <div className="space-y-6 opacity-40 select-none">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                      {[3, 4, 5].map((id) => (
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div key={id} className="bg-surface border border-surfaceBorder p-6">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div className="h-6 bg-gray-300 w-1/3 mb-4 rounded-none"></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div className="h-4 bg-gray-200 w-1/4 mb-4 rounded-none"></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div className="h-4 bg-gray-100 w-full mb-2 rounded-none"></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div className="h-4 bg-gray-100 w-4/5 rounded-none"></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ))}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            );
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+          {/* Blurred Background Cards (Skeleton UI) */}
+          <div className="space-y-6 opacity-40 select-none pointer-events-none">
+            {[3, 4, 5].map((id) => (
+              <div key={id} className="bg-surface border border-surfaceBorder p-6 rounded-sm">
+                <div className="h-6 bg-gray-300 w-1/3 mb-4 rounded-none"></div>
+                <div className="h-4 bg-gray-200 w-1/4 mb-4 rounded-none"></div>
+                <div className="h-4 bg-gray-100 w-full mb-2 rounded-none"></div>
+                <div className="h-4 bg-gray-100 w-4/5 rounded-none"></div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
