@@ -24,6 +24,46 @@ export default function Login() {
     };
     setEnvStatus(`API:${checkKeys.API} DOM:${checkKeys.DOM} PROJ:${checkKeys.PROJ} SEND:${checkKeys.SEND} APP:${checkKeys.APP}`);
   }, []);
+    const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(""); 
+
+      // 1. Google verifies you perfectly (This works!)
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // 2. We try the Database, but if the network blocks it, we DON'T crash.
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+          await setDoc(userRef, {
+            name: user.displayName,
+            email: user.email,
+            createdAt: new Date().toISOString(),
+            activePathway: "Study Abroad",
+            roadmapProgress: {} 
+          });
+        }
+      } catch (dbError) {
+        console.warn("Database blocked by phone network, but letting user in anyway!", dbError);
+        // We catch the error silently so it doesn't stop the next step!
+      }
+
+      // 3. BLAST THROUGH TO THE DASHBOARD NO MATTER WHAT
+      router.push("/study-abroad");
+
+    } catch (error: any) {
+      // This will only trigger if the Google Popup itself fails
+      console.error("Login Error:", error);
+      setErrorMessage(`Error: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleGoogleLogin = async () => {
     try {
