@@ -1,7 +1,28 @@
+"use client"; // 1. Added this because we need to listen to live user state
+
 import Link from "next/link";
 import { GraduationCap, BookOpen, Award, ChevronRight, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react"; // 2. Imported React hooks
+import { auth } from "../../lib/firebase"; // 3. Imported your Firebase engine
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function StudyAbroadDashboard() {
+  // 4. Set up the memory for the user's name
+  const [firstName, setFirstName] = useState<string | null>(null);
+
+  // 5. Tell the dashboard to fetch the name the second it loads
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && user.displayName) {
+        // This splits "Ashu Bhagwan" and just grabs "Ashu" for a cleaner greeting
+        setFirstName(user.displayName.split(" ")[0]);
+      } else {
+        setFirstName(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   const levels = [
     {
       id: "ug",
@@ -40,9 +61,12 @@ export default function StudyAbroadDashboard() {
               <Sparkles className="w-5 h-5 text-warning" />
               <span className="text-sm font-bold tracking-wider text-warning uppercase">Your Journey Begins</span>
             </div>
+            
+            {/* 6. Dynamic Welcome Message */}
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground tracking-tight">
-              Select Your Level
+              {firstName ? `Welcome back, ${firstName}` : "Select Your Level"}
             </h1>
+            
             <p className="text-gray-600 mt-3 text-lg max-w-xl">
               Choose your current stage of education to unlock a tailored roadmap, scholarship data, and application timelines.
             </p>
