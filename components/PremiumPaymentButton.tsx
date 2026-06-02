@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "../../lib/firebase"; // Your firebase instance
+import { auth } from "../lib/firebase"; // Your firebase instance
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Lock } from "lucide-react"; // Nice iconography
