@@ -1,8 +1,65 @@
 import Link from "next/link";
 import { Lock } from "lucide-react"; 
-import PremiumPaymentButton from "@/components/PremiumPaymentButton"; // Your new Gatekeeper!
+import PremiumPaymentButton from "@/components/PremiumPaymentButton"; 
+
+// 1. THE DATA DICTIONARY
+// This stores all the unique content for each level, keeping the UI clean.
+const scholarshipData = {
+  ug: [
+    {
+      id: "ug-1",
+      title: "MEXT Undergraduate Scholarship",
+      location: "Japan • Ministry of Education (MEXT)",
+      description: "100% tuition waiver, round-trip flights, and a ¥117,000 monthly stipend. Includes 1 full year of Japanese language training.",
+      roadmapId: "mext-ug"
+    },
+    {
+      id: "ug-2",
+      title: "DAAD WISE Research Internship",
+      location: "Germany • Various Universities",
+      description: "Exclusive to Indian undergraduate students in STEM. Offers a 2-6 month research stint in Germany with an EUR 861 monthly stipend and travel allowance.",
+      roadmapId: "daad-wise"
+    }
+  ],
+  masters: [
+    {
+      id: "pg-1",
+      title: "Chevening Scholarship",
+      location: "United Kingdom • Any UK University",
+      description: "UK's premier fully-funded Master's scholarship. Covers full tuition, flights, visa fees, and provides a £917–£1,134 monthly stipend.",
+      roadmapId: "chevening-pg"
+    },
+    {
+      id: "pg-2",
+      title: "DAAD Study Scholarship",
+      location: "Germany • Public Universities",
+      description: "Fully-funded Master's support providing EUR 992/month. Takes advantage of Germany's zero-tuition public university system.",
+      roadmapId: "daad-pg"
+    }
+  ],
+  phd: [
+    {
+      id: "phd-1",
+      title: "DAAD Research Grants",
+      location: "Germany • Research Institutes",
+      description: "Offers EUR 1,400/month for doctoral candidates. Requires a detailed research proposal and acceptance from a German supervisor.",
+      roadmapId: "daad-phd"
+    },
+    {
+      id: "phd-2",
+      title: "MEXT Research Scholarship",
+      location: "Japan • Target Universities",
+      description: "Covers 3-4 years of doctoral research with a ¥145,000 monthly stipend, flights, and full tuition coverage.",
+      roadmapId: "mext-phd"
+    }
+  ]
+};
 
 export default function ScholarshipList({ params }: { params: { level: string } }) {
+  // 2. SMART ROUTING LOGIC
+  const levelKey = params.level as keyof typeof scholarshipData;
+  const currentScholarships = scholarshipData[levelKey] || scholarshipData.ug; // Fallback to UG
+
   const levelName = params.level === "ug" ? "Undergraduate" : params.level === "masters" ? "Master's" : "PhD";
 
   return (
@@ -15,29 +72,29 @@ export default function ScholarshipList({ params }: { params: { level: string } 
       </div>
 
       <div className="space-y-6">
-        {/* Unlocked Card 1 */}
-        <div className="bg-surface border-l-4 border-l-primary border-y border-r border-surfaceBorder p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 className="font-heading text-2xl font-bold">Global Excellence Scholarship</h2>
-            <p className="text-gray-500 font-medium mb-2">United Kingdom • Oxford University</p>
-            <p className="text-gray-700 max-w-2xl">100% tuition coverage plus living stipend for exceptional Indian students demonstrating academic merit and leadership potential.</p>
+        
+        {/* 3. DYNAMIC RENDERING OF UNLOCKED CARDS */}
+        {currentScholarships.map((scholarship, index) => (
+          <div key={scholarship.id} className={`bg-surface p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${
+            index === 0 ? "border-l-4 border-l-primary border-y border-r border-surfaceBorder shadow-sm" : "border border-surfaceBorder"
+          }`}>
+            <div>
+              <h2 className={`font-heading text-2xl font-bold ${index === 0 ? "" : "text-gray-800"}`}>
+                {scholarship.title}
+              </h2>
+              <p className="text-gray-500 font-medium mb-2">{scholarship.location}</p>
+              <p className="text-gray-700 max-w-2xl">{scholarship.description}</p>
+            </div>
+            <Link 
+              href={`/roadmap/${scholarship.roadmapId}`} 
+              className={`shrink-0 px-6 py-3 font-bold transition-colors ${
+                index === 0 ? "bg-primary text-white hover:bg-primaryHover" : "bg-white border-2 border-primary text-primary hover:bg-gray-50"
+              }`}
+            >
+              View Roadmap
+            </Link>
           </div>
-          <Link href="/roadmap/1" className="shrink-0 bg-primary text-white px-6 py-3 font-bold hover:bg-primaryHover transition-colors">
-            View Roadmap
-          </Link>
-        </div>
-
-        {/* Unlocked Card 2 */}
-        <div className="bg-surface border border-surfaceBorder p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 className="font-heading text-2xl font-bold text-gray-800">Future Leaders Award</h2>
-            <p className="text-gray-500 font-medium mb-2">Australia • Multiple Universities</p>
-            <p className="text-gray-700 max-w-2xl">Partial to fully funded tuition waiver specifically targeting STEM and Social Sciences applicants from South Asia.</p>
-          </div>
-          <Link href="/roadmap/2" className="shrink-0 bg-white border-2 border-primary text-primary px-6 py-3 font-bold hover:bg-gray-50 transition-colors">
-            View Roadmap
-          </Link>
-        </div>
+        ))}
 
         {/* Locked Premium Cards Container */}
         <div className="relative mt-12">
@@ -49,7 +106,6 @@ export default function ScholarshipList({ params }: { params: { level: string } 
               <h3 className="font-heading text-2xl font-bold mb-2">Unlock Premium Access</h3>
               <p className="text-gray-600 mb-6">Unlock all 5 scholarships, full stage-by-stage roadmaps, and detailed progress tracking.</p>
               
-              {/* THE SMART GATEKEEPER BUTTON */}
               <PremiumPaymentButton />
               
             </div>
