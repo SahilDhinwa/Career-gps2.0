@@ -11,7 +11,7 @@ export default function PathwaysSelection() {
           Select Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Destination</span>
         </h1>
         <p className="text-lg text-gray-600 font-medium">
-          India's first structured career guidance platform. Choose your path below and follow the exact roadmap to success.
+          India&apos;s first structured career guidance platform. Choose your path below and follow the exact roadmap to success.
         </p>
       </div>
 
