@@ -5,7 +5,7 @@ import { auth, db } from "../../lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { User as UserIcon, Mail, ShieldCheck, LogOut, Loader2, Star, ChevronRight } from "lucide-react";
+import { User as UserIcon, Mail, ShieldCheck, LogOut, Star, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export default function UserProfile() {
@@ -52,14 +52,45 @@ export default function UserProfile() {
     }
   };
 
+  // --- THE SKELETON LOADER ---
   if (isLoading) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      <div className="max-w-3xl mx-auto px-6 py-16 min-h-[85vh] animate-pulse">
+        {/* Skeleton Title */}
+        <div className="h-10 bg-gray-200 w-64 mb-8 rounded-sm"></div>
+
+        {/* Skeleton Profile Card */}
+        <div className="bg-surface border border-surfaceBorder rounded-sm p-8 shadow-sm mb-6 flex flex-col md:flex-row items-center gap-6">
+          <div className="w-24 h-24 rounded-full bg-gray-200 shrink-0"></div>
+          <div className="flex-grow w-full text-center md:text-left flex flex-col items-center md:items-start">
+            <div className="h-8 bg-gray-200 w-48 mb-3 rounded-sm"></div>
+            <div className="h-4 bg-gray-200 w-32 rounded-sm"></div>
+          </div>
+          <div className="w-32 h-12 bg-gray-200 rounded-sm shrink-0"></div>
+        </div>
+
+        {/* Skeleton Premium Banner */}
+        <div className="h-24 bg-gray-100 rounded-sm mb-8 border border-gray-200"></div>
+
+        {/* Skeleton Database/Support Section */}
+        <div className="mt-8 border-t border-gray-100 pt-8">
+          <div className="h-6 bg-gray-200 w-40 mb-4 rounded-sm"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="h-20 bg-gray-50 border border-gray-100 rounded-sm p-4">
+              <div className="h-3 w-16 bg-gray-200 mb-3 rounded-sm"></div>
+              <div className="h-4 w-full bg-gray-200 rounded-sm"></div>
+            </div>
+            <div className="h-20 bg-gray-50 border border-gray-100 rounded-sm p-4">
+              <div className="h-3 w-32 bg-gray-200 mb-3 rounded-sm"></div>
+              <div className="h-4 w-24 bg-gray-200 rounded-sm"></div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
+  // --- THE ACTUAL UI ---
   // Get the first initial for the avatar fallback
   const firstInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
 
@@ -155,5 +186,4 @@ export default function UserProfile() {
 
     </div>
   );
-    }
-
+}
