@@ -76,6 +76,7 @@ export default function UserProfile() {
           {/* Avatar (Uses Google Photo if available, otherwise shows Initial) */}
           <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center overflow-hidden shrink-0">
             {user?.photoURL ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               <span className="text-3xl font-bold text-primary">{firstInitial}</span>
