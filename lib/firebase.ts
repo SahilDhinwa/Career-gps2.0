@@ -1,20 +1,30 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
 
-// WE ARE HARDCODING THIS TO BYPASS VERCEL CACHE AND INVISIBLE TYPOS
 const firebaseConfig = {
-  apiKey: "AIzaSyDayZCAU8jD5YaJ9nzN07uf70fEOfXNuwE",
-  authDomain: "career-gps-16af6.firebaseapp.com",
-  projectId: "career-gps-16af6",
-  storageBucket: "career-gps-16af6.firebasestorage.app",
-  messagingSenderId: "167598116710",
-  appId: "1:167598116710:web:22d605229f5fc4b47f42a7"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Clean initialization without Next.js double-rendering issues
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+let app;
+let firestoreDb;
+
+if (getApps().length === 0) {
+  app = initializeApp(firebaseConfig);
+  // Keep the 5G armor permanently on
+  firestoreDb = initializeFirestore(app, {
+    experimentalForceLongPolling: true
+  });
+} else {
+  app = getApp();
+  firestoreDb = getFirestore(app);
+}
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
+export const db = firestoreDb;
