@@ -2,7 +2,7 @@
 
 import { CheckCircle, Circle, MapPin, Calendar, BookOpen, ChevronRight, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { auth, db } from "../../../lib/firebase"; // Note the 3-level deep path
+import { auth, db } from "../../../lib/firebase"; 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -12,12 +12,11 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // We move your static stages into a state variable so we can dynamically update them!
   const [stages, setStages] = useState([
     {
       id: 1,
       title: "Initial Research & Shortlisting",
-      status: "active", // Default starting state
+      status: "active", 
       desc: "Identify programs aligned with your goals and review historical acceptance data.",
       checklist: ["List top 5 university choices", "Verify basic eligibility criteria", "Check historical cut-offs"],
     },
@@ -37,26 +36,27 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     },
   ]);
 
-  // 1. GATEKEEPER & DATA FETCHING
+  // 1. OPEN ACCESS: Let anyone view the page
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
-        router.push("/login"); // Kick out unauthorized users
+        // If not logged in, just stop loading and let them see the default roadmap!
+        setUser(null);
+        setIsLoading(false);
         return;
       }
+      
       setUser(currentUser);
 
-      // Fetch their saved progress from Firestore
+      // If they ARE logged in, fetch their saved progress
       try {
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
           const data = userSnap.data();
-          // Look for progress saved under this specific roadmap ID, default to stage 1
           const savedProgress = data.roadmapProgress?.[params.id] || 1; 
 
-          // Update the stages array based on their saved progress
           setStages(prev => prev.map(stage => ({
             ...stage,
             status: stage.id < savedProgress ? "completed" : stage.id === savedProgress ? "active" : "locked"
@@ -70,21 +70,23 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     });
 
     return () => unsubscribe();
-  }, [params.id, router]);
+  }, [params.id]);
 
-  // 2. THE FIREBASE SAVE FUNCTION
+  // 2. THE SMART INTERACTION TRIGGER
   const handleMarkComplete = async (stageId: number) => {
-    if (!user) return;
+    if (!user) {
+      // If a guest tries to save progress, NOW we tell them to log in!
+      router.push("/login"); 
+      return;
+    }
 
     const nextStage = stageId + 1;
 
-    // Optimistic UI Update (Makes it feel instantly fast for the user)
     setStages(prev => prev.map(stage => ({
       ...stage,
       status: stage.id < nextStage ? "completed" : stage.id === nextStage ? "active" : "locked"
     })));
 
-    // Save silently to Database
     try {
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
@@ -95,7 +97,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     }
   };
 
-  // Show a premium loading spinner while fetching Firebase data
   if (isLoading) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
@@ -197,13 +198,13 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
                   </div>
                 )}
 
-                {/* THE TRIGGER BUTTON */}
+                {/* THE SMART TRIGGER BUTTON */}
                 {isActive && (
                   <button 
                     onClick={() => handleMarkComplete(stage.id)}
                     className="bg-primary text-white font-bold py-3 px-8 hover:bg-primaryHover transition-colors mt-2 shadow-sm flex items-center gap-2"
                   >
-                    Mark as Complete <ChevronRight className="w-4 h-4" />
+                    {user ? "Mark as Complete" : "Login to Save Progress"} <ChevronRight className="w-4 h-4" />
                   </button>
                 )}
               </div>
@@ -214,3 +215,4 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
