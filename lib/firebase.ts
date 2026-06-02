@@ -1,32 +1,20 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, initializeFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
+// WE ARE HARDCODING THIS TO BYPASS VERCEL CACHE AND INVISIBLE TYPOS
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  apiKey: "AIzaSyDayZCAU8jD5YaJ9nzN07uf70fEOfXNuwE",
+  authDomain: "career-gps-16af6.firebaseapp.com",
+  projectId: "career-gps-16af6",
+  storageBucket: "career-gps-16af6.firebasestorage.app",
+  messagingSenderId: "167598116710",
+  appId: "1:167598116710:web:22d605229f5fc4b47f42a7"
 };
 
-// BULLETPROOF NEXT.JS INITIALIZATION
-let app;
-let firestoreDb;
-
-if (getApps().length === 0) {
-  // 1. First time loading: Initialize App AND force the Long Polling network armor
-  app = initializeApp(firebaseConfig);
-  firestoreDb = initializeFirestore(app, {
-    experimentalForceLongPolling: true
-  });
-} else {
-  // 2. Next.js reload: Grab the existing app and its already-armored database
-  app = getApp();
-  firestoreDb = getFirestore(app);
-}
+// Clean initialization without Next.js double-rendering issues
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-export const db = firestoreDb;
+export const db = getFirestore(app);
