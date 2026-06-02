@@ -11,31 +11,36 @@ export default function Login() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [envStatus, setEnvStatus] = useState(""); // The Key Scanner
+  
+  // Stealth Debugger State (The 5 Dots)
+  const [keyStatus, setKeyStatus] = useState([
+    { name: "API Key", ok: false },
+    { name: "Auth Domain", ok: false },
+    { name: "Project ID", ok: false },
+    { name: "Sender ID", ok: false },
+    { name: "App ID", ok: false },
+  ]);
 
-  // This runs instantly to check if Vercel successfully handed over the keys
+  // Checks Vercel environment variables silently on load
   useEffect(() => {
-    const checkKeys = {
-      API: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? "✅" : "❌",
-      DOM: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ? "✅" : "❌",
-      PROJ: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ? "✅" : "❌",
-      SEND: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ? "✅" : "❌",
-      APP: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ? "✅" : "❌",
-    };
-    setEnvStatus(`API:${checkKeys.API} DOM:${checkKeys.DOM} PROJ:${checkKeys.PROJ} SEND:${checkKeys.SEND} APP:${checkKeys.APP}`);
+    setKeyStatus([
+      { name: "API Key", ok: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY },
+      { name: "Auth Domain", ok: !!process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN },
+      { name: "Project ID", ok: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID },
+      { name: "Sender ID", ok: !!process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID },
+      { name: "App ID", ok: !!process.env.NEXT_PUBLIC_FIREBASE_APP_ID },
+    ]);
   }, []);
 
-  // THE GHOST BYPASS FUNCTION
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
       setErrorMessage(""); 
 
-      // 1. Google verifies you perfectly
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      // 2. We try the Database, but if the network blocks it, we DON'T crash.
+      // Silent database sync (Ghost Bypass)
       try {
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
@@ -50,26 +55,34 @@ export default function Login() {
           });
         }
       } catch (dbError) {
-        console.warn("Database blocked by phone network, but letting user in anyway!", dbError);
+        console.warn("Silent sync failed, but proceeding to dashboard.");
       }
 
-      // 3. BLAST THROUGH TO THE DASHBOARD
+      // Smooth transition to the app
       router.push("/study-abroad");
 
     } catch (error: any) {
       console.error("Login Error:", error);
-      setErrorMessage(`Error: ${error.message}`);
+      setErrorMessage("Could not sign in with Google. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-6">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 relative">
       
-      {/* KEY SCANNER HUD */}
-      <div className="mb-6 text-xs font-mono bg-gray-900 text-green-400 p-3 rounded w-full max-w-md text-center shadow-lg tracking-wider">
-        {envStatus || "Scanning keys..."}
+      {/* THE STEALTH DEBUGGER (5 Dots) */}
+      <div className="mb-6 flex items-center justify-center gap-3">
+        {keyStatus.map((key, index) => (
+          <div 
+            key={index}
+            title={key.name} // Shows the key name if you hover over the dot!
+            className={`w-2.5 h-2.5 rounded-full shadow-sm transition-colors ${
+              key.ok ? "bg-success opacity-80" : "bg-red-500 animate-pulse"
+            }`}
+          />
+        ))}
       </div>
 
       <div className="bg-surface border border-surfaceBorder p-10 max-w-md w-full shadow-lg">
@@ -110,7 +123,7 @@ export default function Login() {
             <div className="flex-grow border-t border-surfaceBorder"></div>
           </div>
 
-          <button className="w-full bg-primary text-white py-3 font-bold hover:bg-primaryHover transition-all flex items-center justify-center gap-3">
+          <button className="w-full bg-primary text-white py-3 font-bold hover:bg-primaryHover transition-all flex items-center justify-center gap-3 opacity-60 cursor-not-allowed">
             <Mail className="w-5 h-5" />
             Continue with Email OTP
           </button>
