@@ -4,16 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { X, ChevronRight, Loader2, Sparkles, Trophy, ArrowLeft } from "lucide-react";
 
-// 1. FIXED: Properly formatted array with all objects and options included
-const QUIZ_QUESTIONS = [
-  {
-    id: "degree",
-    title: "What degree level are you seeking funding for?",
-    options: [
-      { label: "Undergraduate", value: "UG" },
-      { label: "Postgraduate", value: "PG" },
-      { label: "Doctorate", value: "PHD" }
-    ]
+// 1. THE STRATEGIC 4-QUESTION ALGORITHM
+const QUIZ_QUESTIONS =
   },
   {
     id: "experience",
@@ -27,31 +19,22 @@ const QUIZ_QUESTIONS = [
   {
     id: "academic",
     title: "What is your current academic score (Percentage / CGPA)?",
-    options: [
-      { label: "Top 10% / Distinctive", value: "TOP" },
-      { label: "Above Average (First Class)", value: "HIGH" },
-      { label: "Average (Second Class)", value: "MID" }
-    ]
+    options:
   },
   {
     id: "finance",
     title: "Do you belong to the EWS category or require absolute financial support?",
-    options: [
-      { label: "Yes, full funding is essential", value: "YES" },
-      { label: "No, I have partial/full funding", value: "NO" }
-    ]
+    options:
   }
 ];
 
 export default function Matchmaker() {
   const router = useRouter();
-  
-  // 2. FIXED: Correctly destructured state variables
   const [isOpen, setIsOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const = useState<any>(null);
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -61,11 +44,11 @@ export default function Matchmaker() {
   }, [isOpen]);
 
   const handleOptionSelect = (value: string) => {
-    // 3. FIXED: Properly reference the current question based on currentStep
-    const currentQuestion = QUIZ_QUESTIONS[currentStep];
-    const newAnswers = { ...answers, [currentQuestion.id]: value };
+    const questionId = QUIZ_QUESTIONS.id;
+    const newAnswers = {...answers, [questionId]: value };
     setAnswers(newAnswers);
 
+    // Smooth transition to the next step
     setTimeout(() => {
       if (currentStep < QUIZ_QUESTIONS.length - 1) {
         setCurrentStep(currentStep + 1);
@@ -78,10 +61,12 @@ export default function Matchmaker() {
   const processAlgorithm = (finalAnswers: Record<string, string>) => {
     setIsProcessing(true);
     
+    // Fake loading delay to increase perceived value and trust
     setTimeout(() => {
       const { degree, experience, academic, finance } = finalAnswers;
       let match = null;
 
+      // The Algorithmic Routing Matrix
       if (degree === "UG") {
         match = {
           name: "MEXT Scholarship",
@@ -112,7 +97,7 @@ export default function Matchmaker() {
         };
       } else {
         match = {
-          name: "General Pathway",
+          name: "General Application Pathway",
           country: "Global Institutions",
           tagline: "Structured Application Guidance",
           link: `/roadmap/${degree.toLowerCase()}`
@@ -133,7 +118,7 @@ export default function Matchmaker() {
 
   return (
     <>
-      {/* THE SEPARATE BUTTON */}
+      {/* THE TRIGGER BUTTON */}
       <button 
         onClick={() => setIsOpen(true)}
         className="w-full sm:w-auto bg-gray-900 text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-black hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
@@ -146,6 +131,7 @@ export default function Matchmaker() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in duration-300">
           <div className="bg-surface w-full max-w-lg border border-surfaceBorder rounded-sm shadow-2xl relative overflow-hidden flex flex-col">
             
+            {/* Header */}
             <div className="flex justify-between items-center p-6 border-b border-surfaceBorder bg-gray-50/50">
               <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
                 Career GPS Matchmaker
@@ -156,13 +142,15 @@ export default function Matchmaker() {
             </div>
 
             <div className="p-8 flex-grow">
-              {isProcessing ? (
+              {isProcessing? (
+                // PROCESSING STATE
                 <div className="flex flex-col items-center justify-center py-12 text-center animate-pulse">
                   <Loader2 className="w-12 h-12 mb-6 text-primary animate-spin" />
                   <h3 className="font-heading text-2xl font-bold text-gray-900 mb-2">Analyzing Profile Matrix...</h3>
                   <p className="text-sm text-gray-500 font-medium">Cross-referencing global funding requirements.</p>
                 </div>
-              ) : result ? (
+              ) : result? (
+                // FINAL RESULT STATE
                 <div className="text-center py-6 animate-in slide-in-from-bottom-4 duration-500">
                   <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Trophy className="w-8 h-8 text-success" />
@@ -180,9 +168,18 @@ export default function Matchmaker() {
                   >
                     View Verified Roadmap <ChevronRight className="w-4 h-4" />
                   </button>
+                  
+                  <button 
+                    onClick={() => { setCurrentStep(0); setAnswers({}); setResult(null); }}
+                    className="w-full mt-4 text-sm font-bold text-gray-500 hover:text-gray-800 transition-colors"
+                  >
+                    Retake Quiz
+                  </button>
                 </div>
               ) : (
+                // ACTIVE QUIZ STATE
                 <div className="animate-in slide-in-from-right-4 duration-300">
+                  {/* Progress Bar */}
                   <div className="mb-8">
                     <div className="flex justify-between text-xs font-bold text-gray-400 mb-2 tracking-wider">
                       <span>QUESTION {currentStep + 1} OF 4</span>
@@ -196,34 +193,27 @@ export default function Matchmaker() {
                     </div>
                   </div>
 
-                  {/* 4. FIXED: Dynamically referencing title from the array based on currentStep */}
                   <h3 className="font-heading text-2xl font-bold text-gray-900 mb-8 leading-snug">
-                    {QUIZ_QUESTIONS[currentStep].title}
+                    {QUIZ_QUESTIONS.title}
                   </h3>
 
                   <div className="space-y-3">
-                    {/* 5. FIXED: Mapping through options based on currentStep */}
-                    {QUIZ_QUESTIONS[currentStep].options.map((option, idx) => {
-                      const currentQuestionId = QUIZ_QUESTIONS[currentStep].id;
-                      const isSelected = answers[currentQuestionId] === option.value;
-                      
-                      return (
-                        <button
-                          key={idx}
-                          onClick={() => handleOptionSelect(option.value)}
-                          className={`w-full text-left px-6 py-4 border-2 rounded-sm font-medium transition-all flex items-center justify-between group ${
-                            isSelected 
-                              ? "border-primary bg-primary/5 text-primary" 
-                              : "border-gray-200 text-gray-700 hover:border-primary/50 hover:bg-gray-50"
-                          }`}
-                        >
-                          {option.label}
-                          <ChevronRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${
-                            isSelected ? "opacity-100 text-primary" : "text-gray-400"
-                          }`} />
-                        </button>
-                      );
-                    })}
+                    {QUIZ_QUESTIONS.options.map((option, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleOptionSelect(option.value)}
+                        className={`w-full text-left px-6 py-4 border-2 rounded-sm font-medium transition-all flex items-center justify-between group ${
+                          answers.id] === option.value 
+                           ? "border-primary bg-primary/5 text-primary" 
+                            : "border-gray-200 text-gray-700 hover:border-primary/50 hover:bg-gray-50"
+                        }`}
+                      >
+                        {option.label}
+                        <ChevronRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${
+                          answers.id] === option.value? "opacity-100 text-primary" : "text-gray-400"
+                        }`} />
+                      </button>
+                    ))}
                   </div>
 
                   {currentStep > 0 && (
@@ -242,6 +232,5 @@ export default function Matchmaker() {
       )}
     </>
   );
-}
-
-```
+    }
+    
