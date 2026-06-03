@@ -121,7 +121,7 @@ export default function LandingPage() {
               <div className="bg-white p-4 rounded-sm shadow-md border border-gray-200 mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
                 {/* Fixed Image component for Next.js */}
                 <Image 
-                  src="/1000062353.jpg" 
+                  src="/QR_1780487966.png" 
                   alt="Support Career GPS via UPI" 
                   width={192}
                   height={192}
