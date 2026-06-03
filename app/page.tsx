@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart } from "lucide-react";
 
 export default function LandingPage() {
@@ -111,18 +112,20 @@ export default function LandingPage() {
                 We are on a mission to democratize global education. Your support helps us maintain our free tools, expand our scholarship database, and guide thousands of students from tier-2 and tier-3 cities toward fully-funded opportunities.
               </p>
               <p className="text-gray-800 font-bold bg-gray-50 inline-block px-4 py-2 rounded-sm border border-gray-200">
-                Scan the UPI QR code to contribute. Every rupee builds a bridge to someone's future.
+                Scan the UPI QR code to contribute. Every rupee builds a bridge to someone&apos;s future.
               </p>
             </div>
 
             {/* QR Code Container */}
             <div className="shrink-0 flex flex-col items-center z-10">
               <div className="bg-white p-4 rounded-sm shadow-md border border-gray-200 mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
-                {/* Referencing the exact image uploaded */}
-                <img 
+                {/* Fixed Image component for Next.js */}
+                <Image 
                   src="/1000062353.jpg" 
                   alt="Support Career GPS via UPI" 
-                  className="w-48 h-48 object-contain"
+                  width={192}
+                  height={192}
+                  className="object-contain"
                 />
               </div>
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
