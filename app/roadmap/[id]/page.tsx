@@ -1,11 +1,12 @@
 "use client";
 
-import { CheckCircle, Circle, MapPin, BookOpen, ChevronRight, CheckSquare, Square } from "lucide-react";
+import { CheckCircle, Circle, MapPin, BookOpen, ChevronRight, CheckSquare, Square, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { auth, db } from "../../../lib/firebase"; 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import PremiumPaymentButton from "../../../components/PremiumPaymentButton"; 
 
 // --- 1. GENERIC MASTER'S ROADMAP (3 Stages) ---
 const masterRoadmap = [
@@ -65,11 +66,11 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // NEW: State to track individual checked items
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  
+  // THE NEW PREMIUM GATEKEEPER STATE
+  const [isPremium, setIsPremium] = useState(false);
 
-  // --- SMART ROUTER & LOCATION TAGGING ---
   let baseRoadmap = masterRoadmap;
   let locationTag = "Global Institutions";
   let levelTag = "MASTER'S LEVEL";
@@ -89,7 +90,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     levelTag = "UG LEVEL";
   }
 
-  // BULLETPROOF INITIALIZATION
   const [stages, setStages] = useState<any[]>(
     baseRoadmap.map(stage => ({ ...stage, status: stage.id === 1 ? "active" : "locked" }))
   );
@@ -98,7 +98,8 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         setUser(null);
-        setCheckedItems([]); // Clear checks for guests
+        setIsPremium(false);
+        setCheckedItems([]);
         setIsLoading(false);
         return;
       }
@@ -112,19 +113,17 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
         if (userSnap.exists()) {
           const data = userSnap.data();
           
-          // 1. Restore Stage Progress
+          // Verify Premium Status securely from the database
+          setIsPremium(data.isPremium || false);
+          
           const savedProgress = data.roadmapProgress?.[params.id] || 1; 
           setStages(baseRoadmap.map(stage => ({
             ...stage,
             status: stage.id < savedProgress ? "completed" : stage.id === savedProgress ? "active" : "locked"
           })));
 
-          // 2. Restore Individual Checklist Progress
           const savedChecklist = data.checklistProgress?.[params.id] || [];
           setCheckedItems(savedChecklist);
-
-        } else {
-          setCheckedItems([]);
         }
       } catch (error) {
         console.error("Failed to fetch progress", error);
@@ -136,28 +135,20 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     return () => unsubscribe();
   }, [params.id, baseRoadmap]);
 
-  // --- SMART MICRO-INTERACTION SAVING ---
   const handleToggleCheck = async (item: string) => {
     if (!user) {
-      router.push("/login"); // Force login to save micro-progress
+      router.push("/login");
       return;
     }
-
     const isCurrentlyChecked = checkedItems.includes(item);
-    
-    // Create the updated array locally first for instant UI response
     const newCheckedItems = isCurrentlyChecked 
       ? checkedItems.filter(i => i !== item) 
       : [...checkedItems, item];
-
     setCheckedItems(newCheckedItems);
 
-    // Blast it to the Firebase Database
     try {
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        [`checklistProgress.${params.id}`]: newCheckedItems
-      });
+      await updateDoc(userRef, { [`checklistProgress.${params.id}`]: newCheckedItems });
     } catch (error) {
       console.error("Failed to save checklist item", error);
     }
@@ -168,9 +159,11 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
       router.push("/login"); 
       return;
     }
+    
+    // Security check: Stop free users from marking Stage 1 as complete and bypassing the lock
+    if (!isPremium && stageId >= 1) return;
 
     const nextStage = stageId + 1;
-
     setStages(prev => prev.map(stage => ({
       ...stage,
       status: stage.id < nextStage ? "completed" : stage.id === nextStage ? "active" : "locked"
@@ -178,15 +171,12 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
 
     try {
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        [`roadmapProgress.${params.id}`]: nextStage
-      });
+      await updateDoc(userRef, { [`roadmapProgress.${params.id}`]: nextStage });
     } catch (error) {
       console.error("Failed to save progress", error);
     }
   };
 
-  // --- SKELETON UI ---
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-12 animate-pulse">
@@ -199,7 +189,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
           <div className="h-6 w-1/2 bg-gray-200 mb-6 rounded-sm"></div>
           <div className="h-8 w-64 bg-gray-100 rounded-sm"></div>
         </div>
-
         <div className="mb-10">
           <div className="flex justify-between items-end mb-2">
             <div className="h-5 w-32 bg-gray-200 rounded-sm"></div>
@@ -207,23 +196,11 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
           </div>
           <div className="w-full bg-gray-100 h-2 rounded-full"></div>
         </div>
-
         <div className="space-y-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="relative flex gap-6">
-              <div className="flex flex-col items-center">
-                <div className="w-8 h-8 bg-gray-200 rounded-full z-10 py-1 border-4 border-white"></div>
-                {i !== 3 && <div className="w-0.5 h-full -mt-2 bg-gray-100"></div>}
-              </div>
-              <div className="flex-1 p-6 border border-gray-100 bg-gray-50 rounded-sm mb-4">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="h-8 w-1/2 bg-gray-200 rounded-sm"></div>
-                  <div className="h-6 w-24 bg-gray-200 rounded-sm"></div>
-                </div>
-                <div className="h-4 w-full bg-gray-200 mb-2 rounded-sm"></div>
-                <div className="h-4 w-5/6 bg-gray-200 mb-6 rounded-sm"></div>
-                <div className="h-12 w-48 bg-gray-200 rounded-sm"></div>
-              </div>
+            <div key={i} className="flex gap-6">
+              <div className="w-8 h-8 bg-gray-200 rounded-full shrink-0"></div>
+              <div className="flex-1 h-32 bg-gray-50 border border-gray-100 rounded-sm"></div>
             </div>
           ))}
         </div>
@@ -231,7 +208,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     );
   }
 
-  // --- ACTUAL UI ---
   const completedCount = stages.filter(s => s.status === "completed").length;
   const progressPercent = (completedCount / stages.length) * 100;
 
@@ -261,8 +237,57 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 relative">
         {stages.map((stage, index) => {
+          
+          // --- THE GATEKEEPER LOGIC ---
+          // If the user is on the Free Tier and they reach Stage 2 (index 1), throw the paywall.
+          if (!isPremium && index > 0) {
+            
+            // Only render the blur effect and CTA on Stage 2. Hide Stages 3-10 entirely to save DOM space.
+            if (index === 1) {
+              return (
+                <div key={stage.id} className="relative mt-8">
+                  
+                  {/* The Blurred Teaser Background */}
+                  <div className="filter blur-sm opacity-30 pointer-events-none select-none">
+                    <div className="flex gap-6">
+                      <div className="flex flex-col items-center">
+                         <Circle className="w-8 h-8 text-gray-300 bg-white rounded-full" />
+                         <div className="w-0.5 h-48 -mt-2 bg-gray-200"></div>
+                      </div>
+                      <div className="flex-1 p-6 border bg-gray-50 border-surfaceBorder rounded-sm mb-4">
+                         <h3 className="font-heading text-2xl font-bold text-gray-500 mb-2">Stage {stage.id}: {stage.title}</h3>
+                         <p className="text-gray-600 mb-4">{stage.desc}</p>
+                         <div className="h-10 bg-gray-200 w-1/3 rounded-sm mb-2"></div>
+                         <div className="h-10 bg-gray-200 w-1/2 rounded-sm"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* The Razorpay Upgrade Overlay */}
+                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 bg-gradient-to-b from-transparent via-background/90 to-background">
+                    <div className="bg-surface border border-primary/20 p-8 rounded-sm shadow-2xl max-w-lg w-full flex flex-col items-center">
+                      <div className="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mb-6">
+                        <Lock className="w-8 h-8 text-warning" />
+                      </div>
+                      <h3 className="font-heading text-2xl font-bold text-foreground mb-3">Premium Content Locked</h3>
+                      <p className="text-gray-600 text-base mb-8 font-medium">
+                        Upgrade to Career GPS Premium to instantly unlock all {stages.length} stages, insider application checklists, and verified university strategies.
+                      </p>
+                      
+                      <div className="w-full sm:w-auto">
+                        <PremiumPaymentButton />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return null; // Return nothing for stages 3+ on free tier
+          }
+
+          // --- NORMAL RENDER FOR UNLOCKED STAGES ---
           const isCompleted = stage.status === "completed";
           const isActive = stage.status === "active";
           const isLocked = stage.status === "locked";
@@ -309,43 +334,13 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
                           <li 
                             key={i} 
                             onClick={() => handleToggleCheck(item)}
-                            className="flex items-start gap-3 p-3 rounded-sm cursor-pointer transition-colors hover:bg-gray-50 border border-transparent hover:border-gray-100"
+                            className={`flex items-start gap-3 p-3 rounded-sm transition-colors border ${
+                              isLocked ? "cursor-not-allowed border-transparent" : "cursor-pointer hover:bg-gray-50 border-transparent hover:border-gray-100"
+                            }`}
                           >
                             {isItemChecked ? (
                               <CheckSquare className="w-5 h-5 text-success shrink-0 mt-0.5" />
                             ) : (
-                              <Square className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                              <Square className={`w-5 h-5 shrink-0 mt-0.5 ${isLocked ? "text-gray-300" : "text-gray-400"}`} />
                             )}
-                            <span className={`text-sm md:text-base font-medium transition-all ${isItemChecked ? "line-through text-gray-400" : "text-gray-700"}`}>
-                              {item}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
-
-                {(isActive || isCompleted) && stage.notes && (
-                  <div className="bg-warning/10 border-l-4 border-warning p-4 mb-6 flex gap-3">
-                    <BookOpen className="w-5 h-5 text-warning shrink-0" />
-                    <p className="text-sm text-gray-800 font-medium">{stage.notes}</p>
-                  </div>
-                )}
-
-                {isActive && (
-                  <button 
-                    onClick={() => handleMarkComplete(stage.id)}
-                    className="bg-primary text-white font-bold py-3 px-8 hover:bg-primaryHover transition-colors mt-2 shadow-sm flex items-center gap-2"
-                  >
-                    {user ? "Mark as Complete" : "Login to Save Progress"} <ChevronRight className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+          
