@@ -77,6 +77,18 @@ const allScholarships = [
     color: "from-cyan-500 to-blue-600",
     bgLight: "bg-cyan-50",
     textDark: "text-cyan-700"
+  },
+   // --- NEWLY ADDED COMMONWEALTH SCHOLARSHIP ---
+  {
+    id: "commonwealth-masters",
+    title: "Commonwealth Master's",
+    location: "UNITED KINGDOM",
+    levelDisplay: "Master's (Development)",
+    stipend: "£1,378 - £1,652 / month",
+    coverage: "Full Tuition & Flights",
+    color: "from-teal-500 to-cyan-600",
+    bgLight: "bg-teal-50",
+    textDark: "text-teal-700"
   }
 ];
 
