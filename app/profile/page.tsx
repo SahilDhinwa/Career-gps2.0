@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../../lib/firebase"; 
-import { doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged, signOut, User, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin } from "lucide-react";
+import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2 } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
 export default function UserProfile() {
@@ -13,22 +13,31 @@ export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // New States for Profile Picture and Checklist
+  const [checklistData, setChecklistData] = useState<Record<string, string[]>>({});
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
-        router.push("/login"); // Redirect to login if not authenticated
+        router.push("/login");
         return;
       }
       
       setUser(currentUser);
+      setProfilePic(currentUser.photoURL);
 
       try {
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
-          setUserData(userSnap.data());
+          const data = userSnap.data();
+          setUserData(data);
+          setChecklistData(data.checklistProgress || {});
         }
       } catch (error) {
         console.error("Failed to fetch user data", error);
@@ -49,6 +58,59 @@ export default function UserProfile() {
     }
   };
 
+  // --- 1. PROFILE PICTURE UPLOAD LOGIC ---
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    setIsUploading(true);
+    try {
+      // Create a temporary local URL for immediate UI update
+      const localImageUrl = URL.createObjectURL(file);
+      setProfilePic(localImageUrl);
+
+      // Convert to Base64 to save directly in Firestore (Simple & scalable for avatars)
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        
+        // Update Firebase Auth Profile
+        await updateProfile(user, { photoURL: base64String });
+        
+        // Update Firestore User Document
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, { photoURL: base64String });
+        setIsUploading(false);
+      };
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      setIsUploading(false);
+    }
+  };
+
+  // --- 2. CHECKLIST REMOVAL LOGIC ---
+  const handleRemoveChecklistItem = async (roadmapId: string, itemToRemove: string) => {
+    if (!user) return;
+
+    const currentList = checklistData[roadmapId] || [];
+    const updatedList = currentList.filter((item: string) => item !== itemToRemove);
+
+    // 1. Optimistic UI Update (Instant visual feedback)
+    setChecklistData(prev => ({
+      ...prev,
+      [roadmapId]: updatedList
+    }));
+
+    // 2. Database Update
+    try {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList });
+    } catch (error) {
+      console.error("Failed to update checklist in database", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex justify-center items-center">
@@ -62,8 +124,6 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-background py-16 px-6 relative overflow-hidden">
-      
-      {/* Subtle Background Elements */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
 
       <div className="max-w-5xl mx-auto relative z-10">
@@ -71,9 +131,37 @@ export default function UserProfile() {
         {/* HEADER & IDENTITY BLOCK */}
         <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
-            <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center border-4 border-white shadow-md shrink-0">
-              <UserIcon className="w-10 h-10 text-gray-400" />
+            
+            {/* Interactive Profile Picture Avatar */}
+            <div 
+              className="relative w-24 h-24 rounded-full border-4 border-white shadow-md shrink-0 group cursor-pointer overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {profilePic ? (
+                <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <UserIcon className="w-10 h-10 text-gray-400" />
+              )}
+              
+              {/* Hover Camera Overlay */}
+              <div className={`absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${isUploading ? 'opacity-100' : ''}`}>
+                {isUploading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Camera className="w-6 h-6 text-white" />
+                )}
+              </div>
+              
+              {/* Hidden File Input */}
+              <input 
+                type="file" 
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/png, image/jpeg, image/webp"
+                className="hidden" 
+              />
             </div>
+
             <div>
               <h1 className="font-heading text-3xl font-bold text-foreground mb-1">
                 {userData?.displayName || user?.displayName || "Scholarship Applicant"}
@@ -109,10 +197,10 @@ export default function UserProfile() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* LEFT COLUMN: PROGRESS & STATS */}
+          {/* LEFT COLUMN: PROGRESS & CHECKLISTS */}
           <div className="lg:col-span-2 space-y-8">
             
-            {/* Active Roadmaps */}
+            {/* Active Roadmaps Section */}
             <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Activity className="w-6 h-6 text-primary" />
@@ -159,6 +247,50 @@ export default function UserProfile() {
                 </div>
               )}
             </div>
+
+            {/* Checklist Command Center Section */}
+            <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <ListChecks className="w-6 h-6 text-primary" />
+                <h2 className="font-heading text-2xl font-bold text-foreground">Checklist Command Center</h2>
+              </div>
+
+              {Object.keys(checklistData).length > 0 && Object.values(checklistData).some(list => list.length > 0) ? (
+                <div className="space-y-6">
+                  {Object.entries(checklistData).map(([roadmapId, items]) => {
+                    if (items.length === 0) return null; // Hide empty roadmaps
+                    
+                    return (
+                      <div key={roadmapId} className="bg-white border border-gray-100 rounded-sm p-4">
+                        <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                          {roadmapId.replace(/-/g, " ")}
+                        </h4>
+                        <ul className="space-y-2">
+                          {items.map((item, index) => (
+                            <li key={index} className="flex justify-between items-start gap-4 p-2 hover:bg-gray-50 rounded-sm group transition-colors">
+                              <span className="text-sm font-medium text-gray-600 flex-1">{item}</span>
+                              <button 
+                                onClick={() => handleRemoveChecklistItem(roadmapId, item)}
+                                className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
+                                title="Remove from checklist"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-10 bg-gray-50 border border-gray-100 rounded-sm">
+                  <ListChecks className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 font-medium">Your checked tasks will appear here.</p>
+                </div>
+              )}
+            </div>
+
           </div>
 
           {/* RIGHT COLUMN: RESOURCES & ACCOUNT */}
@@ -196,4 +328,4 @@ export default function UserProfile() {
       </div>
     </div>
   );
-}
+                  }
