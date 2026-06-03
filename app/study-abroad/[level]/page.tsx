@@ -56,7 +56,7 @@ const scholarshipData = {
       color: "from-amber-500 to-orange-600",
       bgLight: "bg-amber-50",
       textDark: "text-amber-700"
-    }
+    },
      // --- NEWLY ADDED COMMONWEALTH SCHOLARSHIP ---
     {
       id: "commonwealth-masters",
