@@ -69,7 +69,7 @@ export default function UserProfile() {
       const localImageUrl = URL.createObjectURL(file);
       setProfilePic(localImageUrl);
 
-      // Convert to Base64 to save directly in Firestore (Simple & scalable for avatars)
+      // Convert to Base64 to save directly in Firestore
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = async () => {
@@ -96,7 +96,7 @@ export default function UserProfile() {
     const currentList = checklistData[roadmapId] || [];
     const updatedList = currentList.filter((item: string) => item !== itemToRemove);
 
-    // 1. Optimistic UI Update (Instant visual feedback)
+    // 1. Optimistic UI Update
     setChecklistData(prev => ({
       ...prev,
       [roadmapId]: updatedList
@@ -138,6 +138,7 @@ export default function UserProfile() {
               onClick={() => fileInputRef.current?.click()}
             >
               {profilePic ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <UserIcon className="w-10 h-10 text-gray-400" />
@@ -237,7 +238,8 @@ export default function UserProfile() {
               ) : (
                 <div className="text-center py-10 bg-gray-50 border border-gray-100 rounded-sm">
                   <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium mb-4">You haven't started any application roadmaps yet.</p>
+                  {/* FIXED APOSTROPHE HERE */}
+                  <p className="text-gray-500 font-medium mb-4">You haven&apos;t started any application roadmaps yet.</p>
                   <button 
                     onClick={() => router.push("/scholarships")}
                     className="bg-gray-900 text-white font-bold py-2 px-6 rounded-sm hover:bg-primary transition-colors inline-block"
@@ -304,8 +306,9 @@ export default function UserProfile() {
                 <BookOpen className="w-5 h-5 text-warning" />
                 <h2 className="font-heading text-xl font-bold text-white">Career Assets</h2>
               </div>
+              {/* FIXED QUOTES HERE */}
               <p className="text-sm text-gray-400 mb-6 font-medium relative z-10 leading-relaxed">
-                Access your premium guides, including "The Unspoken Aura" by Sahil Dhinwa.
+                Access your premium guides, including &quot;The Unspoken Aura&quot; by Sahil Dhinwa.
               </p>
               <button 
                 onClick={() => router.push("/e-books")}
@@ -328,4 +331,4 @@ export default function UserProfile() {
       </div>
     </div>
   );
-                  }
+}
