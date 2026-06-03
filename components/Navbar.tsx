@@ -37,6 +37,9 @@ export default function Navbar() {
           <Link href="/scholarships" className="hover:text-primary transition-colors">
   Scholarships
 </Link>
+          <Link href="/e-books" className="hover:text-primary transition-colors font-medium">
+  E-Books
+</Link>          
         </div>
 
         {/* Dynamic Auth Actions */}
