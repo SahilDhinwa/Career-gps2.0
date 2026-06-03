@@ -3,73 +3,70 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { auth } from "../lib/firebase";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { Compass, User as UserIcon } from "lucide-react";
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
 
-  // This listener quietly checks if the user is logged in or logged out
+  // Listen to Firebase Auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-    return () => unsubscribe(); // Cleanup the listener
+    return () => unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      router.push("/"); // Send them back to the home page after logging out
-    } catch (error) {
-      console.error("Logout Error:", error);
-    }
-  };
-
   return (
-    <header className="sticky top-0 z-50 bg-primary shadow-md px-6 md:px-10 py-4 flex justify-between items-center">
-      {/* Brand Text */}
-      <Link href="/" className="text-xs md:text-sm text-[#FBFBF9] hover:text-white transition-colors font-medium tracking-wide">
-        by Employability Index
-      </Link>
+    <nav className="sticky top-0 z-50 w-full bg-surface/80 backdrop-blur-md border-b border-surfaceBorder shadow-sm">
+      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        
+        {/* Brand Logo & Name */}
+        <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
+          <Compass className="w-6 h-6" />
+          <span className="font-heading font-bold text-xl tracking-tight text-foreground">
+            Career GPS
+          </span>
+        </Link>
 
-      {/* Dynamic Authentication Buttons */}
-      <div className="flex items-center gap-4 md:gap-6">
-        {user ? (
-          // IF USER IS LOGGED IN: Show Dashboard & Logout
-          <>
+        {/* Desktop Central Links */}
+        <div className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
+          <Link href="/pathways" className="hover:text-primary transition-colors">
+            Pathways
+          </Link>
+          <Link href="/study-abroad/masters" className="hover:text-primary transition-colors">
+            Scholarships
+          </Link>
+        </div>
+
+        {/* Dynamic Auth Actions */}
+        <div className="flex items-center gap-4">
+          {user ? (
             <Link 
-              href="/study-abroad" 
-              className="text-white hover:text-success font-medium text-sm md:text-base transition-colors hidden sm:block"
+              href="/profile" 
+              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-sm transition-colors font-bold text-sm"
             >
-              Dashboard
+              <UserIcon className="w-4 h-4" /> Profile
             </Link>
-            <button 
-              onClick={handleLogout}
-              className="bg-red-500 text-white px-5 py-2 text-sm md:text-base font-bold hover:bg-red-600 transition-colors shadow-sm"
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          // IF USER IS LOGGED OUT: Show Login & Sign Up
-          <>
-            <Link 
-              href="/login" 
-              className="text-white hover:text-success font-medium text-sm md:text-base transition-colors"
-            >
-              Login
-            </Link>
-            <Link 
-              href="/login" 
-              className="bg-[#FBFBF9] text-primary px-5 py-2 text-sm md:text-base font-bold hover:bg-gray-200 transition-colors shadow-sm"
-            >
-              Sign Up
-            </Link>
-          </>
-        )}
+          ) : (
+            <>
+              <Link 
+                href="/login" 
+                className="text-sm font-bold text-gray-600 hover:text-primary transition-colors hidden sm:block"
+              >
+                Login
+              </Link>
+              <Link 
+                href="/login" 
+                className="bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+
       </div>
-    </header>
+    </nav>
   );
 }
