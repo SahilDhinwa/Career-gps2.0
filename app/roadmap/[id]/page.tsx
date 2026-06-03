@@ -343,4 +343,38 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
                             ) : (
                               <Square className={`w-5 h-5 shrink-0 mt-0.5 ${isLocked ? "text-gray-300" : "text-gray-400"}`} />
                             )}
-          
+          <span className={`text-sm md:text-base font-medium transition-all ${
+                              isItemChecked ? "line-through text-gray-400" : 
+                              isLocked ? "text-gray-400" : "text-gray-700"
+                            }`}>
+                              {item}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+                   {(isActive || isCompleted) && stage.notes && (
+                  <div className="bg-warning/10 border-l-4 border-warning p-4 mb-6 flex gap-3">
+                    <BookOpen className="w-5 h-5 text-warning shrink-0" />
+                    <p className="text-sm text-gray-800 font-medium">{stage.notes}</p>
+                  </div>
+                )}
+
+                {isActive && isPremium && (
+                  <button 
+                    onClick={() => handleMarkComplete(stage.id)}
+                    className="bg-primary text-white font-bold py-3 px-8 hover:bg-primaryHover transition-colors mt-2 shadow-sm flex items-center gap-2"
+                  >
+                    {user ? "Mark as Complete" : "Login to Save Progress"} <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+      );
+}
