@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -87,6 +87,49 @@ export default function LandingPage() {
                 No more generic advice. Access premium, insider checklists designed by experts who have navigated the system.
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* COMMUNITY SUPPORT / DONATION SECTION */}
+      <div className="bg-background border-t border-surfaceBorder py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
+            
+            {/* Subtle Background Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+            {/* Text Content */}
+            <div className="flex-1 text-center md:text-left z-10">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-sm font-bold text-primary mb-6 border border-primary/20">
+                <Heart className="w-4 h-4 fill-current text-primary" /> Support Our Community
+              </div>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Help Us Empower More Students
+              </h2>
+              <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+                We are on a mission to democratize global education. Your support helps us maintain our free tools, expand our scholarship database, and guide thousands of students from tier-2 and tier-3 cities toward fully-funded opportunities.
+              </p>
+              <p className="text-gray-800 font-bold bg-gray-50 inline-block px-4 py-2 rounded-sm border border-gray-200">
+                Scan the UPI QR code to contribute. Every rupee builds a bridge to someone's future.
+              </p>
+            </div>
+
+            {/* QR Code Container */}
+            <div className="shrink-0 flex flex-col items-center z-10">
+              <div className="bg-white p-4 rounded-sm shadow-md border border-gray-200 mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+                {/* Referencing the exact image uploaded */}
+                <img 
+                  src="/1000062353.jpg" 
+                  alt="Support Career GPS via UPI" 
+                  className="w-48 h-48 object-contain"
+                />
+              </div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-success" /> Secure UPI Payment
+              </p>
+            </div>
+
           </div>
         </div>
       </div>
