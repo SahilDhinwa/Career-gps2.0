@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle, Circle, MapPin, BookOpen, ChevronRight } from "lucide-react";
+import { CheckCircle, Circle, MapPin, BookOpen, ChevronRight, CheckSquare, Square } from "lucide-react";
 import { useState, useEffect } from "react";
 import { auth, db } from "../../../lib/firebase"; 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -65,6 +65,9 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // NEW: State to track individual checked items
+  const [checkedItems, setCheckedItems] = useState<string[]>([]);
 
   // --- SMART ROUTER & LOCATION TAGGING ---
   let baseRoadmap = masterRoadmap;
@@ -95,6 +98,7 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         setUser(null);
+        setCheckedItems([]); // Clear checks for guests
         setIsLoading(false);
         return;
       }
@@ -107,12 +111,20 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
 
         if (userSnap.exists()) {
           const data = userSnap.data();
+          
+          // 1. Restore Stage Progress
           const savedProgress = data.roadmapProgress?.[params.id] || 1; 
-
           setStages(baseRoadmap.map(stage => ({
             ...stage,
             status: stage.id < savedProgress ? "completed" : stage.id === savedProgress ? "active" : "locked"
           })));
+
+          // 2. Restore Individual Checklist Progress
+          const savedChecklist = data.checklistProgress?.[params.id] || [];
+          setCheckedItems(savedChecklist);
+
+        } else {
+          setCheckedItems([]);
         }
       } catch (error) {
         console.error("Failed to fetch progress", error);
@@ -123,6 +135,33 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
 
     return () => unsubscribe();
   }, [params.id, baseRoadmap]);
+
+  // --- SMART MICRO-INTERACTION SAVING ---
+  const handleToggleCheck = async (item: string) => {
+    if (!user) {
+      router.push("/login"); // Force login to save micro-progress
+      return;
+    }
+
+    const isCurrentlyChecked = checkedItems.includes(item);
+    
+    // Create the updated array locally first for instant UI response
+    const newCheckedItems = isCurrentlyChecked 
+      ? checkedItems.filter(i => i !== item) 
+      : [...checkedItems, item];
+
+    setCheckedItems(newCheckedItems);
+
+    // Blast it to the Firebase Database
+    try {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        [`checklistProgress.${params.id}`]: newCheckedItems
+      });
+    } catch (error) {
+      console.error("Failed to save checklist item", error);
+    }
+  };
 
   const handleMarkComplete = async (stageId: number) => {
     if (!user) {
@@ -263,13 +302,26 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
                 {(isActive || isCompleted) && stage.checklist && (
                   <div className="mb-6">
                     <p className="font-bold text-sm text-gray-800 mb-3 uppercase tracking-wider">Checklist</p>
-                    <ul className="space-y-2">
-                      {stage.checklist.map((item: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-gray-700">
-                          <ChevronRight className={`w-4 h-4 mt-1 shrink-0 ${isCompleted ? "text-success" : "text-primary"}`} />
-                          <span className={isCompleted ? "line-through text-gray-500" : ""}>{item}</span>
-                        </li>
-                      ))}
+                    <ul className="space-y-3">
+                      {stage.checklist.map((item: string, i: number) => {
+                        const isItemChecked = checkedItems.includes(item);
+                        return (
+                          <li 
+                            key={i} 
+                            onClick={() => handleToggleCheck(item)}
+                            className="flex items-start gap-3 p-3 rounded-sm cursor-pointer transition-colors hover:bg-gray-50 border border-transparent hover:border-gray-100"
+                          >
+                            {isItemChecked ? (
+                              <CheckSquare className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                            ) : (
+                              <Square className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                            )}
+                            <span className={`text-sm md:text-base font-medium transition-all ${isItemChecked ? "line-through text-gray-400" : "text-gray-700"}`}>
+                              {item}
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 )}
@@ -296,5 +348,4 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
-      }
-                      
+}
