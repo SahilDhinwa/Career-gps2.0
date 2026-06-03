@@ -57,6 +57,18 @@ const scholarshipData = {
       bgLight: "bg-amber-50",
       textDark: "text-amber-700"
     }
+     // --- NEWLY ADDED COMMONWEALTH SCHOLARSHIP ---
+    {
+      id: "commonwealth-masters",
+      title: "Commonwealth Master's",
+      location: "UNITED KINGDOM",
+      levelDisplay: "Master's (Development)",
+      stipend: "£1,378 - £1,652 / month",
+      coverage: "Full Tuition & Flights",
+      color: "from-teal-500 to-cyan-600",
+      bgLight: "bg-teal-50",
+      textDark: "text-teal-700"
+}
   ],
   phd: [
     {
