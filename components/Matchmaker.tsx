@@ -1,10 +1,20 @@
+```react
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { X, ChevronRight, Loader2, Sparkles, Trophy, ArrowLeft } from "lucide-react";
 
-const QUIZ_QUESTIONS =
+// 1. FIXED: Properly formatted array with all objects and options included
+const QUIZ_QUESTIONS = [
+  {
+    id: "degree",
+    title: "What degree level are you seeking funding for?",
+    options: [
+      { label: "Undergraduate", value: "UG" },
+      { label: "Postgraduate", value: "PG" },
+      { label: "Doctorate", value: "PHD" }
+    ]
   },
   {
     id: "experience",
@@ -18,22 +28,31 @@ const QUIZ_QUESTIONS =
   {
     id: "academic",
     title: "What is your current academic score (Percentage / CGPA)?",
-    options:
+    options: [
+      { label: "Top 10% / Distinctive", value: "TOP" },
+      { label: "Above Average (First Class)", value: "HIGH" },
+      { label: "Average (Second Class)", value: "MID" }
+    ]
   },
   {
     id: "finance",
     title: "Do you belong to the EWS category or require absolute financial support?",
-    options:
+    options: [
+      { label: "Yes, full funding is essential", value: "YES" },
+      { label: "No, I have partial/full funding", value: "NO" }
+    ]
   }
 ];
 
 export default function Matchmaker() {
   const router = useRouter();
+  
+  // 2. FIXED: Correctly destructured state variables
   const [isOpen, setIsOpen] = useState(false);
-  const = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState(false);
-  const = useState<any>(null);
+  const [result, setResult] = useState<any>(null);
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -43,8 +62,9 @@ export default function Matchmaker() {
   }, [isOpen]);
 
   const handleOptionSelect = (value: string) => {
-    const questionId = QUIZ_QUESTIONS.id;
-    const newAnswers = {...answers, [questionId]: value };
+    // 3. FIXED: Properly reference the current question based on currentStep
+    const currentQuestion = QUIZ_QUESTIONS[currentStep];
+    const newAnswers = { ...answers, [currentQuestion.id]: value };
     setAnswers(newAnswers);
 
     setTimeout(() => {
@@ -114,7 +134,7 @@ export default function Matchmaker() {
 
   return (
     <>
-      {/* THE SEPARATE BUTTON (Added alongside your existing buttons) */}
+      {/* THE SEPARATE BUTTON */}
       <button 
         onClick={() => setIsOpen(true)}
         className="w-full sm:w-auto bg-gray-900 text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-black hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
@@ -137,13 +157,13 @@ export default function Matchmaker() {
             </div>
 
             <div className="p-8 flex-grow">
-              {isProcessing? (
+              {isProcessing ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center animate-pulse">
                   <Loader2 className="w-12 h-12 mb-6 text-primary animate-spin" />
                   <h3 className="font-heading text-2xl font-bold text-gray-900 mb-2">Analyzing Profile Matrix...</h3>
                   <p className="text-sm text-gray-500 font-medium">Cross-referencing global funding requirements.</p>
                 </div>
-              ) : result? (
+              ) : result ? (
                 <div className="text-center py-6 animate-in slide-in-from-bottom-4 duration-500">
                   <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Trophy className="w-8 h-8 text-success" />
@@ -167,37 +187,44 @@ export default function Matchmaker() {
                   <div className="mb-8">
                     <div className="flex justify-between text-xs font-bold text-gray-400 mb-2 tracking-wider">
                       <span>QUESTION {currentStep + 1} OF 4</span>
-                      <span>{Math.round(((currentStep) / 4) * 100)}%</span>
+                      <span>{Math.round((currentStep / 4) * 100)}%</span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-primary transition-all duration-500 ease-out"
-                        style={{ width: `${((currentStep) / 4) * 100}%` }}
+                        style={{ width: `${(currentStep / 4) * 100}%` }}
                       />
                     </div>
                   </div>
 
+                  {/* 4. FIXED: Dynamically referencing title from the array based on currentStep */}
                   <h3 className="font-heading text-2xl font-bold text-gray-900 mb-8 leading-snug">
-                    {QUIZ_QUESTIONS.title}
+                    {QUIZ_QUESTIONS[currentStep].title}
                   </h3>
 
                   <div className="space-y-3">
-                    {QUIZ_QUESTIONS.options.map((option, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleOptionSelect(option.value)}
-                        className={`w-full text-left px-6 py-4 border-2 rounded-sm font-medium transition-all flex items-center justify-between group ${
-                          answers.id] === option.value 
-                           ? "border-primary bg-primary/5 text-primary" 
-                            : "border-gray-200 text-gray-700 hover:border-primary/50 hover:bg-gray-50"
-                        }`}
-                      >
-                        {option.label}
-                        <ChevronRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${
-                          answers.id] === option.value? "opacity-100 text-primary" : "text-gray-400"
-                        }`} />
-                      </button>
-                    ))}
+                    {/* 5. FIXED: Mapping through options based on currentStep */}
+                    {QUIZ_QUESTIONS[currentStep].options.map((option, idx) => {
+                      const currentQuestionId = QUIZ_QUESTIONS[currentStep].id;
+                      const isSelected = answers[currentQuestionId] === option.value;
+                      
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleOptionSelect(option.value)}
+                          className={`w-full text-left px-6 py-4 border-2 rounded-sm font-medium transition-all flex items-center justify-between group ${
+                            isSelected 
+                              ? "border-primary bg-primary/5 text-primary" 
+                              : "border-gray-200 text-gray-700 hover:border-primary/50 hover:bg-gray-50"
+                          }`}
+                        >
+                          {option.label}
+                          <ChevronRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${
+                            isSelected ? "opacity-100 text-primary" : "text-gray-400"
+                          }`} />
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {currentStep > 0 && (
@@ -216,5 +243,6 @@ export default function Matchmaker() {
       )}
     </>
   );
-    }
-    
+}
+
+```
