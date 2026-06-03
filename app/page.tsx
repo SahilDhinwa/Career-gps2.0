@@ -38,6 +38,8 @@ export default function LandingPage() {
             >
               Start Your Journey <ArrowRight className="w-5 h-5" />
             </Link>
+            {/* The new dedicated Quiz button added here! */}
+  <Matchmaker />
             <Link 
               href="/login" 
               className="w-full sm:w-auto bg-white text-gray-800 border-2 border-gray-200 font-bold px-8 py-4 rounded-sm hover:border-primary hover:text-primary transition-all flex items-center justify-center"
