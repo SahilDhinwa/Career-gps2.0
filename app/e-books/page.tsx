@@ -9,6 +9,7 @@ const careerAssets = [
   {
     id: "unspoken-aura",
     title: "The Unspoken Aura",
+    author: "Sahil Dhinwa", // ADDED AUTHOR HERE
     subtitle: "Unlocking Your True Personality Through Communication",
     description: "A Guide for the Real World. Master the art of the aura, overcome the 'Invisible Wall', and command respect in every room you enter.",
     price: "FREE",
@@ -78,10 +79,17 @@ export default function EBooksDirectory() {
                     <div className="w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
                   </div>
                   
-                  <div className="relative z-10 text-center">
-                    <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">
+                  {/* Bottom Subtitle & Author Name */}
+                  <div className="relative z-10 text-center mt-auto pt-4">
+                    <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-2">
                       A Guide for the Real World
                     </p>
+                    {/* The Royal Author Tag */}
+                    <div className="inline-block border-t border-white/20 pt-2">
+                      <p className="text-xs font-bold text-white tracking-[0.2em] uppercase drop-shadow-md">
+                        {asset.author}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -97,7 +105,13 @@ export default function EBooksDirectory() {
                   </div>
                 </div>
 
-                <h2 className="font-heading text-2xl font-bold text-gray-900 mb-2">{asset.title}</h2>
+                <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">{asset.title}</h2>
+                
+                {/* Author Name in Details */}
+                <p className="text-sm font-medium text-gray-500 mb-2">
+                  By <span className="text-primary font-bold">{asset.author}</span>
+                </p>
+
                 <p className="text-primary font-medium text-sm mb-4">{asset.subtitle}</p>
                 
                 <p className="text-gray-600 text-sm mb-8 flex-grow leading-relaxed">
@@ -121,7 +135,7 @@ export default function EBooksDirectory() {
                     
                     <a 
                       href={asset.fileUrl} 
-                      download="The_Unspoken_Aura_CareerGPS.pdf"
+                      download="The_Unspoken_Aura_Sahil_Dhinwa.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 bg-gray-900 text-white font-bold py-3 px-4 rounded-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
@@ -153,7 +167,7 @@ export default function EBooksDirectory() {
               </div>
               <div>
                 <h3 className="font-heading font-bold text-foreground leading-tight">Career GPS E-Reader</h3>
-                <p className="text-xs text-gray-500 font-medium">The Unspoken Aura</p>
+                <p className="text-xs text-gray-500 font-medium">The Unspoken Aura by Sahil Dhinwa</p>
               </div>
             </div>
             
