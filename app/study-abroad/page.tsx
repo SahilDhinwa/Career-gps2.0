@@ -1,7 +1,29 @@
+"use client"; // Required for live user state
+
 import Link from "next/link";
-import { MapPin, ArrowRight, Wallet, GraduationCap, Star, ShieldCheck } from "lucide-react";
+import { MapPin, ArrowRight, Wallet, GraduationCap, Star, ShieldCheck, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { auth } from "../../lib/firebase"; 
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function StudyAbroadHub() {
+  // --- USER MEMORY ---
+  const [firstName, setFirstName] = useState<string | null>(null);
+
+  // Fetch the name the second the dashboard loads
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && user.displayName) {
+        // Splits the full name and grabs the first name for a cleaner greeting
+        setFirstName(user.displayName.split(" ")[0]);
+      } else {
+        setFirstName(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // --- PREMIUM SCHOLARSHIP DATABASE ---
   const scholarships = [
     {
       id: "mext-ug",
@@ -44,13 +66,16 @@ export default function StudyAbroadHub() {
       {/* Header Section */}
       <div className="max-w-6xl mx-auto mb-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 text-sm font-bold text-success mb-6 border border-success/20">
-          <ShieldCheck className="w-4 h-4" /> Premium Access Hub
+          <Sparkles className="w-4 h-4" /> Premium Access Hub
         </div>
+        
+        {/* Dynamic Welcome Message */}
         <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
-          Global Scholarship <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Directory</span>
+          {firstName ? `Welcome back, ${firstName}` : "Global Scholarship Directory"}
         </h1>
+        
         <p className="text-lg text-gray-600 font-medium max-w-2xl mx-auto">
-          Select your target country below. Each premium roadmap provides step-by-step guidance to secure a fully-funded seat at a top global university.
+          Explore fully-funded global scholarships. Choose your destination to unlock a tailored roadmap and step-by-step application timelines.
         </p>
       </div>
 
