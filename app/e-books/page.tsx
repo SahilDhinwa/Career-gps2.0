@@ -1,20 +1,19 @@
 import Link from "next/link";
-import { BookOpen, Download, Sparkles, Star, ShieldCheck, ChevronRight } from "lucide-react";
+import { Download, Sparkles, Star, ShieldCheck } from "lucide-react";
 
-// 1. THE DIGITAL ASSET DICTIONARY
-// You can easily add your new books here when they are ready.
+// 1. THE DIGITAL ASSET DICTIONARY (Updated with The Unspoken Aura)
 const careerAssets = [
   {
-    id: "global-communicator",
-    title: "The Global Communicator",
-    subtitle: "Speak with the confidence of an IT leader, even from a tier-3 city.",
-    description: "Our flagship guide to mastering interviews, networking with foreign professors, and writing SOPs that admission committees cannot ignore.",
+    id: "unspoken-aura",
+    title: "The Unspoken Aura",
+    subtitle: "Unlocking Your True Personality Through Communication",
+    description: "A Guide for the Real World. Master the art of the aura, overcome the 'Invisible Wall', and command respect in every room you enter.",
     price: "FREE",
-    originalPrice: "₹499",
-    tag: "Most Popular",
-    color: "from-blue-600 to-indigo-700",
-    coverPlaceholder: "bg-blue-50 text-blue-600",
-    // fileUrl: "/books/global-communicator.pdf" // You will link your PDF here later
+    originalPrice: "₹999",
+    tag: "Flagship Release",
+    color: "from-gray-900 to-black", // Royal dark aesthetic background
+    coverBgImage: "/unspoken-aura-bg.jpg", // The AI image you will generate and put in 'public'
+    fileUrl: "/The Glass World.pdf" // The exact PDF you provided, placed in the 'public' folder
   }
 ];
 
@@ -41,14 +40,48 @@ export default function EBooksDirectory() {
           {careerAssets.map((asset) => (
             <div key={asset.id} className="bg-surface border border-surfaceBorder rounded-sm shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group">
               
-              {/* Left Side: 3D Book Cover Area */}
+              {/* Left Side: 3D Royal Credit Card Book Cover Area */}
               <div className={`sm:w-2/5 p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                <div className="absolute top-0 right-0 w-48 h-48 bg-warning/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                 
-                {/* Book Mockup Skeleton (Will be replaced by your image) */}
-                <div className="w-3/4 aspect-[3/4] bg-white rounded-sm shadow-2xl flex flex-col items-center justify-center p-4 text-center transform group-hover:scale-105 transition-transform duration-500 relative z-10 border-l-8 border-gray-300">
-                  <BookOpen className="w-10 h-10 text-gray-300 mb-3" />
-                  <p className="font-heading font-bold text-gray-800 text-sm leading-tight">{asset.title}</p>
+                {/* The Credit Card Ratio Cover (Aspect Ratio 54:85) */}
+                <div 
+                  className="w-3/4 aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-6 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
+                  style={{
+                    // Fallback gradient if the image isn't loaded yet
+                    background: `linear-gradient(to bottom right, #0f172a, #020617)`,
+                    backgroundImage: `url(${asset.coverBgImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                >
+                  {/* Glassmorphism Dark Overlay for Text Readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10"></div>
+                  
+                  {/* Top Branding */}
+                  <div className="relative z-10 text-center mt-2">
+                    <p className="text-[10px] font-bold text-warning uppercase tracking-[0.3em] opacity-90">
+                      Career GPS Exclusive
+                    </p>
+                  </div>
+
+                  {/* Main Title Area */}
+                  <div className="relative z-10 text-center mb-4">
+                    <h3 className="font-heading font-bold text-white text-2xl md:text-3xl leading-tight mb-2 drop-shadow-lg">
+                      The Unspoken<br/>Aura
+                    </h3>
+                    <p className="text-xs text-gray-300 font-medium leading-relaxed px-2">
+                      Unlocking Your True Personality
+                    </p>
+                    <div className="w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
+                  </div>
+                  
+                  {/* Bottom Subtitle */}
+                  <div className="relative z-10 text-center">
+                    <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">
+                      A Guide for the Real World
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -76,12 +109,18 @@ export default function EBooksDirectory() {
                     <span className="text-sm font-medium text-gray-400 line-through mb-1">{asset.originalPrice}</span>
                   </div>
 
-                  {/* Free Checkout Button */}
-                  <button className="w-full bg-gray-900 text-white font-bold py-4 px-4 rounded-sm hover:bg-primary transition-colors flex items-center justify-center gap-2 group-hover:shadow-lg">
-                    <Download className="w-4 h-4" /> Download Now
-                  </button>
+                  {/* Functional Direct Download Button */}
+                  <a 
+                    href={asset.fileUrl} 
+                    download="The_Unspoken_Aura_CareerGPS.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-gray-900 text-white font-bold py-4 px-4 rounded-sm hover:bg-primary transition-colors flex items-center justify-center gap-2 group-hover:shadow-lg cursor-pointer"
+                  >
+                    <Download className="w-5 h-5" /> Download E-Book Now
+                  </a>
                   <p className="text-center text-xs text-gray-500 mt-3 font-medium flex items-center justify-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-success" /> Instant direct download
+                    <ShieldCheck className="w-3 h-3 text-success" /> Secure 1-Click PDF Download
                   </p>
                 </div>
               </div>
