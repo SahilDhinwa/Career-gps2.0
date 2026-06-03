@@ -1,3 +1,4 @@
+import Matchmaker from "../components/Matchmaker";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart, BookOpen } from "lucide-react";
