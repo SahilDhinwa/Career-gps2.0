@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart, BookOpen } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -88,6 +88,41 @@ export default function LandingPage() {
                 No more generic advice. Access premium, insider checklists designed by experts who have navigated the system.
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SKELETON PROMO BANNER FOR E-BOOKS */}
+      <div className="bg-background py-10 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+            
+            {/* Background Glow */}
+            <div className="absolute top-0 left-0 w-full h-full bg-primary/10 blur-3xl pointer-events-none"></div>
+
+            {/* Left Side: Text */}
+            <div className="flex-1 text-center md:text-left z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-white mb-4 border border-white/20 uppercase tracking-widest">
+                <BookOpen className="w-3 h-3 text-warning" /> New Release
+              </div>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-3">
+                Master the Art of Communication
+              </h2>
+              <p className="text-gray-300 text-lg mb-0 font-medium max-w-xl">
+                Grab our flagship E-Book: <span className="text-white font-bold">The Global Communicator</span>. Learn to speak with the confidence of an IT leader. Completely free for a limited time.
+              </p>
+            </div>
+
+            {/* Right Side: CTA */}
+            <div className="shrink-0 z-10 w-full md:w-auto">
+              <Link 
+                href="/e-books"
+                className="w-full md:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:scale-105 transition-all flex items-center justify-center gap-2"
+              >
+                Claim Free Asset <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+
           </div>
         </div>
       </div>
