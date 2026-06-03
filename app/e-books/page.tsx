@@ -1,7 +1,10 @@
-import Link from "next/link";
-import { Download, Sparkles, Star, ShieldCheck } from "lucide-react";
+"use client";
 
-// 1. THE DIGITAL ASSET DICTIONARY (Updated with The Unspoken Aura)
+import Link from "next/link";
+import { Download, Sparkles, Star, ShieldCheck, Eye, X, BookOpen } from "lucide-react";
+import { useState } from "react";
+
+// 1. THE DIGITAL ASSET DICTIONARY
 const careerAssets = [
   {
     id: "unspoken-aura",
@@ -11,15 +14,18 @@ const careerAssets = [
     price: "FREE",
     originalPrice: "₹999",
     tag: "Flagship Release",
-    color: "from-gray-900 to-black", // Royal dark aesthetic background
-    coverBgImage: "/unspoken-aura-bg.jpg", // The AI image you will generate and put in 'public'
-    fileUrl: "/The Glass World.pdf" // The exact PDF you provided, placed in the 'public' folder
+    color: "from-gray-900 to-black", 
+    coverBgImage: "/unspoken-aura-bg.jpg", 
+    fileUrl: "/The Glass World.pdf" 
   }
 ];
 
 export default function EBooksDirectory() {
+  // 2. STATE TO CONTROL THE IN-PAGE E-READER
+  const [viewingPdf, setViewingPdf] = useState<string | null>(null);
+
   return (
-    <div className="min-h-screen bg-background py-16 px-6">
+    <div className="min-h-screen bg-background py-16 px-6 relative">
       <div className="max-w-6xl mx-auto">
         
         {/* Header Section */}
@@ -44,28 +50,24 @@ export default function EBooksDirectory() {
               <div className={`sm:w-2/5 p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
                 <div className="absolute top-0 right-0 w-48 h-48 bg-warning/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                 
-                {/* The Credit Card Ratio Cover (Aspect Ratio 54:85) */}
+                {/* The Credit Card Ratio Cover */}
                 <div 
                   className="w-3/4 aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-6 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
                   style={{
-                    // Fallback gradient if the image isn't loaded yet
                     background: `linear-gradient(to bottom right, #0f172a, #020617)`,
                     backgroundImage: `url(${asset.coverBgImage})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                   }}
                 >
-                  {/* Glassmorphism Dark Overlay for Text Readability */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10"></div>
                   
-                  {/* Top Branding */}
                   <div className="relative z-10 text-center mt-2">
                     <p className="text-[10px] font-bold text-warning uppercase tracking-[0.3em] opacity-90">
                       Career GPS Exclusive
                     </p>
                   </div>
 
-                  {/* Main Title Area */}
                   <div className="relative z-10 text-center mb-4">
                     <h3 className="font-heading font-bold text-white text-2xl md:text-3xl leading-tight mb-2 drop-shadow-lg">
                       The Unspoken<br/>Aura
@@ -76,7 +78,6 @@ export default function EBooksDirectory() {
                     <div className="w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
                   </div>
                   
-                  {/* Bottom Subtitle */}
                   <div className="relative z-10 text-center">
                     <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">
                       A Guide for the Real World
@@ -109,18 +110,28 @@ export default function EBooksDirectory() {
                     <span className="text-sm font-medium text-gray-400 line-through mb-1">{asset.originalPrice}</span>
                   </div>
 
-                  {/* Functional Direct Download Button */}
-                  <a 
-                    href={asset.fileUrl} 
-                    download="The_Unspoken_Aura_CareerGPS.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full bg-gray-900 text-white font-bold py-4 px-4 rounded-sm hover:bg-primary transition-colors flex items-center justify-center gap-2 group-hover:shadow-lg cursor-pointer"
-                  >
-                    <Download className="w-5 h-5" /> Download E-Book Now
-                  </a>
-                  <p className="text-center text-xs text-gray-500 mt-3 font-medium flex items-center justify-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-success" /> Secure 1-Click PDF Download
+                  {/* 3. DUAL-ACTION BUTTONS (Read Online vs Download) */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button 
+                      onClick={() => setViewingPdf(asset.fileUrl)}
+                      className="flex-1 bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <Eye className="w-5 h-5" /> Read Online
+                    </button>
+                    
+                    <a 
+                      href={asset.fileUrl} 
+                      download="The_Unspoken_Aura_CareerGPS.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-gray-900 text-white font-bold py-3 px-4 rounded-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                    >
+                      <Download className="w-5 h-5" /> Download PDF
+                    </a>
+                  </div>
+                  
+                  <p className="text-center text-xs text-gray-500 mt-4 font-medium flex items-center justify-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-success" /> 100% Free • No Sign-Up Required
                   </p>
                 </div>
               </div>
@@ -128,8 +139,44 @@ export default function EBooksDirectory() {
             </div>
           ))}
         </div>
-
       </div>
+
+      {/* 4. THE IN-PAGE FULLSCREEN E-READER MODAL */}
+      {viewingPdf && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
+          
+          {/* Reader Top Navbar */}
+          <div className="flex justify-between items-center p-4 border-b border-surfaceBorder bg-surface shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-heading font-bold text-foreground leading-tight">Career GPS E-Reader</h3>
+                <p className="text-xs text-gray-500 font-medium">The Unspoken Aura</p>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => setViewingPdf(null)}
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
+            >
+              <X className="w-4 h-4" /> Close Reader
+            </button>
+          </div>
+
+          {/* PDF Iframe Viewer */}
+          <div className="flex-grow w-full h-full p-0 sm:p-6 bg-gray-100/50">
+            {/* Adding #toolbar=0 hides the browser's default PDF menu to make it look like a native app */}
+            <iframe 
+              src={`${viewingPdf}#toolbar=0`} 
+              className="w-full h-full sm:rounded-sm shadow-2xl border border-surfaceBorder bg-white"
+              title="Career GPS E-Reader"
+            />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
