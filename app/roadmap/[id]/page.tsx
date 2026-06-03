@@ -8,74 +8,32 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import PremiumPaymentButton from "../../../components/PremiumPaymentButton"; 
 
-// --- 1. GENERIC MASTER'S ROADMAP (3 Stages) ---
-const masterRoadmap = [
-  { id: 1, title: "Initial Research", desc: "Identify programs aligned with your goals.", checklist: ["List top 5 university choices", "Verify basic eligibility criteria"] },
-  { id: 2, title: "Standardized Testing", desc: "Prepare for your English proficiency exams.", checklist: ["Book IELTS/TOEFL date", "Take diagnostic test"] },
-  { id: 3, title: "Document Compilation", desc: "Gather transcripts and draft your SOP.", checklist: ["Draft SOP", "Contact referees for LORs"] }
-];
-
-// --- 2. GENERIC UG ROADMAP (3 Stages) ---
-const ugRoadmap = [
-  { id: 1, title: "Profile Building & Academics", desc: "Focus on maintaining a 75%+ academic score.", checklist: ["Maintain 75%+ in 12th grade", "Build leadership portfolio"] },
-  { id: 2, title: "Standardized Tests", desc: "Prepare for the SAT/ACT and English proficiency tests.", checklist: ["Book SAT/ACT date", "Take IELTS/TOEFL diagnostic"] },
-  { id: 3, title: "Essays & Applications", desc: "Draft your SOP and submit via the Common App.", checklist: ["Draft Study Plan", "Get School Recommendation"] }
-];
-
-// --- 3. PREMIUM MEXT ROADMAP (Japan - 10 Stages) ---
-const mextUgRoadmap = [
-  { id: 1, title: "Scholarship Overview", desc: "Covers 100% tuition, flights, and provides ¥117,000 monthly stipend.", checklist: ["Understand funding", "Identify UG category"] },
-  { id: 2, title: "Complete Eligibility Checklist", desc: "Verify your age, nationality, and academic criteria.", checklist: ["Confirm age limit", "Target 75%+ in Class 12"] },
-  { id: 3, title: "What MEXT Covers", desc: "The scholarship is worth approx ₹14–17 lakh per year.", checklist: ["Review stipend", "Calculate monthly budget"] },
-  { id: 4, title: "Month-by-Month Timeline", desc: "Track your timeline starting from September preparation.", checklist: ["Check embassy site in April", "Prepare physical submission"] },
-  { id: 5, title: "Documents Required", desc: "Collect mark sheets, recommendation letters, and draft Study Plan.", checklist: ["Download current forms", "Get principal recommendation"] },
-  { id: 6, title: "Application Process", desc: "Submit physical copies to the Embassy via registered post.", checklist: ["Write specific Study Plan", "Send via registered post"] },
-  { id: 7, title: "Written Exam & Interview", desc: "Clear the NCERT standard written exam in New Delhi.", checklist: ["Start NCERT revision", "Practice past exam papers"] },
-  { id: 8, title: "University Selection", desc: "Research target universities; MEXT assigns your UG placement.", checklist: ["Match field to course", "Research top 3 universities"] },
-  { id: 9, title: "From Offer to Arrival", desc: "Secure CoE, apply for student visa, and pack for Japan.", checklist: ["Apply for Visa", "Pack heavy winter clothing"] },
-  { id: 10, title: "Final Preparation", desc: "Arrive in Japan and begin your 1-year language training.", checklist: ["Carry Yen for month 1", "Start language training"] }
-];
-
-// --- 4. PREMIUM CHEVENING ROADMAP (UK - 8 Stages) ---
-const cheveningRoadmap = [
-  { id: 1, title: "Overview: What Is Chevening?", desc: "UK Government's 100% funded master's program for global leaders.", checklist: ["Understand 1-year duration", "Target UK universities"] },
-  { id: 2, title: "The 5 Must-Meet Criteria", desc: "Requires 2:1 degree (60%+) and minimum 2,800 hours of work experience.", checklist: ["Verify 2,800 work hours", "Confirm 2:1 degree equivalent"] },
-  { id: 3, title: "Full Financial Breakdown", desc: "Covers tuition (MBA capped at £22k), flights, visa, and £917-£1,134/mo.", checklist: ["Review London vs non-London stipend", "Estimate monthly budget"] },
-  { id: 4, title: "How To Apply (Portal Walkthrough)", desc: "Portal opens in August and closes in early October.", checklist: ["Register on applications.chevening.org", "Select 3 UK university courses"] },
-  { id: 5, title: "The 4 Critical Essays", desc: "Write 300-500 words on Leadership, Networking, UK Study, and Career Plan.", checklist: ["Draft Leadership story", "Draft Career return plan"] },
-  { id: 6, title: "British High Commission Interview", desc: "A 30-minute panel probing your essays, leadership, and India impact.", checklist: ["Prepare for specific essay probing", "Research chosen university"] },
-  { id: 7, title: "Month-by-Month Timeline", desc: "Follow the application cycle from January prep to September departure.", checklist: ["Set Oct deadline reminder", "Sit IELTS/TOEFL in summer"] },
-  { id: 8, title: "Winning Tips", desc: "Essays are the differentiator. Start 5-7 drafts by June.", checklist: ["Get alumni essay review", "Ensure clear career narrative"] }
-];
-
-// --- 5. PREMIUM DAAD ROADMAP (Germany - 10 Stages) ---
-const daadRoadmap = [
-  { id: 1, title: "DAAD Overview", desc: "Germany's premier scholarship making public university 100% free with a living stipend.", checklist: ["Identify EPOS, Study, or WISE track", "Review EUR 992/mo stipend"] },
-  { id: 2, title: "Eligibility Criteria", desc: "Check the strict 6-year degree rule for Study Scholarships.", checklist: ["Confirm degree recency (under 6 yrs)", "Verify 70%+ academic marks"] },
-  { id: 3, title: "What DAAD Covers", desc: "Provides ~EUR 14,164+ annually including health insurance and travel.", checklist: ["Understand health coverage", "Note Blocked Account requirement"] },
-  { id: 4, title: "Month-by-Month Timeline", desc: "Start 12 months early. APS Certificate takes 4-6 weeks.", checklist: ["Target Winter/Summer intake", "Apply for APS 10 months early"] },
-  { id: 5, title: "Documents Required", desc: "APS Certificate, Motivation Letter, Transcripts, and IELTS/TestDaF.", checklist: ["Apply at aps-india.de (₹18k)", "Collect official sealed transcripts"] },
-  { id: 6, title: "Application Process", desc: "Submit completely online via portal.daad.de. No physical submission.", checklist: ["Create DAAD portal account", "Have referees submit via link"] },
-  { id: 7, title: "Written Exam & Interview", desc: "No exam for Master's. Selection is heavily based on your Motivation Letter.", checklist: ["Focus 80% effort on Motivation Letter", "PhD: Outreach to German professors"] },
-  { id: 8, title: "University & Course Selection", desc: "Find English or German-taught programs at top universities like TUM or RWTH.", checklist: ["Select 3-5 target universities", "Check semester fees (EUR 200-400)"] },
-  { id: 9, title: "From Offer to Arrival", desc: "Deposit EUR 11,208 into a Fintiba/Expatrio Blocked Account for the visa.", checklist: ["Book VFS Visa appointment", "Open Blocked Account"] },
-  { id: 10, title: "FJI Verdict & Insider Tips", desc: "Generic motivation letters are the #1 reason for rejection. Be impossibly specific.", checklist: ["Name specific professors in SOP", "Ensure clear India-development angle"] }
-];
+// 1. IMPORT YOUR CLEAN DATA DICTIONARY HERE
+import { 
+  masterRoadmap, 
+  ugRoadmap, 
+  mextUgRoadmap, 
+  cheveningRoadmap, 
+  daadRoadmap,
+  commonwealthRoadmap 
+} from "../../../lib/roadmaps";
 
 export default function RoadmapTracker({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
-  
-  // THE NEW PREMIUM GATEKEEPER STATE
   const [isPremium, setIsPremium] = useState(false);
 
+  // 2. SMART ROUTING LOGIC
   let baseRoadmap = masterRoadmap;
   let locationTag = "Global Institutions";
   let levelTag = "MASTER'S LEVEL";
 
-  if (params.id.includes("chevening")) {
+  if (params.id.includes("commonwealth")) {
+    baseRoadmap = commonwealthRoadmap;
+    locationTag = "United Kingdom • Development Masters";
+  } else if (params.id.includes("chevening")) {
     baseRoadmap = cheveningRoadmap;
     locationTag = "United Kingdom • Global Institutions";
   } else if (params.id.includes("daad")) {
@@ -112,8 +70,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
 
         if (userSnap.exists()) {
           const data = userSnap.data();
-          
-          // Verify Premium Status securely from the database
           setIsPremium(data.isPremium || false);
           
           const savedProgress = data.roadmapProgress?.[params.id] || 1; 
@@ -159,8 +115,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
       router.push("/login"); 
       return;
     }
-    
-    // Security check: Stop free users from marking Stage 1 as complete and bypassing the lock
     if (!isPremium && stageId >= 1) return;
 
     const nextStage = stageId + 1;
@@ -240,16 +194,11 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
       <div className="space-y-6 relative">
         {stages.map((stage, index) => {
           
-          // --- THE GATEKEEPER LOGIC ---
-          // If the user is on the Free Tier and they reach Stage 2 (index 1), throw the paywall.
           if (!isPremium && index > 0) {
-            
-            // Only render the blur effect and CTA on Stage 2. Hide Stages 3-10 entirely to save DOM space.
             if (index === 1) {
               return (
                 <div key={stage.id} className="relative mt-8">
                   
-                  {/* The Blurred Teaser Background */}
                   <div className="filter blur-sm opacity-30 pointer-events-none select-none">
                     <div className="flex gap-6">
                       <div className="flex flex-col items-center">
@@ -265,7 +214,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
                     </div>
                   </div>
 
-                  {/* The Razorpay Upgrade Overlay */}
                   <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 bg-gradient-to-b from-transparent via-background/90 to-background">
                     <div className="bg-surface border border-primary/20 p-8 rounded-sm shadow-2xl max-w-lg w-full flex flex-col items-center">
                       <div className="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mb-6">
@@ -284,10 +232,9 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
                 </div>
               );
             }
-            return null; // Return nothing for stages 3+ on free tier
+            return null; 
           }
 
-          // --- NORMAL RENDER FOR UNLOCKED STAGES ---
           const isCompleted = stage.status === "completed";
           const isActive = stage.status === "active";
           const isLocked = stage.status === "locked";
@@ -343,7 +290,7 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
                             ) : (
                               <Square className={`w-5 h-5 shrink-0 mt-0.5 ${isLocked ? "text-gray-300" : "text-gray-400"}`} />
                             )}
-          <span className={`text-sm md:text-base font-medium transition-all ${
+                            <span className={`text-sm md:text-base font-medium transition-all ${
                               isItemChecked ? "line-through text-gray-400" : 
                               isLocked ? "text-gray-400" : "text-gray-700"
                             }`}>
@@ -376,5 +323,5 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
         })}
       </div>
     </div>
-      );
+  );
 }
