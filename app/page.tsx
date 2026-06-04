@@ -1,7 +1,7 @@
 import Matchmaker from "../components/Matchmaker";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart, BookOpen } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart, BookOpen, FolderOpen } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -38,8 +38,9 @@ export default function LandingPage() {
             >
               Start Your Journey <ArrowRight className="w-5 h-5" />
             </Link>
-            {/* The new dedicated Quiz button added here! */}
-  <Matchmaker />
+            
+            <Matchmaker />
+            
             <Link 
               href="/login" 
               className="w-full sm:w-auto bg-white text-gray-800 border-2 border-gray-200 font-bold px-8 py-4 rounded-sm hover:border-primary hover:text-primary transition-all flex items-center justify-center"
@@ -59,7 +60,6 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
             <div className="bg-background p-8 border border-surfaceBorder rounded-sm shadow-sm hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <Globe className="w-6 h-6 text-primary" />
@@ -70,7 +70,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Feature 2 */}
             <div className="bg-background p-8 border border-surfaceBorder rounded-sm shadow-sm hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-success" />
@@ -81,7 +80,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Feature 3 */}
             <div className="bg-background p-8 border border-surfaceBorder rounded-sm shadow-sm hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-6">
                 <ShieldCheck className="w-6 h-6 text-warning" />
@@ -95,15 +93,57 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* SKELETON PROMO BANNER FOR E-BOOKS */}
+      {/* --- NEW ACTION VAULT TOOLKIT EXTENSION --- */}
       <div className="bg-background py-10 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Gold Gradient Wrapper for Premium Feel */}
+          <div className="relative p-[1px] rounded-sm bg-gradient-to-r from-warning/40 via-warning/10 to-warning/40 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-surface p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 rounded-sm relative overflow-hidden">
+              
+              {/* Subtle background glow */}
+              <div className="absolute top-0 left-0 w-full h-full bg-warning/5 pointer-events-none"></div>
+
+              {/* Left Side: Icon & Copy */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-start md:items-center text-center sm:text-left gap-5 z-10 w-full md:w-auto">
+                <div className="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center shrink-0 border border-warning/20">
+                  <FolderOpen className="w-8 h-8 text-warning" />
+                </div>
+                <div>
+                  <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-2">
+                    Stop Drafting from Scratch.
+                  </h2>
+                  <p className="text-gray-600 font-medium max-w-lg">
+                    Bypass blank-page anxiety with our Action Vault. Access copy-paste document templates proven to win international scholarships.
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Side: CTA */}
+              <div className="shrink-0 z-10 w-full md:w-auto flex flex-col items-center md:items-end">
+                <Link 
+                  href="/dashboard/vault"
+                  className="w-full md:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-md hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mb-3"
+                >
+                  Open Action Vault <ArrowRight className="w-5 h-5" />
+                </Link>
+                <p className="text-xs font-bold text-gray-500 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-success" />
+                  Includes templates for DAAD, Chevening & Commonwealth
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SKELETON PROMO BANNER FOR E-BOOKS */}
+      <div className="bg-background pb-10 pt-4 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
             
-            {/* Background Glow */}
             <div className="absolute top-0 left-0 w-full h-full bg-primary/10 blur-3xl pointer-events-none"></div>
 
-            {/* Left Side: Text */}
             <div className="flex-1 text-center md:text-left z-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-white mb-4 border border-white/20 uppercase tracking-widest">
                 <BookOpen className="w-3 h-3 text-warning" /> New Release
@@ -116,7 +156,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Right Side: CTA */}
             <div className="shrink-0 z-10 w-full md:w-auto">
               <Link 
                 href="/e-books"
@@ -135,10 +174,8 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
             
-            {/* Subtle Background Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
-            {/* Text Content */}
             <div className="flex-1 text-center md:text-left z-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-sm font-bold text-primary mb-6 border border-primary/20">
                 <Heart className="w-4 h-4 fill-current text-primary" /> Support Our Community
@@ -154,10 +191,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* QR Code Container */}
             <div className="shrink-0 flex flex-col items-center z-10">
               <div className="bg-white p-4 rounded-sm shadow-md border border-gray-200 mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
-                {/* Fixed Image component for Next.js */}
                 <Image 
                   src="/QR_1780487966.png" 
                   alt="Support Career GPS via UPI" 
