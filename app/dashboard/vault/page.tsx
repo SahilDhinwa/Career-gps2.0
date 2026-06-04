@@ -365,7 +365,14 @@ export default function ActionVault() {
               </button>
             </div>
 
-              {/* Modal Footer */}
+            {/* Modal Body (Raw Text) - THIS WAS MISSING! */}
+            <div className="p-6 overflow-y-auto flex-grow bg-white">
+              <pre className="whitespace-pre-wrap font-body text-sm leading-relaxed text-gray-800 p-6 bg-gray-50 border border-gray-100 rounded-sm">
+                {previewTemplate.rawText}
+              </pre>
+            </div>
+
+            {/* Modal Footer */}
             <div className="px-6 py-5 border-t border-surfaceBorder bg-gray-50 flex justify-end gap-3">
               <button
                 onClick={() => setPreviewTemplate(null)}
@@ -393,5 +400,3 @@ export default function ActionVault() {
     </div>
   );
 }
-                  
-             
