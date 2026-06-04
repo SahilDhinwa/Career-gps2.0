@@ -1,7 +1,7 @@
 "use client";
 
 import { auth, db } from "../lib/firebase"; 
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore"; // CHANGED: Imported setDoc instead of updateDoc
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Lock, Loader2 } from "lucide-react"; 
@@ -10,7 +10,6 @@ export default function PremiumPaymentButton() {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Helper function to load the Razorpay checkout script seamlessly
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -24,7 +23,6 @@ export default function PremiumPaymentButton() {
   const handlePaymentClick = async () => {
     const currentUser = auth.currentUser;
 
-    // 1. GATEKEEPER: Force login
     if (!currentUser) {
       router.push("/login");
       return;
@@ -33,7 +31,6 @@ export default function PremiumPaymentButton() {
     setIsProcessing(true);
 
     try {
-      // 2. Load the Razorpay script
       const res = await loadRazorpayScript();
       if (!res) {
         alert("Razorpay SDK failed to load. Are you online?");
@@ -41,13 +38,11 @@ export default function PremiumPaymentButton() {
         return;
       }
 
-      // 3. Ask our secure API for an Order ID
       const orderResponse = await fetch("/api/razorpay", { method: "POST" });
       const orderData = await orderResponse.json();
 
       if (!orderData.orderId) throw new Error("No Order ID returned");
 
-      // 4. Configure the Razorpay Popup
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
         amount: 999 * 100, 
@@ -56,20 +51,24 @@ export default function PremiumPaymentButton() {
         description: "Unlock all Scholarships & Roadmaps",
         order_id: orderData.orderId,
         handler: async function (response: any) {
-          // 5. SUCCESS! The user paid. Now we upgrade them in Firebase.
+          
           try {
             const userRef = doc(db, "users", currentUser.uid);
-            await updateDoc(userRef, {
-              isPremium: true,
-              paymentId: response.razorpay_payment_id
-            });
             
-            // Redirect to a success page or refresh the dashboard
+            // THE FIX: setDoc with merge: true guarantees it works even if the document is missing
+            await setDoc(userRef, {
+              isPremium: true,
+              paymentId: response.razorpay_payment_id,
+              email: currentUser.email // Safe practice to store email with the payment record
+            }, { merge: true });
+            
             alert("Payment Successful! Welcome to Premium.");
             window.location.reload(); 
             
-          } catch (error) {
+          } catch (error: any) {
             console.error("Firebase update failed", error);
+            // THE FIX: Force the error to show on screen so we aren't debugging blindly
+            alert("Payment captured, but database update failed: " + error.message);
           }
         },
         prefill: {
@@ -77,11 +76,10 @@ export default function PremiumPaymentButton() {
           email: currentUser.email || "",
         },
         theme: {
-          color: "#0F5132", // Your exact primary brand color!
+          color: "#0F5132",
         },
       };
 
-      // 6. Launch the popup
       const paymentObject = new (window as any).Razorpay(options);
       paymentObject.open();
 
