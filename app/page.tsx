@@ -31,6 +31,8 @@ export default function LandingPage() {
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
+          {/* UPDATED: Redundant Member Login button removed. 
+              Now strictly focused on the two primary CTAs. */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
               href="/pathways" 
@@ -40,13 +42,6 @@ export default function LandingPage() {
             </Link>
             
             <Matchmaker />
-            
-            <Link 
-              href="/login" 
-              className="w-full sm:w-auto bg-white text-gray-800 border-2 border-gray-200 font-bold px-8 py-4 rounded-sm hover:border-primary hover:text-primary transition-all flex items-center justify-center"
-            >
-              Member Login
-            </Link>
           </div>
         </div>
       </div>
@@ -93,7 +88,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* --- NEW ACTION VAULT TOOLKIT EXTENSION --- */}
+      {/* --- ACTION VAULT TOOLKIT EXTENSION --- */}
       <div className="bg-background py-10 px-6">
         <div className="max-w-6xl mx-auto">
           {/* Gold Gradient Wrapper for Premium Feel */}
@@ -137,7 +132,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* SKELETON PROMO BANNER FOR E-BOOKS */}
+      {/* PROMO BANNER FOR E-BOOKS */}
       <div className="bg-background pb-10 pt-4 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
