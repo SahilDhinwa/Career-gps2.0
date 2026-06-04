@@ -3,12 +3,12 @@
 import { CheckCircle, Circle, MapPin, BookOpen, ChevronRight, CheckSquare, Square, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { auth, db } from "../../../lib/firebase"; 
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+// FIX: Swapped updateDoc for setDoc
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import PremiumPaymentButton from "../../../components/PremiumPaymentButton"; 
 
-// 1. IMPORT YOUR CLEAN DATA DICTIONARY HERE
 import { 
   masterRoadmap, 
   ugRoadmap, 
@@ -16,7 +16,7 @@ import {
   cheveningRoadmap, 
   daadRoadmap,
   commonwealthRoadmap,
-  fulbrightRoadmap // <-- NEW IMPORT ADDED HERE
+  fulbrightRoadmap 
 } from "../../../lib/roadmaps";
 
 export default function RoadmapTracker({ params }: { params: { id: string } }) {
@@ -26,7 +26,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isPremium, setIsPremium] = useState(false);
 
-  // 2. SMART ROUTING LOGIC
   let baseRoadmap = masterRoadmap;
   let locationTag = "Global Institutions";
   let levelTag = "MASTER'S LEVEL";
@@ -44,7 +43,7 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     baseRoadmap = mextUgRoadmap;
     locationTag = "Japan • Global Institutions";
     levelTag = params.id.includes("ug") ? "UG LEVEL" : "MASTER'S LEVEL";
-  } else if (params.id.includes("fulbright")) { // <-- NEW FULBRIGHT ROUTING LOGIC
+  } else if (params.id.includes("fulbright")) { 
     baseRoadmap = fulbrightRoadmap;
     locationTag = "United States • USIEF";
     levelTag = "MASTER'S & DOCTORAL LEVEL";
@@ -109,7 +108,8 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
 
     try {
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { [`checklistProgress.${params.id}`]: newCheckedItems });
+      // FIX: Changed to setDoc with merge: true to guarantee the save happens
+      await setDoc(userRef, { [`checklistProgress.${params.id}`]: newCheckedItems }, { merge: true });
     } catch (error) {
       console.error("Failed to save checklist item", error);
     }
@@ -130,7 +130,8 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
 
     try {
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { [`roadmapProgress.${params.id}`]: nextStage });
+      // FIX: Changed to setDoc with merge: true to guarantee the save happens
+      await setDoc(userRef, { [`roadmapProgress.${params.id}`]: nextStage }, { merge: true });
     } catch (error) {
       console.error("Failed to save progress", error);
     }
@@ -329,4 +330,4 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
-                    }
+      }
