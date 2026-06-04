@@ -65,12 +65,10 @@ export default function Matchmaker() {
 
   // 4. HANDLERS
   const handleOptionSelect = (value: string) => {
-    // FIXED: Accessing the specific question by index to prevent TypeScript errors
     const currentQuestionId = QUIZ_QUESTIONS[currentStep].id;
     const newAnswers = { ...answers, [currentQuestionId]: value };
     setAnswers(newAnswers);
 
-    // Smooth transition to the next step
     setTimeout(() => {
       if (currentStep < QUIZ_QUESTIONS.length - 1) {
         setCurrentStep(currentStep + 1);
@@ -83,7 +81,6 @@ export default function Matchmaker() {
   const processAlgorithm = (finalAnswers: Record<string, string>) => {
     setIsProcessing(true);
     
-    // Fake loading delay for UX premium feel
     setTimeout(() => {
       const { degree, experience, academic, finance } = finalAnswers;
       let match = null;
@@ -96,7 +93,17 @@ export default function Matchmaker() {
           tagline: "100% Tuition & ¥117,000 Monthly Stipend",
           link: "/roadmap/mext-ug"
         };
-      } else if (degree === "PG" && experience === "2+" && (academic === "MID" || academic === "HIGH")) {
+      } 
+      // --- NEW FULBRIGHT LOGIC INJECTED HERE ---
+      else if ((degree === "PG" || degree === "PHD") && experience === "2+" && academic === "TOP") {
+        match = {
+          name: "Fulbright-Nehru Fellowship",
+          country: "United States",
+          tagline: "US Govt Fully Funded Program",
+          link: "/roadmap/fulbright-masters" 
+        };
+      } 
+      else if (degree === "PG" && experience === "2+" && (academic === "MID" || academic === "HIGH")) {
         match = {
           name: "Chevening Scholarship",
           country: "United Kingdom",
@@ -115,7 +122,7 @@ export default function Matchmaker() {
           name: "DAAD Scholarship",
           country: "Germany",
           tagline: "World-Class Education at Zero Tuition",
-          link: "/roadmap/daad-masters" // Routes to DAAD Master's or PhD depending on selection
+          link: "/roadmap/daad-masters" 
         };
       } else {
         match = {
@@ -141,7 +148,6 @@ export default function Matchmaker() {
   // 5. RENDER
   return (
     <>
-      {/* The Trigger Button */}
       <button 
         onClick={() => setIsOpen(true)}
         className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
@@ -149,13 +155,11 @@ export default function Matchmaker() {
         <Sparkles className="w-5 h-5" /> Find My Scholarship
       </button>
 
-      {/* The Modal Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in duration-300">
           
           <div className="bg-surface w-full max-w-lg border border-surfaceBorder rounded-sm shadow-2xl relative overflow-hidden flex flex-col">
             
-            {/* Header */}
             <div className="flex justify-between items-center p-6 border-b border-surfaceBorder bg-gray-50/50">
               <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
                 Career GPS Matchmaker
@@ -167,14 +171,12 @@ export default function Matchmaker() {
 
             <div className="p-8 flex-grow">
               {isProcessing ? (
-                // LOADING STATE
                 <div className="flex flex-col items-center justify-center py-12 text-center animate-pulse">
                   <Loader2 className="w-12 h-12 mb-6 text-primary animate-spin" />
                   <h3 className="font-heading text-2xl font-bold text-gray-900 mb-2">Analyzing Profile Matrix...</h3>
                   <p className="text-sm text-gray-500 font-medium">Cross-referencing global funding requirements.</p>
                 </div>
               ) : result ? (
-                // RESULT STATE
                 <div className="text-center py-6 animate-in slide-in-from-bottom-4 duration-500">
                   <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Trophy className="w-8 h-8 text-success" />
@@ -194,9 +196,7 @@ export default function Matchmaker() {
                   </button>
                 </div>
               ) : (
-                // QUIZ STATE
                 <div className="animate-in slide-in-from-right-4 duration-300">
-                  {/* Progress Bar */}
                   <div className="mb-8">
                     <div className="flex justify-between text-xs font-bold text-gray-400 mb-2 tracking-wider">
                       <span>QUESTION {currentStep + 1} OF 4</span>
