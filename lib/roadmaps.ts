@@ -61,4 +61,15 @@ export const commonwealthRoadmap = [
   { id: 9, title: "Visa & Pre-Departure", desc: "Get CAS from your university, apply for Tier 4 Visa, and prepare for the UK.", checklist: ["Pay IHS & Visa fee", "Book VFS biometric appointment"] },
   { id: 10, title: "The Winning Strategy", desc: "Specificity is everything. A generic 'I will help India' statement will result in immediate rejection.", checklist: ["Review application for extreme specificity", "Ensure strong financial need narrative"] }
 ];
-
+export const fulbrightRoadmap = [
+  { id: 1, title: "Scholarship Overview", desc: "US & Indian govt jointly funded fellowship requiring a strict return to India.", checklist: ["Understand joint funding", "Commit to return to India"] },
+  { id: 2, title: "Complete Eligibility Checklist", desc: "Requires 3+ years paid work experience and approved fields (no STEM/medicine).", checklist: ["Verify 3+ yrs paid work", "Check approved fields list"] },
+  { id: 3, title: "Financial Coverage", desc: "Covers tuition, airfare, health insurance, and a living stipend (approx $35K-$45K/yr).", checklist: ["Review monthly stipend", "Budget for dependent costs"] },
+  { id: 4, title: "Month-by-Month Timeline", desc: "15-18 month process. Applications open in Feb and close around May 14.", checklist: ["Set May 14 deadline", "Discuss extended leave"] },
+  { id: 5, title: "Documents Required", desc: "Requires 3 reference letters, employer endorsement, and proof of leadership.", checklist: ["Get Employer Endorsement", "Gather Leadership Proof"] },
+  { id: 6, title: "The Application Process", desc: "The Study Objective (700-800 words) naming a specific US university is critical.", checklist: ["Write Study Objective", "Draft Personal Statement"] },
+  { id: 7, title: "USIEF Interview", desc: "A 30-45 min panel interview in October probing your essays and return plan.", checklist: ["Prepare STAR leadership stories", "Define 60-second return plan"] },
+  { id: 8, title: "University Selection", desc: "You must apply to US universities yourself; research faculty and city costs.", checklist: ["Identify 3 US universities", "Email 1-2 US faculty members"] },
+  { id: 9, title: "Visa & Pre-Departure", desc: "USIEF manages the J-1 visa process. Attend mandatory pre-departure orientation.", checklist: ["Pay SEVIS fee", "Attend USIEF orientation"] },
+  { id: 10, title: "FJI Verdict & Insider Tips", desc: "Generic essays or vague return plans lead to instant rejection. Specificity is key.", checklist: ["Ensure specific India return plan", "Verify non-GOI employment"] }
+];
