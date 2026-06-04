@@ -7,16 +7,47 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col">
       
-      {/* HERO SECTION */}
-      <div className="relative flex-grow flex items-center justify-center px-6 py-20 lg:py-32">
+      {/* INLINE STYLES FOR DYNAMIC HERO BACKGROUND */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .bg-gps-grid {
+          background-image: 
+            linear-gradient(to right, rgba(17, 66, 50, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(17, 66, 50, 0.05) 1px, transparent 1px);
+          background-size: 40px 40px;
+          animation: pan-grid 20s linear infinite;
+        }
+        @keyframes pan-grid {
+          0% { background-position: 0px 0px; }
+          100% { background-position: 40px 40px; }
+        }
         
-        {/* Background Decorative Elements */}
+        .bg-topo-pattern {
+          /* Elegant Topographic Contour Lines */
+          background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c13.866 0 25.362 11.238 25.362 25.105 0 13.866-11.496 25.105-25.362 25.105C-2.866 68.21-14.362 56.972-14.362 43.105-14.362 29.238-2.866 18 11 18zm0 47.105c12.155 0 22.023-9.867 22.023-22.022 0-12.155-9.868-22.022-22.023-22.022C-1.155 21.06-11.023 30.928-11.023 43.105c0 12.155 9.868 22.022 22.023 22.022z' fill='%23114232' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+          animation: pan-topo 90s linear infinite;
+        }
+        @keyframes pan-topo {
+          0% { background-position: 0px 0px; }
+          100% { background-position: 100px 100px; }
+        }
+      `}} />
+
+      {/* HERO SECTION */}
+      <div className="relative flex-grow flex items-center justify-center px-6 py-20 lg:py-32 overflow-hidden">
+        
+        {/* Layer 1: Moving Topography Contour */}
+        <div className="absolute inset-0 bg-topo-pattern pointer-events-none"></div>
+        
+        {/* Layer 2: Moving GPS Coordinate Grid (Faded at edges using radial mask) */}
+        <div className="absolute inset-0 bg-gps-grid pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]"></div>
+
+        {/* Layer 3: Existing Glowing Orbs (Adds a "Radar/Sonar" glow over the grid) */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
         <div className="absolute bottom-0 right-0 w-[500px] h-[300px] bg-success/5 blur-[100px] rounded-full pointer-events-none"></div>
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
-            <span className="flex h-2 w-2 rounded-full bg-success"></span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
+            <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
             2026 Scholarship Pathways Now Live
           </div>
           
@@ -27,12 +58,10 @@ export default function LandingPage() {
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-background/50 backdrop-blur-[2px] rounded-lg p-2">
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
-          {/* UPDATED: Redundant Member Login button removed. 
-              Now strictly focused on the two primary CTAs. */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
               href="/pathways" 
@@ -47,7 +76,7 @@ export default function LandingPage() {
       </div>
 
       {/* FEATURE GRID */}
-      <div className="bg-surface border-t border-surfaceBorder py-20 px-6">
+      <div className="bg-surface border-t border-surfaceBorder py-20 px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl font-bold mb-4">Why Top Students Choose Career GPS</h2>
@@ -91,14 +120,11 @@ export default function LandingPage() {
       {/* --- ACTION VAULT TOOLKIT EXTENSION --- */}
       <div className="bg-background py-10 px-6">
         <div className="max-w-6xl mx-auto">
-          {/* Gold Gradient Wrapper for Premium Feel */}
           <div className="relative p-[1px] rounded-sm bg-gradient-to-r from-warning/40 via-warning/10 to-warning/40 shadow-sm hover:shadow-md transition-shadow">
             <div className="bg-surface p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 rounded-sm relative overflow-hidden">
               
-              {/* Subtle background glow */}
               <div className="absolute top-0 left-0 w-full h-full bg-warning/5 pointer-events-none"></div>
 
-              {/* Left Side: Icon & Copy */}
               <div className="flex flex-col sm:flex-row items-center sm:items-start md:items-center text-center sm:text-left gap-5 z-10 w-full md:w-auto">
                 <div className="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center shrink-0 border border-warning/20">
                   <FolderOpen className="w-8 h-8 text-warning" />
@@ -113,7 +139,6 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Right Side: CTA */}
               <div className="shrink-0 z-10 w-full md:w-auto flex flex-col items-center md:items-end">
                 <Link 
                   href="/dashboard/vault"
