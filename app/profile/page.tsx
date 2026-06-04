@@ -63,9 +63,9 @@ export default function UserProfile() {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // 1. Protect Firestore: Limit file size to 1MB (1048576 bytes)
-    if (file.size > 1048576) {
-      alert("Image is too large. Please upload an image smaller than 1MB.");
+    // 1. Protect Firestore: Limit file size to 2MB (2097152 bytes)
+    if (file.size > 2097152) {
+      alert("Image is too large. Please upload an image smaller than 2MB.");
       return;
     }
 
