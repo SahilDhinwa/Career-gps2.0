@@ -14,7 +14,7 @@ export default function UserProfile() {
   const [userData, setUserData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // New States for Profile Picture and Checklist
+  // States for Profile Picture and Checklist
   const [checklistData, setChecklistData] = useState<Record<string, string[]>>({});
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -28,6 +28,7 @@ export default function UserProfile() {
       }
       
       setUser(currentUser);
+      // Fallback to Auth photo initially
       setProfilePic(currentUser.photoURL);
 
       try {
@@ -38,6 +39,11 @@ export default function UserProfile() {
           const data = userSnap.data();
           setUserData(data);
           setChecklistData(data.checklistProgress || {});
+          
+          // FIX: Explicitly pull the Base64 image from Firestore to cure the amnesia
+          if (data.photoURL) {
+            setProfilePic(data.photoURL);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch user data", error);
@@ -63,7 +69,7 @@ export default function UserProfile() {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // 1. Protect Firestore: Limit file size to 2MB (2097152 bytes)
+    // Protect Firestore: Limit file size to 2MB
     if (file.size > 2097152) {
       alert("Image is too large. Please upload an image smaller than 2MB.");
       return;
@@ -71,11 +77,9 @@ export default function UserProfile() {
 
     setIsUploading(true);
     try {
-      // Create a temporary local URL for immediate UI update
       const localImageUrl = URL.createObjectURL(file);
       setProfilePic(localImageUrl);
 
-      // Convert to Base64 to save directly in Firestore
       const reader = new FileReader();
       reader.readAsDataURL(file);
       
@@ -87,7 +91,7 @@ export default function UserProfile() {
           const userRef = doc(db, "users", user.uid);
           await updateDoc(userRef, { photoURL: base64String });
           
-          // Secondary Save: Try Auth, but catch silent fails for long Base64 strings
+          // Secondary Save: Try Auth
           try {
             await updateProfile(user, { photoURL: base64String });
           } catch (authError) {
@@ -98,7 +102,6 @@ export default function UserProfile() {
           console.error("Failed to save image to database:", error);
           alert("Failed to save image. Please try again.");
         } finally {
-          // Guaranteed to shut off the loading spinner
           setIsUploading(false);
         }
       };
@@ -121,13 +124,11 @@ export default function UserProfile() {
     const currentList = checklistData[roadmapId] || [];
     const updatedList = currentList.filter((item: string) => item !== itemToRemove);
 
-    // 1. Optimistic UI Update
     setChecklistData(prev => ({
       ...prev,
       [roadmapId]: updatedList
     }));
 
-    // 2. Database Update
     try {
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList });
@@ -144,6 +145,7 @@ export default function UserProfile() {
     );
   }
 
+  // The isPremium status is successfully pulled from the database here
   const isPremium = userData?.isPremium || false;
   const roadmapProgress = userData?.roadmapProgress || {};
 
@@ -169,7 +171,6 @@ export default function UserProfile() {
                 <UserIcon className="w-10 h-10 text-gray-400" />
               )}
               
-              {/* Hover Camera Overlay */}
               <div className={`absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${isUploading ? 'opacity-100' : ''}`}>
                 {isUploading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -178,7 +179,6 @@ export default function UserProfile() {
                 )}
               </div>
               
-              {/* Hidden File Input */}
               <input 
                 type="file" 
                 ref={fileInputRef}
@@ -226,7 +226,6 @@ export default function UserProfile() {
           {/* LEFT COLUMN: PROGRESS & CHECKLISTS */}
           <div className="lg:col-span-2 space-y-8">
             
-            {/* Active Roadmaps Section */}
             <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Activity className="w-6 h-6 text-primary" />
@@ -263,7 +262,6 @@ export default function UserProfile() {
               ) : (
                 <div className="text-center py-10 bg-gray-50 border border-gray-100 rounded-sm">
                   <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                  {/* FIXED APOSTROPHE HERE */}
                   <p className="text-gray-500 font-medium mb-4">You haven&apos;t started any application roadmaps yet.</p>
                   <button 
                     onClick={() => router.push("/scholarships")}
@@ -275,7 +273,6 @@ export default function UserProfile() {
               )}
             </div>
 
-            {/* Checklist Command Center Section */}
             <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8">
               <div className="flex items-center gap-3 mb-6">
                 <ListChecks className="w-6 h-6 text-primary" />
@@ -285,7 +282,7 @@ export default function UserProfile() {
               {Object.keys(checklistData).length > 0 && Object.values(checklistData).some(list => list.length > 0) ? (
                 <div className="space-y-6">
                   {Object.entries(checklistData).map(([roadmapId, items]) => {
-                    if (items.length === 0) return null; // Hide empty roadmaps
+                    if (items.length === 0) return null; 
                     
                     return (
                       <div key={roadmapId} className="bg-white border border-gray-100 rounded-sm p-4">
@@ -323,7 +320,6 @@ export default function UserProfile() {
           {/* RIGHT COLUMN: RESOURCES & ACCOUNT */}
           <div className="space-y-8">
             
-            {/* Career Assets Vault */}
             <div className="bg-gradient-to-br from-gray-900 to-black rounded-sm shadow-xl p-8 border border-gray-800 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
               
@@ -331,7 +327,6 @@ export default function UserProfile() {
                 <BookOpen className="w-5 h-5 text-warning" />
                 <h2 className="font-heading text-xl font-bold text-white">Career Assets</h2>
               </div>
-              {/* FIXED QUOTES HERE */}
               <p className="text-sm text-gray-400 mb-6 font-medium relative z-10 leading-relaxed">
                 Access your premium guides, including &quot;The Unspoken Aura&quot; by Sahil Dhinwa.
               </p>
@@ -343,7 +338,6 @@ export default function UserProfile() {
               </button>
             </div>
 
-            {/* Trust & Security Badge */}
             <div className="bg-surface border border-surfaceBorder rounded-sm p-6 text-center">
               <ShieldCheck className="w-8 h-8 text-success mx-auto mb-3" />
               <h3 className="font-bold text-gray-800 mb-1">Secure Account</h3>
@@ -356,4 +350,4 @@ export default function UserProfile() {
       </div>
     </div>
   );
-}
+                                }
