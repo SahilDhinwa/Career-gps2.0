@@ -63,6 +63,12 @@ export default function UserProfile() {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
+    // 1. Protect Firestore: Limit file size to 1MB (1048576 bytes)
+    if (file.size > 1048576) {
+      alert("Image is too large. Please upload an image smaller than 1MB.");
+      return;
+    }
+
     setIsUploading(true);
     try {
       // Create a temporary local URL for immediate UI update
@@ -72,19 +78,38 @@ export default function UserProfile() {
       // Convert to Base64 to save directly in Firestore
       const reader = new FileReader();
       reader.readAsDataURL(file);
+      
       reader.onloadend = async () => {
-        const base64String = reader.result as string;
-        
-        // Update Firebase Auth Profile
-        await updateProfile(user, { photoURL: base64String });
-        
-        // Update Firestore User Document
-        const userRef = doc(db, "users", user.uid);
-        await updateDoc(userRef, { photoURL: base64String });
+        try {
+          const base64String = reader.result as string;
+          
+          // Primary Save: Update Firestore User Document
+          const userRef = doc(db, "users", user.uid);
+          await updateDoc(userRef, { photoURL: base64String });
+          
+          // Secondary Save: Try Auth, but catch silent fails for long Base64 strings
+          try {
+            await updateProfile(user, { photoURL: base64String });
+          } catch (authError) {
+            console.warn("Auth profile limit reached, but safely stored in Firestore.");
+          }
+
+        } catch (error) {
+          console.error("Failed to save image to database:", error);
+          alert("Failed to save image. Please try again.");
+        } finally {
+          // Guaranteed to shut off the loading spinner
+          setIsUploading(false);
+        }
+      };
+      
+      reader.onerror = () => {
+        console.error("Failed to read file.");
         setIsUploading(false);
       };
+
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("Error setting up image upload:", error);
       setIsUploading(false);
     }
   };
