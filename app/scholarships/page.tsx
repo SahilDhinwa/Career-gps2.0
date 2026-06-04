@@ -78,7 +78,6 @@ const allScholarships = [
     bgLight: "bg-cyan-50",
     textDark: "text-cyan-700"
   },
-   // --- NEWLY ADDED COMMONWEALTH SCHOLARSHIP ---
   {
     id: "commonwealth-masters",
     title: "Commonwealth Master's",
@@ -89,6 +88,18 @@ const allScholarships = [
     color: "from-teal-500 to-cyan-600",
     bgLight: "bg-teal-50",
     textDark: "text-teal-700"
+  },
+  // --- NEWLY ADDED FULBRIGHT SCHOLARSHIP ---
+  {
+    id: "fulbright-masters",
+    title: "Fulbright-Nehru Fellowship",
+    location: "UNITED STATES",
+    levelDisplay: "Master's & Doctoral",
+    stipend: "$35K - $45K / year",
+    coverage: "Full Tuition & Airfare",
+    color: "from-blue-700 to-indigo-900",
+    bgLight: "bg-blue-50",
+    textDark: "text-blue-800"
   }
 ];
 
@@ -119,7 +130,7 @@ export default function ScholarshipsDirectory() {
     return () => unsubscribe();
   }, []);
 
-  // Split the database into Free (First 2) and Premium (Remaining 4)
+  // Split the database into Free (First 2) and Premium (Remaining)
   const freeScholarships = allScholarships.slice(0, 2);
   const premiumScholarships = allScholarships.slice(2);
 
@@ -225,5 +236,4 @@ export default function ScholarshipsDirectory() {
       </div>
     </div>
   );
-            }
-
+}
