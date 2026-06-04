@@ -7,58 +7,58 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col">
       
-      {/* INLINE STYLES FOR DYNAMIC HERO BACKGROUND */}
+      {/* INLINE STYLES FOR DYNAMIC AURORA BACKGROUND */}
       <style dangerouslySetInnerHTML={{__html: `
-        .bg-gps-grid {
-          background-image: 
-            linear-gradient(to right, rgba(17, 66, 50, 0.05) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(17, 66, 50, 0.05) 1px, transparent 1px);
-          background-size: 40px 40px;
-          animation: pan-grid 20s linear infinite;
+        @keyframes float {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
         }
-        @keyframes pan-grid {
-          0% { background-position: 0px 0px; }
-          100% { background-position: 40px 40px; }
+        .animate-float {
+          animation: float 8s infinite ease-in-out;
         }
-        
-        .bg-topo-pattern {
-          /* Elegant Topographic Contour Lines */
-          background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c13.866 0 25.362 11.238 25.362 25.105 0 13.866-11.496 25.105-25.362 25.105C-2.866 68.21-14.362 56.972-14.362 43.105-14.362 29.238-2.866 18 11 18zm0 47.105c12.155 0 22.023-9.867 22.023-22.022 0-12.155-9.868-22.022-22.023-22.022C-1.155 21.06-11.023 30.928-11.023 43.105c0 12.155 9.868 22.022 22.023 22.022z' fill='%23114232' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-          animation: pan-topo 90s linear infinite;
+        .animation-delay-2000 {
+          animation-delay: 2s;
         }
-        @keyframes pan-topo {
-          0% { background-position: 0px 0px; }
-          100% { background-position: 100px 100px; }
+        .animation-delay-4000 {
+          animation-delay: 4s;
         }
       `}} />
 
       {/* HERO SECTION */}
-      <div className="relative flex-grow flex items-center justify-center px-6 py-20 lg:py-32 overflow-hidden">
+      <div className="relative flex-grow flex items-center justify-center px-6 py-20 lg:py-32 overflow-hidden bg-background">
         
-        {/* Layer 1: Moving Topography Contour */}
-        <div className="absolute inset-0 bg-topo-pattern pointer-events-none"></div>
-        
-        {/* Layer 2: Moving GPS Coordinate Grid (Faded at edges using radial mask) */}
-        <div className="absolute inset-0 bg-gps-grid pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]"></div>
+        {/* Layer 1: The Breathing Aurora Orbs */}
+        <div className="absolute inset-0 w-full h-full flex justify-center items-center pointer-events-none z-0">
+          <div className="relative w-full max-w-3xl h-full">
+            {/* Primary Green Orb */}
+            <div className="absolute top-[-10%] left-[-10%] w-72 md:w-96 h-72 md:h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float opacity-80"></div>
+            {/* Success Green Orb */}
+            <div className="absolute top-[20%] right-[-10%] w-72 md:w-96 h-72 md:h-96 bg-success/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float animation-delay-2000 opacity-80"></div>
+            {/* Warning Gold Orb */}
+            <div className="absolute bottom-[-10%] left-[20%] w-72 md:w-96 h-72 md:h-96 bg-warning/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float animation-delay-4000 opacity-80"></div>
+          </div>
+        </div>
 
-        {/* Layer 3: Existing Glowing Orbs (Adds a "Radar/Sonar" glow over the grid) */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
-        <div className="absolute bottom-0 right-0 w-[500px] h-[300px] bg-success/5 blur-[100px] rounded-full pointer-events-none"></div>
+        {/* Layer 2: Subtle White Glassmorphic Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] pointer-events-none z-0"></div>
 
+        {/* Foreground Content */}
         <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
             2026 Scholarship Pathways Now Live
           </div>
           
-          <h1 className="font-heading text-5xl md:text-7xl font-bold text-foreground tracking-tight mb-6 leading-tight">
+          <h1 className="font-heading text-5xl md:text-7xl font-bold text-foreground tracking-tight mb-6 leading-tight drop-shadow-sm">
             Your Ultimate Roadmap to <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">
               Global Education.
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-background/50 backdrop-blur-[2px] rounded-lg p-2">
+          <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-white/50 backdrop-blur-sm rounded-xl p-3 shadow-sm border border-white/20">
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
@@ -232,4 +232,4 @@ export default function LandingPage() {
 
     </div>
   );
-}
+      }
