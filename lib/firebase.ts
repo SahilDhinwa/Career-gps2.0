@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, initializeFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,10 +16,8 @@ let firestoreDb;
 
 if (getApps().length === 0) {
   app = initializeApp(firebaseConfig);
-  // Keep the 5G armor permanently on
-  firestoreDb = initializeFirestore(app, {
-    experimentalForceLongPolling: true
-  });
+  // Removed the experimental long polling to prevent "hanging writes"
+  firestoreDb = getFirestore(app);
 } else {
   app = getApp();
   firestoreDb = getFirestore(app);
