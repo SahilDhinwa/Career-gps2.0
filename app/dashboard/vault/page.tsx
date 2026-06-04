@@ -90,6 +90,87 @@ Recognizing that authoritative demands would fail, I initiated a collaborative s
 
 As a direct result of my leadership actions, we successfully [Primary_Result]. This intervention achieved [Quantifiable_Metric_1] and [Quantifiable_Metric_2]. More importantly, it established a permanent cultural shift toward [New_Practice] within our organization, proving that sustainable leadership is rooted in empowerment and structured execution.`,
   },
+  {
+    id: "fulbright-study-objective",
+    category: "SOPs/Essays",
+    title: "Study/Research Objective Framework (Fulbright-Nehru)",
+    difficulty: "Prestige Masterclass",
+    description:
+      "A meticulous essay structure demonstrating clear academic intent, U.S. institutional alignment, and a strict post-fellowship India return plan.",
+    stipendConnection:
+      "Unlocks USIEF $35K - $45K/year comprehensive funding.",
+    rawText: `FULBRIGHT-NEHRU STUDY OBJECTIVE DRAFTING FRAMEWORK
+
+My central objective in applying for the Fulbright-Nehru Master's Fellowship is to acquire advanced technical expertise in [Specific_Field] to address [Specific_Indian_Problem] in India. My undergraduate studies in [UG_Degree] equipped me with a foundational understanding of [Core_Concept], but my subsequent [Number] years of professional experience at [Company_Name] revealed a critical gap in my capacity to [Specific_Limitation].
+
+To overcome this, I intend to pursue a Master's degree in [Program_Name] at a U.S. institution such as [Target_US_University]. The U.S. academic ecosystem is uniquely suited for my goals because it offers [Specific_US_Advantage, e.g., interdisciplinary lab access/industry partnerships] that are currently developing in India. Specifically, I plan to focus on coursework related to [Course_1] and [Course_2], which directly translate to solving [Indian_Problem].
+
+Beyond academics, I view the Fulbright Fellowship as a platform for bilateral cultural exchange. I look forward to sharing Indian perspectives on [Cultural/Professional_Topic] with my American peers, fostering mutual understanding in an increasingly globalized [Your_Industry] sector. 
+
+Upon completion of my program, I am fully committed to returning to India to resume my work in the [Sector_Name]. My immediate goal is to join an organization like [Target_Indian_Organization] to implement [Specific_Solution]. Long-term, I aim to lead policy/technical initiatives that bridge the gap between U.S. innovation and Indian application, directly advancing India's capabilities in [Broad_Field].`,
+  },
+  {
+    id: "mext-research-plan",
+    category: "SOPs/Essays",
+    title: "Field of Study & Research Plan (MEXT Japan)",
+    difficulty: "High Value",
+    description:
+      "A highly structured, logical framework required by the Japanese embassy to connect your past academic background to your future Japanese research.",
+    stipendConnection:
+      "Unlocks MEXT 100% Tuition & ¥145,000 monthly stipend.",
+    rawText: `MEXT FIELD OF STUDY AND RESEARCH PROGRAM PLAN
+
+1. Past and Present Field of Study:
+During my undergraduate studies in [Degree_Name] at [University_Name], my primary focus was on [Core_Subject]. My thesis, titled "[Thesis_Title]," investigated [Brief_Summary_of_Research]. Through this project, I developed strong competencies in [Skill_1] and [Skill_2]. However, my research concluded that in order to achieve [Higher_Level_Goal], an advanced understanding of [Japanese_Specialty_Topic] is required.
+
+2. Research Theme in Japan:
+Proposed Theme: [Clear, Concise Title of Proposed Research]
+
+3. Proposed Research Program in Japan:
+(a) Purpose of the Research:
+The primary objective of this research is to resolve the challenge of [Specific_Problem] by applying [Specific_Method/Technology]. I chose Japan for this research because Japanese institutions, particularly [Target_Japanese_University], pioneer global advancements in [Niche_Field].
+
+(b) Methodology:
+First, I will conduct a comprehensive literature review of current Japanese methodologies regarding [Topic]. Second, utilizing the laboratory facilities at the host university, I will execute [Specific_Experiment/Analysis]. Finally, I will compare the data against [Benchmark/Current_Standard] to evaluate the efficacy of [Proposed_Solution].
+
+(c) Expected Results and Impact:
+This research is expected to yield [Specific_Outcome]. Upon returning to India, I will integrate these findings into [Specific_Indian_Industry/Academic_Sector], directly contributing to the technological/cultural cooperation between India and Japan.`,
+  },
+  {
+    id: "daad-wise-motivation",
+    category: "Cover Letters",
+    title: "WISE Internship Motivation Letter (DAAD)",
+    difficulty: "Standard",
+    description:
+      "A persuasive, one-page cover letter template for Indian STEM undergraduates applying for funded summer research internships in Germany.",
+    stipendConnection:
+      "Unlocks DAAD WISE €861/month + travel allowance.",
+    rawText: `[Your_Name]
+[Your_Address]
+[Your_Email]
+[Date]
+
+[Professor_Name/Selection Committee]
+[Institute/Department Name]
+[Target_German_University]
+
+Subject: Application for DAAD WISE Research Internship — [Your_Name]
+
+Dear [Professor_Name or Selection Committee],
+
+I am writing to express my enthusiastic interest in joining your research group as a DAAD WISE intern for the upcoming summer. I am currently in my [Year, e.g., third] year of a [Degree, e.g., B.Tech in Mechanical Engineering] at [Indian_University_Name], maintaining a CGPA of [Score].
+
+My academic journey has been driven by a deep fascination with [Specific_Field]. Recently, I completed a project on [Project_Topic], where I successfully utilized [Software/Tool/Method] to achieve [Specific_Result]. When I discovered your lab’s recent work on [Lab's_Recent_Project], I was immediately drawn to your innovative approach to [Specific_Concept]. 
+
+I am highly motivated to contribute to your ongoing research regarding [Specific_Task_in_Lab]. My hands-on experience with [Skill_1] and theoretical background in [Skill_2] make me well-prepared to assist your team effectively. The opportunity to train in Germany’s rigorous academic environment under your mentorship would be a pivotal step in my career.
+
+I have attached my academic transcripts, CV, and a letter of recommendation from my current professor. Thank you for considering my application. I look forward to the possibility of contributing to your esteemed institute.
+
+Sincerely,
+
+[Your_Name]
+[Your_Phone_Number]`
+  }
 ];
 
 const CATEGORIES: Category[] = [
