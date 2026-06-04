@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../../lib/firebase"; 
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+// FIX: setDoc is correctly imported at the very top of the file
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged, signOut, User, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2 } from "lucide-react";
@@ -14,7 +15,6 @@ export default function UserProfile() {
   const [userData, setUserData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // States for Profile Picture and Checklist
   const [checklistData, setChecklistData] = useState<Record<string, string[]>>({});
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -28,7 +28,6 @@ export default function UserProfile() {
       }
       
       setUser(currentUser);
-      // Fallback to Auth photo initially
       setProfilePic(currentUser.photoURL);
 
       try {
@@ -40,7 +39,6 @@ export default function UserProfile() {
           setUserData(data);
           setChecklistData(data.checklistProgress || {});
           
-          // FIX: Explicitly pull the Base64 image from Firestore to cure the amnesia
           if (data.photoURL) {
             setProfilePic(data.photoURL);
           }
@@ -64,12 +62,10 @@ export default function UserProfile() {
     }
   };
 
-  // --- 1. PROFILE PICTURE UPLOAD LOGIC ---
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Protect Firestore: Limit file size to 2MB
     if (file.size > 2097152) {
       alert("Image is too large. Please upload an image smaller than 2MB.");
       return;
@@ -87,14 +83,10 @@ export default function UserProfile() {
         try {
           const base64String = reader.result as string;
           
-          // Primary Save: Update Firestore User Document
           const userRef = doc(db, "users", user.uid);
-         
-          import { setDoc } from "firebase/firestore"; // Ensure this is imported at the top
+          // FIX: setDoc used correctly without any inline imports
           await setDoc(userRef, { photoURL: base64String }, { merge: true });
           
-          
-          // Secondary Save: Try Auth
           try {
             await updateProfile(user, { photoURL: base64String });
           } catch (authError) {
@@ -120,7 +112,6 @@ export default function UserProfile() {
     }
   };
 
-  // --- 2. CHECKLIST REMOVAL LOGIC ---
   const handleRemoveChecklistItem = async (roadmapId: string, itemToRemove: string) => {
     if (!user) return;
 
@@ -134,8 +125,8 @@ export default function UserProfile() {
 
     try {
       const userRef = doc(db, "users", user.uid);
+      // FIX: setDoc used correctly here as well
       await setDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList }, { merge: true });
-      
     } catch (error) {
       console.error("Failed to update checklist in database", error);
     }
@@ -149,7 +140,6 @@ export default function UserProfile() {
     );
   }
 
-  // The isPremium status is successfully pulled from the database here
   const isPremium = userData?.isPremium || false;
   const roadmapProgress = userData?.roadmapProgress || {};
 
@@ -159,11 +149,9 @@ export default function UserProfile() {
 
       <div className="max-w-5xl mx-auto relative z-10">
         
-        {/* HEADER & IDENTITY BLOCK */}
         <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
             
-            {/* Interactive Profile Picture Avatar */}
             <div 
               className="relative w-24 h-24 rounded-full border-4 border-white shadow-md shrink-0 group cursor-pointer overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
               onClick={() => fileInputRef.current?.click()}
@@ -227,7 +215,6 @@ export default function UserProfile() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* LEFT COLUMN: PROGRESS & CHECKLISTS */}
           <div className="lg:col-span-2 space-y-8">
             
             <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8">
@@ -321,7 +308,6 @@ export default function UserProfile() {
 
           </div>
 
-          {/* RIGHT COLUMN: RESOURCES & ACCOUNT */}
           <div className="space-y-8">
             
             <div className="bg-gradient-to-br from-gray-900 to-black rounded-sm shadow-xl p-8 border border-gray-800 relative overflow-hidden group">
@@ -354,4 +340,4 @@ export default function UserProfile() {
       </div>
     </div>
   );
-                                }
+      }
