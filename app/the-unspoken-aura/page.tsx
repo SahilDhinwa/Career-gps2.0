@@ -48,7 +48,8 @@ export default function EbookLandingPage() {
             <div className="flex justify-center gap-1 mb-3">
               {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-5 h-5 text-warning fill-current" />)}
             </div>
-            <p className="text-gray-300 font-medium italic">"This completely changed how I approach my university interviews. The invisible wall is gone."</p>
+            {/* FIXED: Replaced raw quotes with &quot; */}
+            <p className="text-gray-300 font-medium italic">&quot;This completely changed how I approach my university interviews. The invisible wall is gone.&quot;</p>
             <p className="text-gray-500 text-sm mt-2 font-bold">— Verified Student</p>
           </div>
         </div>
@@ -77,7 +78,8 @@ export default function EbookLandingPage() {
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-primary shrink-0" />
-              <p className="text-gray-700 font-medium">Break the myth that "Fluent English = Good Communication."</p>
+              {/* FIXED: Replaced raw quotes with &quot; */}
+              <p className="text-gray-700 font-medium">Break the myth that &quot;Fluent English = Good Communication.&quot;</p>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-primary shrink-0" />
