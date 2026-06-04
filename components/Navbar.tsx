@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
@@ -8,8 +9,8 @@ import { Compass, User as UserIcon } from "lucide-react";
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
+  const pathname = usePathname(); // Get the current active route
 
-  // Listen to Firebase Auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -17,11 +18,17 @@ export default function Navbar() {
     return () => unsubscribe();
   }, []);
 
+  // Helper function to apply dynamic active styles
+  const getLinkStyle = (path: string) => {
+    return pathname === path
+      ? "text-primary font-bold transition-colors" // Active state
+      : "hover:text-primary transition-colors";    // Inactive state
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full bg-surface/80 backdrop-blur-md border-b border-surfaceBorder shadow-sm">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         
-        {/* Brand Logo & Name */}
         <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
           <Compass className="w-6 h-6" />
           <span className="font-heading font-bold text-xl tracking-tight text-foreground">
@@ -31,20 +38,20 @@ export default function Navbar() {
 
         {/* Desktop Central Links */}
         <div className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
-          <Link href="/pathways" className="hover:text-primary transition-colors">
+          <Link href="/pathways" className={getLinkStyle("/pathways")}>
             Pathways
           </Link>
-          <Link href="/scholarships" className="hover:text-primary transition-colors">
-  Scholarships
-</Link>
-          <Link href="/e-books" className="hover:text-primary transition-colors font-medium">
-  E-Books
-</Link> 
-          {/* Added Action Vault Link Here */}
-          <Link href="/dashboard/vault" className="hover:text-primary transition-colors font-bold text-primary">Vault</Link>
+          <Link href="/scholarships" className={getLinkStyle("/scholarships")}>
+            Scholarships
+          </Link>
+          <Link href="/e-books" className={getLinkStyle("/e-books")}>
+            E-Books
+          </Link>
+          <Link href="/dashboard/vault" className={getLinkStyle("/dashboard/vault")}>
+            Vault
+          </Link>
         </div>
 
-        {/* Dynamic Auth Actions */}
         <div className="flex items-center gap-4">
           {user ? (
             <Link 
@@ -55,22 +62,15 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              <Link 
-                href="/login" 
-                className="text-sm font-bold text-gray-600 hover:text-primary transition-colors hidden sm:block"
-              >
+              <Link href="/login" className="text-sm font-bold text-gray-600 hover:text-primary transition-colors hidden sm:block">
                 Login
               </Link>
-              <Link 
-                href="/login" 
-                className="bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
-              >
+              <Link href="/login" className="bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm">
                 Sign Up
               </Link>
             </>
           )}
         </div>
-
       </div>
     </nav>
   );
