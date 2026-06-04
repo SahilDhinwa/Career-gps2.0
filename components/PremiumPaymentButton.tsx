@@ -97,7 +97,7 @@ export default function PremiumPaymentButton() {
     <button 
       onClick={handlePaymentClick}
       disabled={isProcessing}
-      className="w-full bg-primary text-white py-4 font-bold rounded-sm shadow-lg hover:bg-primaryHover transition-all flex items-center justify-center gap-2"
+      className="w-full bg-primary text-white py-4 px-6 font-bold rounded-sm shadow-lg hover:bg-primaryHover transition-all flex items-center justify-center gap-2"
     >
       {isProcessing ? (
         <>
