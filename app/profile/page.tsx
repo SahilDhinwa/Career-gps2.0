@@ -89,7 +89,10 @@ export default function UserProfile() {
           
           // Primary Save: Update Firestore User Document
           const userRef = doc(db, "users", user.uid);
-          await updateDoc(userRef, { photoURL: base64String });
+         
+          import { setDoc } from "firebase/firestore"; // Ensure this is imported at the top
+          await setDoc(userRef, { photoURL: base64String }, { merge: true });
+          
           
           // Secondary Save: Try Auth
           try {
@@ -131,7 +134,8 @@ export default function UserProfile() {
 
     try {
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList });
+      await setDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList }, { merge: true });
+      
     } catch (error) {
       console.error("Failed to update checklist in database", error);
     }
