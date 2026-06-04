@@ -39,7 +39,9 @@ export default function Navbar() {
 </Link>
           <Link href="/e-books" className="hover:text-primary transition-colors font-medium">
   E-Books
-</Link>          
+</Link> 
+          {/* Added Action Vault Link Here */}
+          <Link href="/dashboard/vault" className="hover:text-primary transition-colors font-bold text-primary">Vault</Link>
         </div>
 
         {/* Dynamic Auth Actions */}
