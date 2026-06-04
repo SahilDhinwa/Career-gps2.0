@@ -167,11 +167,11 @@ export default function ActionVault() {
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={\`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border \${
+              className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
                 activeCategory === category
                   ? "bg-[#114232] text-[#FBFBF9] border-[#114232]"
                   : "bg-transparent text-[#0B1410] border-[#E2E6E3] hover:border-[#114232]/40 hover:bg-[#E2E6E3]/30"
-              }\`}
+              }`}
             >
               {category}
             </button>
@@ -220,11 +220,11 @@ export default function ActionVault() {
                 <div className="flex items-center gap-3 mt-auto">
                   <button
                     onClick={() => handleCopy(template)}
-                    className={\`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all border \${
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all border ${
                       copiedId === template.id
                         ? "bg-[#2A9D8F]/10 border-[#2A9D8F] text-[#2A9D8F]"
                         : "bg-[#114232] border-[#114232] text-[#FBFBF9] hover:bg-[#0A291F]"
-                    }\`}
+                    }`}
                   >
                     {copiedId === template.id ? (
                       <>
@@ -296,11 +296,11 @@ export default function ActionVault() {
                   handleCopy(previewTemplate);
                   setTimeout(() => setPreviewTemplate(null), 1000);
                 }}
-                className={\`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all \${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                   copiedId === previewTemplate.id
                     ? "bg-[#2A9D8F] text-[#FFFFFF]"
                     : "bg-[#114232] text-[#FBFBF9] hover:bg-[#0A291F]"
-                }\`}
+                }`}
               >
                 {copiedId === previewTemplate.id ? (
                   <>
