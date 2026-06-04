@@ -46,22 +46,28 @@ const QUIZ_QUESTIONS = [
 export default function Matchmaker() {
   const router = useRouter();
   
-  // 2. FIXED: Correctly defined state variables
+  // 2. STATE VARIABLES
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
 
+  // 3. EFFECTS
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
 
+  // 4. HANDLERS
   const handleOptionSelect = (value: string) => {
-    const currentQuestion = QUIZ_QUESTIONS[currentStep];
-    const newAnswers = { ...answers, [currentQuestion.id]: value };
+    // FIXED: Accessing the specific question by index to prevent TypeScript errors
+    const currentQuestionId = QUIZ_QUESTIONS[currentStep].id;
+    const newAnswers = { ...answers, [currentQuestionId]: value };
     setAnswers(newAnswers);
 
     setTimeout(() => {
@@ -80,15 +86,40 @@ export default function Matchmaker() {
       let match = null;
 
       if (degree === "UG") {
-        match = { name: "MEXT Scholarship", country: "Japan", tagline: "100% Tuition & ¥117,000 Monthly Stipend", link: "/roadmap/mext-ug" };
+        match = { 
+          name: "MEXT Scholarship", 
+          country: "Japan", 
+          tagline: "100% Tuition & ¥117,000 Monthly Stipend", 
+          link: "/roadmap/mext-ug" 
+        };
       } else if (degree === "PG" && experience === "2+" && (academic === "MID" || academic === "HIGH" || academic === "TOP")) {
-        match = { name: "Chevening Scholarship", country: "United Kingdom", tagline: "The Premier Leadership Program", link: "/roadmap/chevening-masters" };
+        match = { 
+          name: "Chevening Scholarship", 
+          country: "United Kingdom", 
+          tagline: "The Premier Leadership Program", 
+          link: "/roadmap/chevening-masters" 
+        };
       } else if (degree === "PG" && finance === "YES" && (academic === "MID" || academic === "HIGH" || academic === "TOP")) {
-        match = { name: "Commonwealth Master's", country: "United Kingdom", tagline: "Development-Focused Full Funding", link: "/roadmap/commonwealth-masters" };
+        match = { 
+          name: "Commonwealth Master's", 
+          country: "United Kingdom", 
+          tagline: "Development-Focused Full Funding", 
+          link: "/roadmap/commonwealth-masters" 
+        };
       } else if ((degree === "PG" || degree === "PHD") && (academic === "HIGH" || academic === "TOP")) {
-        match = { name: "DAAD Scholarship", country: "Germany", tagline: "World-Class Education at Zero Tuition", link: "/roadmap/daad-masters" };
+        match = { 
+          name: "DAAD Scholarship", 
+          country: "Germany", 
+          tagline: "World-Class Education at Zero Tuition", 
+          link: "/roadmap/daad-masters" 
+        };
       } else {
-        match = { name: "General Application Pathway", country: "Global Institutions", tagline: "Structured Application Guidance", link: `/roadmap/${degree.toLowerCase()}` };
+        match = { 
+          name: "General Application Pathway", 
+          country: "Global Institutions", 
+          tagline: "Structured Application Guidance", 
+          link: `/roadmap/${degree.toLowerCase()}` 
+        };
       }
 
       setResult(match);
@@ -103,9 +134,13 @@ export default function Matchmaker() {
     setIsOpen(false);
   };
 
+  // 5. RENDER
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className="w-full sm:w-auto bg-gray-900 text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-black hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+      <button 
+        onClick={() => setIsOpen(true)} 
+        className="w-full sm:w-auto bg-gray-900 text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-black hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+      >
         <Sparkles className="w-5 h-5 text-warning" /> Find My Scholarship
       </button>
 
@@ -114,7 +149,9 @@ export default function Matchmaker() {
           <div className="bg-surface w-full max-w-lg border border-surfaceBorder rounded-sm shadow-2xl relative overflow-hidden flex flex-col">
             <div className="flex justify-between items-center p-6 border-b border-surfaceBorder bg-gray-50/50">
               <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Career GPS Matchmaker</span>
-              <button onClick={resetQuiz} className="text-gray-400 hover:text-gray-800 transition-colors"><X className="w-5 h-5" /></button>
+              <button onClick={resetQuiz} className="text-gray-400 hover:text-gray-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             <div className="p-8 flex-grow">
@@ -127,7 +164,10 @@ export default function Matchmaker() {
                 <div className="text-center py-6 animate-in slide-in-from-bottom-4 duration-500">
                   <h2 className="font-heading text-3xl font-bold text-gray-900 mb-2">{result.name}</h2>
                   <p className="text-gray-500 font-medium mb-8">{result.country} • {result.tagline}</p>
-                  <button onClick={() => { resetQuiz(); router.push(result.link); }} className="w-full bg-primary text-white font-bold py-4 rounded-sm hover:bg-primaryHover transition-colors">
+                  <button 
+                    onClick={() => { resetQuiz(); router.push(result.link); }} 
+                    className="w-full bg-primary text-white font-bold py-4 rounded-sm hover:bg-primaryHover transition-colors"
+                  >
                     View Verified Roadmap
                   </button>
                 </div>
@@ -138,7 +178,13 @@ export default function Matchmaker() {
                     {QUIZ_QUESTIONS[currentStep].options.map((option, idx) => {
                       const isSelected = answers[QUIZ_QUESTIONS[currentStep].id] === option.value;
                       return (
-                        <button key={idx} onClick={() => handleOptionSelect(option.value)} className={`w-full text-left px-6 py-4 border-2 rounded-sm font-medium transition-all ${isSelected ? "border-primary bg-primary/5 text-primary" : "border-gray-200"}`}>
+                        <button 
+                          key={idx} 
+                          onClick={() => handleOptionSelect(option.value)} 
+                          className={`w-full text-left px-6 py-4 border-2 rounded-sm font-medium transition-all ${
+                            isSelected ? "border-primary bg-primary/5 text-primary" : "border-gray-200"
+                          }`}
+                        >
                           {option.label}
                         </button>
                       );
