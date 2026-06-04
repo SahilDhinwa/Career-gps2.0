@@ -15,7 +15,8 @@ import {
   mextUgRoadmap, 
   cheveningRoadmap, 
   daadRoadmap,
-  commonwealthRoadmap 
+  commonwealthRoadmap,
+  fulbrightRoadmap // <-- NEW IMPORT ADDED HERE
 } from "../../../lib/roadmaps";
 
 export default function RoadmapTracker({ params }: { params: { id: string } }) {
@@ -43,6 +44,10 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     baseRoadmap = mextUgRoadmap;
     locationTag = "Japan • Global Institutions";
     levelTag = params.id.includes("ug") ? "UG LEVEL" : "MASTER'S LEVEL";
+  } else if (params.id.includes("fulbright")) { // <-- NEW FULBRIGHT ROUTING LOGIC
+    baseRoadmap = fulbrightRoadmap;
+    locationTag = "United States • USIEF";
+    levelTag = "MASTER'S & DOCTORAL LEVEL";
   } else if (params.id.includes("ug") || params.id.includes("wise")) {
     baseRoadmap = ugRoadmap;
     levelTag = "UG LEVEL";
@@ -324,4 +329,4 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
-}
+                    }
