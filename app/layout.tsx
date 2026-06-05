@@ -1,10 +1,22 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Syne, DM_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/Navbar'
 import { ThemeProvider } from '../components/ThemeProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+// 1. Configure the Heading Font (Syne)
+const syne = Syne({ 
+  subsets: ['latin'],
+  variable: '--font-syne',
+  display: 'swap',
+})
+
+// 2. Configure the Body Font (DM Sans)
+const dmSans = DM_Sans({ 
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Career GPS | Global Scholarships & Roadmaps',
@@ -19,7 +31,8 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning is REQUIRED for next-themes to work perfectly
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      {/* 3. Inject the font variables and apply the default body font */}
+      <body className={`${syne.variable} ${dmSans.variable} font-body antialiased`}>
         <ThemeProvider 
           attribute="class" 
           defaultTheme="system" 
