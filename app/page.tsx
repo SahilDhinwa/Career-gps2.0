@@ -1,52 +1,77 @@
 import Matchmaker from "../components/Matchmaker";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Globe, ShieldCheck, TrendingUp, GraduationCap, Heart, BookOpen, FolderOpen } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col">
       
-      {/* INLINE STYLES FOR DYNAMIC AURORA BACKGROUND */}
+      {/* INLINE STYLES FOR 3D PERSPECTIVE NAVIGATOR BACKGROUND */}
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes float {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
+        .perspective-container {
+          position: absolute;
+          inset: 0;
+          perspective: 1000px;
+          overflow: hidden;
+          z-index: 0;
+          pointer-events: none;
         }
-        .animate-float {
-          animation: float 8s infinite ease-in-out;
+        
+        /* The Moving 3D Grid Floor */
+        .perspective-grid {
+          position: absolute;
+          width: 200%;
+          height: 150%;
+          left: -50%;
+          top: 30%;
+          background-image: 
+            linear-gradient(to right, rgba(17, 66, 50, 0.15) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(17, 66, 50, 0.15) 1px, transparent 1px);
+          background-size: 60px 60px;
+          transform: rotateX(75deg);
+          animation: pan-grid 3s linear infinite;
+          /* This mask seamlessly fades the grid out before it hits the text */
+          mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
         }
-        .animation-delay-2000 {
-          animation-delay: 2s;
+        
+        @keyframes pan-grid {
+          0% { transform: rotateX(75deg) translateY(0); }
+          100% { transform: rotateX(75deg) translateY(60px); }
         }
-        .animation-delay-4000 {
-          animation-delay: 4s;
+
+        /* The Slow-Pulsing Golden Destination Glow */
+        .glowing-core {
+          position: absolute;
+          top: 0%;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 800px;
+          height: 800px;
+          background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
+          animation: pulse-core 8s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        @keyframes pulse-core {
+          0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.7; }
+          50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
         }
       `}} />
 
       {/* HERO SECTION */}
       <div className="relative flex-grow flex items-center justify-center px-6 py-20 lg:py-32 overflow-hidden bg-background">
         
-        {/* Layer 1: The Breathing Aurora Orbs */}
-        <div className="absolute inset-0 w-full h-full flex justify-center items-center pointer-events-none z-0">
-          <div className="relative w-full max-w-3xl h-full">
-            {/* Primary Green Orb */}
-            <div className="absolute top-[-10%] left-[-10%] w-72 md:w-96 h-72 md:h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float opacity-80"></div>
-            {/* Success Green Orb */}
-            <div className="absolute top-[20%] right-[-10%] w-72 md:w-96 h-72 md:h-96 bg-success/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float animation-delay-2000 opacity-80"></div>
-            {/* Warning Gold Orb */}
-            <div className="absolute bottom-[-10%] left-[20%] w-72 md:w-96 h-72 md:h-96 bg-warning/20 rounded-full mix-blend-multiply filter blur-[80px] animate-float animation-delay-4000 opacity-80"></div>
-          </div>
+        {/* Layer 1: The Premium 3D Background */}
+        <div className="perspective-container">
+          <div className="glowing-core"></div>
+          <div className="perspective-grid"></div>
         </div>
 
-        {/* Layer 2: Subtle White Glassmorphic Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] pointer-events-none z-0"></div>
-
-        {/* Foreground Content */}
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
+        {/* Foreground Content (Safe from color bleed) */}
+        <div className="max-w-5xl mx-auto text-center relative z-10 pt-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
             2026 Scholarship Pathways Now Live
           </div>
@@ -58,7 +83,7 @@ export default function LandingPage() {
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-white/50 backdrop-blur-sm rounded-xl p-3 shadow-sm border border-white/20">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-white/40 backdrop-blur-[2px] rounded-lg p-2">
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
@@ -118,7 +143,7 @@ export default function LandingPage() {
       </div>
 
       {/* --- ACTION VAULT TOOLKIT EXTENSION --- */}
-      <div className="bg-background py-10 px-6">
+      <div className="bg-background py-10 px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="relative p-[1px] rounded-sm bg-gradient-to-r from-warning/40 via-warning/10 to-warning/40 shadow-sm hover:shadow-md transition-shadow">
             <div className="bg-surface p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 rounded-sm relative overflow-hidden">
@@ -158,7 +183,7 @@ export default function LandingPage() {
       </div>
 
       {/* PROMO BANNER FOR E-BOOKS */}
-      <div className="bg-background pb-10 pt-4 px-6">
+      <div className="bg-background pb-10 pt-4 px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
             
@@ -190,7 +215,7 @@ export default function LandingPage() {
       </div>
 
       {/* COMMUNITY SUPPORT / DONATION SECTION */}
-      <div className="bg-background border-t border-surfaceBorder py-20 px-6">
+      <div className="bg-background border-t border-surfaceBorder py-20 px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
             
@@ -232,4 +257,4 @@ export default function LandingPage() {
 
     </div>
   );
-      }
+}
