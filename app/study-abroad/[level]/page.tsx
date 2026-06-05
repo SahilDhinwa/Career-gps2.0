@@ -8,7 +8,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import PremiumPaymentButton from "@/components/PremiumPaymentButton"; 
 
-// 1. THE UPDATED DATA DICTIONARY (Merged with new Visual Data)
+// 1. THE UPDATED DATA DICTIONARY (Dark-Mode Ready Colors)
 const scholarshipData = {
   ug: [
     {
@@ -19,8 +19,8 @@ const scholarshipData = {
       stipend: "¥117,000 / month",
       coverage: "100% Tuition & Flights",
       color: "from-blue-500 to-indigo-600",
-      bgLight: "bg-blue-50",
-      textDark: "text-blue-700"
+      bgLight: "bg-blue-500/10",
+      textDark: "text-blue-500"
     },
     {
       id: "daad-wise",
@@ -30,8 +30,8 @@ const scholarshipData = {
       stipend: "EUR 861 / month",
       coverage: "Travel Allowance",
       color: "from-amber-500 to-orange-600",
-      bgLight: "bg-amber-50",
-      textDark: "text-amber-700"
+      bgLight: "bg-amber-500/10",
+      textDark: "text-amber-500"
     }
   ],
   masters: [
@@ -43,8 +43,8 @@ const scholarshipData = {
       stipend: "£917 - £1,134 / month",
       coverage: "100% Funded & Visa",
       color: "from-red-500 to-rose-600",
-      bgLight: "bg-red-50",
-      textDark: "text-red-700"
+      bgLight: "bg-red-500/10",
+      textDark: "text-red-500"
     },
     {
       id: "daad-masters",
@@ -54,8 +54,8 @@ const scholarshipData = {
       stipend: "EUR 992 / month",
       coverage: "Free Tuition & Health",
       color: "from-amber-500 to-orange-600",
-      bgLight: "bg-amber-50",
-      textDark: "text-amber-700"
+      bgLight: "bg-amber-500/10",
+      textDark: "text-amber-500"
     },
     {
       id: "commonwealth-masters",
@@ -65,10 +65,9 @@ const scholarshipData = {
       stipend: "£1,378 - £1,652 / month",
       coverage: "Full Tuition & Flights",
       color: "from-teal-500 to-cyan-600",
-      bgLight: "bg-teal-50",
-      textDark: "text-teal-700"
+      bgLight: "bg-teal-500/10",
+      textDark: "text-teal-500"
     },
-    // --- NEWLY ADDED FULBRIGHT SCHOLARSHIP ---
     {
       id: "fulbright-masters",
       title: "Fulbright-Nehru Fellowship",
@@ -77,8 +76,8 @@ const scholarshipData = {
       stipend: "$35K - $45K / year",
       coverage: "Full Tuition & Airfare",
       color: "from-blue-700 to-indigo-900",
-      bgLight: "bg-blue-50",
-      textDark: "text-blue-800"
+      bgLight: "bg-blue-500/10",
+      textDark: "text-blue-500"
     }
   ],
   phd: [
@@ -90,8 +89,8 @@ const scholarshipData = {
       stipend: "EUR 1,400 / month",
       coverage: "Free Tuition & Health",
       color: "from-amber-500 to-orange-600",
-      bgLight: "bg-amber-50",
-      textDark: "text-amber-700"
+      bgLight: "bg-amber-500/10",
+      textDark: "text-amber-500"
     },
     {
       id: "mext-phd",
@@ -101,14 +100,13 @@ const scholarshipData = {
       stipend: "¥145,000 / month",
       coverage: "100% Tuition & Flights",
       color: "from-blue-500 to-indigo-600",
-      bgLight: "bg-blue-50",
-      textDark: "text-blue-700"
+      bgLight: "bg-blue-500/10",
+      textDark: "text-blue-500"
     }
   ]
 };
 
 export default function ScholarshipList({ params }: { params: { level: string } }) {
-  // 2. LIVE FIREBASE PREMIUM STATE
   const [isPremium, setIsPremium] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -134,30 +132,35 @@ export default function ScholarshipList({ params }: { params: { level: string } 
     return () => unsubscribe();
   }, []);
 
-  // 3. SMART ROUTING LOGIC
   const levelKey = params.level as keyof typeof scholarshipData;
   const currentScholarships = scholarshipData[levelKey] || scholarshipData.ug;
 
   const levelName = params.level === "ug" ? "Undergraduate (UG)" : params.level === "masters" ? "Master's" : "PhD";
 
   return (
-    <div className="min-h-[90vh] bg-background py-16 px-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-background py-16 px-6 relative overflow-hidden transition-colors duration-300">
+      
+      {/* Ambient Background Orbs */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px]"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Back Button */}
-        <Link href="/study-abroad" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors mb-8 font-bold text-sm">
+        <Link href="/study-abroad" className="inline-flex items-center gap-2 text-foreground/60 hover:text-primary transition-colors mb-8 font-bold text-sm bg-surface/50 px-4 py-2 rounded-sm border border-surfaceBorder backdrop-blur-sm">
           <ArrowLeft className="w-4 h-4" /> Back to Levels
         </Link>
 
         {/* Header */}
         <div className="mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 text-sm font-bold text-success mb-6 border border-success/20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 text-sm font-bold text-success mb-6 border border-success/20 shadow-sm">
             <ShieldCheck className="w-4 h-4" /> Verified Programs
           </div>
-          <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4 drop-shadow-sm">
             {levelName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Scholarships</span>
           </h1>
-          <p className="text-lg text-gray-600 font-medium max-w-2xl">
+          <p className="text-lg text-foreground/70 font-medium max-w-2xl bg-surface/40 backdrop-blur-md p-2 rounded-sm">
             Select a fully-funded scholarship below to unlock its verified application roadmap, or choose the general pathway.
           </p>
         </div>
@@ -165,18 +168,18 @@ export default function ScholarshipList({ params }: { params: { level: string } 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           
           {/* THE GENERAL ROADMAP (Always Unlocked) */}
-          <div className="group bg-surface border border-dashed border-gray-300 rounded-sm hover:border-primary/50 transition-all duration-300 relative overflow-hidden flex flex-col opacity-80 hover:opacity-100">
+          <div className="group bg-surface/60 backdrop-blur-sm border border-dashed border-surfaceBorder rounded-sm hover:border-primary/50 transition-all duration-500 relative overflow-hidden flex flex-col opacity-90 hover:opacity-100 hover:shadow-lg">
             <div className="p-8 flex-grow flex flex-col justify-center items-center text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
-                <Compass className="w-8 h-8 text-gray-400 group-hover:text-primary transition-colors" />
+              <div className="w-16 h-16 bg-foreground/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors duration-300">
+                <Compass className="w-8 h-8 text-foreground/40 group-hover:text-primary transition-colors duration-300" />
               </div>
-              <h2 className="font-heading text-2xl font-bold text-gray-900 mb-2">General {levelName} Pathway</h2>
-              <p className="text-sm text-gray-500 font-medium mb-8">
+              <h2 className="font-heading text-2xl font-bold text-foreground mb-2">General {levelName} Pathway</h2>
+              <p className="text-sm text-foreground/60 font-medium mb-8">
                 Not sure which specific scholarship to target? Follow our general step-by-step application roadmap.
               </p>
               <Link 
                 href={`/roadmap/${params.level}`}
-                className="w-full bg-transparent border-2 border-gray-200 text-gray-600 font-bold py-3 px-4 rounded-sm group-hover:border-primary group-hover:text-primary transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-transparent border-2 border-surfaceBorder text-foreground/80 font-bold py-3 px-4 rounded-sm group-hover:border-primary group-hover:text-primary transition-colors flex items-center justify-center gap-2"
               >
                 View General Roadmap <ArrowRight className="w-4 h-4" />
               </Link>
@@ -185,13 +188,15 @@ export default function ScholarshipList({ params }: { params: { level: string } 
 
           {/* DYNAMIC RENDERING OF PREMIUM CARDS */}
           {currentScholarships.map((scholarship) => (
-            <div key={scholarship.id} className="group bg-surface border border-surfaceBorder rounded-sm shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col">
+            <div key={scholarship.id} className="group bg-surface/90 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col">
               <div className={`h-2 w-full bg-gradient-to-r ${scholarship.color}`}></div>
-              <div className="p-8 flex-grow flex flex-col">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              
+              <div className="p-8 flex-grow flex flex-col relative z-10">
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">{scholarship.title}</h2>
-                    <p className="flex items-center gap-1.5 text-sm font-bold text-gray-500 uppercase tracking-wider">
+                    <h2 className="font-heading text-2xl font-bold text-foreground mb-1">{scholarship.title}</h2>
+                    <p className="flex items-center gap-1.5 text-sm font-bold text-foreground/50 uppercase tracking-wider">
                       <MapPin className="w-4 h-4" /> {scholarship.location}
                     </p>
                   </div>
@@ -202,25 +207,25 @@ export default function ScholarshipList({ params }: { params: { level: string } 
 
                 <div className="space-y-4 mb-8 flex-grow">
                   <div className="flex items-start gap-3">
-                    <GraduationCap className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                    <GraduationCap className="w-5 h-5 text-foreground/40 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Level</p>
-                      <p className="font-medium text-gray-800">{scholarship.levelDisplay}</p>
+                      <p className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Level</p>
+                      <p className="font-medium text-foreground">{scholarship.levelDisplay}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Wallet className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                    <Wallet className="w-5 h-5 text-foreground/40 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Financial Support</p>
+                      <p className="text-xs font-bold text-foreground/40 uppercase tracking-wider">Financial Support</p>
                       <p className="font-medium text-success">{scholarship.stipend}</p>
-                      <p className="text-sm text-gray-500">{scholarship.coverage}</p>
+                      <p className="text-sm text-foreground/60">{scholarship.coverage}</p>
                     </div>
                   </div>
                 </div>
 
                 <Link 
                   href={`/roadmap/${scholarship.id}`}
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-800 font-bold py-4 px-4 rounded-sm group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-surfaceBorder/30 border border-surfaceBorder text-foreground font-bold py-4 px-4 rounded-sm group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-colors flex items-center justify-center gap-2 mt-auto"
                 >
                   Launch Premium Roadmap <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -236,13 +241,13 @@ export default function ScholarshipList({ params }: { params: { level: string } 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 opacity-30 select-none pointer-events-none filter blur-[4px]">
                 {[1, 2, 3].map((id) => (
                   <div key={id} className="bg-surface border border-surfaceBorder h-[400px] rounded-sm p-8 flex flex-col">
-                    <div className="h-6 bg-gray-300 w-3/4 mb-4 rounded-sm"></div>
-                    <div className="h-4 bg-gray-200 w-1/2 mb-8 rounded-sm"></div>
+                    <div className="h-6 bg-surfaceBorder w-3/4 mb-4 rounded-sm"></div>
+                    <div className="h-4 bg-surfaceBorder/50 w-1/2 mb-8 rounded-sm"></div>
                     <div className="space-y-4 flex-grow">
-                      <div className="h-4 bg-gray-100 w-full rounded-sm"></div>
-                      <div className="h-4 bg-gray-100 w-5/6 rounded-sm"></div>
+                      <div className="h-4 bg-surfaceBorder/30 w-full rounded-sm"></div>
+                      <div className="h-4 bg-surfaceBorder/30 w-5/6 rounded-sm"></div>
                     </div>
-                    <div className="h-12 bg-gray-200 w-full rounded-sm mt-auto"></div>
+                    <div className="h-12 bg-surfaceBorder w-full rounded-sm mt-auto"></div>
                   </div>
                 ))}
               </div>
@@ -254,7 +259,7 @@ export default function ScholarshipList({ params }: { params: { level: string } 
                     <Lock className="w-8 h-8 text-warning" />
                   </div>
                   <h3 className="font-heading text-2xl font-bold text-foreground mb-3">Unlock The Full Database</h3>
-                  <p className="text-gray-600 text-base mb-8 font-medium">
+                  <p className="text-foreground/70 text-base mb-8 font-medium">
                     You are viewing a limited selection. Upgrade to Career GPS Premium to instantly unlock the remaining 40+ global scholarships, insider timelines, and full progress tracking.
                   </p>
                   <div className="w-full sm:w-auto">
