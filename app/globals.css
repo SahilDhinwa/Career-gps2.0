@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* LIGHT MODE (Your Exact Original Colors) */
+  :root {
+    --background: #FBFBF9; 
+    --foreground: #0B1410; 
+    --primary: #114232; 
+    --primaryHover: #0A291F; 
+    --success: #2A9D8F; 
+    --warning: #D4AF37; 
+    --surface: #FFFFFF; 
+    --surfaceBorder: #E2E6E3; 
+  }
+
+  /* DARK MODE (The Premium Night Vault) */
+  .dark {
+    --background: #0A0A0A; /* Extremely deep, rich hacker gray/black */
+    --foreground: #FBFBF9; /* Crisp off-white text for readability */
+    
+    /* We slightly brighten the primary greens and golds so they pop against the dark background */
+    --primary: #165c46; 
+    --primaryHover: #1d7a5d; 
+    --success: #35c4b3; 
+    --warning: #e6c245; 
+    
+    --surface: #121212; /* Slightly elevated dark color for your cards */
+    --surfaceBorder: #262626; /* Very subtle dark gray borders */
+  }
+}
