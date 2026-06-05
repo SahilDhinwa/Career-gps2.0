@@ -62,10 +62,18 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              <Link href="/login" className="text-sm font-bold text-gray-600 hover:text-primary transition-colors hidden sm:block">
+              {/* THE RETURN TICKET LOGIC HAS BEEN ADDED HERE */}
+              <Link 
+                href={`/login?redirect=${encodeURIComponent(pathname)}`} 
+                className="text-sm font-bold text-gray-600 hover:text-primary transition-colors hidden sm:block"
+              >
                 Login
               </Link>
-              <Link href="/login" className="bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm">
+              
+              <Link 
+                href={`/signup?redirect=${encodeURIComponent(pathname)}`} 
+                className="bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
+              >
                 Sign Up
               </Link>
             </>
