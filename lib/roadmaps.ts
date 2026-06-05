@@ -73,3 +73,128 @@ export const fulbrightRoadmap = [
   { id: 9, title: "Visa & Pre-Departure", desc: "USIEF manages the J-1 visa process. Attend mandatory pre-departure orientation.", checklist: ["Pay SEVIS fee", "Attend USIEF orientation"] },
   { id: 10, title: "FJI Verdict & Insider Tips", desc: "Generic essays or vague return plans lead to instant rejection. Specificity is key.", checklist: ["Ensure specific India return plan", "Verify non-GOI employment"] }
 ];
+export const mextPhdRoadmap = [
+  {
+    id: 1,
+    title: "Blueprint & Eligibility Verification",
+    desc: "Before the embassy application window opens (typically April–May), you must verify your eligibility and begin drafting your core materials. For the MEXT Research Scholarship, you must generally be under 35 years old and hold a Master's degree with a high academic standing.",
+    status: "active",
+    checklist: [
+      "Verify your age eligibility (Under 35 years old).",
+      "Draft the 'Field of Study and Research Plan' (The most critical document).",
+      "Acquire official, attested academic transcripts for both Bachelor's and Master's degrees.",
+      "Secure a formal recommendation letter from your university dean or current academic advisor."
+    ],
+    notes: "Your Research Plan must clearly connect your past academic background to your proposed doctoral research. Crucially, you must explicitly justify why this specific research can only be conducted in Japan."
+  },
+  {
+    id: 2,
+    title: "Embassy Application Submission",
+    desc: "Submit your complete application package directly to the Japanese Embassy or Consulate in your home country before the strict deadline (usually mid-May to early June).",
+    status: "locked",
+    checklist: [
+      "Download the official application forms from your local Japanese Embassy website.",
+      "Complete the Application Form and Placement Preference Form.",
+      "Obtain the official Certificate of Health signed by a professional medical doctor.",
+      "Submit all documents exactly as instructed (usually via post/courier or in-person, not via email)."
+    ],
+    notes: "Do not send any documents directly to MEXT in Tokyo. All initial processing is handled exclusively by your local embassy."
+  },
+  {
+    id: 3,
+    title: "First Screening: Written Examinations",
+    desc: "If your document screening is successful, the embassy will invite you to take written language examinations (typically in June or July).",
+    status: "locked",
+    checklist: [
+      "Review past MEXT examination papers available on the 'Study in Japan' official website.",
+      "Prepare for the English proficiency exam.",
+      "Prepare for the Japanese proficiency exam (even if your research is in English, attempting this shows dedication)."
+    ],
+    notes: "While doctoral research can often be conducted entirely in English, a strong score on the English exam is mandatory to pass this stage."
+  },
+  {
+    id: 4,
+    title: "First Screening: The Embassy Interview",
+    desc: "Candidates who pass the written exams are invited for an in-person or online interview with an embassy panel.",
+    status: "locked",
+    checklist: [
+      "Prepare a concise, 2-minute pitch explaining your Research Plan to non-specialists.",
+      "Formulate a strong answer to the guaranteed question: 'Why do you want to study in Japan?'",
+      "Explain how your research will contribute to the bilateral relationship between your home country and Japan."
+    ],
+    notes: "The panel is evaluating your academic potential, your adaptability to Japanese culture, and your diplomatic potential as a bridge between the two nations."
+  },
+  {
+    id: 5,
+    title: "Passing Certificate & The LoPA Hunt Begins",
+    desc: "If you pass the interview, you will receive the 'Passing Certificate of the First Screening'. This triggers the most stressful phase: finding a Japanese professor willing to supervise your PhD.",
+    status: "locked",
+    checklist: [
+      "Receive your official Passing Certificate from the embassy.",
+      "Use the 'Researchmap' or 'J-GLOBAL' databases to identify professors matching your research niche.",
+      "Draft highly personalized cold emails to prospective academic advisors."
+    ],
+    notes: "You cannot contact Japanese universities for a Letter of Acceptance until you have this official Passing Certificate in your hands."
+  },
+  {
+    id: 6,
+    title: "Securing the Letter of Provisional Acceptance (LoPA)",
+    desc: "You must convince at least one (and up to three) Japanese universities to issue you an official LoPA before the late-August deadline.",
+    status: "locked",
+    checklist: [
+      "Email professors with the subject line: <MEXT: Embassy Recommendation> Application for a Letter of Provisional Acceptance.",
+      "Attach your Passing Certificate, CV, and Embassy-stamped Research Plan.",
+      "Attend any requested online academic interviews with the Japanese professors or university boards.",
+      "Secure the signed LoPA."
+    ],
+    notes: "Some universities require you to apply through an online portal (like Kyoto University's AAO system) rather than emailing professors directly. Always check the specific university's international student guidelines."
+  },
+  {
+    id: 7,
+    title: "Placement Preference Submission",
+    desc: "Once you have your LoPAs, you must officially submit your university choices back to the embassy.",
+    status: "locked",
+    checklist: [
+      "Fill out the final Placement Preference Application Form.",
+      "Rank your chosen universities (up to 3).",
+      "Submit the original LoPAs and the Preference Form to your local embassy by the given deadline (usually September)."
+    ],
+    notes: "MEXT will use this form to attempt to place you in your top-choice university, though final placement is ultimately decided by the Ministry."
+  },
+  {
+    id: 8,
+    title: "Second Screening (MEXT Tokyo)",
+    desc: "Your local embassy forwards your entire file (Application, Exams, Interview scores, and LoPAs) to MEXT headquarters in Tokyo for the final evaluation.",
+    status: "locked",
+    checklist: [
+      "Maintain contact with your prospective supervisor in Japan.",
+      "Wait for the official results (this is a long waiting period from September to January)."
+    ],
+    notes: "The Second Screening is generally a verification process. If you have secured a LoPA and passed the embassy stage, your chances of final selection are very high unless there are severe budget cuts."
+  },
+  {
+    id: 9,
+    title: "Final Results & University Placement",
+    desc: "Between January and February, MEXT officially announces the final scholarship recipients and confirms which university you have been placed in.",
+    status: "locked",
+    checklist: [
+      "Receive official notification of selection as a MEXT Scholar.",
+      "Confirm your university placement.",
+      "Sign the scholarship pledge and begin visa processing with the embassy."
+    ],
+    notes: "You are typically admitted initially as a 'Research Student' (Non-regular student). You will need to pass the university's internal entrance exam later to officially become a regular PhD candidate."
+  },
+  {
+    id: 10,
+    title: "Visa, Flights, & Arrival in Japan",
+    desc: "MEXT coordinates your travel logistics. You will arrive in Japan to begin your doctoral journey, usually in either the April or September/October intake.",
+    status: "locked",
+    checklist: [
+      "Submit your passport to the embassy for your Student Visa.",
+      "Receive your MEXT-funded flight ticket.",
+      "Arrive in Japan and register your residence at the local ward office.",
+      "Open a Japanese bank account (Japan Post Bank) to receive your ¥145,000 monthly stipend."
+    ],
+    notes: "Congratulations! You have successfully navigated one of the most prestigious and complex scholarship processes in the world."
+  }
+];
