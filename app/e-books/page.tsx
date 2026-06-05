@@ -20,7 +20,7 @@ const careerAssets = [
     coverBgImage: "/unspoken-aura-bg.jpg", 
     fileUrl: "/The Glass World.pdf" 
   },
-  {
+    {
     id: "invisible-art",
     title: "The Invisible Art of Speaking",
     coverTitle: "The Invisible Art\nof Speaking",
@@ -31,10 +31,12 @@ const careerAssets = [
     price: "FREE",
     originalPrice: "₹1,299",
     tag: "New Release",
-    color: "from-[#022c22] to-black", // A deep emerald-to-black gradient
-    coverBgImage: "/invisible-art-bg.jpg", 
+    color: "from-[#022c22] to-black", 
+    // Change the line below to match your new image file in the public folder
+    coverBgImage: "/my-new-cover.jpg", 
     fileUrl: "/The_Invisible_Art_of_Speaking.pdf" 
-  }
+}
+
 ];
 
 // Interface for type safety in the modal
