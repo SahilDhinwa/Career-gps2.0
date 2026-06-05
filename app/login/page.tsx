@@ -1,134 +1,175 @@
 "use client";
 
-import { Compass, Mail } from "lucide-react";
-import { auth, googleProvider, db } from "../../lib/firebase";
-import { signInWithPopup } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, Suspense } from "react";
+import { auth, db, googleProvider } from "../../lib/firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Mail, Lock, ArrowRight, ShieldCheck, Chrome } from "lucide-react";
 
-export default function Login() {
+// We separate the form to wrap it in <Suspense> for the useSearchParams hook
+function LoginForm() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const searchParams = useSearchParams();
   
-  // Stealth Debugger State (The 5 Dots)
-  const [keyStatus, setKeyStatus] = useState([
-    { name: "API Key", ok: false },
-    { name: "Auth Domain", ok: false },
-    { name: "Project ID", ok: false },
-    { name: "Sender ID", ok: false },
-    { name: "App ID", ok: false },
-  ]);
+  // THE RETURN TICKET: Grabs the exact page they came from, or defaults to the profile
+  const redirectUrl = searchParams.get("redirect") || "/profile";
 
-  // Checks Vercel environment variables silently on load
-  useEffect(() => {
-    setKeyStatus([
-      { name: "API Key", ok: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY },
-      { name: "Auth Domain", ok: !!process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN },
-      { name: "Project ID", ok: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID },
-      { name: "Sender ID", ok: !!process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID },
-      { name: "App ID", ok: !!process.env.NEXT_PUBLIC_FIREBASE_APP_ID },
-    ]);
-  }, []);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // Teleport them back to where they came from
+      router.push(redirectUrl);
+    } catch (err: any) {
+      console.error(err);
+      setError("Invalid email or password. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError("");
+    
     try {
-      setIsLoading(true);
-      setErrorMessage(""); 
-
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      // Silent database sync (Ghost Bypass)
-      try {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+      // Failsafe: If a new user accidentally uses Google Login instead of Signup,
+      // we silently create their database profile so the app doesn't crash.
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
 
-        if (!userSnap.exists()) {
-          await setDoc(userRef, {
-            name: user.displayName,
-            email: user.email,
-            createdAt: new Date().toISOString(),
-            activePathway: "Study Abroad",
-            roadmapProgress: {} 
-          });
-        }
-      } catch (dbError) {
-        console.warn("Silent sync failed, but proceeding to dashboard.");
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || "Scholarship Applicant",
+          createdAt: new Date().toISOString(),
+          isPremium: false,
+          roadmapProgress: {},
+          checklistProgress: {}
+        });
       }
-
-      // Smooth transition to the app
-      router.push("/study-abroad");
-
-    } catch (error: any) {
-      console.error("Login Error:", error);
-      setErrorMessage("Could not sign in with Google. Please try again.");
+      
+      // Teleport them back!
+      router.push(redirectUrl);
+    } catch (err: any) {
+      console.error(err);
+      setError("Google sign-in failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 relative">
-      
-      {/* THE STEALTH DEBUGGER (5 Dots) */}
-      <div className="mb-6 flex items-center justify-center gap-3">
-        {keyStatus.map((key, index) => (
-          <div 
-            key={index}
-            title={key.name} // Shows the key name if you hover over the dot!
-            className={`w-2.5 h-2.5 rounded-full shadow-sm transition-colors ${
-              key.ok ? "bg-success opacity-80" : "bg-red-500 animate-pulse"
-            }`}
+    <div className="w-full max-w-md bg-white p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10">
+      <div className="text-center mb-8">
+        <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
+        <p className="text-gray-500 font-medium">Log in to access your roadmap and assets.</p>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-500 p-3 rounded-sm text-sm font-bold mb-6 border border-red-100 text-center">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input 
+            type="email" 
+            required
+            placeholder="Email Address" 
+            className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-        ))}
-      </div>
-
-      <div className="bg-surface border border-surfaceBorder p-10 max-w-md w-full shadow-lg">
-        <div className="text-center mb-8">
-          <Compass className="w-12 h-12 text-primary mx-auto mb-4" />
-          <h1 className="font-heading text-3xl font-bold mb-2">Welcome Back</h1>
-          <p className="text-gray-600">Login to save your roadmap progress.</p>
         </div>
 
-        {errorMessage && (
-          <div className="mb-6 p-3 bg-red-100 border border-red-400 text-red-700 text-sm font-bold text-center">
-            {errorMessage}
-          </div>
-        )}
-
-        <div className="space-y-4">
-          <button 
-            onClick={handleGoogleLogin}
-            disabled={isLoading}
-            className="w-full border-2 border-primary py-3 font-bold text-gray-700 hover:border-primaryHover hover:bg-gray-50 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-          >
-            {isLoading ? "Connecting..." : (
-              <>
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                Continue with Google
-              </>
-            )}
-          </button>
-
-          <div className="relative flex items-center py-2">
-            <div className="flex-grow border-t border-surfaceBorder"></div>
-            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">OR</span>
-            <div className="flex-grow border-t border-surfaceBorder"></div>
-          </div>
-
-          <button className="w-full bg-primary text-white py-3 font-bold hover:bg-primaryHover transition-all flex items-center justify-center gap-3 opacity-60 cursor-not-allowed">
-            <Mail className="w-5 h-5" />
-            Continue with Email OTP
-          </button>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input 
+            type="password" 
+            required
+            placeholder="Password" 
+            className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-colors flex items-center justify-center gap-2 shadow-md disabled:opacity-70"
+        >
+          {isLoading ? (
+            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          ) : (
+            <>Log In <ArrowRight className="w-4 h-4" /></>
+          )}
+        </button>
+      </form>
+
+      <div className="flex items-center gap-4 mb-6">
+        <div className="h-px bg-gray-200 flex-1"></div>
+        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Or</span>
+        <div className="h-px bg-gray-200 flex-1"></div>
       </div>
+
+      <button 
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+        type="button"
+        className="w-full bg-white text-gray-700 border border-gray-200 font-bold py-3 px-4 rounded-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6"
+      >
+        <Chrome className="w-5 h-5 text-blue-500" /> Continue with Google
+      </button>
+
+      <p className="text-center text-sm text-gray-600 font-medium">
+        Don&apos;t have an account?{" "}
+        {/* Pass the ticket along to the signup page */}
+        <Link href={`/signup?redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
+          Sign up
+        </Link>
+      </p>
+
+      <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
+        <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
+      </div>
+    </div>
+  );
+}
+
+// The main page component that houses the background and the form
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen bg-[#FBFBF9] flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Universal Background Decoration matching the Signup Page */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-warning/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+      
+      {/* Suspense wrapper is required by Next.js when reading URL query parameters */}
+      <Suspense fallback={
+        <div className="w-full max-w-md bg-white p-8 rounded-sm shadow-xl border border-surfaceBorder flex justify-center py-20">
+           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }
