@@ -1,13 +1,13 @@
 "use client";
 
-import { Mail, Lock, ArrowRight, ShieldCheck, Chrome, Compass } from "lucide-react";
 import { useState, Suspense } from "react";
 import { auth, db, googleProvider } from "../../lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, ArrowRight, ShieldCheck, Chrome } from "lucide-react";
+// Cleaned up the duplicate imports and ensured Compass is here
+import { Mail, Lock, ArrowRight, ShieldCheck, Chrome, Compass } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -27,7 +27,11 @@ function LoginForm() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push(redirectUrl);
+      // START THE CINEMATIC INTRO
+      setShowIntro(true);
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 1800);
     } catch (err: any) {
       console.error(err);
       setError("Invalid email or password. Please try again.");
@@ -52,7 +56,7 @@ function LoginForm() {
       return; // Stop if auth fails
     }
 
-    // STEP 2: Handle Database Silently (Don't let this block the user!)
+    // STEP 2: Handle Database Silently
     try {
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
@@ -72,8 +76,11 @@ function LoginForm() {
       console.warn("Database sync delayed, but user is authenticated.");
     }
     
-    // STEP 3: Teleport them!
-    router.push(redirectUrl);
+    // STEP 3: START THE CINEMATIC INTRO
+    setShowIntro(true);
+    setTimeout(() => {
+      router.push(redirectUrl);
+    }, 1800);
   };
 
   return (
@@ -152,6 +159,24 @@ function LoginForm() {
       <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
         <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
       </div>
+
+      {/* THE CINEMATIC NETFLIX-STYLE INTRO OVERLAY */}
+      {showIntro && (
+        <div className="fixed inset-0 z-[9999] bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes compass-cinematic {
+              0% { transform: scale(0.3) rotate(-45deg); opacity: 0; filter: blur(10px); }
+              30% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px) drop-shadow(0 0 40px rgba(42,157,143,0.8)); }
+              60% { transform: scale(1.1) rotate(0deg); opacity: 1; filter: blur(0px) drop-shadow(0 0 60px rgba(212,175,55,0.6)); }
+              100% { transform: scale(30) rotate(20deg); opacity: 0; filter: blur(5px); }
+            }
+            .animate-cinematic {
+              animation: compass-cinematic 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            }
+          `}} />
+          <Compass className="w-24 h-24 text-success animate-cinematic" strokeWidth={1.5} />
+        </div>
+      )}
     </div>
   );
 }
