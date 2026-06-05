@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../../lib/firebase"; 
-// FIX: setDoc is correctly imported at the very top of the file
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged, signOut, User, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -84,7 +83,6 @@ export default function UserProfile() {
           const base64String = reader.result as string;
           
           const userRef = doc(db, "users", user.uid);
-          // FIX: setDoc used correctly without any inline imports
           await setDoc(userRef, { photoURL: base64String }, { merge: true });
           
           try {
@@ -125,7 +123,6 @@ export default function UserProfile() {
 
     try {
       const userRef = doc(db, "users", user.uid);
-      // FIX: setDoc used correctly here as well
       await setDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList }, { merge: true });
     } catch (error) {
       console.error("Failed to update checklist in database", error);
@@ -144,16 +141,34 @@ export default function UserProfile() {
   const roadmapProgress = userData?.roadmapProgress || {};
 
   return (
-    <div className="min-h-screen bg-background py-16 px-6 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
+    <div className="min-h-screen bg-[#FBFBF9] py-16 px-6 relative overflow-hidden">
+      
+      {/* INLINE STYLES FOR THE SECURE HEX-MESH BACKGROUND */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .bg-hex-mesh {
+          background-image: url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23114232' fill-opacity='0.08' fill-rule='evenodd'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .vault-vignette {
+          box-shadow: inset 0 0 150px rgba(17, 66, 50, 0.05);
+        }
+      `}} />
+
+      {/* Layer 1: Noticeable Hex-Mesh Background */}
+      <div className="absolute inset-0 bg-hex-mesh pointer-events-none z-0"></div>
+      
+      {/* Layer 2: Vault Vignette Overlay (Darkens edges slightly for focus) */}
+      <div className="absolute inset-0 vault-vignette pointer-events-none z-0"></div>
+
+      {/* Layer 3: Subtle Gold Glow behind the Command Center */}
+      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-warning/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
       <div className="max-w-5xl mx-auto relative z-10">
         
-        <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
             
             <div 
-              className="relative w-24 h-24 rounded-full border-4 border-white shadow-md shrink-0 group cursor-pointer overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
+              className="relative w-24 h-24 rounded-full border-4 border-white shadow-lg shrink-0 group cursor-pointer overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
               onClick={() => fileInputRef.current?.click()}
             >
               {profilePic ? (
@@ -187,7 +202,7 @@ export default function UserProfile() {
               <p className="text-gray-500 font-medium mb-3">{user?.email}</p>
               
               {isPremium ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-warning/10 text-xs font-bold text-warning uppercase tracking-wider border border-warning/20">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-warning/10 text-xs font-bold text-warning uppercase tracking-wider border border-warning/30 shadow-sm">
                   <Crown className="w-3.5 h-3.5" /> Premium Member
                 </span>
               ) : (
@@ -206,7 +221,7 @@ export default function UserProfile() {
             )}
             <button 
               onClick={handleLogout}
-              className="w-full md:w-auto px-6 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+              className="w-full md:w-auto px-6 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm"
             >
               <LogOut className="w-4 h-4" /> Sign Out
             </button>
@@ -217,7 +232,7 @@ export default function UserProfile() {
           
           <div className="lg:col-span-2 space-y-8">
             
-            <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8">
+            <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Activity className="w-6 h-6 text-primary" />
                 <h2 className="font-heading text-2xl font-bold text-foreground">Active Roadmaps</h2>
@@ -226,16 +241,16 @@ export default function UserProfile() {
               {Object.keys(roadmapProgress).length > 0 ? (
                 <div className="space-y-4">
                   {Object.entries(roadmapProgress).map(([id, stage]: [string, any]) => (
-                    <div key={id} className="border border-gray-100 rounded-sm p-5 hover:border-primary/30 transition-colors bg-gray-50/50">
+                    <div key={id} className="border border-gray-100 rounded-sm p-5 hover:border-primary/30 transition-colors bg-white shadow-sm">
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="font-bold text-gray-800 capitalize flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-primary" /> {id.replace(/-/g, " ")}
                         </h3>
-                        <span className="text-xs font-bold bg-white border border-gray-200 px-2 py-1 rounded-sm text-gray-600">
+                        <span className="text-xs font-bold bg-gray-50 border border-gray-200 px-2 py-1 rounded-sm text-gray-600">
                           Stage {stage}
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden mb-4">
+                      <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mb-4 border border-gray-200">
                         <div 
                           className="bg-primary h-full transition-all duration-500" 
                           style={{ width: `${Math.min((stage / 10) * 100, 100)}%` }}
@@ -251,7 +266,7 @@ export default function UserProfile() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 bg-gray-50 border border-gray-100 rounded-sm">
+                <div className="text-center py-10 bg-white border border-gray-100 rounded-sm shadow-sm">
                   <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500 font-medium mb-4">You haven&apos;t started any application roadmaps yet.</p>
                   <button 
@@ -264,7 +279,7 @@ export default function UserProfile() {
               )}
             </div>
 
-            <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8">
+            <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8">
               <div className="flex items-center gap-3 mb-6">
                 <ListChecks className="w-6 h-6 text-primary" />
                 <h2 className="font-heading text-2xl font-bold text-foreground">Checklist Command Center</h2>
@@ -276,7 +291,7 @@ export default function UserProfile() {
                     if (items.length === 0) return null; 
                     
                     return (
-                      <div key={roadmapId} className="bg-white border border-gray-100 rounded-sm p-4">
+                      <div key={roadmapId} className="bg-white border border-gray-100 rounded-sm p-4 shadow-sm">
                         <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
                           {roadmapId.replace(/-/g, " ")}
                         </h4>
@@ -299,7 +314,7 @@ export default function UserProfile() {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-10 bg-gray-50 border border-gray-100 rounded-sm">
+                <div className="text-center py-10 bg-white border border-gray-100 rounded-sm shadow-sm">
                   <ListChecks className="w-8 h-8 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500 font-medium">Your checked tasks will appear here.</p>
                 </div>
@@ -322,13 +337,13 @@ export default function UserProfile() {
               </p>
               <button 
                 onClick={() => router.push("/e-books")}
-                className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-3 px-4 rounded-sm transition-colors flex items-center justify-between group-hover:border-warning/50 relative z-10"
+                className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-3 px-4 rounded-sm transition-colors flex items-center justify-between group-hover:border-warning/50 relative z-10 shadow-md"
               >
                 Open Library <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="bg-surface border border-surfaceBorder rounded-sm p-6 text-center">
+            <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm p-6 text-center shadow-md">
               <ShieldCheck className="w-8 h-8 text-success mx-auto mb-3" />
               <h3 className="font-bold text-gray-800 mb-1">Secure Account</h3>
               <p className="text-xs text-gray-500 font-medium">Your data and application progress are securely synced to the cloud.</p>
@@ -340,4 +355,4 @@ export default function UserProfile() {
       </div>
     </div>
   );
-      }
+                      }
