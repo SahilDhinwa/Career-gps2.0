@@ -5,7 +5,7 @@ import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-background overflow-hidden flex flex-col transition-colors duration-300">
       
       {/* INLINE STYLES FOR 3D PERSPECTIVE NAVIGATOR BACKGROUND */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -18,7 +18,6 @@ export default function LandingPage() {
           pointer-events: none;
         }
         
-        /* The Moving 3D Grid Floor */
         .perspective-grid {
           position: absolute;
           width: 200%;
@@ -31,7 +30,6 @@ export default function LandingPage() {
           background-size: 60px 60px;
           transform: rotateX(75deg);
           animation: pan-grid 3s linear infinite;
-          /* This mask seamlessly fades the grid out before it hits the text */
           mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
           -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
         }
@@ -41,7 +39,6 @@ export default function LandingPage() {
           100% { transform: rotateX(75deg) translateY(60px); }
         }
 
-        /* The Slow-Pulsing Golden Destination Glow */
         .glowing-core {
           position: absolute;
           top: 0%;
@@ -69,9 +66,9 @@ export default function LandingPage() {
           <div className="perspective-grid"></div>
         </div>
 
-        {/* Foreground Content (Safe from color bleed) */}
+        {/* Foreground Content */}
         <div className="max-w-5xl mx-auto text-center relative z-10 pt-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
             2026 Scholarship Pathways Now Live
           </div>
@@ -83,11 +80,11 @@ export default function LandingPage() {
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-white/40 backdrop-blur-[2px] rounded-lg p-2">
+          <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-surface/50 backdrop-blur-[2px] rounded-lg p-2">
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
             <Link 
               href="/pathways" 
               className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
@@ -95,17 +92,19 @@ export default function LandingPage() {
               Start Your Journey <ArrowRight className="w-5 h-5" />
             </Link>
             
-            <Matchmaker />
+            <div className="w-full sm:w-auto">
+              <Matchmaker />
+            </div>
           </div>
         </div>
       </div>
 
       {/* FEATURE GRID */}
-      <div className="bg-surface border-t border-surfaceBorder py-20 px-6 relative z-10">
+      <div className="bg-surface border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl font-bold mb-4">Why Top Students Choose Career GPS</h2>
-            <p className="text-gray-500">Everything you need to secure your seat at a global university.</p>
+            <h2 className="font-heading text-3xl font-bold text-foreground mb-4">Why Top Students Choose Career GPS</h2>
+            <p className="text-foreground/60 font-medium">Everything you need to secure your seat at a global university.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -113,8 +112,8 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <Globe className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-heading text-xl font-bold mb-3">100% Fully Funded</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="font-heading text-xl font-bold text-foreground mb-3">100% Fully Funded</h3>
+              <p className="text-foreground/70 leading-relaxed">
                 Discover scholarships that cover your entire tuition, flights, and monthly living expenses. Zero student loans required.
               </p>
             </div>
@@ -123,8 +122,8 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-success" />
               </div>
-              <h3 className="font-heading text-xl font-bold mb-3">Stage-by-Stage Tracking</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="font-heading text-xl font-bold text-foreground mb-3">Stage-by-Stage Tracking</h3>
+              <p className="text-foreground/70 leading-relaxed">
                 Never miss a deadline. Our interactive roadmap breaks down complex applications into manageable daily tasks.
               </p>
             </div>
@@ -133,8 +132,8 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-6">
                 <ShieldCheck className="w-6 h-6 text-warning" />
               </div>
-              <h3 className="font-heading text-xl font-bold mb-3">Verified Guidance</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="font-heading text-xl font-bold text-foreground mb-3">Verified Guidance</h3>
+              <p className="text-foreground/70 leading-relaxed">
                 No more generic advice. Access premium, insider checklists designed by experts who have navigated the system.
               </p>
             </div>
@@ -143,7 +142,7 @@ export default function LandingPage() {
       </div>
 
       {/* --- ACTION VAULT TOOLKIT EXTENSION --- */}
-      <div className="bg-background py-10 px-6 relative z-10">
+      <div className="bg-background py-10 px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <div className="relative p-[1px] rounded-sm bg-gradient-to-r from-warning/40 via-warning/10 to-warning/40 shadow-sm hover:shadow-md transition-shadow">
             <div className="bg-surface p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 rounded-sm relative overflow-hidden">
@@ -158,7 +157,7 @@ export default function LandingPage() {
                   <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-2">
                     Stop Drafting from Scratch.
                   </h2>
-                  <p className="text-gray-600 font-medium max-w-lg">
+                  <p className="text-foreground/80 font-medium max-w-lg">
                     Bypass blank-page anxiety with our Action Vault. Access copy-paste document templates proven to win international scholarships.
                   </p>
                 </div>
@@ -171,7 +170,7 @@ export default function LandingPage() {
                 >
                   Open Action Vault <ArrowRight className="w-5 h-5" />
                 </Link>
-                <p className="text-xs font-bold text-gray-500 flex items-center gap-1.5">
+                <p className="text-xs font-bold text-foreground/60 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-success" />
                   Includes templates for DAAD, Chevening & Commonwealth
                 </p>
@@ -182,7 +181,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* PROMO BANNER FOR E-BOOKS */}
+      {/* PROMO BANNER FOR E-BOOKS (Explicitly Dark for Contrast) */}
       <div className="bg-background pb-10 pt-4 px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
@@ -215,7 +214,7 @@ export default function LandingPage() {
       </div>
 
       {/* COMMUNITY SUPPORT / DONATION SECTION */}
-      <div className="bg-background border-t border-surfaceBorder py-20 px-6 relative z-10">
+      <div className="bg-background border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-8 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
             
@@ -228,15 +227,16 @@ export default function LandingPage() {
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Help Us Empower More Students
               </h2>
-              <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+              <p className="text-foreground/70 text-lg mb-6 leading-relaxed">
                 We are on a mission to democratize global education. Your support helps us maintain our free tools, expand our scholarship database, and guide thousands of students from tier-2 and tier-3 cities toward fully-funded opportunities.
               </p>
-              <p className="text-gray-800 font-bold bg-gray-50 inline-block px-4 py-2 rounded-sm border border-gray-200">
+              <p className="text-foreground font-bold bg-foreground/5 inline-block px-4 py-2 rounded-sm border border-surfaceBorder">
                 Scan the UPI QR code to contribute. Every rupee builds a bridge to someone&apos;s future.
               </p>
             </div>
 
             <div className="shrink-0 flex flex-col items-center z-10">
+              {/* Note: Kept bg-white here deliberately to ensure the QR code is readable by scanners in Dark Mode */}
               <div className="bg-white p-4 rounded-sm shadow-md border border-gray-200 mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
                 <Image 
                   src="/QR_1780487966.png" 
@@ -246,7 +246,7 @@ export default function LandingPage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+              <p className="text-xs font-bold text-foreground/60 uppercase tracking-widest flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-success" /> Secure UPI Payment
               </p>
             </div>
