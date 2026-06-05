@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/Navbar'
+import { ThemeProvider } from '../components/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,15 +17,23 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    // suppressHydrationWarning is REQUIRED for next-themes to work perfectly
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* The Global Navigation Bar */}
-        <Navbar />
-        
-        {/* The Dynamic Page Content */}
-        <main className="min-h-screen bg-background">
-          {children}
-        </main>
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="system" 
+          enableSystem 
+          disableTransitionOnChange
+        >
+          {/* The Global Navigation Bar */}
+          <Navbar />
+          
+          {/* The Dynamic Page Content */}
+          <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   )
