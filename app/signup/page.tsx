@@ -6,7 +6,8 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from "
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, User, ArrowRight, ShieldCheck, Chrome } from "lucide-react";
+// Added Compass to the imports here
+import { Mail, Lock, User, ArrowRight, ShieldCheck, Chrome, Compass } from "lucide-react";
 
 function SignupForm() {
   const router = useRouter();
@@ -18,6 +19,8 @@ function SignupForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  // Added the animation state
+  const [showIntro, setShowIntro] = useState(false);
 
   const createFirestoreUser = async (user: any, displayName: string | null) => {
     try {
@@ -49,7 +52,12 @@ function SignupForm() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
       await createFirestoreUser(userCredential.user, name);
-      router.push(redirectUrl);
+      
+      // START THE CINEMATIC INTRO
+      setShowIntro(true);
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 1800);
     } catch (err: any) {
       console.error(err);
       setError("Failed to create an account. Password must be 6+ chars.");
@@ -77,8 +85,11 @@ function SignupForm() {
     // STEP 2: Handle DB Silently
     await createFirestoreUser(user, user.displayName);
     
-    // STEP 3: Teleport!
-    router.push(redirectUrl);
+    // STEP 3: START THE CINEMATIC INTRO
+    setShowIntro(true);
+    setTimeout(() => {
+      router.push(redirectUrl);
+    }, 1800);
   };
 
   return (
@@ -169,6 +180,24 @@ function SignupForm() {
       <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
         <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
       </div>
+
+      {/* THE CINEMATIC NETFLIX-STYLE INTRO OVERLAY */}
+      {showIntro && (
+        <div className="fixed inset-0 z-[9999] bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes compass-cinematic {
+              0% { transform: scale(0.3) rotate(-45deg); opacity: 0; filter: blur(10px); }
+              30% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px) drop-shadow(0 0 40px rgba(42,157,143,0.8)); }
+              60% { transform: scale(1.1) rotate(0deg); opacity: 1; filter: blur(0px) drop-shadow(0 0 60px rgba(212,175,55,0.6)); }
+              100% { transform: scale(30) rotate(20deg); opacity: 0; filter: blur(5px); }
+            }
+            .animate-cinematic {
+              animation: compass-cinematic 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            }
+          `}} />
+          <Compass className="w-24 h-24 text-success animate-cinematic" strokeWidth={1.5} />
+        </div>
+      )}
     </div>
   );
 }
