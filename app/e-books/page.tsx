@@ -33,7 +33,7 @@ const careerAssets = [
     tag: "New Release",
     color: "from-[#022c22] to-black", 
     // Change the line below to match your new image file in the public folder
-    coverBgImage: "/my-new-cover.jpg", 
+    coverBgImage: "/the_invisible_art.jpg", 
     fileUrl: "/The_Invisible_Art_of_Speaking.pdf" 
 }
 
