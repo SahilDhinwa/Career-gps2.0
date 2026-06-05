@@ -8,8 +8,10 @@ const careerAssets = [
   {
     id: "unspoken-aura",
     title: "The Unspoken Aura",
+    coverTitle: "The Unspoken\nAura",
     author: "Sahil Dhinwa", 
     subtitle: "Unlocking Your True Personality Through Communication",
+    shortSubtitle: "Unlocking Your True Personality",
     description: "A Guide for the Real World. Master the art of the aura, overcome the 'Invisible Wall', and command respect in every room you enter.",
     price: "FREE",
     originalPrice: "₹999",
@@ -17,12 +19,34 @@ const careerAssets = [
     color: "from-gray-900 to-black", 
     coverBgImage: "/unspoken-aura-bg.jpg", 
     fileUrl: "/The Glass World.pdf" 
+  },
+  {
+    id: "invisible-art",
+    title: "The Invisible Art of Speaking",
+    coverTitle: "The Invisible Art\nof Speaking",
+    author: "Sahil Dhinwa", 
+    subtitle: "A Mentor's Guide to Communication for the Ambitious",
+    shortSubtitle: "A Mentor's Guide for the Ambitious",
+    description: "Claim your space in a world that tries to make you feel small. This survival guide breaks down how to overcome hesitation, hack your learning style, and command respect in any environment.",
+    price: "FREE",
+    originalPrice: "₹1,299",
+    tag: "New Release",
+    color: "from-[#022c22] to-black", // A deep emerald-to-black gradient
+    coverBgImage: "/invisible-art-bg.jpg", 
+    fileUrl: "/The_Invisible_Art_of_Speaking.pdf" 
   }
 ];
 
+// Interface for type safety in the modal
+interface Asset {
+  title: string;
+  author: string;
+  fileUrl: string;
+}
+
 export default function EBooksDirectory() {
   // STATE TO CONTROL THE IN-PAGE E-READER
-  const [viewingPdf, setViewingPdf] = useState<string | null>(null);
+  const [viewingAsset, setViewingAsset] = useState<Asset | null>(null);
 
   return (
     <div className="min-h-screen bg-[#FBFBF9] relative overflow-hidden flex flex-col">
@@ -41,11 +65,9 @@ export default function EBooksDirectory() {
         .emerald-panel {
           position: absolute;
           border-radius: 16px;
-          /* The Emerald Glassmorphism Effect */
           background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 66, 50, 0.02) 100%);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          /* Lighting: Bright top/left edges, deep emerald bottom/right */
           border-top: 1px solid rgba(255, 255, 255, 0.6);
           border-left: 1px solid rgba(255, 255, 255, 0.6);
           border-bottom: 1px solid rgba(16, 185, 129, 0.3);
@@ -55,11 +77,6 @@ export default function EBooksDirectory() {
             inset 0 0 40px rgba(16, 185, 129, 0.05);
           transform-style: preserve-3d;
         }
-
-        /* 
-          ANIMATIONS: We use 5 distinct panels spanning the height of the screen.
-          They slowly rotate on the Y-axis (like opening doors) and float vertically.
-        */
         
         .panel-1 {
           width: 18vw; height: 85vh; top: -10%; left: 5%;
@@ -67,7 +84,6 @@ export default function EBooksDirectory() {
         }
         .panel-2 {
           width: 25vw; height: 90vh; top: 15%; left: 25%;
-          /* A touch of gold glass mixed into the emerald */
           background: linear-gradient(135deg, rgba(212, 175, 55, 0.06) 0%, rgba(16, 185, 129, 0.02) 100%);
           border-top: 1px solid rgba(212, 175, 55, 0.3);
           animation: pivot-glass-2 30s ease-in-out infinite alternate-reverse;
@@ -146,10 +162,11 @@ export default function EBooksDirectory() {
                   <div 
                     className="w-3/4 aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-6 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
                     style={{
-                      background: `linear-gradient(to bottom right, #0f172a, #020617)`,
+                      background: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9))`,
                       backgroundImage: `url(${asset.coverBgImage})`,
                       backgroundSize: 'cover',
-                      backgroundPosition: 'center'
+                      backgroundPosition: 'center',
+                      backgroundBlendMode: 'overlay'
                     }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10"></div>
@@ -161,11 +178,12 @@ export default function EBooksDirectory() {
                     </div>
 
                     <div className="relative z-10 text-center mb-4">
-                      <h3 className="font-heading font-bold text-white text-2xl md:text-3xl leading-tight mb-2 drop-shadow-lg">
-                        The Unspoken<br/>Aura
+                      {/* Using whitespace-pre-line to respect the \n in coverTitle */}
+                      <h3 className="font-heading font-bold text-white text-2xl md:text-3xl leading-tight mb-2 drop-shadow-lg whitespace-pre-line">
+                        {asset.coverTitle}
                       </h3>
                       <p className="text-xs text-gray-300 font-medium leading-relaxed px-2">
-                        Unlocking Your True Personality
+                        {asset.shortSubtitle}
                       </p>
                       <div className="w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
                     </div>
@@ -218,7 +236,7 @@ export default function EBooksDirectory() {
                     {/* DUAL-ACTION BUTTONS (Read Online vs Download) */}
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button 
-                        onClick={() => setViewingPdf(asset.fileUrl)}
+                        onClick={() => setViewingAsset(asset)}
                         className="flex-1 bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-colors flex items-center justify-center gap-2 shadow-md"
                       >
                         <Eye className="w-5 h-5" /> Read Online
@@ -226,7 +244,7 @@ export default function EBooksDirectory() {
                       
                       <a 
                         href={asset.fileUrl} 
-                        download="The_Unspoken_Aura_Sahil_Dhinwa.pdf"
+                        download={`${asset.title.replace(/\s+/g, '_')}_${asset.author.replace(/\s+/g, '_')}.pdf`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 bg-gray-900 text-white font-bold py-3 px-4 rounded-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
@@ -248,7 +266,7 @@ export default function EBooksDirectory() {
       </div>
 
       {/* THE IN-PAGE FULLSCREEN E-READER MODAL */}
-      {viewingPdf && (
+      {viewingAsset && (
         <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
           
           {/* Reader Top Navbar */}
@@ -259,12 +277,12 @@ export default function EBooksDirectory() {
               </div>
               <div>
                 <h3 className="font-heading font-bold text-foreground leading-tight">Career GPS E-Reader</h3>
-                <p className="text-xs text-gray-500 font-medium">The Unspoken Aura by Sahil Dhinwa</p>
+                <p className="text-xs text-gray-500 font-medium">{viewingAsset.title} by {viewingAsset.author}</p>
               </div>
             </div>
             
             <button 
-              onClick={() => setViewingPdf(null)}
+              onClick={() => setViewingAsset(null)}
               className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
             >
               <X className="w-4 h-4" /> Close Reader
@@ -274,9 +292,9 @@ export default function EBooksDirectory() {
           {/* PDF Iframe Viewer */}
           <div className="flex-grow w-full h-full p-0 sm:p-6 bg-gray-100/50">
             <iframe 
-              src={`${viewingPdf}#toolbar=0`} 
+              src={`${viewingAsset.fileUrl}#toolbar=0`} 
               className="w-full h-full sm:rounded-sm shadow-2xl border border-surfaceBorder bg-white"
-              title="Career GPS E-Reader"
+              title={`Reading ${viewingAsset.title}`}
             />
           </div>
         </div>
@@ -284,4 +302,4 @@ export default function EBooksDirectory() {
 
     </div>
   );
-}
+              }
