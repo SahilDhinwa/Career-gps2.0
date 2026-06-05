@@ -8,13 +8,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, User, ArrowRight, ShieldCheck, Chrome } from "lucide-react";
 
-// We separate the form into its own component so we can wrap it in <Suspense>.
-// This is required by Next.js when using useSearchParams() to read the URL.
 function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
-  // THE RETURN TICKET: Grabs the exact page they came from, or defaults to the profile
   const redirectUrl = searchParams.get("redirect") || "/profile";
 
   const [name, setName] = useState("");
@@ -23,21 +19,24 @@ function SignupForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Helper function to safely build the user's database document
   const createFirestoreUser = async (user: any, displayName: string | null) => {
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-    
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email,
-        displayName: displayName || "Scholarship Applicant",
-        createdAt: new Date().toISOString(),
-        isPremium: false,
-        roadmapProgress: {},
-        checklistProgress: {}
-      });
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: displayName || "Scholarship Applicant",
+          createdAt: new Date().toISOString(),
+          isPremium: false,
+          roadmapProgress: {},
+          checklistProgress: {}
+        });
+      }
+    } catch (dbErr) {
+      console.warn("Silent DB creation delayed.");
     }
   };
 
@@ -47,41 +46,39 @@ function SignupForm() {
     setError("");
 
     try {
-      // 1. Create Auth Account
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // 2. Add their Name to Auth
       await updateProfile(userCredential.user, { displayName: name });
-      
-      // 3. Build their Database Document
       await createFirestoreUser(userCredential.user, name);
-      
-      // 4. Teleport them back using the Return Ticket!
       router.push(redirectUrl);
     } catch (err: any) {
       console.error(err);
-      setError("Failed to create an account. Please check your details.");
-    } finally {
+      setError("Failed to create an account. Password must be 6+ chars.");
       setIsLoading(false);
-    }
+    } 
   };
 
   const handleGoogleSignup = async () => {
     setIsLoading(true);
     setError("");
     
+    let user;
+    
+    // STEP 1: Handle Auth Safely
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
-      await createFirestoreUser(userCredential.user, userCredential.user.displayName);
-      
-      // Teleport them back!
-      router.push(redirectUrl);
+      user = userCredential.user;
     } catch (err: any) {
-      console.error(err);
-      setError("Google sign-in failed. Please try again.");
-    } finally {
+      console.error("Auth Error:", err);
+      setError("Google popup closed or blocked. Please try again.");
       setIsLoading(false);
+      return;
     }
+
+    // STEP 2: Handle DB Silently
+    await createFirestoreUser(user, user.displayName);
+    
+    // STEP 3: Teleport!
+    router.push(redirectUrl);
   };
 
   return (
@@ -164,7 +161,6 @@ function SignupForm() {
 
       <p className="text-center text-sm text-gray-600 font-medium">
         Already have an account?{" "}
-        {/* We pass the return ticket to the login page too, just in case they clicked the wrong button! */}
         <Link href={`/login?redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
           Log in
         </Link>
@@ -177,15 +173,12 @@ function SignupForm() {
   );
 }
 
-// The main page component that houses the background and the form
 export default function SignupPage() {
   return (
     <div className="min-h-screen bg-[#FBFBF9] flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Subtle background decoration */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-warning/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
       
-      {/* We wrap the form in Suspense because it reads URL parameters */}
       <Suspense fallback={
         <div className="w-full max-w-md bg-white p-8 rounded-sm shadow-xl border border-surfaceBorder flex justify-center py-20">
            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
