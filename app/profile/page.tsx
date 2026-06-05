@@ -68,30 +68,60 @@ export default function UserProfile() {
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    if (file.size > 1048576) {
-      alert("Image is too large. Please upload an image smaller than 1MB.");
+    if (file.size > 2097152) {
+      alert("Image is too large. Please upload an image smaller than 2MB.");
       return;
     }
 
     setIsUploading(true);
     try {
+      // Show instant preview
       const localImageUrl = URL.createObjectURL(file);
       setProfilePic(localImageUrl);
 
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      
-      reader.onloadend = async () => {
+      // Create an image object to draw on the canvas
+      const img = new Image();
+      img.src = localImageUrl;
+
+      img.onload = async () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Calculate new dimensions (Max 400x400 for a profile picture)
+        const MAX_WIDTH = 400;
+        const MAX_HEIGHT = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        // Resize the canvas and draw the image
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // Compress to JPEG with 70% quality (This shrinks the Base64 string safely below 100KB)
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
         try {
-          const base64String = reader.result as string;
           const userRef = doc(db, "users", user.uid);
-          await setDoc(userRef, { photoURL: base64String }, { merge: true });
+          await setDoc(userRef, { photoURL: compressedBase64 }, { merge: true });
           try {
-            await updateProfile(user, { photoURL: base64String });
+            await updateProfile(user, { photoURL: compressedBase64 });
           } catch (authError) {
             console.warn("Auth profile limit reached, but safely stored in Firestore.");
           }
