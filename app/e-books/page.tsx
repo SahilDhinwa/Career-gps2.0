@@ -23,85 +23,100 @@ const careerAssets = [
 export default function EBooksDirectory() {
   // STATE TO CONTROL THE IN-PAGE E-READER
   const [viewingPdf, setViewingPdf] = useState<string | null>(null);
-  
-  // Grid generator for the background
-  const gridTiles = Array.from({ length: 144 });
 
   return (
     <div className="min-h-screen bg-[#FBFBF9] relative overflow-hidden flex flex-col">
       
-      {/* INLINE STYLES FOR FLOATING GLASS ISOMETRIC GRID */}
+      {/* INLINE STYLES FOR EMERALD VERTICAL GLASS TRANSITIONS */}
       <style dangerouslySetInnerHTML={{__html: `
-        .glass-environment {
+        .emerald-vault {
           position: fixed;
           inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          perspective: 1200px;
+          overflow: hidden;
+          perspective: 1500px;
           z-index: 0;
           pointer-events: none;
         }
 
-        .isometric-plane {
-          display: grid;
-          grid-template-columns: repeat(12, 100px);
-          grid-template-rows: repeat(12, 100px);
-          gap: 16px;
+        .emerald-panel {
+          position: absolute;
+          border-radius: 16px;
+          /* The Emerald Glassmorphism Effect */
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 66, 50, 0.02) 100%);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          /* Lighting: Bright top/left edges, deep emerald bottom/right */
+          border-top: 1px solid rgba(255, 255, 255, 0.6);
+          border-left: 1px solid rgba(255, 255, 255, 0.6);
+          border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+          border-right: 1px solid rgba(16, 185, 129, 0.3);
+          box-shadow: 
+            0 25px 50px -12px rgba(17, 66, 50, 0.15),
+            inset 0 0 40px rgba(16, 185, 129, 0.05);
           transform-style: preserve-3d;
-          transform: rotateX(60deg) rotateZ(-45deg) translateZ(-50px);
         }
 
-        .glass-tile {
-          width: 100%;
-          height: 100%;
-          border-radius: 12px;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.4) 100%);
-          border-top: 1.5px solid rgba(255, 255, 255, 1);
-          border-left: 1.5px solid rgba(255, 255, 255, 1);
-          border-bottom: 1px solid rgba(17, 66, 50, 0.05);
-          border-right: 1px solid rgba(17, 66, 50, 0.05);
-          box-shadow: 
-            -8px 8px 15px rgba(0, 0, 0, 0.03),
-            -15px 15px 30px rgba(17, 66, 50, 0.08);
-          animation: glass-wave 5s ease-in-out infinite;
+        /* 
+          ANIMATIONS: We use 5 distinct panels spanning the height of the screen.
+          They slowly rotate on the Y-axis (like opening doors) and float vertically.
+        */
+        
+        .panel-1 {
+          width: 18vw; height: 85vh; top: -10%; left: 5%;
+          animation: pivot-glass-1 25s ease-in-out infinite alternate;
+        }
+        .panel-2 {
+          width: 25vw; height: 90vh; top: 15%; left: 25%;
+          /* A touch of gold glass mixed into the emerald */
+          background: linear-gradient(135deg, rgba(212, 175, 55, 0.06) 0%, rgba(16, 185, 129, 0.02) 100%);
+          border-top: 1px solid rgba(212, 175, 55, 0.3);
+          animation: pivot-glass-2 30s ease-in-out infinite alternate-reverse;
+        }
+        .panel-3 {
+          width: 15vw; height: 75vh; top: 5%; left: 55%;
+          animation: pivot-glass-3 20s ease-in-out infinite alternate;
+        }
+        .panel-4 {
+          width: 20vw; height: 110vh; top: -5%; right: 5%;
+          animation: pivot-glass-4 35s ease-in-out infinite alternate-reverse;
+        }
+        .panel-5 {
+          width: 30vw; height: 60vh; bottom: -10%; left: 40%;
+          animation: pivot-glass-5 28s ease-in-out infinite alternate;
         }
 
-        .gold-glass {
-          background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.02) 100%);
-          border-top: 1.5px solid rgba(212, 175, 55, 0.4);
-          border-left: 1.5px solid rgba(212, 175, 55, 0.4);
-          box-shadow: 
-            -8px 8px 15px rgba(212, 175, 55, 0.05),
-            -15px 15px 30px rgba(212, 175, 55, 0.1);
+        @keyframes pivot-glass-1 {
+          0% { transform: rotateY(-35deg) rotateZ(5deg) translateY(0); }
+          100% { transform: rotateY(25deg) rotateZ(-2deg) translateY(40px); }
         }
-
-        @keyframes glass-wave {
-          0%, 100% { transform: translateZ(0px); }
-          50% { transform: translateZ(50px); }
+        @keyframes pivot-glass-2 {
+          0% { transform: rotateY(20deg) rotateZ(-3deg) translateY(20px); }
+          100% { transform: rotateY(-30deg) rotateZ(4deg) translateY(-30px); }
+        }
+        @keyframes pivot-glass-3 {
+          0% { transform: rotateY(-15deg) rotateX(10deg) translateY(-20px); }
+          100% { transform: rotateY(40deg) rotateX(-5deg) translateY(20px); }
+        }
+        @keyframes pivot-glass-4 {
+          0% { transform: rotateY(35deg) rotateZ(2deg) translateY(0); }
+          100% { transform: rotateY(-20deg) rotateZ(-4deg) translateY(-50px); }
+        }
+        @keyframes pivot-glass-5 {
+          0% { transform: rotateX(45deg) rotateY(-10deg) translateX(0); }
+          100% { transform: rotateX(20deg) rotateY(25deg) translateX(-40px); }
         }
       `}} />
 
-      {/* Layer 1: The 3D Glass Environment */}
-      <div className="glass-environment">
-        <div className="isometric-plane">
-          {gridTiles.map((_, i) => {
-            const row = Math.floor(i / 12);
-            const col = i % 12;
-            const delay = (row + col) * 0.15; 
-            const isGold = (row * col) % 17 === 0;
-
-            return (
-              <div 
-                key={i} 
-                className={`glass-tile ${isGold ? 'gold-glass' : ''}`} 
-                style={{ animationDelay: `${delay}s` }}
-              ></div>
-            );
-          })}
-        </div>
+      {/* Layer 1: The Rotating Emerald Glass Environment */}
+      <div className="emerald-vault">
+        <div className="emerald-panel panel-1"></div>
+        <div className="emerald-panel panel-2"></div>
+        <div className="emerald-panel panel-3"></div>
+        <div className="emerald-panel panel-4"></div>
+        <div className="emerald-panel panel-5"></div>
       </div>
 
+      {/* Foreground Content */}
       <div className="relative z-10 flex-grow py-16 px-6">
         <div className="max-w-6xl mx-auto">
           
@@ -121,7 +136,7 @@ export default function EBooksDirectory() {
           {/* E-Books Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {careerAssets.map((asset) => (
-              <div key={asset.id} className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group">
+              <div key={asset.id} className="bg-white/80 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group">
                 
                 {/* Left Side: 3D Royal Credit Card Book Cover Area */}
                 <div className={`sm:w-2/5 p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
@@ -171,7 +186,7 @@ export default function EBooksDirectory() {
                 </div>
 
                 {/* Right Side: Copy & Checkout */}
-                <div className="p-8 sm:w-3/5 flex flex-col">
+                <div className="p-8 sm:w-3/5 flex flex-col relative z-10">
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-xs font-bold bg-warning/10 text-warning px-2 py-1 rounded-sm uppercase tracking-wider shadow-sm">
                       {asset.tag}
