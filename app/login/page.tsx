@@ -1,5 +1,6 @@
 "use client";
 
+import { Mail, Lock, ArrowRight, ShieldCheck, Chrome, Compass } from "lucide-react";
 import { useState, Suspense } from "react";
 import { auth, db, googleProvider } from "../../lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
