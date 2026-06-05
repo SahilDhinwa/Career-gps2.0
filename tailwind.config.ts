@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class", // THIS IS THE MAGIC KEY
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,14 +8,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "#FBFBF9", // A rich, very subtle warm off-white (Royal Cream)
-        foreground: "#0B1410", // Near-black forest green for highly readable text
-        primary: "#114232", // Deep Royal Dark Green (Hero color for buttons/borders)
-        primaryHover: "#0A291F", // Darker shade for hover effects
-        success: "#2A9D8F", // Sea Green (Used for completion checkmarks and progress bars)
-        warning: "#D4AF37", // Muted Royal Gold (Replaces the harsh yellow for warnings/deadlines)
-        surface: "#FFFFFF", // Pure white for cards
-        surfaceBorder: "#E2E6E3", // Soft green-tinted grey for borders
+        background: "var(--background)", 
+        foreground: "var(--foreground)", 
+        primary: "var(--primary)", 
+        primaryHover: "var(--primaryHover)", 
+        success: "var(--success)", 
+        warning: "var(--warning)", 
+        surface: "var(--surface)", 
+        surfaceBorder: "var(--surfaceBorder)", 
       },
       fontFamily: {
         heading: ["var(--font-syne)", "sans-serif"],
