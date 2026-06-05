@@ -24,7 +24,7 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isPremium, setIsPremium] = useState(false);
-
+  
   let baseRoadmap = masterRoadmap;
   let locationTag = "Global Institutions";
   let levelTag = "MASTER'S LEVEL";
@@ -38,11 +38,17 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
   } else if (params.id.includes("daad")) {
     baseRoadmap = daadRoadmap;
     locationTag = "Germany • Global Institutions";
-  } else if (params.id.includes("mext")) {
+  } else if (params.id === "mext-ug") {
+    // Explicitly targets the MEXT Undergraduate pathway
     baseRoadmap = mextUgRoadmap;
     locationTag = "Japan • Global Institutions";
-    levelTag = params.id.includes("ug") ? "UG LEVEL" : "MASTER'S LEVEL";
-  } else if (params.id.includes("fulbright")) { 
+    levelTag = "UG LEVEL";
+  } else if (params.id === "mext-phd") {
+    // Explicitly targets the MEXT PhD pathway
+    baseRoadmap = masterRoadmap; // WARNING: Replace this with `mextPhdRoadmap` once you add it to roadmaps.ts
+    locationTag = "Japan • Target Universities";
+    levelTag = "PHD / RESEARCH LEVEL";
+  } else if (params.id.includes("fulbright")) {
     baseRoadmap = fulbrightRoadmap;
     locationTag = "United States • USIEF";
     levelTag = "MASTER'S & DOCTORAL LEVEL";
@@ -50,7 +56,7 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     baseRoadmap = ugRoadmap;
     levelTag = "UG LEVEL";
   }
-
+  
   const [stages, setStages] = useState<any[]>(
     baseRoadmap.map(stage => ({ ...stage, status: stage.id === 1 ? "active" : "locked" }))
   );
