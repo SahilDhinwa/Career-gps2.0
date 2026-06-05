@@ -5,11 +5,17 @@ import { auth, db } from "../../lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged, signOut, User, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2 } from "lucide-react";
+import { useTheme } from "next-themes"; // IMPORTED THEME ENGINE
+import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
 export default function UserProfile() {
   const router = useRouter();
+  
+  // THEME ENGINE STATE
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +26,8 @@ export default function UserProfile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setMounted(true); // Ensures the theme toggle only loads after the browser mounts (fixes hydration)
+    
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         router.push("/login");
@@ -81,29 +89,19 @@ export default function UserProfile() {
       reader.onloadend = async () => {
         try {
           const base64String = reader.result as string;
-          
           const userRef = doc(db, "users", user.uid);
           await setDoc(userRef, { photoURL: base64String }, { merge: true });
-          
           try {
             await updateProfile(user, { photoURL: base64String });
           } catch (authError) {
             console.warn("Auth profile limit reached, but safely stored in Firestore.");
           }
-
         } catch (error) {
           console.error("Failed to save image to database:", error);
-          alert("Failed to save image. Please try again.");
         } finally {
           setIsUploading(false);
         }
       };
-      
-      reader.onerror = () => {
-        console.error("Failed to read file.");
-        setIsUploading(false);
-      };
-
     } catch (error) {
       console.error("Error setting up image upload:", error);
       setIsUploading(false);
@@ -141,26 +139,24 @@ export default function UserProfile() {
   const roadmapProgress = userData?.roadmapProgress || {};
 
   return (
-    <div className="min-h-screen bg-[#FBFBF9] py-16 px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-background py-16 px-6 relative overflow-hidden transition-colors duration-300">
       
-      {/* STRIPPED AND CLEANED HEX-MESH BACKGROUND */}
+      {/* Clean Hex-Mesh Background */}
       <style dangerouslySetInnerHTML={{__html: `
         .bg-hex-mesh {
-          /* Changed fill to #D4AF37 (Gold) and opacity to an ultra-faint 0.055 */
           background-image: url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4AF37' fill-opacity='0.035' fill-rule='evenodd'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/svg%3E");
         }
       `}} />
-
-      {/* Static Single-Color Background Layer */}
       <div className="absolute inset-0 bg-hex-mesh pointer-events-none z-0"></div>
 
       <div className="max-w-5xl mx-auto relative z-10">
         
-        <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8">
+        {/* HEADER CARD */}
+        <div className="bg-surface/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transition-colors duration-300">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
             
             <div 
-              className="relative w-24 h-24 rounded-full border-4 border-white shadow-lg shrink-0 group cursor-pointer overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
+              className="relative w-24 h-24 rounded-full border-4 border-surface shadow-lg shrink-0 group cursor-pointer overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center"
               onClick={() => fileInputRef.current?.click()}
             >
               {profilePic ? (
@@ -169,43 +165,42 @@ export default function UserProfile() {
               ) : (
                 <UserIcon className="w-10 h-10 text-gray-400" />
               )}
-              
               <div className={`absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${isUploading ? 'opacity-100' : ''}`}>
-                {isUploading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <Camera className="w-6 h-6 text-white" />
-                )}
+                {isUploading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Camera className="w-6 h-6 text-white" />}
               </div>
-              
-              <input 
-                type="file" 
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/png, image/jpeg, image/webp"
-                className="hidden" 
-              />
+              <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/png, image/jpeg, image/webp" className="hidden" />
             </div>
 
             <div>
               <h1 className="font-heading text-3xl font-bold text-foreground mb-1">
                 {userData?.displayName || user?.displayName || "Scholarship Applicant"}
               </h1>
-              <p className="text-gray-500 font-medium mb-3">{user?.email}</p>
+              <p className="text-foreground/60 font-medium mb-3">{user?.email}</p>
               
               {isPremium ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-warning/10 text-xs font-bold text-warning uppercase tracking-wider border border-warning/30 shadow-sm">
                   <Crown className="w-3.5 h-3.5" /> Premium Member
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider border border-gray-200">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-surfaceBorder/30 text-xs font-bold text-foreground/60 uppercase tracking-wider border border-surfaceBorder">
                   Free Tier
                 </span>
               )}
             </div>
           </div>
 
+          {/* ACTION BUTTONS (Sign out + Dark Mode) */}
           <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
+            {mounted && (
+              <button 
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="w-full md:w-auto px-6 py-3 bg-surface border border-surfaceBorder text-foreground font-bold rounded-sm hover:bg-foreground/5 transition-colors flex items-center justify-center gap-2 shadow-sm"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-primary" />}
+                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              </button>
+            )}
+
             {!isPremium && (
               <div className="w-full">
                 <PremiumPaymentButton />
@@ -213,18 +208,18 @@ export default function UserProfile() {
             )}
             <button 
               onClick={handleLogout}
-              className="w-full md:w-auto px-6 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="w-full md:w-auto px-6 py-3 bg-surface border border-surfaceBorder text-foreground font-bold rounded-sm hover:bg-foreground/5 transition-colors flex items-center justify-center gap-2 shadow-sm"
             >
               <LogOut className="w-4 h-4" /> Sign Out
             </button>
           </div>
         </div>
 
+        {/* METRICS & ROADMAPS */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           <div className="lg:col-span-2 space-y-8">
-            
-            <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8">
+            <div className="bg-surface/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8 transition-colors duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <Activity className="w-6 h-6 text-primary" />
                 <h2 className="font-heading text-2xl font-bold text-foreground">Active Roadmaps</h2>
@@ -233,16 +228,16 @@ export default function UserProfile() {
               {Object.keys(roadmapProgress).length > 0 ? (
                 <div className="space-y-4">
                   {Object.entries(roadmapProgress).map(([id, stage]: [string, any]) => (
-                    <div key={id} className="border border-gray-100 rounded-sm p-5 hover:border-primary/30 transition-colors bg-white shadow-sm">
+                    <div key={id} className="border border-surfaceBorder rounded-sm p-5 hover:border-primary/30 transition-colors bg-surface shadow-sm">
                       <div className="flex justify-between items-center mb-3">
-                        <h3 className="font-bold text-gray-800 capitalize flex items-center gap-2">
+                        <h3 className="font-bold text-foreground capitalize flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-primary" /> {id.replace(/-/g, " ")}
                         </h3>
-                        <span className="text-xs font-bold bg-gray-50 border border-gray-200 px-2 py-1 rounded-sm text-gray-600">
+                        <span className="text-xs font-bold bg-foreground/5 border border-surfaceBorder px-2 py-1 rounded-sm text-foreground/70">
                           Stage {stage}
                         </span>
                       </div>
-                      <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mb-4 border border-gray-200">
+                      <div className="w-full bg-surfaceBorder h-1.5 rounded-full overflow-hidden mb-4 border border-surfaceBorder">
                         <div 
                           className="bg-primary h-full transition-all duration-500" 
                           style={{ width: `${Math.min((stage / 10) * 100, 100)}%` }}
@@ -258,12 +253,12 @@ export default function UserProfile() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 bg-white border border-gray-100 rounded-sm shadow-sm">
-                  <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium mb-4">You haven&apos;t started any application roadmaps yet.</p>
+                <div className="text-center py-10 bg-surface border border-surfaceBorder rounded-sm shadow-sm">
+                  <MapPin className="w-8 h-8 text-foreground/20 mx-auto mb-3" />
+                  <p className="text-foreground/60 font-medium mb-4">You haven&apos;t started any application roadmaps yet.</p>
                   <button 
                     onClick={() => router.push("/scholarships")}
-                    className="bg-gray-900 text-white font-bold py-2 px-6 rounded-sm hover:bg-primary transition-colors inline-block"
+                    className="bg-foreground text-background font-bold py-2 px-6 rounded-sm hover:bg-primary transition-colors inline-block"
                   >
                     Explore Scholarships
                   </button>
@@ -271,7 +266,7 @@ export default function UserProfile() {
               )}
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8">
+            <div className="bg-surface/90 backdrop-blur-sm border border-surfaceBorder rounded-sm shadow-md p-8 transition-colors duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <ListChecks className="w-6 h-6 text-primary" />
                 <h2 className="font-heading text-2xl font-bold text-foreground">Checklist Command Center</h2>
@@ -281,20 +276,18 @@ export default function UserProfile() {
                 <div className="space-y-6">
                   {Object.entries(checklistData).map(([roadmapId, items]) => {
                     if (items.length === 0) return null; 
-                    
                     return (
-                      <div key={roadmapId} className="bg-white border border-gray-100 rounded-sm p-4 shadow-sm">
-                        <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                      <div key={roadmapId} className="bg-surface border border-surfaceBorder rounded-sm p-4 shadow-sm">
+                        <h4 className="font-bold text-sm text-foreground uppercase tracking-wider mb-4 border-b border-surfaceBorder pb-2">
                           {roadmapId.replace(/-/g, " ")}
                         </h4>
                         <ul className="space-y-2">
                           {items.map((item, index) => (
-                            <li key={index} className="flex justify-between items-start gap-4 p-2 hover:bg-gray-50 rounded-sm group transition-colors">
-                              <span className="text-sm font-medium text-gray-600 flex-1">{item}</span>
+                            <li key={index} className="flex justify-between items-start gap-4 p-2 hover:bg-foreground/5 rounded-sm group transition-colors">
+                              <span className="text-sm font-medium text-foreground/80 flex-1">{item}</span>
                               <button 
                                 onClick={() => handleRemoveChecklistItem(roadmapId, item)}
-                                className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
-                                title="Remove from checklist"
+                                className="text-foreground/40 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -306,20 +299,17 @@ export default function UserProfile() {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-10 bg-white border border-gray-100 rounded-sm shadow-sm">
-                  <ListChecks className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium">Your checked tasks will appear here.</p>
+                <div className="text-center py-10 bg-surface border border-surfaceBorder rounded-sm shadow-sm">
+                  <ListChecks className="w-8 h-8 text-foreground/20 mx-auto mb-3" />
+                  <p className="text-foreground/60 font-medium">Your checked tasks will appear here.</p>
                 </div>
               )}
             </div>
-
           </div>
 
           <div className="space-y-8">
-            
-            <div className="bg-gradient-to-br from-gray-900 to-black rounded-sm shadow-xl p-8 border border-gray-800 relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-gray-900 to-black dark:from-black dark:to-gray-900 rounded-sm shadow-xl p-8 border border-gray-800 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-              
               <div className="flex items-center gap-3 mb-4 relative z-10">
                 <BookOpen className="w-5 h-5 text-warning" />
                 <h2 className="font-heading text-xl font-bold text-white">Career Assets</h2>
@@ -335,12 +325,11 @@ export default function UserProfile() {
               </button>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm border border-surfaceBorder rounded-sm p-6 text-center shadow-md">
+            <div className="bg-surface/90 backdrop-blur-sm border border-surfaceBorder rounded-sm p-6 text-center shadow-md transition-colors duration-300">
               <ShieldCheck className="w-8 h-8 text-success mx-auto mb-3" />
-              <h3 className="font-bold text-gray-800 mb-1">Secure Account</h3>
-              <p className="text-xs text-gray-500 font-medium">Your data and application progress are securely synced to the cloud.</p>
+              <h3 className="font-bold text-foreground mb-1">Secure Account</h3>
+              <p className="text-xs text-foreground/60 font-medium">Your data and application progress are securely synced to the cloud.</p>
             </div>
-
           </div>
 
         </div>
