@@ -3,7 +3,6 @@
 import { Download, Sparkles, Star, ShieldCheck, Eye, X, BookOpen } from "lucide-react";
 import { useState } from "react";
 
-// 1. THE DIGITAL ASSET DICTIONARY
 const careerAssets = [
   {
     id: "unspoken-aura",
@@ -20,7 +19,7 @@ const careerAssets = [
     coverBgImage: "/unspoken-aura-bg.jpg", 
     fileUrl: "/The Glass World.pdf" 
   },
-    {
+  {
     id: "invisible-art",
     title: "The Invisible Art of Speaking",
     coverTitle: "The Invisible Art\nof Speaking",
@@ -32,14 +31,11 @@ const careerAssets = [
     originalPrice: "₹1,299",
     tag: "New Release",
     color: "from-[#022c22] to-black", 
-    // Change the line below to match your new image file in the public folder
     coverBgImage: "/the_invisible_art.jpg", 
     fileUrl: "/The_Invisible_Art_of_Speaking.pdf" 
-}
-
+  }
 ];
 
-// Interface for type safety in the modal
 interface Asset {
   title: string;
   author: string;
@@ -47,13 +43,11 @@ interface Asset {
 }
 
 export default function EBooksDirectory() {
-  // STATE TO CONTROL THE IN-PAGE E-READER
   const [viewingAsset, setViewingAsset] = useState<Asset | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#FBFBF9] relative overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col transition-colors duration-300">
       
-      {/* INLINE STYLES FOR EMERALD VERTICAL GLASS TRANSITIONS */}
       <style dangerouslySetInnerHTML={{__html: `
         .emerald-vault {
           position: fixed;
@@ -70,10 +64,10 @@ export default function EBooksDirectory() {
           background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 66, 50, 0.02) 100%);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          border-top: 1px solid rgba(255, 255, 255, 0.6);
-          border-left: 1px solid rgba(255, 255, 255, 0.6);
-          border-bottom: 1px solid rgba(16, 185, 129, 0.3);
-          border-right: 1px solid rgba(16, 185, 129, 0.3);
+          border-top: 1px solid rgba(16, 185, 129, 0.3);
+          border-left: 1px solid rgba(16, 185, 129, 0.3);
+          border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+          border-right: 1px solid rgba(16, 185, 129, 0.1);
           box-shadow: 
             0 25px 50px -12px rgba(17, 66, 50, 0.15),
             inset 0 0 40px rgba(16, 185, 129, 0.05);
@@ -125,7 +119,6 @@ export default function EBooksDirectory() {
         }
       `}} />
 
-      {/* Layer 1: The Rotating Emerald Glass Environment */}
       <div className="emerald-vault">
         <div className="emerald-panel panel-1"></div>
         <div className="emerald-panel panel-2"></div>
@@ -134,33 +127,28 @@ export default function EBooksDirectory() {
         <div className="emerald-panel panel-5"></div>
       </div>
 
-      {/* Foreground Content */}
       <div className="relative z-10 flex-grow py-16 px-6">
         <div className="max-w-6xl mx-auto">
           
-          {/* Header Section */}
           <div className="mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-6 shadow-sm">
               <Sparkles className="w-4 h-4 text-warning" /> Free Resources
             </div>
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4 drop-shadow-sm">
               Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Career Assets</span>
             </h1>
-            <p className="text-lg text-gray-600 font-medium max-w-2xl bg-white/40 backdrop-blur-[2px] rounded-lg p-2">
+            <p className="text-lg text-foreground/70 font-medium max-w-2xl bg-surface/40 backdrop-blur-[2px] rounded-lg p-2">
               Download our exclusive guides and frameworks. Completely free, no login required. Master the soft skills you need to secure your global seat.
             </p>
           </div>
 
-          {/* E-Books Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {careerAssets.map((asset) => (
-              <div key={asset.id} className="bg-white/80 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group">
+              <div key={asset.id} className="bg-surface/80 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group">
                 
-                {/* Left Side: 3D Royal Credit Card Book Cover Area */}
                 <div className={`sm:w-2/5 p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
                   <div className="absolute top-0 right-0 w-48 h-48 bg-warning/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                   
-                  {/* The Credit Card Ratio Cover */}
                   <div 
                     className="w-3/4 aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-6 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
                     style={{
@@ -180,7 +168,6 @@ export default function EBooksDirectory() {
                     </div>
 
                     <div className="relative z-10 text-center mb-4">
-                      {/* Using whitespace-pre-line to respect the \n in coverTitle */}
                       <h3 className="font-heading font-bold text-white text-2xl md:text-3xl leading-tight mb-2 drop-shadow-lg whitespace-pre-line">
                         {asset.coverTitle}
                       </h3>
@@ -190,12 +177,10 @@ export default function EBooksDirectory() {
                       <div className="w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
                     </div>
                     
-                    {/* Bottom Subtitle & Author Name */}
                     <div className="relative z-10 text-center mt-auto pt-4">
                       <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-2">
                         A Guide for the Real World
                       </p>
-                      {/* The Royal Author Tag */}
                       <div className="inline-block border-t border-white/20 pt-2">
                         <p className="text-xs font-bold text-white tracking-[0.2em] uppercase drop-shadow-md">
                           {asset.author}
@@ -205,7 +190,6 @@ export default function EBooksDirectory() {
                   </div>
                 </div>
 
-                {/* Right Side: Copy & Checkout */}
                 <div className="p-8 sm:w-3/5 flex flex-col relative z-10">
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-xs font-bold bg-warning/10 text-warning px-2 py-1 rounded-sm uppercase tracking-wider shadow-sm">
@@ -216,26 +200,24 @@ export default function EBooksDirectory() {
                     </div>
                   </div>
 
-                  <h2 className="font-heading text-2xl font-bold text-gray-900 mb-1">{asset.title}</h2>
+                  <h2 className="font-heading text-2xl font-bold text-foreground mb-1">{asset.title}</h2>
                   
-                  {/* Author Name in Details */}
-                  <p className="text-sm font-medium text-gray-500 mb-2">
+                  <p className="text-sm font-medium text-foreground/50 mb-2">
                     By <span className="text-primary font-bold">{asset.author}</span>
                   </p>
 
                   <p className="text-primary font-medium text-sm mb-4">{asset.subtitle}</p>
                   
-                  <p className="text-gray-600 text-sm mb-8 flex-grow leading-relaxed">
+                  <p className="text-foreground/70 text-sm mb-8 flex-grow leading-relaxed">
                     {asset.description}
                   </p>
 
                   <div className="mt-auto">
                     <div className="flex items-end gap-3 mb-4">
                       <span className="text-2xl font-bold text-success drop-shadow-sm">{asset.price}</span>
-                      <span className="text-sm font-medium text-gray-400 line-through mb-1">{asset.originalPrice}</span>
+                      <span className="text-sm font-medium text-foreground/40 line-through mb-1">{asset.originalPrice}</span>
                     </div>
 
-                    {/* DUAL-ACTION BUTTONS (Read Online vs Download) */}
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button 
                         onClick={() => setViewingAsset(asset)}
@@ -255,7 +237,7 @@ export default function EBooksDirectory() {
                       </a>
                     </div>
                     
-                    <p className="text-center text-xs text-gray-500 mt-4 font-medium flex items-center justify-center gap-1">
+                    <p className="text-center text-xs text-foreground/50 mt-4 font-medium flex items-center justify-center gap-1">
                       <ShieldCheck className="w-3 h-3 text-success" /> 100% Free • No Sign-Up Required
                     </p>
                   </div>
@@ -267,11 +249,9 @@ export default function EBooksDirectory() {
         </div>
       </div>
 
-      {/* THE IN-PAGE FULLSCREEN E-READER MODAL */}
       {viewingAsset && (
         <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
           
-          {/* Reader Top Navbar */}
           <div className="flex justify-between items-center p-4 border-b border-surfaceBorder bg-surface shadow-sm">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -279,20 +259,19 @@ export default function EBooksDirectory() {
               </div>
               <div>
                 <h3 className="font-heading font-bold text-foreground leading-tight">Career GPS E-Reader</h3>
-                <p className="text-xs text-gray-500 font-medium">{viewingAsset.title} by {viewingAsset.author}</p>
+                <p className="text-xs text-foreground/50 font-medium">{viewingAsset.title} by {viewingAsset.author}</p>
               </div>
             </div>
             
             <button 
               onClick={() => setViewingAsset(null)}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-surfaceBorder/30 hover:bg-surfaceBorder/50 text-foreground rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
             >
               <X className="w-4 h-4" /> Close Reader
             </button>
           </div>
 
-          {/* PDF Iframe Viewer */}
-          <div className="flex-grow w-full h-full p-0 sm:p-6 bg-gray-100/50">
+          <div className="flex-grow w-full h-full p-0 sm:p-6 bg-background">
             <iframe 
               src={`${viewingAsset.fileUrl}#toolbar=0`} 
               className="w-full h-full sm:rounded-sm shadow-2xl border border-surfaceBorder bg-white"
@@ -304,4 +283,4 @@ export default function EBooksDirectory() {
 
     </div>
   );
-              }
+}
