@@ -72,8 +72,8 @@ export default function UserProfile() {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    if (file.size > 2097152) {
-      alert("Image is too large. Please upload an image smaller than 2MB.");
+    if (file.size > 1048576) {
+      alert("Image is too large. Please upload an image smaller than 1MB.");
       return;
     }
 
