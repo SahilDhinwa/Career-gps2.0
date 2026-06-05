@@ -127,17 +127,17 @@ export default function EBooksDirectory() {
         <div className="emerald-panel panel-5"></div>
       </div>
 
-      <div className="relative z-10 flex-grow py-16 px-6">
+      <div className="relative z-10 flex-grow py-12 md:py-16 px-6">
         <div className="max-w-6xl mx-auto">
           
-          <div className="mb-16">
+          <div className="mb-12 md:mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-6 shadow-sm">
               <Sparkles className="w-4 h-4 text-warning" /> Free Resources
             </div>
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4 drop-shadow-sm">
               Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Career Assets</span>
             </h1>
-            <p className="text-lg text-foreground/70 font-medium max-w-2xl bg-surface/40 backdrop-blur-[2px] rounded-lg p-2">
+            <p className="text-base md:text-lg text-foreground/70 font-medium max-w-2xl bg-surface/40 backdrop-blur-[2px] rounded-lg p-2">
               Download our exclusive guides and frameworks. Completely free, no login required. Master the soft skills you need to secure your global seat.
             </p>
           </div>
@@ -146,11 +146,13 @@ export default function EBooksDirectory() {
             {careerAssets.map((asset) => (
               <div key={asset.id} className="bg-surface/80 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group">
                 
-                <div className={`sm:w-2/5 p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
+                {/* Book Cover Area */}
+                <div className={`sm:w-2/5 p-6 md:p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
                   <div className="absolute top-0 right-0 w-48 h-48 bg-warning/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                   
+                  {/* Fixed max-width so it doesn't blow up on phones */}
                   <div 
-                    className="w-3/4 aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-6 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
+                    className="w-2/3 sm:w-full max-w-[220px] aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-5 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
                     style={{
                       background: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9))`,
                       backgroundImage: `url(${asset.coverBgImage})`,
@@ -162,27 +164,27 @@ export default function EBooksDirectory() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10"></div>
                     
                     <div className="relative z-10 text-center mt-2">
-                      <p className="text-[10px] font-bold text-warning uppercase tracking-[0.3em] opacity-90">
+                      <p className="text-[9px] md:text-[10px] font-bold text-warning uppercase tracking-[0.3em] opacity-90">
                         Career GPS Exclusive
                       </p>
                     </div>
 
                     <div className="relative z-10 text-center mb-4">
-                      <h3 className="font-heading font-bold text-white text-2xl md:text-3xl leading-tight mb-2 drop-shadow-lg whitespace-pre-line">
+                      <h3 className="font-heading font-bold text-white text-xl md:text-2xl leading-tight mb-2 drop-shadow-lg whitespace-pre-line">
                         {asset.coverTitle}
                       </h3>
-                      <p className="text-xs text-gray-300 font-medium leading-relaxed px-2">
+                      <p className="text-[10px] md:text-xs text-gray-300 font-medium leading-relaxed px-1">
                         {asset.shortSubtitle}
                       </p>
-                      <div className="w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
+                      <div className="w-8 md:w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
                     </div>
                     
                     <div className="relative z-10 text-center mt-auto pt-4">
-                      <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-2">
+                      <p className="text-[8px] md:text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-2">
                         A Guide for the Real World
                       </p>
                       <div className="inline-block border-t border-white/20 pt-2">
-                        <p className="text-xs font-bold text-white tracking-[0.2em] uppercase drop-shadow-md">
+                        <p className="text-[10px] md:text-xs font-bold text-white tracking-[0.2em] uppercase drop-shadow-md">
                           {asset.author}
                         </p>
                       </div>
@@ -190,13 +192,14 @@ export default function EBooksDirectory() {
                   </div>
                 </div>
 
-                <div className="p-8 sm:w-3/5 flex flex-col relative z-10">
+                {/* Details & Actions */}
+                <div className="p-6 md:p-8 sm:w-3/5 flex flex-col relative z-10">
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-xs font-bold bg-warning/10 text-warning px-2 py-1 rounded-sm uppercase tracking-wider shadow-sm">
                       {asset.tag}
                     </span>
                     <div className="flex gap-1">
-                      {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-4 h-4 text-warning fill-current drop-shadow-sm" />)}
+                      {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 md:w-4 md:h-4 text-warning fill-current drop-shadow-sm" />)}
                     </div>
                   </div>
 
@@ -218,7 +221,7 @@ export default function EBooksDirectory() {
                       <span className="text-sm font-medium text-foreground/40 line-through mb-1">{asset.originalPrice}</span>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col xl:flex-row gap-3">
                       <button 
                         onClick={() => setViewingAsset(asset)}
                         className="flex-1 bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-colors flex items-center justify-center gap-2 shadow-md"
@@ -249,32 +252,34 @@ export default function EBooksDirectory() {
         </div>
       </div>
 
+      {/* THE RESPONSIVE IN-PAGE E-READER MODAL */}
       {viewingAsset && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
           
-          <div className="flex justify-between items-center p-4 border-b border-surfaceBorder bg-surface shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+          <div className="flex justify-between items-center p-4 md:p-6 border-b border-surfaceBorder bg-surface shadow-sm safe-top">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
                 <BookOpen className="w-5 h-5 text-primary" />
               </div>
-              <div>
-                <h3 className="font-heading font-bold text-foreground leading-tight">Career GPS E-Reader</h3>
-                <p className="text-xs text-foreground/50 font-medium">{viewingAsset.title} by {viewingAsset.author}</p>
+              <div className="truncate">
+                <h3 className="font-heading font-bold text-foreground leading-tight truncate">Career GPS E-Reader</h3>
+                <p className="text-xs text-foreground/50 font-medium truncate">{viewingAsset.title} by {viewingAsset.author}</p>
               </div>
             </div>
             
             <button 
               onClick={() => setViewingAsset(null)}
-              className="px-4 py-2 bg-surfaceBorder/30 hover:bg-surfaceBorder/50 text-foreground rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
+              className="px-4 py-2 ml-2 shrink-0 bg-surfaceBorder/30 hover:bg-surfaceBorder/50 text-foreground rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
             >
-              <X className="w-4 h-4" /> Close Reader
+              <X className="w-4 h-4" /> <span className="hidden sm:inline">Close</span>
             </button>
           </div>
 
-          <div className="flex-grow w-full h-full p-0 sm:p-6 bg-background">
+          {/* Absolute Inset-0: The Ultimate iOS Safari Iframe Fix */}
+          <div className="relative flex-grow w-full bg-background md:p-6">
             <iframe 
               src={`${viewingAsset.fileUrl}#toolbar=0`} 
-              className="w-full h-full sm:rounded-sm shadow-2xl border border-surfaceBorder bg-white"
+              className="absolute inset-0 w-full h-full md:rounded-sm md:shadow-2xl md:border border-surfaceBorder bg-white"
               title={`Reading ${viewingAsset.title}`}
             />
           </div>
