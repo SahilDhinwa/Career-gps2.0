@@ -2,11 +2,8 @@
 
 import Link from "next/link";
 import { Lock, MapPin, ArrowRight, Wallet, GraduationCap, Star, ShieldCheck, ArrowLeft, Compass } from "lucide-react";
-import { useState, useEffect } from "react";
-import { auth, db } from "../../../lib/firebase"; 
-import { doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
 import PremiumPaymentButton from "@/components/PremiumPaymentButton"; 
+import { useAuth } from "../../../context/AuthContext"; // NEW: Connect to the Global Brain
 
 // 1. THE UPDATED DATA DICTIONARY (Dark-Mode Ready Colors)
 const scholarshipData = {
@@ -107,37 +104,16 @@ const scholarshipData = {
 };
 
 export default function ScholarshipList({ params }: { params: { level: string } }) {
-  const [isPremium, setIsPremium] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!currentUser) {
-        setIsPremium(false);
-        setIsLoading(false);
-        return;
-      }
-      try {
-        const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setIsPremium(userSnap.data().isPremium || false);
-        }
-      } catch (error) {
-        console.error("Failed to fetch premium status", error);
-      } finally {
-        setIsLoading(false);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+  
+  // NEW: Pull Premium status instantly from the Brain instead of querying Firebase manually
+  const { isPremium, isLoading } = useAuth(); 
 
   const levelKey = params.level as keyof typeof scholarshipData;
   const currentScholarships = scholarshipData[levelKey] || scholarshipData.ug;
-
   const levelName = params.level === "ug" ? "Undergraduate (UG)" : params.level === "masters" ? "Master's" : "PhD";
-
-  return (
+  
+  // THE REST OF YOUR RETURN STATEMENT STAYS THE SAME BELOW THIS LINE!
+return (
     <div className="min-h-screen bg-background py-16 px-6 relative overflow-hidden transition-colors duration-300">
       
       {/* Ambient Background Orbs */}
