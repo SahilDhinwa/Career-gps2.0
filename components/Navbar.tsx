@@ -3,21 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { auth } from "../lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { Compass, User as UserIcon, Menu, X } from "lucide-react";
+import { useAuth } from "../context/AuthContext"; // NEW: Importing the Global Brain
+import { Compass, User as UserIcon, Menu, X, Loader2 } from "lucide-react"; // NEW: Added Loader2
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, userData, isLoading } = useAuth(); // NEW: Connecting to the Brain
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname(); // Get the current active route
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
 
   // Automatically close the mobile menu whenever the user navigates to a new page
   useEffect(() => {
@@ -61,12 +53,24 @@ export default function Navbar() {
 
         {/* RIGHT SIDE ACTIONS (Profile/Login + Hamburger Toggle) */}
         <div className="flex items-center gap-3 md:gap-4 z-50">
-          {user ? (
+          
+          {/* NEW LOGIC: Prevent the Flash! */}
+          {isLoading ? (
+            <div className="w-16 h-8 flex items-center justify-center">
+              <Loader2 className="w-4 h-4 animate-spin text-foreground/30" />
+            </div>
+          ) : user ? (
             <Link 
               href="/profile" 
               className="flex items-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground px-4 py-2 rounded-sm transition-colors font-bold text-sm border border-surfaceBorder"
             >
-              <UserIcon className="w-4 h-4" /> 
+              {/* NEW LOGIC: Live Avatar Updates! */}
+              {userData?.photoURL || user.photoURL ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={userData?.photoURL || user.photoURL} alt="Profile" className="w-5 h-5 rounded-full object-cover border border-surfaceBorder" />
+              ) : (
+                <UserIcon className="w-4 h-4" /> 
+              )}
               {/* Hide the word "Profile" on very small phones to save space */}
               <span className="hidden sm:inline">Profile</span>
             </Link>
@@ -119,7 +123,7 @@ export default function Navbar() {
           </Link>
 
           {/* Render Login/Signup in the mobile dropdown if the user is logged out */}
-          {!user && (
+          {!isLoading && !user && (
             <div className="pt-4 mt-2 border-t border-surfaceBorder flex flex-col gap-4 sm:hidden">
               <Link 
                 href={`/login?redirect=${encodeURIComponent(pathname)}`} 
