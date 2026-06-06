@@ -69,7 +69,7 @@ export default function AboutPage() {
               <Compass className="w-8 h-8 text-foreground/20 mx-auto mb-4" />
               <h3 className="font-heading text-xl font-bold text-foreground mb-3">The Origin Story</h3>
               <p className="text-foreground/70 font-medium leading-relaxed">
-                The full story behind Career GPS—from its roots in Chanana to becoming a global platform—is currently being documented. 
+                The full story behind Career GPS—from its roots in Hadota to becoming a global platform—is currently being documented. 
                 <br /><br />
                 Stay tuned for an inside look at how we are breaking down the invisible walls of international education for students in tier-2 and tier-3 cities.
               </p>
