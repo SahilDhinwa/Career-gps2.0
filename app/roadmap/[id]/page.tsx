@@ -2,10 +2,10 @@
 
 import { CheckCircle, Circle, MapPin, BookOpen, ChevronRight, CheckSquare, Square, Lock, Sparkles, Crown } from "lucide-react";
 import { useState, useEffect } from "react";
-import { auth, db } from "../../../lib/firebase"; 
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { db } from "../../../lib/firebase"; 
+import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../../context/AuthContext"; // NEW: Connect to the Global Brain
 import PremiumPaymentButton from "../../../components/PremiumPaymentButton"; 
 
 import { 
@@ -20,11 +20,12 @@ import {
 
 export default function RoadmapTracker({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [checkedItems, setCheckedItems] = useState<string[]>([]);
-  const [isPremium, setIsPremium] = useState(false);
   
+  // NEW: Pull all states seamlessly from the Global Brain
+  const { user, userData, isPremium, isLoading, refreshUserData } = useAuth(); 
+  
+  const [checkedItems, setCheckedItems] = useState<string[]>([]);
+
   let baseRoadmap = masterRoadmap;
   let locationTag = "Global Institutions";
   let levelTag = "MASTER'S LEVEL";
@@ -39,13 +40,11 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     baseRoadmap = daadRoadmap;
     locationTag = "Germany • Global Institutions";
   } else if (params.id === "mext-ug") {
-    // Explicitly targets the MEXT Undergraduate pathway
     baseRoadmap = mextUgRoadmap;
     locationTag = "Japan • Global Institutions";
     levelTag = "UG LEVEL";
   } else if (params.id === "mext-phd") {
-    // Explicitly targets the MEXT PhD pathway
-    baseRoadmap = masterRoadmap; // WARNING: Replace this with `mextPhdRoadmap` once you add it to roadmaps.ts
+    baseRoadmap = masterRoadmap; 
     locationTag = "Japan • Target Universities";
     levelTag = "PHD / RESEARCH LEVEL";
   } else if (params.id.includes("fulbright")) {
@@ -61,45 +60,23 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     baseRoadmap.map(stage => ({ ...stage, status: stage.id === 1 ? "active" : "locked" }))
   );
 
+  // NEW: Instantly syncs the UI whenever the Global Brain updates (like after a payment!)
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!currentUser) {
-        setUser(null);
-        setIsPremium(false);
+    if (!isLoading) {
+      if (!user) {
         setCheckedItems([]);
-        setIsLoading(false);
-        return;
+      } else {
+        const savedProgress = userData?.roadmapProgress?.[params.id] || 1; 
+        setStages(baseRoadmap.map(stage => ({
+          ...stage,
+          status: stage.id < savedProgress ? "completed" : stage.id === savedProgress ? "active" : "locked"
+        })));
+
+        const savedChecklist = userData?.checklistProgress?.[params.id] || [];
+        setCheckedItems(savedChecklist);
       }
-      
-      setUser(currentUser);
-
-      try {
-        const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          setIsPremium(data.isPremium || false);
-          
-          const savedProgress = data.roadmapProgress?.[params.id] || 1; 
-          setStages(baseRoadmap.map(stage => ({
-            ...stage,
-            status: stage.id < savedProgress ? "completed" : stage.id === savedProgress ? "active" : "locked"
-          })));
-
-          const savedChecklist = data.checklistProgress?.[params.id] || [];
-          setCheckedItems(savedChecklist);
-        }
-      } catch (error) {
-        console.error("Failed to fetch progress", error);
-      } finally {
-        setIsLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [params.id, baseRoadmap]);
-
+    }
+  }, [isLoading, user, userData, params.id, baseRoadmap]);
   const handleToggleCheck = async (item: string) => {
     if (!user) {
       router.push("/login");
@@ -114,6 +91,7 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     try {
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { [`checklistProgress.${params.id}`]: newCheckedItems }, { merge: true });
+      await refreshUserData(); // INSTANT SYNC: Tells the Brain to update the Profile Dashboard
     } catch (error) {
       console.error("Failed to save checklist item", error);
     }
@@ -135,6 +113,7 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     try {
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { [`roadmapProgress.${params.id}`]: nextStage }, { merge: true });
+      await refreshUserData(); // INSTANT SYNC: Tells the Brain to update the Profile Dashboard
     } catch (error) {
       console.error("Failed to save progress", error);
     }
@@ -377,4 +356,4 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
-                }
+}
