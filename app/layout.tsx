@@ -3,6 +3,7 @@ import { Syne, DM_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/Navbar'
 import { ThemeProvider } from '../components/ThemeProvider'
+import { AuthProvider } from '../context/AuthContext' // NEW: Import the Brain
 
 // 1. Configure the Heading Font (Syne)
 const syne = Syne({ 
@@ -39,13 +40,16 @@ export default function RootLayout({
           enableSystem 
           disableTransitionOnChange
         >
-          {/* The Global Navigation Bar */}
-          <Navbar />
-          
-          {/* The Dynamic Page Content */}
-          <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
-            {children}
-          </main>
+          {/* NEW: Wrap the App in the AuthProvider */}
+          <AuthProvider>
+            {/* The Global Navigation Bar */}
+            <Navbar />
+            
+            {/* The Dynamic Page Content */}
+            <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
+              {children}
+            </main>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
