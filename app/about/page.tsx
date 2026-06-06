@@ -61,7 +61,7 @@ export default function AboutPage() {
               Sahil Dhinwa
             </h1>
             <p className="text-foreground/60 font-bold text-lg mb-10 uppercase tracking-widest leading-relaxed max-w-lg">
-              Jhunjhunu to Global: <br className="md:hidden" /> Democratizing International Education
+              KOTA to Global: <br className="md:hidden" /> Democratizing International Education
             </p>
 
             {/* Origin Story Placeholder */}
@@ -70,7 +70,7 @@ export default function AboutPage() {
               <Compass className="w-10 h-10 text-foreground/15 mx-auto mb-5" />
               <h3 className="font-heading text-2xl font-bold text-foreground mb-4">The Origin Story</h3>
               <p className="text-foreground/80 font-medium leading-relaxed">
-                The full narrative behind Career GPS—from the fields of Chanana to establishing fully-funded pathways at world-class institutions—is currently being documented.
+                The full narrative behind Career GPS—from the fields of Kota to establishing fully-funded pathways at world-class institutions—is currently being documented.
                 <br /><br />
                 We are crafting an inspiring look at breaking down invisible barriers for students in tier-2 and tier-3 cities.
               </p>
