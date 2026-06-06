@@ -1,14 +1,18 @@
 "use client";
 
-import { auth, db } from "../lib/firebase"; 
-import { doc, setDoc } from "firebase/firestore"; // CHANGED: Imported setDoc instead of updateDoc
+import { db } from "../lib/firebase"; 
+import { doc, setDoc } from "firebase/firestore"; 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Lock, Loader2 } from "lucide-react"; 
+import { useAuth } from "../context/AuthContext"; // NEW: Connect to the Global Brain
 
 export default function PremiumPaymentButton() {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // NEW: Pull the user and the sync function from the Brain
+  const { user, refreshUserData } = useAuth(); 
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -21,9 +25,8 @@ export default function PremiumPaymentButton() {
   };
 
   const handlePaymentClick = async () => {
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) {
+    // NEW: Use the user from the Brain instead of checking Firebase directly
+    if (!user) {
       router.push("/login");
       return;
     }
@@ -53,30 +56,30 @@ export default function PremiumPaymentButton() {
         handler: async function (response: any) {
           
           try {
-            const userRef = doc(db, "users", currentUser.uid);
+            const userRef = doc(db, "users", user.uid);
             
-            // THE FIX: setDoc with merge: true guarantees it works even if the document is missing
             await setDoc(userRef, {
               isPremium: true,
               paymentId: response.razorpay_payment_id,
-              email: currentUser.email // Safe practice to store email with the payment record
+              email: user.email 
             }, { merge: true });
             
+            // THE FIX: Tell the Brain to sync instantly instead of refreshing the page!
+            await refreshUserData();
+            
             alert("Payment Successful! Welcome to Premium.");
-            window.location.reload(); 
             
           } catch (error: any) {
             console.error("Firebase update failed", error);
-            // THE FIX: Force the error to show on screen so we aren't debugging blindly
             alert("Payment captured, but database update failed: " + error.message);
           }
         },
         prefill: {
-          name: currentUser.displayName || "",
-          email: currentUser.email || "",
+          name: user.displayName || "",
+          email: user.email || "",
         },
         theme: {
-          color: "#0F5132",
+          color: "#114232", // Updated to match your exact Primary Green variable
         },
       };
 
