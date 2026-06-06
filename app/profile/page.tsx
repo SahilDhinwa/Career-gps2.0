@@ -2,22 +2,21 @@
 
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../../lib/firebase"; 
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { onAuthStateChanged, signOut, User, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { signOut, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes"; 
+import { useAuth } from "../../context/AuthContext"; // NEW: Connect to Global Brain
 import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
 export default function UserProfile() {
   const router = useRouter();
-  
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
-  const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // NEW: Pull all user state from the Global Brain instead of fetching manually
+  const { user, userData, isPremium, isLoading, refreshUserData } = useAuth();
   
   const [checklistData, setChecklistData] = useState<Record<string, string[]>>({});
   const [profilePic, setProfilePic] = useState<string | null>(null);
@@ -27,37 +26,15 @@ export default function UserProfile() {
   useEffect(() => {
     setMounted(true); 
     
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!currentUser) {
-        router.push("/login");
-        return;
-      }
-      
-      setUser(currentUser);
-      setProfilePic(currentUser.photoURL);
-
-      try {
-        const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          setUserData(data);
-          setChecklistData(data.checklistProgress || {});
-          
-          if (data.photoURL) {
-            setProfilePic(data.photoURL);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch user data", error);
-      } finally {
-        setIsLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [router]);
+    // If the brain finishes loading and there is no user, kick them to login
+    if (!isLoading && !user) {
+      router.push("/login");
+    } else if (user) {
+      // Sync local state with the brain's live data
+      setProfilePic(userData?.photoURL || user.photoURL || null);
+      setChecklistData(userData?.checklistProgress || {});
+    }
+  }, [user, userData, isLoading, router]);
 
   const handleLogout = async () => {
     try {
@@ -67,8 +44,8 @@ export default function UserProfile() {
       console.error("Failed to log out", error);
     }
   };
-
-   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Your Canvas Compression Logic (Upgraded with Global Brain Sync)
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
@@ -79,11 +56,9 @@ export default function UserProfile() {
 
     setIsUploading(true);
     try {
-      // Show instant preview
       const localImageUrl = URL.createObjectURL(file);
       setProfilePic(localImageUrl);
 
-      // Create an image object to draw on the canvas
       const img = new Image();
       img.src = localImageUrl;
 
@@ -91,7 +66,6 @@ export default function UserProfile() {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        // Calculate new dimensions (Max 400x400 for a profile picture)
         const MAX_WIDTH = 400;
         const MAX_HEIGHT = 400;
         let width = img.width;
@@ -109,12 +83,10 @@ export default function UserProfile() {
           }
         }
 
-        // Resize the canvas and draw the image
         canvas.width = width;
         canvas.height = height;
         ctx?.drawImage(img, 0, 0, width, height);
 
-        // Compress to JPEG with 70% quality (This shrinks the Base64 string safely below 100KB)
         const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
 
         try {
@@ -125,6 +97,8 @@ export default function UserProfile() {
           } catch (authError) {
             console.warn("Auth profile limit reached, but safely stored in Firestore.");
           }
+          // INSTANT SYNC: Tell the Global Brain the image changed so Navbar updates instantly
+          await refreshUserData(); 
         } catch (error) {
           console.error("Failed to save image to database:", error);
         } finally {
@@ -151,6 +125,7 @@ export default function UserProfile() {
     try {
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList }, { merge: true });
+      await refreshUserData(); // INSTANT SYNC: Update the global brain
     } catch (error) {
       console.error("Failed to update checklist in database", error);
     }
@@ -164,7 +139,6 @@ export default function UserProfile() {
     );
   }
 
-  const isPremium = userData?.isPremium || false;
   const roadmapProgress = userData?.roadmapProgress || {};
 
   return (
@@ -179,8 +153,6 @@ export default function UserProfile() {
           pointer-events: none;
           background-color: var(--background);
         }
-        
-        /* The structural honeycomb pattern */
         .honeycomb-pattern {
           position: absolute;
           inset: 0;
@@ -188,14 +160,10 @@ export default function UserProfile() {
             url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3C/svg%3E");
           background-size: 80px;
         }
-
-        /* Dark mode specifically shifts the brown to a glowing amber */
         .dark .honeycomb-pattern {
           background-image: 
             url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3C/svg%3E");
         }
-
-        /* The soft 'Honey Glow' radial gradients */
         .honey-glow-1 {
           position: absolute;
           top: -10%; left: -10%;
@@ -210,14 +178,12 @@ export default function UserProfile() {
         }
       `}} />
       
-      {/* Background Layers */}
       <div className="honeycomb-bg">
         <div className="honeycomb-pattern"></div>
         <div className="honey-glow-1"></div>
         <div className="honey-glow-2"></div>
       </div>
-
-      <div className="max-w-5xl mx-auto relative z-10 py-12 md:py-16 px-6">
+            <div className="max-w-5xl mx-auto relative z-10 py-12 md:py-16 px-6">
         
         {/* HEADER CARD */}
         <div className="bg-surface/80 backdrop-blur-md border border-amber-900/10 dark:border-amber-500/10 rounded-sm shadow-xl p-6 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transition-colors duration-300">
@@ -236,13 +202,11 @@ export default function UserProfile() {
                   <UserIcon className="w-12 h-12 text-foreground/20" />
                 )}
                 
-                {/* Desktop Hover Overlay */}
                 <div className={`hidden md:flex absolute inset-0 bg-black/50 flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${isUploading ? 'opacity-100' : ''}`}>
                   {isUploading ? <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Camera className="w-6 h-6 text-white" />}
                 </div>
               </div>
 
-              {/* Mobile Tactile Camera Badge (Always visible, makes it obvious it's clickable) */}
               <div 
                 className="absolute bottom-1 right-1 md:hidden bg-primary w-8 h-8 rounded-full border-2 border-surface flex items-center justify-center shadow-md cursor-pointer"
                 onClick={() => fileInputRef.current?.click()}
@@ -302,7 +266,6 @@ export default function UserProfile() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           <div className="lg:col-span-2 space-y-8">
-            {/* Active Roadmaps */}
             <div className="bg-surface/80 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-lg p-6 md:p-8 transition-colors duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <Activity className="w-6 h-6 text-primary" />
@@ -350,7 +313,6 @@ export default function UserProfile() {
               )}
             </div>
 
-            {/* Checklist Command Center */}
             <div className="bg-surface/80 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-lg p-6 md:p-8 transition-colors duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <ListChecks className="w-6 h-6 text-primary" />
@@ -393,10 +355,8 @@ export default function UserProfile() {
             </div>
           </div>
 
-          {/* SIDEBAR WIDGETS */}
           <div className="space-y-8">
             
-            {/* Premium Library Widget */}
             <div className="bg-gradient-to-br from-amber-900 to-black dark:from-black dark:to-amber-950 rounded-sm shadow-2xl p-8 border border-amber-800/30 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-warning/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
               <div className="flex items-center gap-3 mb-4 relative z-10">
@@ -414,7 +374,6 @@ export default function UserProfile() {
               </button>
             </div>
 
-            {/* Security Widget */}
             <div className="bg-surface/80 backdrop-blur-md border border-surfaceBorder rounded-sm p-8 text-center shadow-lg transition-colors duration-300">
               <ShieldCheck className="w-10 h-10 text-success mx-auto mb-4 opacity-80" />
               <h3 className="font-heading text-xl font-bold text-foreground mb-2">Secure Account</h3>
@@ -426,4 +385,4 @@ export default function UserProfile() {
       </div>
     </div>
   );
-              }
+}
