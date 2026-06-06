@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Syne, DM_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 import { ThemeProvider } from '../components/ThemeProvider'
 import { AuthProvider } from '../context/AuthContext' // NEW: Import the Brain
 
@@ -49,6 +50,8 @@ export default function RootLayout({
             <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
               {children}
             </main>
+            {/* NEW: Place the Footer here so it renders at the bottom of the screen */}
+            <Footer />
           </AuthProvider>
         </ThemeProvider>
       </body>
