@@ -10,17 +10,24 @@ const HIGH_YIELD_NOTES = [
     subject: "Dravyaguna Vigyan", 
     topic: "Pharmacology", 
     type: "Quick Revision",
-    link: "/notepdfs/pharmacologyrevision" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
+    link: "/notepdfs/pharmacologyrevision.pdf" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
   },
   { 
     id: 2, 
     subject: "Rasa Shastra", 
-    topic: "Maharasa & Uparasa Classification", 
+    topic: "Maharasa Classification", 
     type: "Cheat Sheet",
-    link: "#" 
+    link: "/notepdfs/maharasa.pdf" 
   },
   { 
     id: 3, 
+    subject: "Rasa Shastra", 
+    topic: "Uparasa Classification", 
+    type: "Cheat Sheet",
+    link: "/notepdfs/uparasa.pdf" 
+  },
+  { 
+    id: 4, 
     subject: "Roga Nidana", 
     topic: "Shatkriyakala & Nidan Panchak", 
     type: "Concept Map",
