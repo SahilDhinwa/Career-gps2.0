@@ -162,7 +162,23 @@ export default function LandingPage() {
                   </p>
                 </div>
               </div>
-        {/* NEW: BAMS 2ND PROF STUDY HUB BANNER */}
+            
+              <div className="shrink-0 z-10 w-full md:w-auto flex flex-col items-center md:items-end">
+                <Link 
+                  href="/dashboard/vault"
+                  className="w-full md:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-md hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mb-3"
+                >
+                  Open Action Vault <ArrowRight className="w-5 h-5" />
+                </Link>
+                <p className="text-xs font-bold text-foreground/60 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-success" />
+                  Includes templates for DAAD, Chevening & Commonwealth
+                </p>
+              </div>
+
+            </div>
+          </div>
+                  {/* NEW: BAMS 2ND PROF STUDY HUB BANNER */}
         <div className="max-w-6xl mx-auto px-6 mb-8 md:mb-12">
           <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-sm p-8 md:p-12 shadow-lg flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:border-amber-700/50 transition-colors duration-500">
             
@@ -188,7 +204,7 @@ export default function LandingPage() {
 
             <div className="shrink-0 w-full md:w-auto relative z-10">
               <Link 
-                href="/bams-hub" 
+                href="/mcq-practice" 
                 className="w-full md:w-auto bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 hover:border-amber-500 font-bold py-4 px-8 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
               >
                 Open BAMS Vault <ArrowRight className="w-5 h-5" />
@@ -200,22 +216,7 @@ export default function LandingPage() {
             
           </div>
         </div>
-              
-              <div className="shrink-0 z-10 w-full md:w-auto flex flex-col items-center md:items-end">
-                <Link 
-                  href="/dashboard/vault"
-                  className="w-full md:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-md hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mb-3"
-                >
-                  Open Action Vault <ArrowRight className="w-5 h-5" />
-                </Link>
-                <p className="text-xs font-bold text-foreground/60 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-success" />
-                  Includes templates for DAAD, Chevening & Commonwealth
-                </p>
-              </div>
 
-            </div>
-          </div>
         </div>
       </div>
 
