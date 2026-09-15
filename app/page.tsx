@@ -188,7 +188,7 @@ export default function LandingPage() {
 
             <div className="shrink-0 w-full md:w-auto relative z-10">
               <Link 
-                href="/mcq-practice" 
+                href="/bams-hub" 
                 className="w-full md:w-auto bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 hover:border-amber-500 font-bold py-4 px-8 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
               >
                 Open BAMS Vault <ArrowRight className="w-5 h-5" />
