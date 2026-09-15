@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext"; // NEW: Importing the Global Brain
-import { Compass, User as UserIcon, Menu, X, Loader2 } from "lucide-react"; // NEW: Added Loader2
+import { useAuth } from "../context/AuthContext";
+import { Compass, User as UserIcon, Menu, X, Loader2, Sparkles } from "lucide-react";
 
 export default function Navbar() {
-  const { user, userData, isLoading } = useAuth(); // NEW: Connecting to the Brain
+  const { user, userData, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const pathname = usePathname(); // Get the current active route
+  const pathname = usePathname();
 
   // Automatically close the mobile menu whenever the user navigates to a new page
   useEffect(() => {
@@ -19,8 +19,8 @@ export default function Navbar() {
   // Helper function to apply dynamic active styles
   const getLinkStyle = (path: string) => {
     return pathname === path
-      ? "text-primary font-bold transition-colors" // Active state
-      : "text-foreground/70 hover:text-primary transition-colors"; // Inactive state
+      ? "text-primary font-bold transition-colors" 
+      : "text-foreground/70 hover:text-primary transition-colors"; 
   };
 
   return (
@@ -36,7 +36,7 @@ export default function Navbar() {
         </Link>
 
         {/* DESKTOP CENTRAL LINKS (Hidden on Mobile) */}
-        <div className="hidden md:flex items-center gap-8 font-medium text-sm">
+        <div className="hidden md:flex items-center gap-7 font-medium text-sm">
           <Link href="/pathways" className={getLinkStyle("/pathways")}>
             Pathways
           </Link>
@@ -49,12 +49,19 @@ export default function Navbar() {
           <Link href="/dashboard/vault" className={getLinkStyle("/dashboard/vault")}>
             Vault
           </Link>
+          
+          {/* NEW: DEDICATED MCQ BUTTON */}
+          <Link 
+            href="/mcq-practice" 
+            className="flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 hover:border-primary px-3 py-1.5 rounded-sm font-bold transition-all duration-300"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> BAMS QUESTIONS
+          </Link>
         </div>
 
         {/* RIGHT SIDE ACTIONS (Profile/Login + Hamburger Toggle) */}
         <div className="flex items-center gap-3 md:gap-4 z-50">
           
-          {/* NEW LOGIC: Prevent the Flash! */}
           {isLoading ? (
             <div className="w-16 h-8 flex items-center justify-center">
               <Loader2 className="w-4 h-4 animate-spin text-foreground/30" />
@@ -64,14 +71,12 @@ export default function Navbar() {
               href="/profile" 
               className="flex items-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground px-4 py-2 rounded-sm transition-colors font-bold text-sm border border-surfaceBorder"
             >
-              {/* NEW LOGIC: Live Avatar Updates! */}
               {userData?.photoURL || user.photoURL ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={userData?.photoURL || user.photoURL} alt="Profile" className="w-5 h-5 rounded-full object-cover border border-surfaceBorder" />
               ) : (
                 <UserIcon className="w-4 h-4" /> 
               )}
-              {/* Hide the word "Profile" on very small phones to save space */}
               <span className="hidden sm:inline">Profile</span>
             </Link>
           ) : (
@@ -122,7 +127,14 @@ export default function Navbar() {
             Vault
           </Link>
 
-          {/* Render Login/Signup in the mobile dropdown if the user is logged out */}
+          {/* NEW: MOBILE MCQ BUTTON */}
+          <Link 
+            href="/mcq-practice" 
+            className="flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/20 py-2.5 rounded-sm font-bold transition-all"
+          >
+            <Sparkles className="w-4 h-4" /> BAMS QUESTIONS
+          </Link>
+
           {!isLoading && !user && (
             <div className="pt-4 mt-2 border-t border-surfaceBorder flex flex-col gap-4 sm:hidden">
               <Link 
