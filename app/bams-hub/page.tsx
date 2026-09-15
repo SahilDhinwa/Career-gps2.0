@@ -92,9 +92,7 @@ export default function BAMSDashboard() {
               Open Study Vault <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
-
-          </div>
-
+          
         </div>
       </div>
     </div>
