@@ -10,7 +10,7 @@ const HIGH_YIELD_NOTES = [
     subject: "Dravyaguna Vigyan", 
     topic: "Pharmacology", 
     type: "Quick Revision",
-    link: "/notespdfs/pharmacologyquickrevision" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
+    link: "/notepdfs/pharmacologyrevision" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
   },
   { 
     id: 2, 
