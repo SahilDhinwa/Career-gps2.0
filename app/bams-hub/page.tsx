@@ -60,22 +60,20 @@ export default function BAMSDashboard() {
             </div>
           </Link>
 
-          {/* 2. Previous Year Papers (COMING SOON) */}
-          <div className="group bg-surface/40 backdrop-blur-sm border border-dashed border-surfaceBorder rounded-sm transition-all duration-500 relative overflow-hidden flex flex-col p-8 opacity-80 hover:opacity-100 cursor-not-allowed">
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 bg-foreground/5 border border-surfaceBorder rounded-sm text-[10px] font-bold text-foreground/50 uppercase tracking-widest">
-              <Clock className="w-3 h-3" /> Coming Soon
+          {/* 2. Previous Year Papers (UNLOCKED) */}
+          <Link href="/bams-hub/papers" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <div className="w-14 h-14 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+              <Download className="w-7 h-7 text-amber-500" />
             </div>
-            <div className="w-14 h-14 bg-foreground/5 rounded-full flex items-center justify-center mb-6 border border-surfaceBorder transition-colors duration-500">
-              <Download className="w-7 h-7 text-foreground/40" />
-            </div>
-            <h2 className="font-heading text-2xl font-bold text-foreground/70 mb-3">Previous Papers</h2>
-            <p className="text-foreground/50 text-sm font-medium mb-8 flex-grow leading-relaxed">
+            <h2 className="font-heading text-2xl font-bold text-foreground mb-3">Previous Papers</h2>
+            <p className="text-foreground/70 text-sm font-medium mb-8 flex-grow leading-relaxed">
               A comprehensive PDF archive of previous year university question papers to analyze exam patterns.
             </p>
-            <div className="w-full bg-foreground/5 border border-surfaceBorder text-foreground/40 font-bold py-3 px-4 rounded-sm flex items-center justify-center gap-2 mt-auto">
-              Module Locked
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-3 px-4 rounded-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
+              Access PDF Vault <ChevronRight className="w-4 h-4" />
             </div>
-          </div>
+          </Link>
 
           {/* 3. High-Yield Notes (COMING SOON) */}
           <div className="group bg-surface/40 backdrop-blur-sm border border-dashed border-surfaceBorder rounded-sm transition-all duration-500 relative overflow-hidden flex flex-col p-8 opacity-80 hover:opacity-100 cursor-not-allowed">
