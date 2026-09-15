@@ -3,13 +3,23 @@
 import Link from "next/link";
 import { ArrowLeft, Download, FileText, BookOpen, Calendar, HardDrive } from "lucide-react";
 
-// The PDF Database (Update these links to match your actual file names in the public/pdfs folder)
+// THE UPDATED PDF DATABASE
 const PREVIOUS_PAPERS = [
-  { id: 1, subject: "Charaka Samhita (Purvardha)", year: "2025", size: "2.4 MB", link: "/pdfs/charaka-2025.pdf" },
-  { id: 2, subject: "Dravyaguna Vigyan - Paper 1", year: "2024", size: "3.1 MB", link: "/pdfs/dravyaguna-1-2024.pdf" },
-  { id: 3, subject: "Dravyaguna Vigyan - Paper 2", year: "2024", size: "2.8 MB", link: "/pdfs/dravyaguna-2-2024.pdf" },
-  { id: 4, subject: "Roga Nidana & Vikriti Vigyan", year: "2023", size: "4.5 MB", link: "/pdfs/roga-nidana-2023.pdf" },
-  { id: 5, subject: "Rasa Shastra & Bhaishajya Kalpana", year: "2023", size: "5.2 MB", link: "/pdfs/rasa-shastra-2023.pdf" },
+  { 
+    id: 1, 
+    subject: "BAMS 2nd Prof - All Papers (Batch 2021)", 
+    year: "Jan-Feb 2025", 
+    size: "16.5 MB", 
+    link: "/pdfs/batch-2021-all-papers.pdf" // EXACT match to your uploaded file
+  },
+  // You can add more files here later as you upload them to the public/pdfs folder!
+  { 
+    id: 2, 
+    subject: "Charaka Samhita (Purvardha) - Placeholder", 
+    year: "2024", 
+    size: "2.4 MB", 
+    link: "#" 
+  },
 ];
 
 export default function PreviousPapers() {
@@ -34,13 +44,13 @@ export default function PreviousPapers() {
             Previous Year <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-400">Papers</span>
           </h1>
           <p className="text-lg text-foreground/70 font-medium max-w-2xl relative z-10">
-            Download the official NCISM university examination papers. Use these to analyze high-yield topics and master the exam pattern.
+            Download or read the official NCISM university examination papers. Use these to analyze high-yield topics and master the exam pattern.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {PREVIOUS_PAPERS.map((paper) => (
-            <div key={paper.id} className="group bg-surface/80 backdrop-blur-sm border border-surfaceBorder rounded-sm p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber-500/50 hover:shadow-lg transition-all duration-300">
+            <div key={paper.id} className="group bg-surface/80 backdrop-blur-sm border border-surfaceBorder rounded-sm p-6 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 hover:border-amber-500/50 hover:shadow-lg transition-all duration-300">
               
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-amber-500/10 rounded-sm flex items-center justify-center shrink-0 border border-amber-500/20 group-hover:bg-amber-500/20 transition-colors">
@@ -55,15 +65,25 @@ export default function PreviousPapers() {
                 </div>
               </div>
 
-              <a 
-                href={paper.link}
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-foreground/5 hover:bg-amber-500 text-foreground hover:text-white border border-surfaceBorder hover:border-amber-500 font-bold py-3 px-6 rounded-sm flex items-center justify-center gap-2 transition-all duration-300 shrink-0"
-              >
-                <Download className="w-4 h-4" /> Download
-              </a>
+              {/* DUAL BUTTON LAYOUT: Read & Download */}
+              <div className="flex items-center gap-3 w-full xl:w-auto shrink-0 mt-2 xl:mt-0">
+                <a 
+                  href={paper.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 xl:flex-none bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 font-bold py-2.5 px-4 rounded-sm flex items-center justify-center gap-2 transition-all duration-300"
+                >
+                  <BookOpen className="w-4 h-4" /> Read
+                </a>
+                <a 
+                  href={paper.link}
+                  download
+                  className="flex-1 xl:flex-none bg-foreground/5 hover:bg-amber-500 text-foreground hover:text-white border border-surfaceBorder hover:border-amber-500 font-bold py-2.5 px-4 rounded-sm flex items-center justify-center gap-2 transition-all duration-300"
+                >
+                  <Download className="w-4 h-4" /> Save
+                </a>
+              </div>
+
             </div>
           ))}
         </div>
