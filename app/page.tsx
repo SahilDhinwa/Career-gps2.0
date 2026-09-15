@@ -1,7 +1,7 @@
 import Matchmaker from "../components/Matchmaker";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen, Leaf, Sparkles, CheckCircle } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -162,7 +162,45 @@ export default function LandingPage() {
                   </p>
                 </div>
               </div>
+        {/* NEW: BAMS 2ND PROF STUDY HUB BANNER */}
+        <div className="max-w-6xl mx-auto px-6 mb-8 md:mb-12">
+          <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-sm p-8 md:p-12 shadow-lg flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:border-amber-700/50 transition-colors duration-500">
+            
+            {/* Ambient Background Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10 w-full md:w-auto text-center md:text-left">
+              <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center shrink-0 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                <Leaf className="w-8 h-8 text-amber-500" />
+              </div>
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-amber-500/10 text-[10px] uppercase font-bold tracking-widest text-amber-500 mb-3 border border-amber-500/20">
+                  <Sparkles className="w-3 h-3" /> NCISM Curriculum
+                </div>
+                <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-3">
+                  BAMS 2nd Prof Hub.
+                </h2>
+                <p className="text-foreground/70 font-medium max-w-xl leading-relaxed">
+                  Ace your university exams. Access interactive Charaka Samhita MCQs, previous year paper PDFs, and high-yield revision notes.
+                </p>
+              </div>
+            </div>
+
+            <div className="shrink-0 w-full md:w-auto relative z-10">
+              <Link 
+                href="/mcq-practice" 
+                className="w-full md:w-auto bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 hover:border-amber-500 font-bold py-4 px-8 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
+              >
+                Open BAMS Vault <ArrowRight className="w-5 h-5" />
+              </Link>
+              <p className="text-xs text-foreground/40 font-bold mt-3 text-center md:text-right flex items-center justify-center md:justify-end gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5 text-amber-500/70" /> Charaka Samhita Live
+              </p>
+            </div>
+            
+          </div>
+        </div>
+              
               <div className="shrink-0 z-10 w-full md:w-auto flex flex-col items-center md:items-end">
                 <Link 
                   href="/dashboard/vault"
