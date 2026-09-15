@@ -20,6 +20,13 @@ const PREVIOUS_PAPERS = [
     size: "17.9 MB", 
     link: "/pdfs/batch-2022-all-papers.pdf" 
   },
+    { 
+    id: 3, 
+    subject: "BAMS 2nd Prof - Back Papers", 
+    year: "July-Aug 2026", 
+    size: "10.1 MB", 
+    link: "/pdfs/batch2021and2022backpapers.pdf" // EXACT match to your uploaded file
+  },
 ];
 
 export default function PreviousPapers() {
