@@ -178,6 +178,7 @@ export default function LandingPage() {
 
             </div>
           </div>
+          
                   {/* NEW: BAMS 2ND PROF STUDY HUB BANNER */}
         <div className="max-w-6xl mx-auto px-6 mb-8 md:mb-12">
           <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-sm p-8 md:p-12 shadow-lg flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:border-amber-700/50 transition-colors duration-500">
@@ -204,7 +205,7 @@ export default function LandingPage() {
 
             <div className="shrink-0 w-full md:w-auto relative z-10">
               <Link 
-                href="/mcq-practice" 
+                href="/bams-hub" 
                 className="w-full md:w-auto bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 hover:border-amber-500 font-bold py-4 px-8 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
               >
                 Open BAMS Vault <ArrowRight className="w-5 h-5" />
