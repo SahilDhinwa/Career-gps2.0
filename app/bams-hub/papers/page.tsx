@@ -15,10 +15,10 @@ const PREVIOUS_PAPERS = [
   // You can add more files here later as you upload them to the public/pdfs folder!
   { 
     id: 2, 
-    subject: "Charaka Samhita (Purvardha) - Placeholder", 
-    year: "2024", 
-    size: "2.4 MB", 
-    link: "#" 
+    subject: "BAMS 2nd Prof - All Papers (Batch 2022)", 
+    year: "Dec2025-Jan2026", 
+    size: "17.9 MB", 
+    link: "/pdfs/batch-2022-all-papers.pdf" 
   },
 ];
 
