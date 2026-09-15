@@ -8,9 +8,9 @@ const HIGH_YIELD_NOTES = [
   { 
     id: 1, 
     subject: "Dravyaguna Vigyan", 
-    topic: "Important Plant Profiles (Jeeraka, Vasa, etc.)", 
+    topic: "Pharmacology", 
     type: "Quick Revision",
-    link: "#" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
+    link: "/notespdfs/pharmacologyquickrevision" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
   },
   { 
     id: 2, 
