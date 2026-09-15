@@ -26,12 +26,19 @@ const HIGH_YIELD_NOTES = [
     type: "Cheat Sheet",
     link: "/notepdfs/uparasa.pdf" 
   },
-  { 
+    { 
     id: 4, 
+    subject: "Rasa Shastra", 
+    topic: "Sadharanarasa Classification", 
+    type: "Cheat Sheet",
+    link: "/notepdfs/sadharanarasa.pdf" 
+  },
+  { 
+    id: 5, 
     subject: "Charak Samhita II", 
     topic: "FULL II PROF", 
     type: "Quick Revision",
-    link: "/note/charaksamhita2nd.pdf" 
+    link: "/notepdfs/charaksamhita2nd.pdf" 
   },
 ];
 
