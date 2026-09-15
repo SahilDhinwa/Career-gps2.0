@@ -50,12 +50,12 @@ export default function Navbar() {
             Vault
           </Link>
           
-          {/* NEW: DEDICATED MCQ BUTTON */}
+          {/* UPDATED: DEDICATED BAMS HUB BUTTON */}
           <Link 
-            href="/mcq-practice" 
+            href="/bams-hub" 
             className="flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 hover:border-primary px-3 py-1.5 rounded-sm font-bold transition-all duration-300"
           >
-            <Sparkles className="w-3.5 h-3.5" /> BAMS QUESTIONS
+            <Sparkles className="w-3.5 h-3.5" /> BAMS HUB
           </Link>
         </div>
 
@@ -127,12 +127,12 @@ export default function Navbar() {
             Vault
           </Link>
 
-          {/* NEW: MOBILE MCQ BUTTON */}
+          {/* UPDATED: MOBILE BAMS HUB BUTTON */}
           <Link 
-            href="/mcq-practice" 
+            href="/bams-hub" 
             className="flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/20 py-2.5 rounded-sm font-bold transition-all"
           >
-            <Sparkles className="w-4 h-4" /> BAMS QUESTIONS
+            <Sparkles className="w-4 h-4" /> BAMS HUB
           </Link>
 
           {!isLoading && !user && (
