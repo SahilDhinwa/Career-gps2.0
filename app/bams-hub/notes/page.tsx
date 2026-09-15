@@ -28,10 +28,10 @@ const HIGH_YIELD_NOTES = [
   },
   { 
     id: 4, 
-    subject: "Roga Nidana", 
-    topic: "Shatkriyakala & Nidan Panchak", 
-    type: "Concept Map",
-    link: "#" 
+    subject: "Charak Samhita II", 
+    topic: "FULL II PROF", 
+    type: "Quick Revision",
+    link: "/note/charaksamhita2nd.pdf" 
   },
 ];
 
