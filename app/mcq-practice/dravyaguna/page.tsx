@@ -9,6 +9,12 @@ import { ArrowLeft, Leaf, Beaker, FileText, ChevronRight, Lock, Award } from "lu
 
 const PAPER_1_SPECIAL_TESTS = [
   {
+    id: "batch-2022",
+    title: "DG Paper 1 - 2022 (Main)",
+    subtitle: "Previous Year University Question Paper • 20 Questions",
+    link: "/mcq-practice/dravyaguna/paper-1/batch-2022"
+  },
+  {
     id: "batch-2021",
     title: "DG Paper 1 - 2021 (Main)",
     subtitle: "Previous Year University Question Paper • 20 Questions",
