@@ -14,7 +14,7 @@ const PREVIOUS_PAPERS = [
   },
   { 
     id: 2, 
-    subject: "BAMS 2nd Prof - All Papers (Batch 2021)", 
+    subject: "BAMS 2nd Prof - DG PAPER-1 ANSWERS (Batch 2021)", 
     year: "Jan-Feb 2025", 
     size: "175 KB", 
     link: "/pdfs/DG 21 batch answer.pdf" // EXACT match to your uploaded file
@@ -29,8 +29,8 @@ const PREVIOUS_PAPERS = [
   },
   { 
     id: 4, 
-    subject: "BAMS 2nd Prof - All Papers (Batch 2021)", 
-    year: "Jan-Feb 2025", 
+    subject: "BAMS 2nd Prof - DG PAPER-1 ANSWERS (Batch 2022)", 
+    year: "Dec2025-Jan2026", 
     size: "208 KB", 
     link: "/pdfs/DG 22 batch answer.pdf" // EXACT match to your uploaded file
   },
