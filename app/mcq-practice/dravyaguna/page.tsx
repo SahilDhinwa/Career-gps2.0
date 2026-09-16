@@ -30,7 +30,8 @@ const PAPER_1_PRACTICE_TESTS = [
   { id: "test-2", title: "DG Practice Paper 2", subtitle: "Questions 21 - 40", link: "/mcq-practice/dravyaguna/paper-1/test-2" },
   { id: "test-3", title: "DG Practice Paper 3", subtitle: "Questions 41 - 60", link: "/mcq-practice/dravyaguna/paper-1/test-3" },
   { id: "test-4", title: "DG Practice Paper 4", subtitle: "Questions 61 - 80 (Fundamentals)", link: "/mcq-practice/dravyaguna/paper-1/test-4" },
-];
+  { id: "test-5", title: "DG Practice Paper 5", subtitle: "Questions 81 - 100 (Comprehensive)", link: "/mcq-practice/dravyaguna/paper-1/test-5" }, // Added here!
+  ];
 
 const PAPER_2_TESTS = [
   { id: "p2-test-1", title: "DG Practice Paper 1", subtitle: "Coming Soon", status: "locked" }
