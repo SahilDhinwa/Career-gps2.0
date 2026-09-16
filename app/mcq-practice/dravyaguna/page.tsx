@@ -83,6 +83,22 @@ export default function DravyagunaHub() {
                 <ChevronRight className="w-5 h-5" />
               </div>
             </Link>
+
+            {/* DG Paper 1 - Test 3 (ACTIVE) */}
+            <Link href="/mcq-practice/dravyaguna/paper-1/test-3" className="group bg-surface/80 backdrop-blur-sm border border-surfaceBorder rounded-sm p-6 flex items-center justify-between hover:border-amber-500/50 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-amber-500/10 rounded-sm flex items-center justify-center shrink-0 border border-amber-500/20 group-hover:bg-amber-500/20 transition-colors">
+                  <Beaker className="w-6 h-6 text-amber-500" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground text-xl mb-1">DG Practice Paper 3</h3>
+                  <p className="text-foreground/50 font-medium text-sm">Questions 41 - 60</p>
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-foreground/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                <ChevronRight className="w-5 h-5" />
+              </div>
+            </Link>
           </div>
         </div>
 
