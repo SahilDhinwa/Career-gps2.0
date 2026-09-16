@@ -17,7 +17,7 @@ const PREVIOUS_PAPERS = [
     subject: "BAMS 2nd Prof - DG PAPER-1 ANSWERS (Batch 2021)", 
     year: "Jan-Feb 2025", 
     size: "175 KB", 
-    link: "/pdfs/DG 21 batch answer.pdf" // EXACT match to your uploaded file
+    link: "/pdfs/DG 21 batch answers.pdf" // EXACT match to your uploaded file
   },
   // You can add more files here later as you upload them to the public/pdfs folder!
   { 
