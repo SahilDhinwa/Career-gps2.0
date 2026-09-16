@@ -21,14 +21,13 @@ const TEST_MODULES = [
     icon: <BookOpen className="w-6 h-6 text-amber-500" />,
     link: "/mcq-practice/charaka-2", 
     status: "active"
-  },
-  {
-    id: "dravyaguna-1",
+  },  {
+    id: "dravyaguna",
     title: "Dravyaguna Vigyan",
-    part: "Part 1",
-    questions: "20 Questions",
+    part: "Paper 1 & Paper 2",
+    questions: "Subject Hub",
     icon: <Leaf className="w-6 h-6 text-amber-500" />,
-    link: "/mcq-practice/dravyaguna-1", 
+    link: "/mcq-practice/dravyaguna", // This now points to the new hub!
     status: "active"
   },
   {
