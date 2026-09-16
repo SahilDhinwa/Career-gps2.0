@@ -8,9 +8,6 @@ import { ArrowLeft, Leaf, Beaker, FileText, ChevronRight, Lock, Award } from "lu
 // ==========================================
 
 const PAPER_1_SPECIAL_TESTS = [
-  // Add the new Chapter 13 test right here:
-  { id: "chapter-13", title: "DG Practice Paper (Ch-13)", subtitle: "20 Questions • Nomenclature & Taxonomy", link: "/mcq-practice/dravyaguna/paper-1/chapter-13" },
-  
   {
     id: "batch-2021",
     title: "DG Paper 1 - 2021 (Main)",
@@ -20,6 +17,9 @@ const PAPER_1_SPECIAL_TESTS = [
 ];
 
 const PAPER_1_PRACTICE_TESTS = [
+  // Add the new Chapter 13 test right here:
+  { id: "chapter-13", title: "DG Practice Paper (Ch-13)", subtitle: "20 Questions • Nomenclature & Taxonomy", link: "/mcq-practice/dravyaguna/paper-1/chapter-13" },
+  
   { id: "test-1", title: "DG Practice Paper 1", subtitle: "20 Questions • Siddhanta", link: "/mcq-practice/dravyaguna/paper-1/test-1" },
   { id: "test-2", title: "DG Practice Paper 2", subtitle: "Questions 21 - 40", link: "/mcq-practice/dravyaguna/paper-1/test-2" },
   { id: "test-3", title: "DG Practice Paper 3", subtitle: "Questions 41 - 60", link: "/mcq-practice/dravyaguna/paper-1/test-3" },
