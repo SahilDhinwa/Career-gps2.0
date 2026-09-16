@@ -5,13 +5,14 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Beaker, BookOpen, ClipboardList } from "lucide-react";
 
 const DRAVYAGUNA_PAPER_1_TEST_3 = [
+  // QUESTIONS 1-10: Substitutes & Adulteration (Perfect for DG Paper 1)
   { 
     questionText: "आयुर्वेद के किस प्रमुख ग्रन्थ में 'अभाव प्रतिनिधि द्रव्य' (Substitute Drugs) का सर्वाधिक सुस्पष्ट और विस्तृत वर्णन प्राप्त होता है?", 
     options: ["चरक संहिता", "सुश्रुत संहिता", "भावप्रकाश निघण्टु", "अष्टांग हृदय"], 
     correctAnswerIndex: 2,
     explanation: "मिश्रक वर्ग के अंतर्गत आचार्य भावमिश्र ने अभाव प्रतिनिधि द्रव्यों का सबसे विस्तृत संकलन किया है।",
     reference: "भावप्रकाश निघण्टु (मिश्रक वर्ग)",
-    ncismRef: "Syllabus Point 10: Abhava Pratinidhi Dravya (Substitute Drugs)"
+    ncismRef: "Syllabus Point 10: Abhava Pratinidhi Dravya"
   },
   { 
     questionText: "औषधि निर्माण में 'दारुहरिद्रा' के उपलब्ध न होने पर, प्रतिनिधि द्रव्य (Substitute) के रूप में किस द्रव्य का प्रयोग करने का शास्त्रीय निर्देश है?", 
@@ -85,85 +86,87 @@ const DRAVYAGUNA_PAPER_1_TEST_3 = [
     reference: "Pharmacognosy",
     ncismRef: "Syllabus Point 12: Types of Adulteration"
   },
+
+  // QUESTIONS 11-20: BRAND NEW PURE DRAVYAGUNA PAPER 1 QUESTIONS
   { 
-    questionText: "औषधि सेवन के सन्दर्भ में, एक आदर्श 'अनुपान' (Vehicle) का सबसे सटीक लक्षण क्या होना चाहिए?", 
-    options: ["जो दोषों के समान गुण वाला हो", "जो दोषों के विपरीत हो, किन्तु औषधि के गुणों का विरोधी न हो", "जो औषधि के गुणों को पूर्णतः नष्ट कर दे", "जो पचने में अत्यंत गुरु हो"], 
-    correctAnswerIndex: 1,
-    explanation: "अनुपान ऐसा होना चाहिए जो रोग/दोष का शमन करे लेकिन मुख्य औषधि की क्रिया (वीर्य/प्रभाव) में कोई बाधा न डाले।",
-    reference: "चरक सूत्रस्थान 27/325",
-    ncismRef: "Syllabus Point 15: Anupana (Concept and utility)"
-  },
-  { 
-    questionText: "आचार्य शारंगधर के अनुसार, चूर्ण (Powder / Churna) की सामान्य सेवन मात्रा (Standard Dose) कितनी बताई गई है?", 
-    options: ["१ माषा", "१ पल", "१ कर्ष (लगभग 12 ग्राम)", "४ कर्ष"], 
-    correctAnswerIndex: 2,
-    explanation: "शारंगधर संहिता के अनुसार \"चूर्णस्य कर्षमात्रं तु\" अर्थात् चूर्ण की मात्रा 1 कर्ष (1 तोल / ~12 ग्राम) मानी गई है।",
-    reference: "शार्ङ्गधर संहिता (मध्यम खण्ड)",
-    ncismRef: "Syllabus Point 14: Posology (Matra)"
-  },
-  { 
-    questionText: "श्वास, कास, हिक्का, छर्दि (उल्टी) और विष विकारों में औषधि सेवन का कौन सा काल (Time of administration) निर्दिष्ट किया गया है?", 
-    options: ["अभक्त (खाली पेट)", "मुहुर्मुहुः (बार-बार)", "सभक्त (भोजन के साथ)", "सामुद्ग (भोजन के आदि और अंत में)"], 
-    correctAnswerIndex: 1,
-    explanation: "प्राणवह स्रोतस के तीव्र रोगों (श्वास, कास) और विष में औषधि को दिन में बार-बार (मुहुर्मुहुः) दिया जाना चाहिए।",
-    reference: "चरक चिकित्सास्थान 30/300",
-    ncismRef: "Syllabus Point 15: Bheshaja Sevana Kala"
-  },
-  { 
-    questionText: "आचार्य चरक के अनुसार, बलवान रोगी और बलवान व्याधि (तीव्र रोग) में औषधि सेवन का सर्वश्रेष्ठ काल कौन सा है?", 
-    options: ["अभक्त (निराहार / खाली पेट)", "सग्रास (ग्रास के साथ)", "ग्रासान्तर (ग्रास के बीच में)", "निशि (रात्रि में)"], 
+    questionText: "'त्रिसुगन्धि' (Trisugandhi) या 'त्रिजात' (Trijata) नामक मिश्रक वर्ग में निम्नलिखित में से किन द्रव्यों का समावेश होता है?", 
+    options: ["त्वक्, एला, पत्र", "शुण्ठी, मरिच, पिप्पली", "हरीतकी, विभीतक, आमलकी", "मुस्ता, विडंग, चित्रक"], 
     correctAnswerIndex: 0,
-    explanation: "बलवान व्यक्ति में खाली पेट (अभक्त) औषधि देने से वह पूर्ण वीर्य के साथ कार्य करती है और शीघ्र लाभ पहुँचाती है।",
-    reference: "चरक चिकित्सास्थान 30/296",
-    ncismRef: "Syllabus Point 15: Bheshaja Sevana Kala"
+    explanation: "त्वक् (दालचीनी), एला (इलायची), और पत्र (तेजपत्ता) के मिश्रण को त्रिजात या त्रिसुगन्धि कहा जाता है।",
+    reference: "भावप्रकाश निघण्टु",
+    ncismRef: "Syllabus Point 9: Mishraka Varga"
   },
   { 
-    questionText: "जल, दुग्ध, तक्र (छाछ), और मद्य - आयुर्वेद में इन्हें मुख्य रूप से किस औषधीय श्रेणी में रखा गया है?", 
-    options: ["मुख्य औषध द्रव्य", "प्रक्षेप (Prakshepa) द्रव्य", "अनुपान (Anupana) द्रव्य", "शोधन द्रव्य"], 
+    questionText: "आधुनिक द्रव्यगुण विज्ञान (Pharmacognosy) में, किसी पादप के सूक्ष्मदर्शीय स्वरूप (Stomata, Trichomes आदि) का अध्ययन किस प्रकार के मूल्यांकन के अंतर्गत आता है?", 
+    options: ["भौतिक (Physical) Evaluation", "रासायनिक (Chemical) Evaluation", "सूक्ष्मदर्शीय (Microscopic) Evaluation", "जैविक (Biological) Evaluation"], 
     correctAnswerIndex: 2,
-    explanation: "ये द्रव्य औषधि के साथ या उसके तुरंत बाद अनुपान (Vehicle) के रूप में लिए जाते हैं ताकि औषधि का पाचन और अवशोषण शीघ्र हो सके।",
-    reference: "चरक सूत्रस्थान 27",
-    ncismRef: "Syllabus Point 15: Anupana (Concept and utility)"
+    explanation: "औषधि की पहचान और मिलावट रोकने के लिए माइक्रोस्कोप द्वारा उसके ऊतकों (Tissues), स्टोमेटा आदि का अध्ययन Microscopic Evaluation कहलाता है।",
+    reference: "Modern Pharmacognosy",
+    ncismRef: "Syllabus Point 12: Bheshaja Pariksha (Pharmacognosy)"
   },
   { 
-    questionText: "'प्रशस्त भेषज' (Ideal Drug) के चार गुणों—\"बहुकल्पं बहुगुणं सम्पन्नं योग्यमौषधम्\" का उल्लेख आचार्य चरक ने किस स्थान में किया है?", 
-    options: ["विमान स्थान", "शारीर स्थान", "सूत्र स्थान", "कल्प स्थान"], 
-    correctAnswerIndex: 2,
-    explanation: "चरक संहिता सूत्रस्थान अध्याय 9 (खुड्डाकचतुष्पाद) में वैद्य, रोगी, परिचारक और औषध (प्रशस्त भेषज) के गुणों का वर्णन है।",
+    questionText: "जो द्रव्य जठराग्नि को तो बढ़ाता है, परन्तु अपक्व आम (भोजन) का पाचन नहीं करता, उसे क्या कहते हैं?", 
+    options: ["पाचन (Pachana)", "दीपन (Deepana)", "अनुलोमन (Anulomana)", "भेदन (Bhedana)"], 
+    correctAnswerIndex: 1,
+    explanation: "\"पचेन्नामं वह्निकृद् दीपनं तद् यथा मिशि:\" - जो केवल अग्नि को दीप्त करे परन्तु आम का पाचन न करे (जैसे शतपुष्पा/सौंफ) वह दीपन है।",
+    reference: "शार्ङ्गधर संहिता (पूर्व खण्ड)",
+    ncismRef: "Syllabus Point 8: Karma (Deepana)"
+  },
+  { 
+    questionText: "धन्वन्तरि निघण्टु (Dhanvantari Nighantu) को आयुर्वेद के सबसे प्राचीन उपलब्ध निघण्टुओं में से एक माना जाता है, इसका संभावित काल क्या है?", 
+    options: ["१०वीं से १३वीं शताब्दी (10th-13th AD)", "16वीं शताब्दी (16th AD)", "२०वीं शताब्दी (20th AD)", "वैदिक काल (Vedic Period)"], 
+    correctAnswerIndex: 0,
+    explanation: "धन्वन्तरि निघण्टु का रचना काल लगभग 10वीं से 13वीं शताब्दी के मध्य माना जाता है।",
+    reference: "History of Dravyaguna",
+    ncismRef: "Syllabus Point 1: Brief knowledge of Nighantus"
+  },
+  { 
+    questionText: "आधुनिक भेषज-विज्ञान (Pharmacology) में 'जैव उपलब्धता' (Bioavailability) से क्या तात्पर्य है?", 
+    options: ["रक्त में पहुँचने वाली सक्रिय औषधि की मात्रा व दर (Rate & extent of active drug reaching systemic circulation)", "औषधि का शरीर से बाहर निकलना (Excretion)", "औषधि का विषैला प्रभाव (Toxicity)", "दो औषधियों की अंतःक्रिया (Drug interaction)"], 
+    correctAnswerIndex: 0,
+    explanation: "बायोअवेलेबिलिटी वह प्रतिशत मात्रा है जो औषधि सेवन के बाद बिना नष्ट हुए सीधे रक्त (Systemic circulation) में पहुँचती है।",
+    reference: "Modern Pharmacology",
+    ncismRef: "Syllabus Point 10.1: General Pharmacology (Pharmacokinetics)"
+  },
+  { 
+    questionText: "'अग्नीषोमीय' जगत की अवधारणा पर आधारित 'द्विविध वीर्य' (उष्ण और शीत वीर्य) का सिद्धान्त विशेष रूप से किस ग्रन्थ में स्थापित किया गया है?", 
+    options: ["चरक संहिता", "सुश्रुत संहिता", "माधव निदान", "अष्टांग संग्रह"], 
+    correctAnswerIndex: 1,
+    explanation: "यद्यपि चरक ने भी द्विविध और अष्टविध वीर्य बताए हैं, किन्तु सुश्रुत ने स्पष्ट रूप से \"अग्नीषोमीयत्वात् जगतः...\" कहकर द्विविध वीर्य को ही प्रधान माना है।",
+    reference: "सुश्रुत सूत्रस्थान 40/4",
+    ncismRef: "Syllabus Point 6: Virya"
+  },
+  { 
+    questionText: "'शिरीष' (Albizia lebbeck) को विषघ्न (Anti-toxic) माना गया है। रस, गुण, वीर्य, विपाक के नियमों से इसे स्पष्ट न कर पाने पर, इस विशिष्ट कर्म का कारण क्या माना जाता है?", 
+    options: ["रस (Rasa)", "विपाक (Vipaka)", "वीर्य (Virya)", "प्रभाव (Prabhava)"], 
+    correctAnswerIndex: 3,
+    explanation: "जब किसी द्रव्य का कार्य उसके रस, गुण, वीर्य और विपाक के सामान्य सिद्धान्तों से विपरीत या अचिन्त्य हो, तो उसे प्रभाव कहा जाता है।",
+    reference: "चरक सूत्रस्थान 26/67",
+    ncismRef: "Syllabus Point 7: Prabhava"
+  },
+  { 
+    questionText: "निम्नलिखित में से कौन सा द्रव्य मुख्य 'अष्टवर्ग' (Ashtavarga) में सम्मिलित नहीं है?", 
+    options: ["जीवक (Jivaka)", "मेदा (Meda)", "काकोली (Kakoli)", "अश्वगंधा (Ashwagandha)"], 
+    correctAnswerIndex: 3,
+    explanation: "अश्वगंधा अष्टवर्ग का मूल द्रव्य नहीं है, बल्कि काकोली और क्षीरकाकोली के न मिलने पर उनके अभाव प्रतिनिधि (Substitute) के रूप में प्रयोग होता है।",
+    reference: "भावप्रकाश निघण्टु",
+    ncismRef: "Syllabus Point 9: Mishraka Varga (Ashtavarga)"
+  },
+  { 
+    questionText: "Pharmacology में, औषधि सेवन का वह मार्ग (Route of administration) जिसमें औषधि को सीधे जीभ के नीचे रखा जाता है, उसे क्या कहते हैं?", 
+    options: ["Intravenous (IV)", "Sublingual (सबलिंगुअल)", "Intramuscular (IM)", "Oral (मुख द्वारा)"], 
+    correctAnswerIndex: 1,
+    explanation: "सबलिंगुअल मार्ग से दी गई औषधि बिना लीवर (First-pass metabolism) में जाए सीधे जीभ के नीचे की रक्त वाहिकाओं में अवशोषित हो जाती है।",
+    reference: "Modern Pharmacology",
+    ncismRef: "Syllabus Point 10.1: Routes of Drug Administration"
+  },
+  { 
+    questionText: "'प्रशस्त भेषज' (Ideal Drug) के चार गुणों में 'बहुकल्पं' (Bahukalpam) का क्या अर्थ है?", 
+    options: ["जो बहुत सी बीमारियों को ठीक करे", "जिसे अनेक कल्पनाओं (स्वरस, चूर्ण, क्वाथ आदि) में आसानी से बदला जा सके", "जो अत्यंत सस्ता हो", "जो अनेक देशों में पाया जाता हो"], 
+    correctAnswerIndex: 1,
+    explanation: "बहुकल्पं का अर्थ है कि उस औषधि से कई प्रकार की कल्पनाएं (जैसे चूर्ण, वटी, क्वाथ, अवलेह) सरलता से बनाई जा सकें।",
     reference: "चरक सूत्रस्थान 9/7",
     ncismRef: "Syllabus Point 12: Prashasta Bheshaja"
-  },
-  { 
-    questionText: "आचार्य शारंगधर के अनुसार, क्वाथ (Decoction / Kashaya) की सामान्य सेवन मात्रा (Dose) कितनी निर्धारित की गई है?", 
-    options: ["२ कर्ष", "२ पल (लगभग 96 ml)", "१ पल", "४ पल"], 
-    correctAnswerIndex: 1,
-    explanation: "शारंगधर संहिता में कहा गया है \"क्वाथस्य द्विपलं मतम्\", अर्थात् क्वाथ की मात्रा 2 पल (~96 ml) होती है।",
-    reference: "शार्ङ्गधर संहिता (मध्यम खण्ड)",
-    ncismRef: "Syllabus Point 14: Posology (Matra)"
-  },
-  { 
-    questionText: "यदि किसी आयुर्वेदिक योग (Formulation) में 'अनुपान' विशेष रूप से निर्दिष्ट न किया गया हो, तो सामान्यतः किस अनुपान का प्रयोग करना चाहिए?", 
-    options: ["मद्य (Alcohol)", "इक्षु रस (Sugarcane juice)", "कोष्ण जल (Lukewarm water / जल)", "घृत (Ghee)"], 
-    correctAnswerIndex: 2,
-    explanation: "जहाँ किसी विशेष अनुपान का उल्लेख न हो, वहाँ जल (सामान्य या कोष्ण) को सर्वमान्य और सुरक्षित अनुपान माना जाता है।",
-    reference: "शार्ङ्गधर संहिता",
-    ncismRef: "Syllabus Point 15: Anupana"
-  },
-  { 
-    questionText: "भेषज सेवन काल (Time of drug administration) की कुल संख्या आचार्य सुश्रुत और आचार्य वाग्भट ने क्रमशः कितनी मानी है?", 
-    options: ["10 और 10", "10 और 11", "11 और 10", "11 और 11"], 
-    correctAnswerIndex: 1,
-    explanation: "आचार्य चरक और सुश्रुत ने 10 भेषज सेवन काल माने हैं, जबकि अष्टांग संग्रह/हृदय (वाग्भट) ने 'निशि' काल को जोड़कर 11 माने हैं।",
-    reference: "सुश्रुत उत्तरतन्त्र 64 / अष्टांग हृदय सूत्रस्थान 13",
-    ncismRef: "Syllabus Point 15: Bheshaja Sevana Kala"
-  },
-  { 
-    questionText: "'भारंगी' (Clerodendrum serratum) जो कि श्वास-कास हर औषधि है, इसके अभाव में प्रतिनिधि द्रव्य के रूप में किसका प्रयोग उत्तम बताया गया है?", 
-    options: ["तालीशपत्र", "कण्टकारी (Kantakari)", "वासा", "पिप्पली"], 
-    correctAnswerIndex: 1,
-    explanation: "\"भारंगी-अभावे तु देया कण्टकारिका\" अर्थात् भारंगी के उपलब्ध न होने पर कण्टकारी का प्रयोग श्वास-कास रोगों में करना चाहिए।",
-    reference: "भावप्रकाश निघण्टु",
-    ncismRef: "Syllabus Point 10: Abhava Pratinidhi Dravya (Substitute Drugs)"
   }
 ];
 
@@ -332,4 +335,4 @@ export default function DravyagunaPaper1Test3() {
       </div>
     </div>
   );
-}
+    }
