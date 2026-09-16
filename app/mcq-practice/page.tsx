@@ -7,10 +7,19 @@ const TEST_MODULES = [
   {
     id: "charaka-1",
     title: "Charaka Samhita (Purvardha)",
-    part: "Part 1",
+    part: "Part 1 (Q1 - Q20)",
     questions: "20 Questions",
     icon: <BookOpen className="w-6 h-6 text-amber-500" />,
-    link: "/mcq-practice/charaka-1", // We will build this route next!
+    link: "/mcq-practice/charaka-1",
+    status: "active"
+  },
+  {
+    id: "charaka-2",
+    title: "Charaka Samhita (Purvardha)",
+    part: "Part 2 (Q21 - Q40)",
+    questions: "20 Questions",
+    icon: <BookOpen className="w-6 h-6 text-amber-500" />,
+    link: "/mcq-practice/charaka-2", 
     status: "active"
   },
   {
@@ -19,8 +28,17 @@ const TEST_MODULES = [
     part: "Part 1",
     questions: "20 Questions",
     icon: <Leaf className="w-6 h-6 text-amber-500" />,
-    link: "/mcq-practice/dravyaguna-1", // The one we just built!
+    link: "/mcq-practice/dravyaguna-1", 
     status: "active"
+  },
+  {
+    id: "dravyaguna-2",
+    title: "Dravyaguna Vigyan",
+    part: "Part 2",
+    questions: "20 Questions",
+    icon: <Leaf className="w-6 h-6 text-amber-500" />,
+    link: "#",
+    status: "locked" // We will unlock this next!
   },
   {
     id: "rasa-1",
