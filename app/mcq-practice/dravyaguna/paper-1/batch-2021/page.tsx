@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Award, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Award, BookOpen, ClipboardList } from "lucide-react";
 
 const BATCH_2021_QUESTIONS = [
   { 
@@ -10,121 +10,148 @@ const BATCH_2021_QUESTIONS = [
     options: ["मानस (Manas)", "औषध (Aushadha)", "लिंग (Linga)", "हेतु (Hetu)"], 
     correctAnswerIndex: 0,
     explanation: "आयुर्वेद के त्रिसूत्र (स्कन्धत्रय) में हेतु, लिंग और औषध शामिल हैं। मानस इसका अंग नहीं है।",
-    reference: "चरक सूत्रस्थान 1/44"
+    reference: "चरक सूत्रस्थान 1/44",
+    ncismRef: "Syllabus Point 1: Introduction (Trisutra of Ayurveda)"
   },
-  { 
-    questionText: "निम्न में से 'स्वस्थानाहित' (Swasthahit) द्रव्य किस प्रकार का वर्गीकरण है?", 
+    { 
+    questionText: "निम्न में से 'स्वस्थहित' (Swasthahit) द्रव्य किस प्रकार का वर्गीकरण है?", 
     options: ["प्रयोगभेद (Prayogabhed)", "उत्पत्तिभेद (Utpattibhed)", "प्रभावभेद (Prabhavabheda)", "योनिभेद (Yonibhed)"], 
-    correctAnswerIndex: 0,
-    explanation: "प्रयोग (उपयोग) के आधार पर द्रव्य के दो भेद होते हैं - स्वस्थानाहित (स्वास्थ्य रक्षक) और व्याधिप्रणुत् (रोग नाशक)।"
+    correctAnswerIndex: 2,
+    explanation: "आचार्य चरक (सूत्रस्थान 1/67) के अनुसार प्रभाव (Action) के आधार पर द्रव्य के तीन भेद हैं: 1. दोषप्रशमन, 2. धातुप्रदूषण और 3. स्वस्थहित। अतः यह प्रभावभेद है।",
+    reference: "चरक सूत्रस्थान 1/67",
+    ncismRef: "Syllabus Point 2: Dravya (Classification based on Prabhava)"
   },
   { 
     questionText: "दवा की प्राथमिक क्रिया के अप्रत्यक्ष परिणाम (Indirect consequences of a primary action of the drug) को कहा जाता है:", 
-    options: ["द्वितीयक प्रभाव (Secondary Effects)", "अतिसंवेदनशीलता (Hypersensitivity)", "मुग्धाता (Idiosyncrasy)", "दुष्प्रभाव (Side Effects)"], 
+    options: ["द्वितीयक प्रभाव (Secondary Effects)", "अतिसंवेदनशीलता (Hypersensitivity)", "मुग्धाता / गुप्ता [Misprint] (Idiosyncrasy)", "दुष्प्रभाव (Side Effects)"], 
     correctAnswerIndex: 0,
-    explanation: "औषधि का जो सीधा असर होता है उसे Primary action कहते हैं, और उस क्रिया के फलस्वरूप जो दूसरा प्रभाव उत्पन्न होता है उसे Secondary effect कहते हैं।"
+    explanation: "औषधि का जो सीधा असर होता है उसे Primary action कहते हैं, और उस क्रिया के फलस्वरूप जो दूसरा प्रभाव उत्पन्न होता है उसे Secondary effect कहते हैं। (नोट: यूनिवर्सिटी पेपर में 'Idiosyncrasy' का हिंदी अनुवाद गलती से 'गुप्ता' छपा है!)",
+    ncismRef: "Syllabus Point 10.2: Modern Pharmacology (Adverse Drug Reactions)"
   },
   { 
     questionText: "वातव्याधि में लाभकारी गुण (Beneficial Gunas in Vatavyadhi):", 
     options: ["स्निग्ध और उष्ण (Snigdha & Ushna)", "लघु और शीत (Laghu & Sheeta)", "रुक्ष और शीत (Ruksha & Sheeta)", "रुक्ष और लघु (Ruksha & Laghu)"], 
     correctAnswerIndex: 0,
-    explanation: "वात दोष मुख्य रूप से रुक्ष और शीत होता है। अतः इसके शमन के लिए विपरीत गुण- स्निग्ध और उष्ण अत्यंत लाभकारी होते हैं।"
+    explanation: "वात दोष मुख्य रूप से रुक्ष और शीत होता है। अतः इसके शमन के लिए विपरीत गुण- स्निग्ध और उष्ण अत्यंत लाभकारी होते हैं।",
+    ncismRef: "Syllabus Point 3: Guna (Clinical Application of Gurvadi Gunas)"
   },
   { 
     questionText: "रुक्ष, शीत और लघु गुण निम्नलिखित में से किस रस में मौजूद हैं?", 
     options: ["लवण (Lavana)", "तिक्त (Tikta)", "मधुर (Madhura)", "अम्ल (Amla)"], 
     correctAnswerIndex: 1,
-    explanation: "तिक्त रस में वायु और आकाश महाभूत की प्रधानता होती है, जिसके कारण यह रुक्ष, शीत और लघु गुणों से युक्त होता है।"
+    explanation: "तिक्त रस में वायु और आकाश महाभूत की प्रधानता होती है, जिसके कारण यह रुक्ष, शीत और लघु गुणों से युक्त होता है।",
+    ncismRef: "Syllabus Point 4: Rasa (Panchabhautik Sangathana)"
   },
   { 
     questionText: "डेटा उपयोग की प्रक्रिया (The process of data utilization) को किस नाम से जाना जाता है?", 
     options: ["डेटा प्लान (Data Plan)", "डेटा माइनिंग (Data Mining)", "रिसर्च (Research)", "स्टैटिस्टिक्स (Statistics)"], 
     correctAnswerIndex: 1,
-    explanation: "बड़े डेटासेट्स में से उपयोगी पैटर्न और जानकारी निकालने की प्रक्रिया को डेटा माइनिंग (Data Mining) कहा जाता है।"
+    explanation: "बड़े डेटासेट्स में से उपयोगी पैटर्न और जानकारी निकालने की प्रक्रिया को डेटा माइनिंग (Data Mining) कहा जाता है।",
+    ncismRef: "Syllabus Point 11: Basics of Bioinformatics & Data Utilization"
   },
   { 
     questionText: "कटु विपाक (Katu Vipak) है:", 
     options: ["वातवर्धक (Vata Vardhak)", "कफवर्धक (Kapha Vardhak)", "पित्तशामक (Pitta Shamak)", "वातशामक (Vata Shamak)"], 
     correctAnswerIndex: 0,
-    explanation: "कटु विपाक वात दोष को बढ़ाता है, कफ को घटाता है और मलमूत्र को बांधने (बद्धविट्क) का कार्य करता है।"
+    explanation: "कटु विपाक वात दोष को बढ़ाता है, कफ को घटाता है और मलमूत्र को बांधने (बद्धविट्क) का कार्य करता है।",
+    ncismRef: "Syllabus Point 5: Vipaka (Lakshana & Karma)"
   },
   { 
     questionText: "'येन कुर्वन्ति तत्' (Yena Kurvanti Tat) का तात्पर्य है:", 
     options: ["विपाक (Vipak)", "कर्म (Karma)", "प्रभाव (Prabhav)", "वीर्य (Virya)"], 
     correctAnswerIndex: 3,
-    explanation: "\"येन कुर्वन्ति तद् वीर्यम्\" - जिसके द्वारा औषध अपना कार्य (कर्म) करती है, उस शक्ति को वीर्य कहते हैं।"
+    explanation: "\"येन कुर्वन्ति तद् वीर्यम्\" - जिसके द्वारा औषध अपना कार्य (कर्म) करती है, उस शक्ति को वीर्य कहते हैं।",
+    reference: "चरक सूत्रस्थान 26/65",
+    ncismRef: "Syllabus Point 6: Virya (Definition)"
   },
   { 
     questionText: "लवण रस द्रव्य में _____ वीर्य होगा (Lavan Rasa Dravya will have ______ Virya):", 
     options: ["रुक्ष (Ruksha)", "उष्ण (Ushna)", "द्रव (Drava)", "शीत (Sheeta)"], 
     correctAnswerIndex: 1,
-    explanation: "लवण रस में जल और अग्नि महाभूत की प्रधानता होती है, अतः इसका वीर्य उष्ण (Ushna) होता है।"
+    explanation: "लवण रस में जल और अग्नि महाभूत की प्रधानता होती है, अतः इसका वीर्य उष्ण (Ushna) होता है।",
+    ncismRef: "Syllabus Point 6: Virya (Relationship between Rasa and Virya)"
   },
   { 
     questionText: "'यत् कुर्वन्ति तत्' (Yat Kurvanti Tat) का तात्पर्य है:", 
     options: ["काल (Kala)", "कर्म (Karma)", "अधिकरण (Adhikaran)", "वीर्य (Virya)"], 
     correctAnswerIndex: 1,
-    explanation: "\"यत् कुर्वन्ति तत् कर्म\" - औषध जो कार्य या चेष्टा करती है, उसे कर्म कहा जाता है।"
+    explanation: "\"यत् कुर्वन्ति तत् कर्म\" - औषध जो कार्य या चेष्टा करती है, उसे कर्म कहा जाता है।",
+    reference: "चरक सूत्रस्थान 26/65",
+    ncismRef: "Syllabus Point 8: Karma (Definition)"
   },
   { 
     questionText: "नेटवर्क फार्माकोलॉजी की अवधारणा (Concept of Network Pharmacology) किसके द्वारा प्रस्तावित की गई थी?", 
     options: ["हॉपकिंस (Hopkins)", "एडवर्ड (Edward)", "किंग्स्टन (Kingston)", "चार्ल्स (Charles)"], 
     correctAnswerIndex: 0,
-    explanation: "नेटवर्क फार्माकोलॉजी (Network Pharmacology) शब्द पहली बार 2007 में एंड्रयू एल. हॉपकिंस (Andrew L. Hopkins) द्वारा प्रस्तावित किया गया था।"
+    explanation: "नेटवर्क फार्माकोलॉजी (Network Pharmacology) शब्द पहली बार 2007 में एंड्रयू एल. हॉपकिंस (Andrew L. Hopkins) द्वारा प्रस्तावित किया गया था।",
+    ncismRef: "Syllabus Point 11: Network Pharmacology"
   },
   { 
     questionText: "मरीच _____ का घटक नहीं है (Marich is not member of):", 
-    options: ["षडूषण (Shadooshana)", "त्रिकटु (Trikatu)", "पंचकोल (Panchakola)", "चतुरषण (Chaturashan)"], 
+    options: ["षडूषण (Shadushana)", "त्रिकटु (Trikatu)", "पंचकोल (Panchakola)", "चतुरुषण (Chaturushana)"], 
     correctAnswerIndex: 2,
-    explanation: "पंचकोल में पिप्पली, पिप्पलीमूल, चव्य, चित्रक और शुण्ठी आते हैं। इसमें मरीच (काली मिर्च) शामिल नहीं है।"
+    explanation: "पंचकोल में पिप्पली, पिप्पलीमूल, चव्य, चित्रक और शुण्ठी आते हैं। इसमें मरीच (काली मिर्च) शामिल नहीं है।",
+    reference: "शार्ङ्गधर संहिता",
+    ncismRef: "Syllabus Point 9: Mishraka Varga (Panchakola)"
   },
   { 
     questionText: "ICBN का तात्पर्य है (ICBN Refers to):", 
     options: ["International Code of Botanical Network", "International Code of Botanical Nomenclature", "International Code of Biology Network", "International Community of Botanical Network"], 
     correctAnswerIndex: 1,
-    explanation: "ICBN (अब ICN) वानस्पतिक नामकरण का अंतर्राष्ट्रीय कोड है, जो पादपों के वैज्ञानिक नाम रखने के नियम तय करता है।"
+    explanation: "ICBN (अब ICN) वानस्पतिक नामकरण का अंतर्राष्ट्रीय कोड है, जो पादपों के वैज्ञानिक नाम रखने के नियम तय करता है।",
+    ncismRef: "Syllabus Point 2: Nomenclature (ICBN Principles)"
   },
   { 
     questionText: "भेषज परीक्षा की अवधारणा (Concept of Bheshaja Pariksha) का उल्लेख किसमें किया गया है?", 
     options: ["चरक विमान (Charak Viman)", "चरक सूत्रस्थान (Charak Sutrasthan)", "चरक इन्द्रिय (Charak Indriya)", "चरक शारीर (Charak Sharir)"], 
     correctAnswerIndex: 0,
-    explanation: "औषध परीक्षा (भेषज परीक्षा) का विस्तृत वर्णन चरक संहिता के विमान स्थान अध्याय 8 (रोगभिषग्जितीय विमान) में मिलता है।"
+    explanation: "औषध परीक्षा (भेषज परीक्षा) का विस्तृत वर्णन चरक संहिता के विमान स्थान अध्याय 8 (रोगभिषग्जितीय विमान) में मिलता है।",
+    reference: "चरक विमानस्थान 8/87",
+    ncismRef: "Syllabus Point 12: Bheshaja Pariksha"
   },
   { 
     questionText: "चरक के अनुसार मूल (जड़) को किस ऋतु में एकत्रित करना चाहिए? (Mula should be collected in which Ritu)", 
     options: ["वसंत (Vasant)", "वर्षा (Varsha)", "शरद (Sharad)", "ग्रीष्म (Grishma)"], 
     correctAnswerIndex: 3,
-    explanation: "आचार्य चरक और सुश्रुत दोनों के अनुसार, पादपों की जड़ों (मूल) का संग्रहण ग्रीष्म (Summer) या शिशिर ऋतु में करना चाहिए, जब पत्ते गिर चुके हों।"
+    explanation: "आचार्य चरक और सुश्रुत दोनों के अनुसार, पादपों की जड़ों (मूल) का संग्रहण ग्रीष्म (Summer) या शिशिर ऋतु में करना चाहिए, जब पत्ते गिर चुके हों।",
+    reference: "चरक कल्पस्थान 1/10",
+    ncismRef: "Syllabus Point 10: Collection of Drugs (Bheshaja Sangrahana)"
   },
   { 
     questionText: "बीज बैंक _____ संरक्षण की विधियों में से एक है (Seed bank is one of the methods of ______ Conservation):", 
     options: ["In-Situ", "Ex-Situ", "Both", "Local"], 
     correctAnswerIndex: 1,
-    explanation: "बीज बैंक (Seed Banks) पादप प्रजातियों को उनके प्राकृतिक आवास से बाहर (Ex-situ) सुरक्षित रखने का एक तरीका है।"
+    explanation: "बीज बैंक (Seed Banks) पादप प्रजातियों को उनके प्राकृतिक आवास से बाहर (Ex-situ) सुरक्षित रखने का एक तरीका है।",
+    ncismRef: "Syllabus Point 13: Conservation of Medicinal Plants"
   },
   { 
     questionText: "मेदा और महामेदा का प्रतिनिधि है (Substitute of Meda & Mahameda is):", 
     options: ["शतावरी (Shatavari)", "विदारीकंद (Vidarikanda)", "वाराहीकंद (Varahikand)", "अश्वगंधा (Ashwagandha)"], 
     correctAnswerIndex: 0,
-    explanation: "अष्टवर्ग द्रव्यों के अभाव प्रतिनिधि सिद्धांत के अनुसार, मेदा और महामेदा न मिलने पर शतावरी का प्रयोग करना चाहिए।"
+    explanation: "अष्टवर्ग द्रव्यों के अभाव प्रतिनिधि सिद्धांत के अनुसार, मेदा और महामेदा न मिलने पर शतावरी का प्रयोग करना चाहिए।",
+    reference: "भावप्रकाश निघण्टु",
+    ncismRef: "Syllabus Point 10: Abhava Pratinidhi Dravya (Substitute Drugs)"
   },
   { 
     questionText: "'Ultrasound Extraction' को ___ के नाम से भी जाना जाता है:", 
     options: ["Multiplication", "Subtraction", "Sublimation", "Sonication"], 
     correctAnswerIndex: 3,
-    explanation: "अल्ट्रासाउंड एक्सट्रैक्शन को सोनिकेशन (Sonication) भी कहा जाता है, जिसमें ध्वनि तरंगों का उपयोग करके औषधीय तत्वों को निकाला जाता है।"
+    explanation: "अल्ट्रासाउंड एक्सट्रैक्शन को सोनिकेशन (Sonication) भी कहा जाता है, जिसमें ध्वनि तरंगों का उपयोग करके औषधीय तत्वों को निकाला जाता है।",
+    ncismRef: "Syllabus Point 12: Pharmacognosy (Extraction Methods)"
   },
   { 
     questionText: "ग्लोबल सेंटर फॉर ट्रेडिशनल मेडिसिन किस शहर में स्थापित किया गया है? (Global Centre for Traditional Medicine is established in):", 
     options: ["जयपुर (Jaipur)", "जामनगर (Jamnagar)", "जोधपुर (Jodhpur)", "जम्मू (Jammu)"], 
     correctAnswerIndex: 1,
-    explanation: "विश्व स्वास्थ्य संगठन (WHO) द्वारा ग्लोबल सेंटर फॉर ट्रेडिशनल मेडिसिन (GCTM) जामनगर, गुजरात में स्थापित किया गया है।"
+    explanation: "विश्व स्वास्थ्य संगठन (WHO) द्वारा ग्लोबल सेंटर फॉर ट्रेडिशनल मेडिसिन (GCTM) जामनगर, गुजरात में स्थापित किया गया है।",
+    ncismRef: "Syllabus Point 1: Important Institutions related to Medicinal Plants"
   },
   { 
     questionText: "वृक्षायुर्वेद ______ के द्वारा लिखा गया है (Vrikshayurved is written by):", 
     options: ["गोपाल (Gopal)", "मदनपाल (Madanpala)", "सुरपाल (Surpala)", "हरपाल (Harpal)"], 
     correctAnswerIndex: 2,
-    explanation: "सुरपाल (Surpala) ने 'वृक्षायुर्वेद' नामक प्राचीन संस्कृत ग्रन्थ की रचना की, जो पादप विज्ञान और कृषि पर आधारित है।"
+    explanation: "सुरपाल (Surpala) ने 'वृक्षायुर्वेद' नामक प्राचीन संस्कृत ग्रन्थ की रचना की, जो पादप विज्ञान और कृषि पर आधारित है।",
+    ncismRef: "Syllabus Point 1: History of Dravyaguna (Vrikshayurveda)"
   }
 ];
 
@@ -244,15 +271,23 @@ export default function Batch2021Test() {
             {/* EXPLANATION POP-UP */}
             {isAnswered && qData.explanation && (
               <div className="mt-6 bg-amber-500/10 border border-amber-500/30 rounded-sm p-5 shadow-inner animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <p className="text-sm text-foreground/90 leading-relaxed font-medium">
+                <p className="text-sm text-foreground/90 leading-relaxed font-medium mb-3">
                   <span className="font-bold text-amber-500 mr-2">Explanation:</span> 
                   {qData.explanation}
                 </p>
-                {qData.reference && (
-                  <p className="text-xs text-foreground/50 mt-3 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <BookOpen className="w-3.5 h-3.5" /> Ref: {qData.reference}
-                  </p>
-                )}
+                
+                <div className="flex flex-col gap-2 border-t border-amber-500/20 pt-3">
+                  {qData.ncismRef && (
+                    <p className="text-xs text-foreground/70 font-bold tracking-wide flex items-center gap-2">
+                      <ClipboardList className="w-4 h-4 text-amber-500" /> {qData.ncismRef}
+                    </p>
+                  )}
+                  {qData.reference && (
+                    <p className="text-xs text-foreground/50 font-bold uppercase tracking-wider flex items-center gap-2">
+                      <BookOpen className="w-4 h-4" /> Ref: {qData.reference}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 
@@ -285,5 +320,4 @@ export default function Batch2021Test() {
       </div>
     </div>
   );
-                }
-
+}
