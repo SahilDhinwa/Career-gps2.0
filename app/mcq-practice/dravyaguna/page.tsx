@@ -8,6 +8,9 @@ import { ArrowLeft, Leaf, Beaker, FileText, ChevronRight, Lock, Award } from "lu
 // ==========================================
 
 const PAPER_1_SPECIAL_TESTS = [
+  // Add the new Chapter 13 test right here:
+  { id: "chapter-13", title: "DG Practice Paper (Ch-13)", subtitle: "20 Questions • Nomenclature & Taxonomy", link: "/mcq-practice/dravyaguna/paper-1/chapter-13" },
+  
   {
     id: "batch-2021",
     title: "DG Paper 1 - 2021 (Main)",
