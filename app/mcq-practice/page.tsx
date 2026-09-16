@@ -4,24 +4,16 @@ import Link from "next/link";
 import { ArrowLeft, BookOpen, Leaf, FlaskConical, Stethoscope, ChevronRight, Lock } from "lucide-react";
 
 const TEST_MODULES = [
-  {
-    id: "charaka-1",
+    {
+    id: "charaka",
     title: "Charaka Samhita (Purvardha)",
-    part: "Part 1 (Q1 - Q20)",
-    questions: "20 Questions",
+    part: "All Papers",
+    questions: "Subject Hub",
     icon: <BookOpen className="w-6 h-6 text-amber-500" />,
-    link: "/mcq-practice/charaka-1",
+    link: "/mcq-practice/charaka",
     status: "active"
   },
   {
-    id: "charaka-2",
-    title: "Charaka Samhita (Purvardha)",
-    part: "Part 2 (Q21 - Q40)",
-    questions: "20 Questions",
-    icon: <BookOpen className="w-6 h-6 text-amber-500" />,
-    link: "/mcq-practice/charaka-2", 
-    status: "active"
-  },  {
     id: "dravyaguna",
     title: "Dravyaguna Vigyan",
     part: "Paper 1 & Paper 2",
