@@ -12,16 +12,30 @@ const PREVIOUS_PAPERS = [
     size: "16.5 MB", 
     link: "/pdfs/batch-2021-all-papers.pdf" // EXACT match to your uploaded file
   },
-  // You can add more files here later as you upload them to the public/pdfs folder!
   { 
     id: 2, 
+    subject: "BAMS 2nd Prof - All Papers (Batch 2021)", 
+    year: "Jan-Feb 2025", 
+    size: "175 KB", 
+    link: "/pdfs/DG 21 batch answer.pdf" // EXACT match to your uploaded file
+  },
+  // You can add more files here later as you upload them to the public/pdfs folder!
+  { 
+    id: 3, 
     subject: "BAMS 2nd Prof - All Papers (Batch 2022)", 
     year: "Dec2025-Jan2026", 
     size: "17.9 MB", 
     link: "/pdfs/batch-2022-all-papers.pdf" 
   },
+  { 
+    id: 4, 
+    subject: "BAMS 2nd Prof - All Papers (Batch 2021)", 
+    year: "Jan-Feb 2025", 
+    size: "208 KB", 
+    link: "/pdfs/DG 22 batch answer.pdf" // EXACT match to your uploaded file
+  },
     { 
-    id: 3, 
+    id: 5, 
     subject: "BAMS 2nd Prof - Back Papers", 
     year: "July-Aug 2026", 
     size: "10.1 MB", 
