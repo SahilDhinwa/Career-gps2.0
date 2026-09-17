@@ -24,6 +24,7 @@ const PAPER_1_SPECIAL_TESTS = [
 
 const PAPER_1_PRACTICE_TESTS = [
   // Add the new Chapter 13 test right here:
+  { id: "chapter-11", title: "DG Practice Paper (Ch-11)", subtitle: "40 Questions • Modern Pharmacology", link: "/mcq-practice/dravyaguna/paper-1/chapter-11" }, // Newly Added!
   { id: "chapter-13", title: "DG Practice Paper (Ch-13)", subtitle: "20 Questions • Nomenclature & Taxonomy", link: "/mcq-practice/dravyaguna/paper-1/chapter-13" },
   { id: "chapter-14", title: "DG Practice Paper (Ch-14)", subtitle: "20 Questions • Bheshaja Pariksha & Pharmacognosy", link: "/mcq-practice/dravyaguna/paper-1/chapter-14" }, // Newly Added!
   
