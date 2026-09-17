@@ -2,128 +2,168 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Award, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Award, BookOpen, ClipboardList } from "lucide-react";
 
 const BATCH_2022_QUESTIONS = [
   { 
-    questionText: "'यतश्चायुष्याणि अनायुष्याणि च द्रव्यगुणकर्माणि।' इस परिभाषा का उल्लेख किस आचार्य ने किया है।", 
-    options: ["आचार्य चरक", "आचार्य सुश्रुत", "आचार्य नागार्जुन", "आचार्य भावमिश्र"], 
+    questionText: "'यतश्चायुष्याणि अनायुष्याणि च द्रव्यगुणकर्माणि।' इस परिभाषा का उल्लेख किस आचार्य ने किया है? / 'यतश्चायुष्याणि अनायुष्याणि च द्रव्यगुणकर्माणि।' Which Acharya has mentioned this definition?", 
+    options: ["आचार्य चरक (Acharya Charaka)", "आचार्य सुश्रुत (Acharya Sushruta)", "आचार्य नागार्जुन (Acharya Nagarjun)", "आचार्य भावमिश्र (Acharya Bhavamishra)"], 
     correctAnswerIndex: 0,
-    explanation: "चरक संहिता सूत्रस्थान 1 में आयु और अनायुष्य द्रव्यों के गुण-कर्म का वर्णन करते हुए यह परिभाषा दी गई है।"
+    explanation: "चरक संहिता सूत्रस्थान 1 में आयु और अनायुष्य द्रव्यों के गुण-कर्म का वर्णन करते हुए यह परिभाषा दी गई है।",
+    reference: "चरक सूत्रस्थान 1/28",
+    ncismRef: "Syllabus Point 1: Dravyaguna Vigyana"
   },
   { 
-    questionText: "वीरुध का उदाहरण निम्न में से कौनसा सही है।", 
-    options: ["वट", "कण्टकारी", "आम्र", "इनमें से कोई नहीं"], 
+    questionText: "वीरुध का उदाहरण निम्न में से कौनसा सही है? / Which of the following is the correct example of Virudha?", 
+    options: ["वट (Vata)", "कण्टकारी (Kantakari)", "आम्र (Aamra)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 1,
-    explanation: "कण्टकारी जमीन पर फैलने वाली (प्रतानवती) 'वीरुध' का सटीक शास्त्रीय उदाहरण है।"
+    explanation: "कण्टकारी जमीन पर फैलने वाली (प्रतानवती) 'वीरुध' का सटीक शास्त्रीय उदाहरण है।",
+    reference: "चरक सूत्रस्थान 1 / सुश्रुत सूत्रस्थान 1",
+    ncismRef: "Syllabus Point 2: Dravya (Classification)"
   },
   { 
-    questionText: "'कर्मभिस्वनुमीयन्ते नानाद्रव्याश्रयाः गुणाः।' इस परिभाषा के लेखक कौन है।", 
-    options: ["आचार्य नागार्जुन", "आचार्य चरक", "आचार्य सुश्रुत", "आचार्य वाग्भट"], 
+    questionText: "'कर्मभिस्वनुमीयन्ते नानाद्रव्याश्रयाः गुणाः।' इस परिभाषा के लेखक कौन है? / 'कर्मभिस्वनुमीयन्ते नानाद्रव्याश्रयाः गुणाः।' Who is the author of this definition?", 
+    options: ["आचार्य नागार्जुन (Acharya Nagarjun)", "आचार्य चरक (Acharya Charaka)", "आचार्य सुश्रुत (Acharya Sushruta)", "आचार्य वाग्भट (Acharya Vagbhata)"], 
     correctAnswerIndex: 2,
-    explanation: "सुश्रुत संहिता, सूत्रस्थान 46/514"
+    explanation: "अप्रत्यक्ष गुणों का अनुमान प्रत्यक्ष कर्मों द्वारा होता है। (संदर्भ: सुश्रुत संहिता, सूत्रस्थान 46/514)",
+    reference: "सुश्रुत सूत्रस्थान 46/514",
+    ncismRef: "Syllabus Point 3: Guna"
   },
   { 
-    questionText: "क्षार को रस किस आचार्य ने माना है।", 
-    options: ["धामार्गव", "कांकायन", "वायोर्विद", "इनमें से कोई नहीं"], 
+    questionText: "क्षार को रस किस आचार्य ने माना है? / Which Acharya has considered Kshara as rasa?", 
+    options: ["धामार्गव (Dhamargava)", "कांकायन (Kankayan)", "वायोर्विद (Vayorvid)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 3,
-    explanation: "आचार्य 'निमि' ने क्षार को सातवाँ रस माना है, जो दिए गए विकल्पों में नहीं है।"
+    explanation: "आचार्य 'निमि' ने क्षार को सातवाँ रस माना है, जो दिए गए विकल्पों में नहीं है।",
+    reference: "चरक सूत्रस्थान 26",
+    ncismRef: "Syllabus Point 4: Rasa"
   },
   { 
-    questionText: "नागार्जुन के अनुसार लघु विपाक में निम्न में से कौनसा गुण कारण नहीं होता है।", 
-    options: ["विशद", "रूक्ष", "तीक्ष्ण", "इनमें से कोई नहीं"], 
+    questionText: "नागार्जुन के अनुसार लघु विपाक में निम्न में से कौनसा गुण कारण नहीं होता है? / According to Nagarjuna, which of the following guna is not responsible for producing a laghu vipaka?", 
+    options: ["विशद (Vishad)", "रूक्ष (Ruksha)", "तीक्ष्ण (Tiksna)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 3,
-    explanation: "नागार्जुन के अनुसार लघु विपाक के कारणों में लघु, रूक्ष, तीक्ष्ण, विशद आदि सभी गुण आते हैं, अतः कोई भी विकल्प 'कारण नहीं' की श्रेणी में नहीं है।"
+    explanation: "नागार्जुन के अनुसार लघु विपाक के कारणों में लघु, रूक्ष, तीक्ष्ण, विशद आदि सभी गुण आते हैं, अतः कोई भी विकल्प 'कारण नहीं' की श्रेणी में नहीं है।",
+    reference: "रसवैशेषिक सूत्र",
+    ncismRef: "Syllabus Point 5: Vipaka"
   },
   { 
-    questionText: "वीर्य की उपलब्धि किससे होती है।", 
-    options: ["निपात", "अधिवास", "निपात व अधिवास से", "इनमें से कोई नहीं"], 
+    questionText: "वीर्य की उपलब्धि किससे होती है? / By which process is Virya obtained?", 
+    options: ["निपात (Nipata)", "अधिवास (Adhivas)", "निपात व अधिवास से (Nipata and Adhivas)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 2,
-    explanation: "वीर्य का परिज्ञान निपात (जीभ/त्वचा पर स्पर्श) और अधिवास (पाचन के बाद शरीर में रहने तक) दोनों से होता है।"
+    explanation: "वीर्य का परिज्ञान निपात (जीभ/त्वचा पर स्पर्श) और अधिवास (पाचन के बाद शरीर में रहने तक) दोनों से होता है।",
+    reference: "चरक सूत्रस्थान 26",
+    ncismRef: "Syllabus Point 6: Virya (Viryaopalabdhi)"
   },
   { 
-    questionText: "द्रव्य किससे कार्य करता है।", 
-    options: ["द्रव्यप्रभाव से", "गुणप्रभाव से", "द्रव्यप्रभाव व गुणप्रभाव से", "इनमें से कोई नहीं"], 
+    questionText: "द्रव्य किससे कार्य करता है? / What does Dravya work with?", 
+    options: ["द्रव्यप्रभाव से (Dravya-prabhava)", "गुणप्रभाव से (Guna-prabhava)", "द्रव्यप्रभाव व गुणप्रभाव से (Dravya prabhava & Guna-prabhava)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 2,
-    explanation: "आयुर्वेद के अनुसार कुछ द्रव्य अपने विशिष्ट द्रव्य-प्रभाव से और कुछ अपने गुण-प्रभाव (रस, गुण, वीर्य, विपाक) से कार्य करते हैं।"
+    explanation: "आयुर्वेद के अनुसार कुछ द्रव्य अपने विशिष्ट द्रव्य-प्रभाव से और कुछ अपने गुण-प्रभाव (रस, गुण, वीर्य, विपाक) से कार्य करते हैं।",
+    reference: "चरक सूत्रस्थान 26",
+    ncismRef: "Syllabus Point 8: Interrelation of Rasa-Guna-Virya-Vipaka-Prabhava"
   },
   { 
-    questionText: "निम्न में से शीतग्राही व उष्णग्राही का सही कर्म क्या है।", 
-    options: ["स्तम्भन", "ग्राही", "स्तम्भन व ग्राही", "इनमें से कोई नहीं"], 
+    questionText: "निम्न में से शीतग्राही व उष्णग्राही का सही कर्म क्या है? / What is the correct action of sheetgrahi and Ushnagrahi among the following?", 
+    options: ["स्तम्भन (Stambhana)", "ग्राही (Grahi)", "स्तम्भन व ग्राही (Stambhana and Grahi)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 2,
-    explanation: "द्रव्य शीत वीर्य होने पर 'स्तम्भन' और उष्ण वीर्य होने पर 'ग्राही' कर्म करता है।"
+    explanation: "द्रव्य शीत वीर्य होने पर 'स्तम्भन' और उष्ण वीर्य होने पर 'ग्राही' कर्म करता है।",
+    reference: "शार्ङ्गधर संहिता",
+    ncismRef: "Syllabus Point 9: Karma"
   },
   { 
-    questionText: "वासा किस मिश्रक वर्ग में वर्णित है।", 
-    options: ["तृणपंचमूल", "वल्लीपंचमूल", "पंचतिक्त", "इनमें से कोई नहीं"], 
+    questionText: "वासा किस मिश्रक वर्ग में वर्णित है? / In which Mishrak Varga is Vasa described?", 
+    options: ["तृणपंचमूल (Trinapanchmool)", "वल्लीपंचमूल (Vallipanchmool)", "पंचतिक्त (Panchatikta)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 2,
-    explanation: "वासा 'पञ्चतिक्त' वर्ग (गुडूची, निम्ब, वासा, कण्टकारी, पटोल) का एक प्रमुख द्रव्य है।"
+    explanation: "वासा 'पञ्चतिक्त' वर्ग (गुडूची, निम्ब, वासा, कण्टकारी, पटोल) का एक प्रमुख द्रव्य है।",
+    reference: "मिश्रक वर्ग",
+    ncismRef: "Syllabus Point 12: Mishraka Gana (Panchatikta)"
   },
   { 
-    questionText: "गुडूची नामकरण का आधार क्या है।", 
-    options: ["देशोक्ति", "लांछन", "रूढि", "वीर्य"], 
+    questionText: "गुडूची नामकरण का आधार क्या है? / What is the basis of the naming of Guduchi?", 
+    options: ["देशोक्ति (Deshokti)", "लांछन (Laanchhan)", "रूढि (Rudhi)", "वीर्य (Veerya)"], 
     correctAnswerIndex: 2,
-    explanation: "गुडूची नामकरण 'रूढि' (परम्परागत प्रसिद्धि और लोक व्यवहार) पर आधारित माना जाता है।"
+    explanation: "गुडूची नामकरण 'रूढि' (परम्परागत प्रसिद्धि और लोक व्यवहार) पर आधारित माना जाता है।",
+    reference: "राज निघण्टु",
+    ncismRef: "Syllabus Point 13: Nomenclature of dravya as per Nighantu"
   },
   { 
-    questionText: "भेषज परीक्षा मुख्यरूप से किस पर आधारित है।", 
-    options: ["रसपरीक्षा", "स्पर्श परीक्षा", "रूप परीक्षा", "उपरोक्त सभी"], 
+    questionText: "भेषज परीक्षा मुख्यरूप से किस पर आधारित है? / Bheshaja Pariksha is mainly based on -", 
+    options: ["रसपरीक्षा (Rasa-Pareeksha)", "स्पर्श परीक्षा (Sparsha-Pareeksha)", "रूप परीक्षा (Rupa-pariksha)", "उपरोक्त सभी (All of the above)"], 
     correctAnswerIndex: 3,
-    explanation: "भेषज परीक्षा (Organoleptic evaluation) पञ्चज्ञानेन्द्रियों द्वारा रस, रूप, गंध, स्पर्श आदि सभी के आधार पर की जाती है।"
+    explanation: "भेषज परीक्षा (Organoleptic evaluation) पञ्चज्ञानेन्द्रियों द्वारा रस, रूप, गंध, स्पर्श आदि सभी के आधार पर की जाती है।",
+    reference: "चरक विमानस्थान 8",
+    ncismRef: "Syllabus Point 14: Bheshaja Pariksha"
   },
   { 
-    questionText: "हेमंत ऋतु में पौधे का कौन सा भाग एकत्रित किया जाता है।", 
-    options: ["पुष्प", "मूल", "पत्र", "सार"], 
+    questionText: "हेमंत ऋतु में पौधे का कौन सा भाग एकत्रित किया जाता है? / Which plant part is collected in Hemanta ritu?", 
+    options: ["पुष्प (flowers)", "मूल (roots)", "पत्र (leaves)", "सार (Heart wood)"], 
     correctAnswerIndex: 3,
-    explanation: "आचार्य सुश्रुत के भेषज संग्रहण नियमों के अनुसार हेमन्त ऋतु में वृक्षों का 'सार' (Heartwood) भाग ग्रहण करना चाहिए।"
+    explanation: "आचार्य सुश्रुत के भेषज संग्रहण नियमों के अनुसार हेमन्त ऋतु में वृक्षों का 'सार' (Heartwood) भाग ग्रहण करना चाहिए।",
+    reference: "चरक कल्पस्थान 1/10",
+    ncismRef: "Syllabus Point 15: Dravyasangrahana"
   },
   { 
-    questionText: "एल्कलॉइड किसमें घुलनशील नहीं होते है।", 
-    options: ["पानी", "एथेनोल", "मेथेनोल", "क्लोरोफॉर्म"], 
+    questionText: "एल्कलॉइड किसमें घुलनशील नहीं होते है? / In which substance alkaloid are not soluble?", 
+    options: ["पानी (Water)", "एथेनोल (Ethanol)", "मेथेनोल (Methanol)", "क्लोरोफॉर्म (Chloroform)"], 
     correctAnswerIndex: 0,
-    explanation: "क्रूड (शुद्ध) एल्कलॉइड्स कार्बनिक विलायकों में घुलनशील होते हैं, परन्तु पानी (Water) में सामान्यतः अघुलनशील (Insoluble) होते हैं।"
+    explanation: "क्रूड (शुद्ध) एल्कलॉइड्स कार्बनिक विलायकों में घुलनशील होते हैं, परन्तु पानी (Water) में सामान्यतः अघुलनशील (Insoluble) होते हैं।",
+    reference: "Modern Pharmacognosy",
+    ncismRef: "Syllabus Point 18: Aqueous and alcoholic extracts"
   },
   { 
-    questionText: "फार्माकोविजिलेंस का मुख्य उद्देश्य है-", 
-    options: ["औषधी की बिक्री को बढ़ावा देना", "औषधी पता लगाना, मूल्यांकन, समझना और रोकथाम", "औषधी की क्षमता बढ़ाना", "नई औषधी बनाना"], 
+    questionText: "फार्माकोविजिलेंस का मुख्य उद्देश्य है- / The main aim of pharmacovigilance is—", 
+    options: ["औषधी की बिक्री को बढ़ावा देना (Promote drug sale)", "औषधी पता लगाना, मूल्यांकन, समझना और रोकथाम (Detection, assessment, understanding and prevention)", "औषधी की क्षमता बढ़ाना (Increase drug potency)", "नई औषधी बनाना (Develop new drugs)"], 
     correctAnswerIndex: 1,
-    explanation: "फार्माकोविजिलेंस का मुख्य कार्य दवाओं के प्रतिकूल प्रभावों (ADRs) की निगरानी करना और उनसे बचाव करना है।"
+    explanation: "फार्माकोविजिलेंस का मुख्य कार्य दवाओं के प्रतिकूल प्रभावों (ADRs) की निगरानी करना और उनसे बचाव करना है।",
+    reference: "WHO Guidelines",
+    ncismRef: "Syllabus Point 19: Pharmacovigilance"
   },
   { 
-    questionText: "निर्गुण्डी का प्रतिनिधि है।", 
-    options: ["तुलसी", "वासा", "रास्ना", "इनमें से कोई नहीं"], 
+    questionText: "निर्गुण्डी का प्रतिनिधि है। / What is the substitute of Nirgundi?", 
+    options: ["तुलसी (Tulasi)", "वासा (Vasa)", "रास्ना (Rasna)", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 2,
-    explanation: "भावप्रकाश निघण्टु के अभाव प्रतिनिधि द्रव्य सिद्धांत के अनुसार निर्गुण्डी के अभाव में रास्ना, और रास्ना के अभाव में निर्गुण्डी का प्रयोग किया जाता है।"
+    explanation: "भावप्रकाश निघण्टु के अभाव प्रतिनिधि द्रव्य सिद्धांत के अनुसार निर्गुण्डी के अभाव में रास्ना, और रास्ना के अभाव में निर्गुण्डी का प्रयोग किया जाता है।",
+    reference: "भावप्रकाश निघण्टु",
+    ncismRef: "Syllabus Point 17: Abhava Pratinidhi Dravya"
   },
   { 
-    questionText: "नेटवर्क फार्माकोलॉजी मुख्य रूप केंद्रित है-", 
-    options: ["एक दवा-एक लक्ष्य", "एक दवा-एकाधिक लक्ष्य", "एक रोग-एक लक्ष्य", "कोई संबंध नहीं"], 
+    questionText: "नेटवर्क फार्माकोलॉजी मुख्य रूप केंद्रित है- / Network pharmacology mainly focuses on-", 
+    options: ["एक दवा-एक लक्ष्य (One drug-one target)", "एक दवा-एकाधिक लक्ष्य (One drug-multiple targets)", "एक रोग-एक लक्ष्य (One disease-one target)", "कोई संबंध नहीं (No correlation)"], 
     correctAnswerIndex: 1,
-    explanation: "नेटवर्क फार्माकोलॉजी 'One drug - multiple targets' के आधुनिक सिद्धांत पर कार्य करती है।"
+    explanation: "नेटवर्क फार्माकोलॉजी 'One drug - multiple targets' के आधुनिक सिद्धांत पर कार्य करती है।",
+    reference: "Network Pharmacology",
+    ncismRef: "Syllabus Point 22: Network pharmacology"
   },
   { 
-    questionText: "बायोइन्फॉर्मेटिक्स का मुख्य उद्देश्य है-", 
-    options: ["बायोलॉजिकल जानकारी का डेटा स्टोरेज और एनालिसिस", "हर्बल दवाएं बनाना", "क्लिनिकल ट्रायल", "माइक्रोस्कोपी"], 
+    questionText: "बायोइन्फॉर्मेटिक्स का मुख्य उद्देश्य है- / The primary aim of bioinformatics is:", 
+    options: ["बायोलॉजिकल जानकारी का डेटा स्टोरेज और एनालिसिस (Data storage and biological information analysis)", "हर्बल दवाएं बनाना (Manufacturing of herbal drugs)", "क्लिनिकल ट्रायल (Clinical trials)", "माइक्रोस्कोपी (Microscopy)"], 
     correctAnswerIndex: 0,
-    explanation: "यह कंप्यूटर और आईटी की मदद से जटिल जैविक डेटा (Genomic/Proteomic) को स्टोर और विश्लेषित करने की तकनीक है।"
+    explanation: "यह कंप्यूटर और आईटी की मदद से जटिल जैविक डेटा (Genomic/Proteomic) को स्टोर और विश्लेषित करने की तकनीक है।",
+    reference: "Bioinformatics",
+    ncismRef: "Syllabus Point 22: Bioinformatics"
   },
   { 
-    questionText: "RET कैटेगरी का मतलब है-", 
-    options: ["पके हुए, खाने लायक, स्वादिष्ट", "दुर्लभ, लुप्तप्राय और संकटग्रस्त प्रजातियां", "लाल, पन्ना, तुलसी के पौधे", "रजिस्टर्ड एक्सपोर्ट पेड़"], 
+    questionText: "RET कैटेगरी का मतलब है- / RET category refers to -", 
+    options: ["पके हुए, खाने लायक, स्वादिष्ट (Ripened, Edible, Tasty)", "दुर्लभ, लुप्तप्राय और संकटग्रस्त प्रजातियां (Rare, Endangered & Threatened species)", "लाल, पन्ना, तुलसी के पौधे (Red, Emerald, Tulsi plants)", "रजिस्टर्ड एक्सपोर्ट पेड़ (Registered Export Trees)"], 
     correctAnswerIndex: 1,
-    explanation: "RET का पूर्ण रूप 'Rare, Endangered & Threatened' प्रजातियां है, जिनका संरक्षण अत्यंत आवश्यक है।"
+    explanation: "RET का पूर्ण रूप 'Rare, Endangered & Threatened' प्रजातियां है, जिनका संरक्षण अत्यंत आवश्यक है।",
+    reference: "IUCN Red List",
+    ncismRef: "Syllabus Point 16: RET medicinal plants"
   },
   { 
-    questionText: "API किसके द्वारा प्रकाशित है।", 
-    options: ["WHO", "CCRAS", "Govt. of India", "इनमें से कोई नहीं"], 
+    questionText: "API किसके द्वारा प्रकाशित है? / Who publishes the API?", 
+    options: ["WHO", "CCRAS", "Govt. of India", "इनमें से कोई नहीं (None of these)"], 
     correctAnswerIndex: 2,
-    explanation: "आयुर्वेदिक फार्माकोपिया ऑफ इंडिया (API) भारत सरकार के आयुष मंत्रालय (PCIMH) द्वारा प्रकाशित किया जाता है।"
+    explanation: "आयुर्वेदिक फार्माकोपिया ऑफ इंडिया (API) भारत सरकार के आयुष मंत्रालय (PCIMH) द्वारा प्रकाशित किया जाता है।",
+    reference: "API Guidelines",
+    ncismRef: "Syllabus Point 20: API"
   },
   { 
-    questionText: "सुरपाल का वृक्षायुर्वेद मुख्य रूप से इनसे संबंधित है-", 
-    options: ["इंसानी बीमारियाँ", "पौधों की खेती और सुरक्षा", "रसायन से बनी चीजें", "ज्योतिष"], 
+    questionText: "सुरपाल का वृक्षायुर्वेद मुख्य रूप से इनसे संबंधित है- / The Vrikshayurved of Surpal is related to which of the following -", 
+    options: ["इंसानी बीमारियाँ (Human diseases)", "पौधों की खेती और सुरक्षा (Cultivation and protection of plants)", "रसायन से बनी चीजें (Chemical preparations)", "ज्योतिष (Astrology)"], 
     correctAnswerIndex: 1,
-    explanation: "सुरपाल रचित 'वृक्षायुर्वेद' विशेष रूप से औषधीय पादपों के कृषिकरण, पोषण (कुणप जल) और रोगों से रक्षा पर केंद्रित ग्रन्थ है।"
+    explanation: "सुरपाल रचित 'वृक्षायुर्वेद' विशेष रूप से औषधीय पादपों के कृषिकरण, पोषण (कुणप जल) और रोगों से रक्षा पर केंद्रित ग्रन्थ है।",
+    reference: "वृक्षायुर्वेद",
+    ncismRef: "Syllabus Point 21: Vrikshayurveda"
   }
 ];
 
@@ -247,6 +287,19 @@ export default function Batch2022Test() {
                   <span className="font-bold text-amber-500 mr-2">Explanation:</span> 
                   {qData.explanation}
                 </p>
+                
+                <div className="flex flex-col gap-2 border-t border-amber-500/20 pt-3">
+                  {qData.ncismRef && (
+                    <p className="text-xs text-foreground/70 font-bold tracking-wide flex items-center gap-2">
+                      <ClipboardList className="w-4 h-4 text-amber-500" /> {qData.ncismRef}
+                    </p>
+                  )}
+                  {qData.reference && (
+                    <p className="text-xs text-foreground/50 font-bold uppercase tracking-wider flex items-center gap-2">
+                      <BookOpen className="w-4 h-4" /> Ref: {qData.reference}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 
