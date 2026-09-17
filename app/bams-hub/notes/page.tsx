@@ -12,29 +12,36 @@ const HIGH_YIELD_NOTES = [
     type: "Quick Revision",
     link: "/notepdfs/pharmacologyrevision.pdf" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
   },
-  { 
+   { 
     id: 2, 
+    subject: "Dravyaguna Vigyan", 
+    topic: "Pharmacology", 
+    type: "Quick Revision",
+    link: "/notepdfs/Pharmacology notes.pdf" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
+  },
+  { 
+    id: 3, 
     subject: "Rasa Shastra", 
     topic: "Maharasa Classification", 
     type: "Cheat Sheet",
     link: "/notepdfs/maharasa.pdf" 
   },
   { 
-    id: 3, 
+    id: 4, 
     subject: "Rasa Shastra", 
     topic: "Uparasa Classification", 
     type: "Cheat Sheet",
     link: "/notepdfs/uparasa.pdf" 
   },
     { 
-    id: 4, 
+    id: 5, 
     subject: "Rasa Shastra", 
     topic: "Sadharanarasa Classification", 
     type: "Cheat Sheet",
     link: "/notepdfs/sadharanarasa.pdf" 
   },
   { 
-    id: 5, 
+    id: 6, 
     subject: "Charak Samhita II", 
     topic: "FULL II PROF", 
     type: "Quick Revision",
