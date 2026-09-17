@@ -16,7 +16,7 @@ const HIGH_YIELD_NOTES = [
     id: 2, 
     subject: "Dravyaguna Vigyan", 
     topic: "Pharmacology Notes", 
-    type: "Quick Revision",
+    type: "CHAPTER COVERED",
     link: "/notepdfs/Pharmacology notes.pdf" // Replace with actual PDF link like "/pdfs/dg-notes.pdf"
   },
   { 
