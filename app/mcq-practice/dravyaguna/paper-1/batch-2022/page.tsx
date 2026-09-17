@@ -2,168 +2,128 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Award, BookOpen, ClipboardList } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Award, BookOpen } from "lucide-react";
 
 const BATCH_2022_QUESTIONS = [
   { 
-    questionText: "'यतश्चायुष्याणि अनायुष्याणि च द्रव्यगुणकर्माणि।' इस परिभाषा का उल्लेख किस आचार्य ने किया है?", 
+    questionText: "'यतश्चायुष्याणि अनायुष्याणि च द्रव्यगुणकर्माणि।' इस परिभाषा का उल्लेख किस आचार्य ने किया है।", 
     options: ["आचार्य चरक", "आचार्य सुश्रुत", "आचार्य नागार्जुन", "आचार्य भावमिश्र"], 
     correctAnswerIndex: 0,
-    explanation: "आयुर्वेद की परिभाषा बताते हुए आचार्य चरक ने कहा है कि जिससे आयु के लिए हितकर-अहितकर द्रव्य, गुण और कर्मों का ज्ञान हो, वह आयुर्वेद है।",
-    reference: "चरक सूत्रस्थान 1/28",
-    ncismRef: "Syllabus Point 1: Dravyaguna Vigyana"
+    explanation: "चरक संहिता सूत्रस्थान 1 में आयु और अनायुष्य द्रव्यों के गुण-कर्म का वर्णन करते हुए यह परिभाषा दी गई है।"
   },
   { 
-    questionText: "वीरुध का उदाहरण निम्न में से कौनसा सही है?", 
+    questionText: "वीरुध का उदाहरण निम्न में से कौनसा सही है।", 
     options: ["वट", "कण्टकारी", "आम्र", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 1,
-    explanation: "वीरुध (Climbers/Creepers) फैलने वाले क्षुप या लताएं होती हैं। वट (वनस्पति) और आम्र (वानस्पत्य) विशाल वृक्ष हैं। कण्टकारी भूमि पर फैलने वाला (प्रतानवती) क्षुप होने के कारण वीरुध के अंतर्गत माना जा सकता है।",
-    reference: "चरक सूत्रस्थान 1 / सुश्रुत सूत्रस्थान 1",
-    ncismRef: "Syllabus Point 2: Dravya (Classification)"
+    explanation: "कण्टकारी जमीन पर फैलने वाली (प्रतानवती) 'वीरुध' का सटीक शास्त्रीय उदाहरण है।"
   },
   { 
-    questionText: "'कर्मभिस्त्वनुमीयन्ते नानाद्रव्याश्रयाः गुणाः।' इस परिभाषा के लेखक कौन है?", 
+    questionText: "'कर्मभिस्वनुमीयन्ते नानाद्रव्याश्रयाः गुणाः।' इस परिभाषा के लेखक कौन है।", 
     options: ["आचार्य नागार्जुन", "आचार्य चरक", "आचार्य सुश्रुत", "आचार्य वाग्भट"], 
-    correctAnswerIndex: 2,
-    explanation: "आचार्य सुश्रुत के अनुसार, द्रव्यों में आश्रित रहने वाले गुणों का अनुमान उनके द्वारा किए गए कर्मों से लगाया जाता है।",
-    reference: "सुश्रुत सूत्रस्थान 40/13",
-    ncismRef: "Syllabus Point 3: Guna"
+    correctAnswerIndex: 1,
+    explanation: "यह परिभाषा आचार्य चरक (सूत्रस्थान 1) की है, जहाँ उन्होंने बताया है कि अप्रत्यक्ष गुणों का अनुमान प्रत्यक्ष कर्मों द्वारा होता है।"
   },
   { 
-    questionText: "क्षार को रस किस आचार्य ने माना है?", 
-    options: ["धामार्गव", "कांकायन", "वार्योविद", "इनमें से कोई नहीं"], 
+    questionText: "क्षार को रस किस आचार्य ने माना है।", 
+    options: ["धामार्गव", "कांकायन", "वायोर्विद", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 3,
-    explanation: "आचार्य निमि (विदेहराज) ने क्षार को सातवां रस माना है। विकल्पों में निमि का नाम न होने के कारण 'इनमें से कोई नहीं' सही उत्तर है।",
-    reference: "चरक सूत्रस्थान 26",
-    ncismRef: "Syllabus Point 4: Rasa"
+    explanation: "आचार्य 'निमि' ने क्षार को सातवाँ रस माना है, जो दिए गए विकल्पों में नहीं है।"
   },
   { 
-    questionText: "नागार्जुन के अनुसार लघु विपाक में निम्न में से कौनसा गुण कारण नहीं होता है?", 
+    questionText: "नागार्जुन के अनुसार लघु विपाक में निम्न में से कौनसा गुण कारण नहीं होता है।", 
     options: ["विशद", "रूक्ष", "तीक्ष्ण", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 3,
-    explanation: "आचार्य नागार्जुन (रसवैशेषिक) के अनुसार लघु, रूक्ष, तीक्ष्ण और विशद गुण लघु विपाक उत्पन्न करते हैं। चूँकि दिए गए तीनों गुण लघु विपाक के कारण हैं, अतः 'इनमें से कोई नहीं' (D) सही है।",
-    reference: "रसवैशेषिक सूत्र",
-    ncismRef: "Syllabus Point 5: Vipaka"
+    explanation: "नागार्जुन के अनुसार लघु विपाक के कारणों में लघु, रूक्ष, तीक्ष्ण, विशद आदि सभी गुण आते हैं, अतः कोई भी विकल्प 'कारण नहीं' की श्रेणी में नहीं है।"
   },
   { 
-    questionText: "वीर्य की उपलब्धि किससे होती है?", 
+    questionText: "वीर्य की उपलब्धि किससे होती है।", 
     options: ["निपात", "अधिवास", "निपात व अधिवास से", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 2,
-    explanation: "\"निपातादधिवासाच्च वीर्यमुपलभ्यते\" - रस का ज्ञान केवल निपात (जिह्वा संपर्क) से होता है, जबकि वीर्य का ज्ञान निपात और अधिवास (पाचन) दोनों से होता है।",
-    reference: "चरक सूत्रस्थान 26",
-    ncismRef: "Syllabus Point 6: Virya (Viryaopalabdhi)"
+    explanation: "वीर्य का परिज्ञान निपात (जीभ/त्वचा पर स्पर्श) और अधिवास (पाचन के बाद शरीर में रहने तक) दोनों से होता है।"
   },
   { 
-    questionText: "द्रव्य किससे कार्य करता है?", 
+    questionText: "द्रव्य किससे कार्य करता है।", 
     options: ["द्रव्यप्रभाव से", "गुणप्रभाव से", "द्रव्यप्रभाव व गुणप्रभाव से", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 2,
-    explanation: "आचार्य चरक के अनुसार कोई भी द्रव्य अपने स्वयं के प्रभाव (द्रव्यप्रभाव) से और अपने गुणों (गुणप्रभाव) दोनों के द्वारा कार्य करता है।",
-    reference: "चरक सूत्रस्थान 26",
-    ncismRef: "Syllabus Point 8: Interrelation of Rasa-Guna-Virya-Vipaka-Prabhava"
+    explanation: "आयुर्वेद के अनुसार कुछ द्रव्य अपने विशिष्ट द्रव्य-प्रभाव से और कुछ अपने गुण-प्रभाव (रस, गुण, वीर्य, विपाक) से कार्य करते हैं।"
   },
   { 
-    questionText: "निम्न में से शीतग्राही व उष्णग्राही का सही कर्म क्या है?", 
+    questionText: "निम्न में से शीतग्राही व उष्णग्राही का सही कर्म क्या है।", 
     options: ["स्तम्भन", "ग्राही", "स्तम्भन व ग्राही", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 2,
-    explanation: "जो शीतवीर्य होकर स्रावों को रोकता है वह स्तम्भन (शीतग्राही) है (जैसे कुटज)। जो उष्णवीर्य होकर जलीय अंश को सुखाता है वह ग्राही (उष्णग्राही) है (जैसे शुण्ठी)।",
-    reference: "शार्ङ्गधर संहिता",
-    ncismRef: "Syllabus Point 9: Karma"
+    explanation: "द्रव्य शीत वीर्य होने पर 'स्तम्भन' और उष्ण वीर्य होने पर 'ग्राही' कर्म करता है।"
   },
   { 
-    questionText: "वासा किस मिश्रक वर्ग में वर्णित है?", 
+    questionText: "वासा किस मिश्रक वर्ग में वर्णित है।", 
     options: ["तृणपंचमूल", "वल्लीपंचमूल", "पंचतिक्त", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 2,
-    explanation: "पंचतिक्त गण में निम्ब, गुडूची, वासा, कण्टकारी और पटोल आते हैं।",
-    reference: "मिश्रक वर्ग",
-    ncismRef: "Syllabus Point 12: Mishraka Gana (Panchatikta)"
+    explanation: "वासा 'पञ्चतिक्त' वर्ग (गुडूची, निम्ब, वासा, कण्टकारी, पटोल) का एक प्रमुख द्रव्य है।"
   },
   { 
-    questionText: "गुडूची नामकरण का आधार क्या है?", 
+    questionText: "गुडूची नामकरण का आधार क्या है।", 
     options: ["देशोक्ति", "लांछन", "रूढि", "वीर्य"], 
     correctAnswerIndex: 2,
-    explanation: "गुडूची एक परम्परागत और लोकप्रचलित नाम है, जो बिना किसी विशेष युक्ति के प्रसिद्ध है, अतः यह 'रूढि' का उदाहरण है।",
-    reference: "राज निघण्टु",
-    ncismRef: "Syllabus Point 13: Nomenclature of dravya as per Nighantu"
+    explanation: "गुडूची नामकरण 'रूढि' (परम्परागत प्रसिद्धि और लोक व्यवहार) पर आधारित माना जाता है।"
   },
   { 
-    questionText: "भेषज परीक्षा मुख्यरूप से किस पर आधारित है?", 
+    questionText: "भेषज परीक्षा मुख्यरूप से किस पर आधारित है।", 
     options: ["रसपरीक्षा", "स्पर्श परीक्षा", "रूप परीक्षा", "उपरोक्त सभी"], 
     correctAnswerIndex: 3,
-    explanation: "भेषज (औषधि) की पहचान और परीक्षण (Organoleptic evaluation) पञ्चज्ञानेन्द्रियों (रूप, रस, गंध, स्पर्श, शब्द) द्वारा किया जाता है।",
-    reference: "चरक विमानस्थान 8",
-    ncismRef: "Syllabus Point 14: Bheshaja Pariksha"
+    explanation: "भेषज परीक्षा (Organoleptic evaluation) पञ्चज्ञानेन्द्रियों द्वारा रस, रूप, गंध, स्पर्श आदि सभी के आधार पर की जाती है।"
   },
   { 
-    questionText: "हेमंत ऋतु में पौधे का कौन सा भाग एकत्रित किया जाता है?", 
+    questionText: "हेमंत ऋतु में पौधे का कौन सा भाग एकत्रित किया जाता है।", 
     options: ["पुष्प", "मूल", "पत्र", "सार"], 
     correctAnswerIndex: 3,
-    explanation: "आचार्य चरक (कल्पस्थान) के अनुसार हेमंत ऋतु में पादप का 'सार भाग' (Heartwood) ग्रहण करना चाहिए।",
-    reference: "चरक कल्पस्थान 1/10",
-    ncismRef: "Syllabus Point 15: Dravyasangrahana"
+    explanation: "आचार्य सुश्रुत के भेषज संग्रहण नियमों के अनुसार हेमन्त ऋतु में वृक्षों का 'सार' (Heartwood) भाग ग्रहण करना चाहिए।"
   },
   { 
-    questionText: "एल्कलॉइड (Alkaloids) किसमें घुलनशील नहीं होते है?", 
-    options: ["पानी (Water)", "एथेनोल (Ethanol)", "मेथेनोल (Methanol)", "क्लोरोफॉर्म (Chloroform)"], 
+    questionText: "एल्कलॉइड किसमें घुलनशील नहीं होते है।", 
+    options: ["पानी", "एथेनोल", "मेथेनोल", "क्लोरोफॉर्म"], 
     correctAnswerIndex: 0,
-    explanation: "सामान्यतः मुक्त एल्कलॉइड (Free base alkaloids) पानी में अघुलनशील (Insoluble) होते हैं, जबकि कार्बनिक विलायकों (Organic solvents) में घुलनशील होते हैं।",
-    reference: "Modern Pharmacognosy",
-    ncismRef: "Syllabus Point 18: Aqueous and alcoholic extracts"
+    explanation: "क्रूड (शुद्ध) एल्कलॉइड्स कार्बनिक विलायकों में घुलनशील होते हैं, परन्तु पानी (Water) में सामान्यतः अघुलनशील (Insoluble) होते हैं।"
   },
   { 
     questionText: "फार्माकोविजिलेंस का मुख्य उद्देश्य है-", 
-    options: ["औषधी की बिक्री को बढ़ावा देना", "औषधी पता लगाना, मूल्यांकन, समझना और रोकथाम", "औषधी की क्षमता बढ़ाना", "नई औषधी बनाना"], 
+    options: ["औषधी की बिक्री को बढ़ावा देना", "औषधी पता लगाना, मूल्यांकन, समझना और रोकथाम", "औषधी की क्षमता बढ़ाना", "नई औषधी बनाना"], 
     correctAnswerIndex: 1,
-    explanation: "फार्माकोविजिलेंस (Pharmacovigilance) का मुख्य कार्य औषधियों के दुष्प्रभावों (Adverse Drug Reactions) का पता लगाना (Detection), मूल्यांकन और रोकथाम करना है।",
-    reference: "WHO Guidelines",
-    ncismRef: "Syllabus Point 19: Pharmacovigilance"
+    explanation: "फार्माकोविजिलेंस का मुख्य कार्य दवाओं के प्रतिकूल प्रभावों (ADRs) की निगरानी करना और उनसे बचाव करना है।"
   },
   { 
-    questionText: "निर्गुण्डी का प्रतिनिधि द्रव्य (Substitute) क्या है?", 
+    questionText: "निर्गुण्डी का प्रतिनिधि है।", 
     options: ["तुलसी", "वासा", "रास्ना", "इनमें से कोई नहीं"], 
-    correctAnswerIndex: 0,
-    explanation: "भावप्रकाश और योगरत्नाकर के अनुसार निर्गुण्डी के उपलब्ध न होने पर प्रतिनिधि के रूप में 'तुलसी' का प्रयोग किया जा सकता है (\"निर्गुण्ड्यभावे तुलसी\")।",
-    reference: "भावप्रकाश निघण्टु",
-    ncismRef: "Syllabus Point 17: Abhava Pratinidhi Dravya"
+    correctAnswerIndex: 2,
+    explanation: "भावप्रकाश निघण्टु के अभाव प्रतिनिधि द्रव्य सिद्धांत के अनुसार निर्गुण्डी के अभाव में रास्ना, और रास्ना के अभाव में निर्गुण्डी का प्रयोग किया जाता है।"
   },
   { 
-    questionText: "नेटवर्क फार्माकोलॉजी (Network Pharmacology) मुख्य रूप केंद्रित है-", 
-    options: ["एक दवा-एक लक्ष्य (One drug-one target)", "एक दवा-एकाधिक लक्ष्य (Multi-target/Polypharmacology)", "एक रोग-एक लक्ष्य (One disease-one target)", "कोई संबंध नहीं (No correlation)"], 
+    questionText: "नेटवर्क फार्माकोलॉजी मुख्य रूप केंद्रित है-", 
+    options: ["एक दवा-एक लक्ष्य", "एक दवा-एकाधिक लक्ष्य", "एक रोग-एक लक्ष्य", "कोई संबंध नहीं"], 
     correctAnswerIndex: 1,
-    explanation: "नेटवर्क फार्माकोलॉजी 'One drug, one target' के स्थान पर 'Multi-drug, multi-target' (एक से अधिक लक्ष्यों) पर कार्य करने की प्रणाली है।",
-    reference: "Network Pharmacology",
-    ncismRef: "Syllabus Point 22: Network pharmacology"
+    explanation: "नेटवर्क फार्माकोलॉजी 'One drug - multiple targets' के आधुनिक सिद्धांत पर कार्य करती है।"
   },
   { 
-    questionText: "बायोइन्फॉर्मेटिक्स (Bioinformatics) का मुख्य उद्देश्य है-", 
+    questionText: "बायोइन्फॉर्मेटिक्स का मुख्य उद्देश्य है-", 
     options: ["बायोलॉजिकल जानकारी का डेटा स्टोरेज और एनालिसिस", "हर्बल दवाएं बनाना", "क्लिनिकल ट्रायल", "माइक्रोस्कोपी"], 
     correctAnswerIndex: 0,
-    explanation: "बायोइन्फॉर्मेटिक्स जीव विज्ञान, कंप्यूटर विज्ञान और सूचना प्रौद्योगिकी का संगम है, जिसका मुख्य कार्य जैविक डेटा (Biological Data) को स्टोर और एनालाइज करना है।",
-    reference: "Bioinformatics",
-    ncismRef: "Syllabus Point 22: Bioinformatics"
+    explanation: "यह कंप्यूटर और आईटी की मदद से जटिल जैविक डेटा (Genomic/Proteomic) को स्टोर और विश्लेषित करने की तकनीक है।"
   },
   { 
-    questionText: "RET कैटेगिरी का मतलब है-", 
-    options: ["पके हुए, खाने लायक, स्वादिष्ट", "दुर्लभ, लुप्तप्राय और संकटग्रस्त प्रजातियां (Rare, Endangered & Threatened species)", "लाल, पन्ना, तुलसी के पौधे", "रजिस्टर्ड एक्सपोर्ट पेड़"], 
+    questionText: "RET कैटेगरी का मतलब है-", 
+    options: ["पके हुए, खाने लायक, स्वादिष्ट", "दुर्लभ, लुप्तप्राय और संकटग्रस्त प्रजातियां", "लाल, पन्ना, तुलसी के पौधे", "रजिस्टर्ड एक्सपोर्ट पेड़"], 
     correctAnswerIndex: 1,
-    explanation: "RET का अर्थ 'Rare, Endangered, and Threatened' प्रजातियां हैं, जिनके संरक्षण (Conservation) पर विशेष ध्यान दिया जाता है।",
-    reference: "IUCN Red List",
-    ncismRef: "Syllabus Point 16: RET medicinal plants"
+    explanation: "RET का पूर्ण रूप 'Rare, Endangered & Threatened' प्रजातियां है, जिनका संरक्षण अत्यंत आवश्यक है।"
   },
   { 
-    questionText: "API किसके द्वारा प्रकाशित है?", 
+    questionText: "API किसके द्वारा प्रकाशित है।", 
     options: ["WHO", "CCRAS", "Govt. of India", "इनमें से कोई नहीं"], 
     correctAnswerIndex: 2,
-    explanation: "API (Ayurvedic Pharmacopoeia of India) का प्रकाशन भारत सरकार (Ministry of AYUSH / PCIM&H) द्वारा किया जाता है।",
-    reference: "API Guidelines",
-    ncismRef: "Syllabus Point 20: API"
+    explanation: "आयुर्वेदिक फार्माकोपिया ऑफ इंडिया (API) भारत सरकार के आयुष मंत्रालय (PCIMH) द्वारा प्रकाशित किया जाता है।"
   },
   { 
-    questionText: "सुरपाल का 'वृक्षायुर्वेद' मुख्य रूप से इनसे संबंधित है-", 
-    options: ["इंसानी बीमारियाँ", "पौधों की खेती और सुरक्षा (Cultivation and protection of plants)", "रसायन से बनी चीजें", "ज्योतिष"], 
+    questionText: "सुरपाल का वृक्षायुर्वेद मुख्य रूप से इनसे संबंधित है-", 
+    options: ["इंसानी बीमारियाँ", "पौधों की खेती और सुरक्षा", "रसायन से बनी चीजें", "ज्योतिष"], 
     correctAnswerIndex: 1,
-    explanation: "सुरपाल द्वारा रचित 'वृक्षायुर्वेद' पादपों (पौधों) की खेती, उनके रोगों और संरक्षण से सम्बंधित एक प्राचीन ग्रन्थ है।",
-    reference: "वृक्षायुर्वेद",
-    ncismRef: "Syllabus Point 21: Vrikshayurveda"
+    explanation: "सुरपाल रचित 'वृक्षायुर्वेद' विशेष रूप से औषधीय पादपों के कृषिकरण, पोषण (कुणप जल) और रोगों से रक्षा पर केंद्रित ग्रन्थ है।"
   }
 ];
 
@@ -287,19 +247,6 @@ export default function Batch2022Test() {
                   <span className="font-bold text-amber-500 mr-2">Explanation:</span> 
                   {qData.explanation}
                 </p>
-                
-                <div className="flex flex-col gap-2 border-t border-amber-500/20 pt-3">
-                  {qData.ncismRef && (
-                    <p className="text-xs text-foreground/70 font-bold tracking-wide flex items-center gap-2">
-                      <ClipboardList className="w-4 h-4 text-amber-500" /> {qData.ncismRef}
-                    </p>
-                  )}
-                  {qData.reference && (
-                    <p className="text-xs text-foreground/50 font-bold uppercase tracking-wider flex items-center gap-2">
-                      <BookOpen className="w-4 h-4" /> Ref: {qData.reference}
-                    </p>
-                  )}
-                </div>
               </div>
             )}
 
@@ -332,4 +279,4 @@ export default function Batch2022Test() {
       </div>
     </div>
   );
-                }
+}
