@@ -25,7 +25,7 @@ const BATCH_2022_QUESTIONS = [
     questionText: "'कर्मभिस्वनुमीयन्ते नानाद्रव्याश्रयाः गुणाः।' इस परिभाषा के लेखक कौन है? / 'कर्मभिस्वनुमीयन्ते नानाद्रव्याश्रयाः गुणाः।' Who is the author of this definition?", 
     options: ["आचार्य नागार्जुन (Acharya Nagarjun)", "आचार्य चरक (Acharya Charaka)", "आचार्य सुश्रुत (Acharya Sushruta)", "आचार्य वाग्भट (Acharya Vagbhata)"], 
     correctAnswerIndex: 2,
-    explanation: "अप्रत्यक्ष गुणों का अनुमान प्रत्यक्ष कर्मों द्वारा होता है। (संदर्भ: सुश्रुत संहिता, सूत्रस्थान 46/514)",
+    explanation: "विभिन्न प्रकार के द्रव्यों (पदार्थों या औषधियों) में रहने वाले अदृश्य गुणों (Properties/Attributes) की पहचान उनके द्वारा किए जाने वाले 'कर्म' (Actions/Effects) के आधार पर ही की जाती है।",
     reference: "सुश्रुत सूत्रस्थान 46/514",
     ncismRef: "Syllabus Point 3: Guna"
   },
