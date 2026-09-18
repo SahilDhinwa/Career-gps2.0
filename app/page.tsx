@@ -2,6 +2,7 @@ import Matchmaker from "../components/Matchmaker";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen, Leaf, Sparkles, CheckCircle } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen, Leaf, Sparkles, CheckCircle, Instagram, Play, Eye } from "lucide-react";
 
 export default function LandingPage() {
   return (
