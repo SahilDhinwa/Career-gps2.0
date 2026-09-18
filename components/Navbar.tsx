@@ -17,10 +17,12 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  // Check if we are on the home page for the Netflix transparent effect
+  const isLandingPage = pathname === "/";
+
   useEffect(() => {
-    setMounted(true); // Prevents hydration mismatch errors
+    setMounted(true); 
     
-    // Add scroll listener for the Netflix-style transparent-to-solid transition
     const handleScroll = () => {
       if (window.scrollY > 20) {
         setIsScrolled(true);
@@ -33,12 +35,10 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Automatically close the mobile menu whenever the user navigates to a new page
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Helper function to apply dynamic active styles
   const getLinkStyle = (path: string) => {
     return pathname === path
       ? "text-primary font-bold transition-colors" 
@@ -47,10 +47,10 @@ export default function Navbar() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isScrolled || isMobileMenuOpen
-          ? "bg-surface border-b border-surfaceBorder shadow-md py-2" 
-          : "bg-transparent border-b-transparent py-4"
+      className={`${isLandingPage ? "fixed" : "sticky"} top-0 left-0 w-full z-50 transition-all duration-300 ${
+        (isLandingPage && !isScrolled && !isMobileMenuOpen)
+          ? "bg-transparent border-b-transparent py-4" 
+          : "bg-surface border-b border-surfaceBorder shadow-md py-2"
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 h-12 md:h-14 flex items-center justify-between">
@@ -63,7 +63,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* DESKTOP CENTRAL LINKS (Hidden on Mobile) */}
+        {/* DESKTOP CENTRAL LINKS */}
         <div className="hidden md:flex items-center gap-7 font-medium text-sm">
           <Link href="/pathways" className={getLinkStyle("/pathways")}>
             Pathways
@@ -78,7 +78,6 @@ export default function Navbar() {
             Vault
           </Link>
           
-          {/* DEDICATED BAMS HUB BUTTON */}
           <Link 
             href="/bams-hub" 
             className="flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 hover:border-primary px-3 py-1.5 rounded-sm font-bold transition-all duration-300"
@@ -90,7 +89,6 @@ export default function Navbar() {
         {/* RIGHT SIDE ACTIONS */}
         <div className="flex items-center gap-3 md:gap-4 z-50">
           
-          {/* THEME TOGGLE BUTTON (Hidden on mobile to save space, moved to dropdown) */}
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -120,14 +118,12 @@ export default function Navbar() {
             </Link>
           ) : (
             <div className="flex items-center gap-3">
-              {/* Login is just text on mobile to match Netflix style */}
               <Link 
                 href={`/login?redirect=${encodeURIComponent(pathname)}`} 
                 className="text-sm font-bold text-foreground hover:text-primary transition-colors"
               >
-                Login
+                Sign In
               </Link>
-              {/* Sign Up is hidden on mobile, replaced by the hero button */}
               <Link 
                 href={`/signup?redirect=${encodeURIComponent(pathname)}`} 
                 className="hidden md:block bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
@@ -137,7 +133,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* MOBILE MENU TOGGLE BUTTON */}
           <button 
             className="md:hidden p-2 text-foreground hover:text-primary transition-colors focus:outline-none -mr-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -156,7 +151,6 @@ export default function Navbar() {
       >
         <div className="flex flex-col px-6 py-6 space-y-6 font-medium text-base">
           
-          {/* Mobile Profile Area (If Logged In) */}
           {user && !isLoading && (
              <Link 
              href="/profile" 
@@ -185,7 +179,6 @@ export default function Navbar() {
             Action Vault
           </Link>
 
-          {/* MOBILE BAMS HUB BUTTON */}
           <Link 
             href="/bams-hub" 
             className="flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/20 py-3 rounded-sm font-bold transition-all"
@@ -193,7 +186,6 @@ export default function Navbar() {
             <Sparkles className="w-4 h-4" /> BAMS 2nd Prof Hub
           </Link>
 
-          {/* Theme Toggle (Moved inside dropdown for mobile) */}
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -218,4 +210,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-            }
+}
