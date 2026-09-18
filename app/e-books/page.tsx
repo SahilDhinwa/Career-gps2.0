@@ -230,7 +230,7 @@ export default function EBooksDirectory() {
                       </button>
                       
                       <a 
-                        href={asset.fileUrl} 
+                        href={encodeURI(asset.fileUrl)} 
                         download={`${asset.title.replace(/\s+/g, '_')}_${asset.author.replace(/\s+/g, '_')}.pdf`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -238,6 +238,7 @@ export default function EBooksDirectory() {
                       >
                         <Download className="w-5 h-5" /> Download PDF
                       </a>
+
                     </div>
                     
                     <p className="text-center text-xs text-foreground/50 mt-4 font-medium flex items-center justify-center gap-1">
@@ -278,10 +279,12 @@ export default function EBooksDirectory() {
           {/* Absolute Inset-0: The Ultimate iOS Safari Iframe Fix */}
           <div className="relative flex-grow w-full bg-background md:p-6">
             <iframe 
-              src={`${viewingAsset.fileUrl}#toolbar=0`} 
+              src={`${encodeURI(viewingAsset.fileUrl)}#toolbar=0`} 
               className="absolute inset-0 w-full h-full md:rounded-sm md:shadow-2xl md:border border-surfaceBorder bg-white"
               title={`Reading ${viewingAsset.title}`}
             />
+          </div>
+
           </div>
         </div>
       )}
