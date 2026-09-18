@@ -58,7 +58,7 @@ export default function LandingPage() {
       `}} />
 
       {/* HERO SECTION */}
-      <div className="relative flex-grow flex items-center justify-center px-6 py-20 lg:py-32 overflow-hidden bg-background">
+      <div className="relative flex-grow flex items-center justify-center px-6 py-12 md:py-20 lg:py-32 overflow-hidden bg-background">
         
         {/* Layer 1: The Premium 3D Background */}
         <div className="perspective-container">
@@ -67,27 +67,27 @@ export default function LandingPage() {
         </div>
 
         {/* Foreground Content */}
-        <div className="max-w-5xl mx-auto text-center relative z-10 pt-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-8 shadow-sm">
+        <div className="max-w-5xl mx-auto text-center relative z-10 pt-2 md:pt-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-xs md:text-sm font-bold text-primary mb-5 md:mb-8 shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
             2026 Scholarship Pathways Now Live
           </div>
           
-          <h1 className="font-heading text-5xl md:text-7xl font-bold text-foreground tracking-tight mb-6 leading-tight drop-shadow-sm">
+          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-tight mb-4 md:mb-6 leading-[1.15] md:leading-tight drop-shadow-sm">
             Your Ultimate Roadmap to <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">
               Global Education.
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto mb-10 font-medium leading-relaxed bg-surface/50 backdrop-blur-[2px] rounded-lg p-2">
+          <p className="text-base md:text-xl text-foreground/80 max-w-2xl mx-auto mb-8 md:mb-10 font-medium leading-relaxed bg-surface/50 backdrop-blur-[2px] rounded-lg p-2">
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
             <Link 
               href="/pathways" 
-              className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-3.5 md:py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
             >
               Start Your Journey <ArrowRight className="w-5 h-5" />
             </Link>
