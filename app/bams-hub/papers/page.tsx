@@ -36,9 +36,9 @@ const PREVIOUS_PAPERS = [
   },
     { 
     id: 6, 
-    subject: "BAMS 2nd Prof - DG PAPER-1 ANSWERS (Batch 2023)", 
+    subject: "BAMS 2nd Prof - DG PAPER-1 (Batch 2023)", 
     year: "Sept-Oct 2026", 
-    size: "175 KB", 
+    size: "2.3 MB", 
     link: "/pdfs/dg-1(2023).pdf" // EXACT match to your uploaded file
   },
   { 
