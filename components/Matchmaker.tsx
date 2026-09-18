@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { X, ChevronRight, Loader2, Sparkles, Trophy, ArrowLeft } from "lucide-react";
 
@@ -47,6 +48,7 @@ export default function Matchmaker() {
   const router = useRouter();
   
   // 2. STATE VARIABLES
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -54,6 +56,11 @@ export default function Matchmaker() {
   const [result, setResult] = useState<any>(null);
 
   // 3. EFFECTS
+  useEffect(() => {
+    // Ensures the portal only renders on the client side to prevent hydration errors
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -85,7 +92,6 @@ export default function Matchmaker() {
       const { degree, experience, academic, finance } = finalAnswers;
       let match = null;
 
-      // The Routing Algorithm
       if (degree === "UG") {
         match = { name: "MEXT Scholarship", country: "Japan", tagline: "100% Tuition & ¥117,000 Monthly Stipend", link: "/roadmap/mext-ug" };
       } else if ((degree === "PG" || degree === "PHD") && experience === "2+" && academic === "TOP") {
@@ -122,8 +128,8 @@ export default function Matchmaker() {
         <Sparkles className="w-5 h-5" /> Find My Scholarship
       </button>
 
-      {isOpen && (
-        // FIX: Increased z-index to z-[9999] to override absolutely everything on the page
+      {/* REACT PORTAL: Teleports the modal directly to the <body> tag to escape the Hero Section trap */}
+      {isOpen && mounted && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md animate-in fade-in duration-300">
           
           <div className="bg-surface w-full max-w-lg max-h-[90vh] border border-surfaceBorder rounded-sm shadow-2xl relative flex flex-col">
@@ -218,7 +224,8 @@ export default function Matchmaker() {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
