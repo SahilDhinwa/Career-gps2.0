@@ -79,7 +79,8 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
   }, [isLoading, user, userData, params.id, baseRoadmap]);
   const handleToggleCheck = async (item: string) => {
     if (!user) {
-      router.push("/login");
+      // FIX: Added the dynamic redirect parameter so they return to this exact roadmap
+      router.push(`/login?redirect=/roadmap/${params.id}`);
       return;
     }
     const isCurrentlyChecked = checkedItems.includes(item);
@@ -91,7 +92,6 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     try {
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { [`checklistProgress.${params.id}`]: newCheckedItems }, { merge: true });
-      await refreshUserData(); // INSTANT SYNC: Tells the Brain to update the Profile Dashboard
     } catch (error) {
       console.error("Failed to save checklist item", error);
     }
@@ -99,7 +99,8 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
 
   const handleMarkComplete = async (stageId: number) => {
     if (!user) {
-      router.push("/login"); 
+      // FIX: Added the dynamic redirect parameter here as well
+      router.push(`/login?redirect=/roadmap/${params.id}`); 
       return;
     }
     if (!isPremium && stageId >= 1) return;
@@ -113,11 +114,11 @@ export default function RoadmapTracker({ params }: { params: { id: string } }) {
     try {
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { [`roadmapProgress.${params.id}`]: nextStage }, { merge: true });
-      await refreshUserData(); // INSTANT SYNC: Tells the Brain to update the Profile Dashboard
     } catch (error) {
       console.error("Failed to save progress", error);
     }
   };
+  
 
   if (isLoading) {
     return (
