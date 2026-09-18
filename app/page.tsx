@@ -57,8 +57,8 @@ export default function LandingPage() {
         }
       `}} />
 
-      {/* HERO SECTION */}
-      <div className="relative flex-grow flex items-center justify-center px-6 py-12 md:py-20 lg:py-32 overflow-hidden bg-background">
+      {/* HERO SECTION - Added z-40 to prevent the stacking context bug */}
+      <div className="relative flex-grow flex items-center justify-center px-6 py-12 md:py-20 lg:py-32 overflow-hidden bg-background z-40">
         
         {/* Layer 1: The Premium 3D Background */}
         <div className="perspective-container">
@@ -84,7 +84,8 @@ export default function LandingPage() {
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+          {/* BUTTON CONTAINER - Added relative z-20 to fix button spacing and layering */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto relative z-20">
             <Link 
               href="/pathways" 
               className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-3.5 md:py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
