@@ -1,6 +1,7 @@
 import Matchmaker from "../components/Matchmaker";
 import Link from "next/link";
 import Image from "next/image";
+// FIXED: Removed the duplicate import and consolidated all icons here
 import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen, Leaf, Sparkles, CheckCircle, Instagram, Play, Eye } from "lucide-react";
 
 export default function LandingPage() {
@@ -141,7 +142,8 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-            {/* --- REELS & SHORT-FORM VIDEO SECTION --- */}
+      
+      {/* --- REELS & SHORT-FORM VIDEO SECTION --- */}
       <div className="bg-surface border-t border-surfaceBorder py-16 md:py-24 relative z-10 transition-colors duration-300 overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           
@@ -170,8 +172,6 @@ export default function LandingPage() {
             {/* Reel 1 */}
             <div className="group relative w-64 md:w-72 shrink-0 aspect-[9/16] rounded-xl overflow-hidden snap-center shadow-lg border border-surfaceBorder cursor-pointer transform transition-transform hover:-translate-y-2">
               <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
-              {/* Optional: Add actual image background here later */}
-              {/* <Image src="/your-thumbnail.jpg" fill className="object-cover opacity-60" alt="Thumbnail" /> */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
               
               <div className="absolute inset-0 flex items-center justify-center">
