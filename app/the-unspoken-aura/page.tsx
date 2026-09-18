@@ -3,10 +3,10 @@ import { Download, CheckCircle, Star, ShieldCheck, ArrowRight } from "lucide-rea
 
 export default function EbookLandingPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col md:flex-row overflow-hidden transition-colors duration-300">
       
-      {/* LEFT SIDE: The Visual & Social Proof (Dark Mode Aesthetic) */}
-      <div className="w-full md:w-1/2 bg-gradient-to-br from-gray-900 via-black to-gray-900 p-10 md:p-20 flex flex-col justify-center relative">
+      {/* LEFT SIDE: The Visual & Social Proof (Always Dark Cinematic Aesthetic) */}
+      <div className="w-full md:w-1/2 bg-gradient-to-br from-gray-900 via-black to-gray-950 p-8 md:p-20 flex flex-col justify-center relative border-r border-surfaceBorder/20">
         <div className="absolute top-0 left-0 w-full h-full bg-success/5 blur-3xl pointer-events-none"></div>
         
         <div className="relative z-10 max-w-md mx-auto w-full">
@@ -48,48 +48,47 @@ export default function EbookLandingPage() {
             <div className="flex justify-center gap-1 mb-3">
               {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-5 h-5 text-warning fill-current" />)}
             </div>
-            {/* FIXED: Replaced raw quotes with &quot; */}
             <p className="text-gray-300 font-medium italic">&quot;This completely changed how I approach my university interviews. The invisible wall is gone.&quot;</p>
             <p className="text-gray-500 text-sm mt-2 font-bold">— Verified Student</p>
           </div>
         </div>
       </div>
 
-      {/* RIGHT SIDE: The Pitch & Conversion (Light Mode) */}
-      <div className="w-full md:w-1/2 bg-white p-10 md:p-20 flex flex-col justify-center">
+      {/* RIGHT SIDE: The Pitch & Conversion (Theme Adaptive) */}
+      <div className="w-full md:w-1/2 bg-background p-8 md:p-20 flex flex-col justify-center">
         <div className="max-w-md mx-auto w-full">
           
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 text-xs font-bold text-success mb-6 uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 text-xs font-bold text-success mb-6 uppercase tracking-wider border border-success/20">
             <ShieldCheck className="w-4 h-4" /> 100% Free Download
           </div>
 
-          <h1 className="font-heading text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground leading-tight mb-6">
             Command respect in <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">every room</span> you enter.
           </h1>
           
-          <p className="text-lg text-gray-600 mb-8 leading-relaxed font-medium">
+          <p className="text-lg text-foreground/70 mb-8 leading-relaxed font-medium">
             Stop shrinking your personality to fit into the background. Download the definitive guide to mastering the art of the aura and unlocking your true communication potential.
           </p>
 
           <div className="space-y-4 mb-10">
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-primary shrink-0" />
-              <p className="text-gray-700 font-medium">Learn the 4 distinct pathways to mastering confidence.</p>
+              <p className="text-foreground/90 font-medium">Learn the 4 distinct pathways to mastering confidence.</p>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-primary shrink-0" />
-              {/* FIXED: Replaced raw quotes with &quot; */}
-              <p className="text-gray-700 font-medium">Break the myth that &quot;Fluent English = Good Communication.&quot;</p>
+              <p className="text-foreground/90 font-medium">Break the myth that &quot;Fluent English = Good Communication.&quot;</p>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-primary shrink-0" />
-              <p className="text-gray-700 font-medium">Master the exact framework to dominate Group Discussions.</p>
+              <p className="text-foreground/90 font-medium">Master the exact framework to dominate Group Discussions.</p>
             </div>
           </div>
 
           <div className="flex flex-col gap-4">
+            {/* SAFARI URL FIX APPLIED HERE */}
             <a 
-              href="/The Glass World.pdf" 
+              href={encodeURI("/The Glass World.pdf")} 
               download="The_Unspoken_Aura_Sahil_Dhinwa.pdf"
               className="w-full bg-primary text-white font-bold text-lg py-5 px-6 rounded-sm hover:bg-primaryHover transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-center"
             >
@@ -98,13 +97,13 @@ export default function EbookLandingPage() {
             
             <Link 
               href="/scholarships"
-              className="w-full bg-gray-50 border border-gray-200 text-gray-600 font-bold py-4 px-6 rounded-sm hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-center"
+              className="w-full bg-surface border border-surfaceBorder text-foreground/80 font-bold py-4 px-6 rounded-sm hover:bg-surfaceBorder/30 transition-colors flex items-center justify-center gap-2 text-center"
             >
               Explore Premium Roadmaps <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          <p className="text-center text-xs text-gray-400 mt-6 font-medium">
+          <p className="text-center text-xs text-foreground/50 mt-6 font-medium">
             Join thousands of students upgrading their careers. No credit card required.
           </p>
         </div>
