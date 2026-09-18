@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { auth } from "../../../../lib/firebase";
+import { auth } from "../../../lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import {
   Search,
@@ -122,14 +122,13 @@ export default function ActionVault() {
   };
 
   return (
-    // FIX: Added pt-14 (padding-top) to clear the global fixed/sticky Navbar
-    <div className="min-h-screen bg-background text-foreground font-body pb-20 pt-14 md:pt-16 relative transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground font-body pb-20 relative transition-colors duration-300">
       
       {/* Ambient Background Glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
-      {/* Standard Header - Lowered z-index to stay below the main Navbar */}
-      <header className="z-10 bg-surface border-b border-surfaceBorder px-6 py-6 md:px-12 relative">
+      {/* Standard Header */}
+      <header className="z-30 bg-surface border-b border-surfaceBorder px-6 py-6 md:px-12">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
             <h1 className="text-3xl font-heading font-bold flex items-center gap-2 text-foreground drop-shadow-sm">
@@ -321,4 +320,4 @@ export default function ActionVault() {
       )}
     </div>
   );
-}
+                      }
