@@ -284,9 +284,7 @@ export default function EBooksDirectory() {
               title={`Reading ${viewingAsset.title}`}
             />
           </div>
-
-          </div>
-        </div>
+       </div>
       )}
 
     </div>
