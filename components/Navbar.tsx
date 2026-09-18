@@ -4,12 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Compass, User as UserIcon, Menu, X, Loader2, Sparkles } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Compass, User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon } from "lucide-react";
 
 export default function Navbar() {
   const { user, userData, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Theme state
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true); // Prevents hydration mismatch errors
+  }, []);
 
   // Automatically close the mobile menu whenever the user navigates to a new page
   useEffect(() => {
@@ -50,7 +59,7 @@ export default function Navbar() {
             Vault
           </Link>
           
-          {/* UPDATED: DEDICATED BAMS HUB BUTTON */}
+          {/* DEDICATED BAMS HUB BUTTON */}
           <Link 
             href="/bams-hub" 
             className="flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 hover:border-primary px-3 py-1.5 rounded-sm font-bold transition-all duration-300"
@@ -59,9 +68,20 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* RIGHT SIDE ACTIONS (Profile/Login + Hamburger Toggle) */}
-        <div className="flex items-center gap-3 md:gap-4 z-50">
+        {/* RIGHT SIDE ACTIONS */}
+        <div className="flex items-center gap-2 md:gap-4 z-50">
           
+          {/* THEME TOGGLE BUTTON */}
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 text-foreground/70 hover:text-primary hover:bg-foreground/5 rounded-full transition-colors focus:outline-none"
+              aria-label="Toggle Dark Mode"
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+          )}
+
           {isLoading ? (
             <div className="w-16 h-8 flex items-center justify-center">
               <Loader2 className="w-4 h-4 animate-spin text-foreground/30" />
@@ -69,7 +89,7 @@ export default function Navbar() {
           ) : user ? (
             <Link 
               href="/profile" 
-              className="flex items-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground px-4 py-2 rounded-sm transition-colors font-bold text-sm border border-surfaceBorder"
+              className="flex items-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground px-4 py-2 rounded-sm transition-colors font-bold text-sm border border-surfaceBorder ml-1 md:ml-0"
             >
               {userData?.photoURL || user.photoURL ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -80,7 +100,7 @@ export default function Navbar() {
               <span className="hidden sm:inline">Profile</span>
             </Link>
           ) : (
-            <div className="hidden sm:flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-4 ml-1 md:ml-0">
               <Link 
                 href={`/login?redirect=${encodeURIComponent(pathname)}`} 
                 className="text-sm font-bold text-foreground/70 hover:text-primary transition-colors"
@@ -98,7 +118,7 @@ export default function Navbar() {
 
           {/* MOBILE MENU TOGGLE BUTTON */}
           <button 
-            className="md:hidden p-2 text-foreground/70 hover:text-primary transition-colors focus:outline-none"
+            className="md:hidden p-2 text-foreground/70 hover:text-primary transition-colors focus:outline-none ml-1"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
           >
@@ -127,7 +147,7 @@ export default function Navbar() {
             Vault
           </Link>
 
-          {/* UPDATED: MOBILE BAMS HUB BUTTON */}
+          {/* MOBILE BAMS HUB BUTTON */}
           <Link 
             href="/bams-hub" 
             className="flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/20 py-2.5 rounded-sm font-bold transition-all"
