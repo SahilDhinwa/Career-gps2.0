@@ -21,7 +21,7 @@ export default function AyurvedicBackground() {
   }));
 
   return (
-    <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none transition-colors duration-500">
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none transition-colors duration-500">
       {/* 
         Inline styles for pure CSS animations. 
         Keeps dependencies zero and performance high.
