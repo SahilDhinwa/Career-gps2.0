@@ -2,10 +2,14 @@
 
 import Link from "next/link";
 import { ArrowLeft, Leaf, BookOpen, FileText, BrainCircuit, Sparkles, Download, Clock, ChevronRight } from "lucide-react";
+import AyurvedicBackground from "@/components/AyurvedicBackground"; // <-- 1. ADD THIS IMPORT
 
 export default function BAMSDashboard() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden transition-colors duration-300 pt-12 pb-24 px-6">
+      
+      {/* <-- 2. ADD THE COMPONENT HERE --> */}
+      <AyurvedicBackground />
       
       {/* Ambient Background Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
