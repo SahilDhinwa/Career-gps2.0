@@ -70,7 +70,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto text-center relative z-10 pt-2 md:pt-4">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-xs md:text-sm font-bold text-primary mb-5 md:mb-8 shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
-            2026 Scholarship Pathways Now Live
+            BATCH 2023 PROF II PAPERS LIVE
           </div>
           
           <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-tight mb-4 md:mb-6 leading-[1.15] md:leading-tight drop-shadow-sm">
