@@ -10,6 +10,7 @@ import { Compass, User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon } from
 export default function Navbar() {
   const { user, userData, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   // Theme state
@@ -18,6 +19,18 @@ export default function Navbar() {
 
   useEffect(() => {
     setMounted(true); // Prevents hydration mismatch errors
+    
+    // Add scroll listener for the Netflix-style transparent-to-solid transition
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Automatically close the mobile menu whenever the user navigates to a new page
@@ -29,17 +42,23 @@ export default function Navbar() {
   const getLinkStyle = (path: string) => {
     return pathname === path
       ? "text-primary font-bold transition-colors" 
-      : "text-foreground/70 hover:text-primary transition-colors"; 
+      : "text-foreground/80 hover:text-primary transition-colors"; 
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-surface/80 backdrop-blur-md border-b border-surfaceBorder shadow-sm transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <nav 
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled || isMobileMenuOpen
+          ? "bg-surface/90 backdrop-blur-md border-b border-surfaceBorder shadow-sm py-2" 
+          : "bg-transparent border-b-transparent py-4"
+      }`}
+    >
+      <div className="max-w-6xl mx-auto px-6 h-12 md:h-14 flex items-center justify-between">
         
         {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity z-50">
-          <Compass className="w-6 h-6" />
-          <span className="font-heading font-bold text-xl tracking-tight text-foreground">
+          <Compass className="w-6 h-6 md:w-7 md:h-7" />
+          <span className="font-heading font-bold text-xl md:text-2xl tracking-tight text-foreground">
             Career GPS
           </span>
         </Link>
@@ -69,13 +88,13 @@ export default function Navbar() {
         </div>
 
         {/* RIGHT SIDE ACTIONS */}
-        <div className="flex items-center gap-2 md:gap-4 z-50">
+        <div className="flex items-center gap-3 md:gap-4 z-50">
           
-          {/* THEME TOGGLE BUTTON */}
+          {/* THEME TOGGLE BUTTON (Hidden on mobile to save space, moved to dropdown) */}
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 text-foreground/70 hover:text-primary hover:bg-foreground/5 rounded-full transition-colors focus:outline-none"
+              className="hidden md:flex p-2 text-foreground/70 hover:text-primary hover:bg-foreground/5 rounded-full transition-colors focus:outline-none"
               aria-label="Toggle Dark Mode"
             >
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -89,7 +108,7 @@ export default function Navbar() {
           ) : user ? (
             <Link 
               href="/profile" 
-              className="flex items-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground px-4 py-2 rounded-sm transition-colors font-bold text-sm border border-surfaceBorder ml-1 md:ml-0"
+              className="hidden md:flex items-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground px-4 py-2 rounded-sm transition-colors font-bold text-sm border border-surfaceBorder"
             >
               {userData?.photoURL || user.photoURL ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -97,19 +116,21 @@ export default function Navbar() {
               ) : (
                 <UserIcon className="w-4 h-4" /> 
               )}
-              <span className="hidden sm:inline">Profile</span>
+              <span>Profile</span>
             </Link>
           ) : (
-            <div className="hidden sm:flex items-center gap-4 ml-1 md:ml-0">
+            <div className="flex items-center gap-3">
+              {/* Login is just text on mobile to match Netflix style */}
               <Link 
                 href={`/login?redirect=${encodeURIComponent(pathname)}`} 
-                className="text-sm font-bold text-foreground/70 hover:text-primary transition-colors"
+                className="text-sm font-bold text-foreground hover:text-primary transition-colors"
               >
-                Login
+                Sign In
               </Link>
+              {/* Sign Up is hidden on mobile, replaced by the hero button */}
               <Link 
                 href={`/signup?redirect=${encodeURIComponent(pathname)}`} 
-                className="bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
+                className="hidden md:block bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
               >
                 Sign Up
               </Link>
@@ -118,22 +139,39 @@ export default function Navbar() {
 
           {/* MOBILE MENU TOGGLE BUTTON */}
           <button 
-            className="md:hidden p-2 text-foreground/70 hover:text-primary transition-colors focus:outline-none ml-1"
+            className="md:hidden p-2 text-foreground hover:text-primary transition-colors focus:outline-none -mr-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
           </button>
         </div>
       </div>
 
       {/* MOBILE DROPDOWN MENU */}
       <div 
-        className={`md:hidden absolute top-16 left-0 w-full bg-surface border-b border-surfaceBorder shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+        className={`md:hidden absolute top-full left-0 w-full bg-surface/95 backdrop-blur-xl border-b border-surfaceBorder shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="flex flex-col px-6 py-4 space-y-5 font-medium text-sm">
+        <div className="flex flex-col px-6 py-6 space-y-6 font-medium text-base">
+          
+          {/* Mobile Profile Area (If Logged In) */}
+          {user && !isLoading && (
+             <Link 
+             href="/profile" 
+             className="flex items-center gap-3 bg-foreground/5 p-3 rounded-sm border border-surfaceBorder"
+           >
+             {userData?.photoURL || user.photoURL ? (
+               /* eslint-disable-next-line @next/next/no-img-element */
+               <img src={userData?.photoURL || user.photoURL} alt="Profile" className="w-8 h-8 rounded-full object-cover border border-surfaceBorder" />
+             ) : (
+               <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center"><UserIcon className="w-4 h-4 text-foreground/70" /></div>
+             )}
+             <span className="font-bold text-foreground">My Profile</span>
+           </Link>
+          )}
+
           <Link href="/pathways" className={getLinkStyle("/pathways")}>
             Pathways
           </Link>
@@ -144,30 +182,35 @@ export default function Navbar() {
             E-Books
           </Link>
           <Link href="/dashboard/vault" className={getLinkStyle("/dashboard/vault")}>
-            Vault
+            Action Vault
           </Link>
 
           {/* MOBILE BAMS HUB BUTTON */}
           <Link 
             href="/bams-hub" 
-            className="flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/20 py-2.5 rounded-sm font-bold transition-all"
+            className="flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/20 py-3 rounded-sm font-bold transition-all"
           >
-            <Sparkles className="w-4 h-4" /> BAMS HUB
+            <Sparkles className="w-4 h-4" /> BAMS 2nd Prof Hub
           </Link>
 
+          {/* Theme Toggle (Moved inside dropdown for mobile) */}
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex items-center gap-3 py-2 text-foreground/80 hover:text-primary transition-colors focus:outline-none"
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5 text-warning" /> : <Moon className="w-5 h-5 text-primary" />}
+              <span>{theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}</span>
+            </button>
+          )}
+
           {!isLoading && !user && (
-            <div className="pt-4 mt-2 border-t border-surfaceBorder flex flex-col gap-4 sm:hidden">
-              <Link 
-                href={`/login?redirect=${encodeURIComponent(pathname)}`} 
-                className="text-foreground/70 font-bold hover:text-primary transition-colors"
-              >
-                Login
-              </Link>
+            <div className="pt-4 mt-2 border-t border-surfaceBorder flex flex-col gap-4">
               <Link 
                 href={`/signup?redirect=${encodeURIComponent(pathname)}`} 
-                className="bg-primary text-white font-bold py-3 text-center rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
+                className="bg-primary text-white font-bold py-3.5 text-center rounded-sm hover:bg-primaryHover transition-colors shadow-sm"
               >
-                Sign Up
+                Create Account
               </Link>
             </div>
           )}
