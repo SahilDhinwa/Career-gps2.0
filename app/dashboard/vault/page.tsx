@@ -127,9 +127,9 @@ export default function ActionVault() {
       {/* Ambient Background Glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-30 backdrop-blur-xl bg-surface/80 border-b border-surfaceBorder px-6 py-6 md:px-12 transition-colors duration-300 shadow-sm">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+      {/* Standard Header */}
+      <header className="z-30 bg-surface border-b border-surfaceBorder px-6 py-6 md:px-12">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
             <h1 className="text-3xl font-heading font-bold flex items-center gap-2 text-foreground drop-shadow-sm">
               <FolderOpen className="text-primary" size={28} />
