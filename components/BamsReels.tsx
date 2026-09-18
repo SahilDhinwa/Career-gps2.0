@@ -26,7 +26,7 @@ const BAMS_REELS_DATA = [
     views: "31K Views",
     title: "Roga Nidana: Quick Trick to Differentiate Vata vs Pitta Vyadhis",
     gradient: "from-red-950 to-black",
-    videoLink: "https://instagram.com"
+    videoLink: "https://www.instagram.com/reel/DbFddcWhViu/?stkn=NjY2aTBobWNtb3Vy"
   },
   {
     id: "bams-reel-4",
