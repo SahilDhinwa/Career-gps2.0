@@ -123,10 +123,9 @@ export default function Matchmaker() {
       </button>
 
       {isOpen && (
-        // FIX: Increased z-index to z-[100] to sit above the sticky navbar
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md animate-in fade-in duration-300">
+        // FIX: Increased z-index to z-[9999] to override absolutely everything on the page
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md animate-in fade-in duration-300">
           
-          {/* FIX: Added max-h-[90vh] to constrain height on small screens */}
           <div className="bg-surface w-full max-w-lg max-h-[90vh] border border-surfaceBorder rounded-sm shadow-2xl relative flex flex-col">
             
             <div className="flex justify-between items-center p-5 md:p-6 border-b border-surfaceBorder bg-surfaceBorder/10 shrink-0">
@@ -138,7 +137,6 @@ export default function Matchmaker() {
               </button>
             </div>
 
-            {/* FIX: Added overflow-y-auto so the content scrolls inside the modal if it's too tall */}
             <div className="p-6 md:p-8 flex-grow overflow-y-auto">
               {isProcessing ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center animate-pulse">
@@ -224,4 +222,4 @@ export default function Matchmaker() {
       )}
     </>
   );
-      }
+}
