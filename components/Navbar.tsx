@@ -125,7 +125,7 @@ export default function Navbar() {
                 href={`/login?redirect=${encodeURIComponent(pathname)}`} 
                 className="text-sm font-bold text-foreground hover:text-primary transition-colors"
               >
-                Sign In
+                Login
               </Link>
               {/* Sign Up is hidden on mobile, replaced by the hero button */}
               <Link 
