@@ -19,7 +19,7 @@ const BAMS_REELS_DATA = [
     views: "24K Views",
     title: "How to Master Dravyaguna Guna-Karma Instantly",
     gradient: "from-orange-950 to-black",
-    videoLink: "https://instagram.com"
+    videoLink: "https://www.instagram.com/reel/Dcl4slUNO4W/?stkn=MXNqeTZrOGhhcjU5ZA=="
   },
   {
     id: "bams-reel-3",
