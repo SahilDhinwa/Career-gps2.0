@@ -49,7 +49,7 @@ export default function Navbar() {
     <nav 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         isScrolled || isMobileMenuOpen
-          ? "bg-surface/90 backdrop-blur-md border-b border-surfaceBorder shadow-sm py-2" 
+          ? "bg-surface border-b border-surfaceBorder shadow-md py-2" 
           : "bg-transparent border-b-transparent py-4"
       }`}
     >
@@ -150,7 +150,7 @@ export default function Navbar() {
 
       {/* MOBILE DROPDOWN MENU */}
       <div 
-        className={`md:hidden absolute top-full left-0 w-full bg-surface/95 backdrop-blur-xl border-b border-surfaceBorder shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`md:hidden absolute top-full left-0 w-full bg-surface border-b border-surfaceBorder shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${
           isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
@@ -218,4 +218,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-}
+            }
