@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, Phone, Mail, MapPin, Heart, ArrowRight } from "lucide-react";
+import { Compass, Mail, MapPin, Heart, ArrowRight, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  
+  // WhatsApp Configuration
+  const phoneNumber = "918769892303";
+  const defaultMessage = encodeURIComponent("Hi Sahil, I have a question about Career GPS!");
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
     <footer className="bg-surface/80 backdrop-blur-md border-t border-surfaceBorder transition-colors duration-300 relative z-20">
@@ -63,13 +68,22 @@ export default function Footer() {
           <div className="md:col-span-4 lg:col-span-4">
             <h3 className="font-heading font-bold text-foreground mb-5 text-lg">Support & Contact</h3>
             <ul className="space-y-4 text-sm font-medium">
+              
+              {/* UPDATED: Clickable WhatsApp Integration */}
               <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                  <Phone className="w-4 h-4 text-primary" />
+                <div className="w-8 h-8 rounded-full bg-[#25D366]/10 flex items-center justify-center shrink-0 border border-[#25D366]/20">
+                  <MessageCircle className="w-4 h-4 text-[#25D366]" />
                 </div>
                 <div>
-                  <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-0.5">Direct Support</p>
-                  <p className="text-foreground font-bold">+91 8769892303</p>
+                  <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-0.5">WhatsApp Support</p>
+                  <a 
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer" 
+                    className="text-foreground font-bold hover:text-[#25D366] transition-colors flex items-center gap-1 group"
+                  >
+                    +91 8769892303 <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
                 </div>
               </li>
               
