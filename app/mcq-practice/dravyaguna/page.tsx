@@ -41,8 +41,7 @@ const PAPER_1_PRACTICE_TESTS = [
   { id: "test-5", title: "DG Practice Paper 5", subtitle: "Questions 81 - 100 (Comprehensive)", link: "/mcq-practice/dravyaguna/paper-1/test-5" }, 
 ];
 
-// UPDATED: Replaced the locked placeholder with the active link to the Flashcard Test Engine
-// UPDATED PAPER 2 ARRAYS
+// PAPER 2 OFFICIAL EXAMS
 const PAPER_2_SPECIAL_TESTS = [
   {
     id: "p2-batch-2021",
@@ -52,6 +51,7 @@ const PAPER_2_SPECIAL_TESTS = [
   }
 ];
 
+// PAPER 2 PRACTICE SETS
 const PAPER_2_TESTS = [
   { 
     id: "p2-practice-set-1", 
@@ -63,7 +63,7 @@ const PAPER_2_TESTS = [
 ];
 
 // ==========================================
-// UI RENDERER (Do not touch this part usually)
+// UI RENDERER
 // ==========================================
 
 export default function DravyagunaHub() {
@@ -138,13 +138,13 @@ export default function DravyagunaHub() {
           </div>
         </div>
 
-                {/* PAPER 2 SECTION */}
+        {/* PAPER 2 SECTION */}
         <div className="mb-12">
           <h2 className="text-2xl font-heading font-bold text-foreground mb-6 flex items-center gap-2">
             <Leaf className="w-6 h-6 text-amber-500" /> Paper 2 (Plant Profiles)
           </h2>
           
-          {/* NEW: PAPER 2 SPECIAL TESTS RENDERING */}
+          {/* PAPER 2 SPECIAL TESTS RENDERING */}
           <div className="mb-6 space-y-4">
             {PAPER_2_SPECIAL_TESTS.map((test) => (
               <Link key={test.id} href={test.link} className="group bg-amber-500/5 backdrop-blur-sm border-2 border-amber-500/30 rounded-sm p-6 flex items-center justify-between hover:border-amber-500 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] transition-all duration-300 relative overflow-hidden">
@@ -165,11 +165,6 @@ export default function DravyagunaHub() {
             ))}
           </div>
 
-          {/* MIXED RENDERER: Handles both active links and locked placeholders */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* ... Keep your existing PAPER_2_TESTS map loop here ... */}
-
-          
           {/* MIXED RENDERER: Handles both active links and locked placeholders */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {PAPER_2_TESTS.map((test) => (
