@@ -1,4 +1,11 @@
-export const dgPaper2Batch2021 = [
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, CheckCircle2, ChevronRight, RotateCcw, Award } from "lucide-react";
+
+// The array we just generated
+const dgPaper2Batch2021 = [
   {
     id: 1,
     question: {
@@ -64,7 +71,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "A",
     explanation: {
-      english: "Prakruti is primarily examined during 'Atura Pariksha' (examination of the patient - Dashavidha Pariksha). Aushadha Pariksha heavily relies on Rasa, Guna, Virya, Vipaka, and Prabhava."
+      english: "Prakruti is primarily examined during 'Atura Pariksha' (examination of the patient). Aushadha Pariksha focuses on Rasa, Guna, Virya, Vipaka, and Prabhava."
     }
   },
   {
@@ -98,7 +105,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "D",
     explanation: {
-      english: "Arjuna, Mocharasa (exudate of Shalmali), and Kanchanara all dominantly possess Kashaya (astringent) Rasa, making them excellent stambhana (checking) and ropana (healing) agents."
+      english: "Arjuna, Mocharasa (exudate of Shalmali), and Kanchanara all dominantly possess Kashaya (astringent) Rasa."
     }
   },
   {
@@ -149,7 +156,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "D",
     explanation: {
-      english: "Agnimantha, Bharangi, and Gambhari all traditionally belong to the Verbenaceae family (though modern taxonomy sometimes shifts them to Lamiaceae, Verbenaceae is the standard textbook answer)."
+      english: "Agnimantha, Bharangi, and Gambhari all traditionally belong to the Verbenaceae family."
     }
   },
   {
@@ -200,7 +207,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "A",
     explanation: {
-      english: "Ayurvedic texts classify Kumkum (Saffron) into three grades. Kashmiraja (from Kashmir) is considered the best (Uttama), Bahlika is medium (Madhyama), and Parasika is inferior (Adhama)."
+      english: "Ayurvedic texts classify Kumkum (Saffron) into three grades. Kashmiraja (from Kashmir) is considered the best (Uttama)."
     }
   },
   {
@@ -234,7 +241,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "A",
     explanation: {
-      english: "While Nimba is renowned for treating skin diseases (Kushthaghna), Acharya Charaka specifically categorizes it under the Kandughna (anti-pruritic) Mahakashaya."
+      english: "While Nimba is renowned for treating skin diseases, Acharya Charaka specifically categorizes it under the Kandughna (anti-pruritic) Mahakashaya."
     }
   },
   {
@@ -251,7 +258,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "D",
     explanation: {
-      english: "Haritaki, Amalaki, and Rasona are all classic examples of Pancharasa dravyas (possessing 5 out of 6 tastes). Haritaki lacks Lavana, Amalaki lacks Lavana, and Rasona lacks Amla rasa."
+      english: "Haritaki, Amalaki, and Rasona are all classic examples of Pancharasa dravyas (possessing 5 out of 6 tastes)."
     }
   },
   {
@@ -268,7 +275,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "D",
     explanation: {
-      english: "The flowers (Pushpa) of Dhataki (Woodfordia fruticosa) are widely used, especially as a fermenting agent in Asava and Arishta preparations."
+      english: "The flowers (Pushpa) of Dhataki (Woodfordia fruticosa) are widely used, especially as a fermenting agent in Asava and Arishta."
     }
   },
   {
@@ -285,7 +292,7 @@ export const dgPaper2Batch2021 = [
     ],
     correctAnswer: "D",
     explanation: {
-      english: "While fresh Dhanyaka (Coriander leaves) is often considered Sheeta, dry Dhanyaka (seeds) is typically classified as Ushna Virya according to texts like Bhavaprakasha."
+      english: "While fresh Dhanyaka is often considered Sheeta, dry Dhanyaka (seeds) is typically classified as Ushna Virya according to texts like Bhavaprakasha."
     }
   },
   {
@@ -340,3 +347,171 @@ export const dgPaper2Batch2021 = [
     }
   }
 ];
+
+export default function Batch2021Paper2Test() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [score, setScore] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const currentQuestion = dgPaper2Batch2021[currentIndex];
+
+  const handleOptionSelect = (optionId: string) => {
+    if (selectedAnswer) return; // Prevent changing answer after selection
+    
+    setSelectedAnswer(optionId);
+    setShowExplanation(true);
+    
+    if (optionId === currentQuestion.correctAnswer) {
+      setScore((prev) => prev + 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < dgPaper2Batch2021.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+    } else {
+      setIsCompleted(true);
+    }
+  };
+
+  const handleRestart = () => {
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setShowExplanation(false);
+    setScore(0);
+    setIsCompleted(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-background relative overflow-hidden transition-colors duration-300 pt-8 pb-24 px-4 md:px-6">
+      
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 right-1/2 translate-x-1/2 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px]"></div>
+      </div>
+
+      <div className="max-w-3xl mx-auto relative z-10">
+        
+        {/* Navigation Bar */}
+        <div className="flex items-center justify-between mb-8">
+          <Link 
+            href="/mcq-practice/dravyaguna" 
+            className="inline-flex items-center gap-2 text-foreground/70 hover:text-amber-500 transition-colors font-bold text-sm bg-surface/80 px-4 py-2 rounded-sm border border-surfaceBorder backdrop-blur-sm shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to Dravyaguna Hub
+          </Link>
+        </div>
+
+        {/* Title Header */}
+        <div className="text-center mb-8">
+          <span className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3.5 py-1 rounded-sm text-xs font-bold tracking-wider uppercase mb-3">
+            <Award className="w-3.5 h-3.5" /> Official Exam • Batch 2021
+          </span>
+          <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
+            Dravyaguna Paper 2 <span className="text-amber-500">2021 (Main)</span>
+          </h1>
+        </div>
+
+        {!isCompleted ? (
+          <div className="bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-xl p-6 md:p-10 relative overflow-hidden transition-all duration-300">
+            
+            {/* Progress & Score */}
+            <div className="flex items-center justify-between text-xs font-bold text-foreground/60 mb-8 pb-4 border-b border-surfaceBorder">
+              <span>QUESTION {currentIndex + 1} OF {dgPaper2Batch2021.length}</span>
+              <span className="text-amber-500">SCORE: {score}</span>
+            </div>
+
+            {/* Question Area */}
+            <div className="mb-8">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground leading-snug mb-3">
+                {currentQuestion.question.hindi}
+              </h2>
+              <p className="text-sm md:text-base font-medium text-foreground/60 italic">
+                {currentQuestion.question.english}
+              </p>
+            </div>
+
+            {/* Options Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              {currentQuestion.options.map((option) => {
+                const isSelected = selectedAnswer === option.id;
+                const isCorrect = option.id === currentQuestion.correctAnswer;
+                
+                let buttonStyle = "bg-surface/50 border-surfaceBorder hover:border-amber-500 hover:bg-amber-500/5 text-foreground";
+                
+                if (showExplanation) {
+                  if (isCorrect) {
+                    buttonStyle = "bg-emerald-500/10 border-emerald-500 text-emerald-600 dark:text-emerald-400";
+                  } else if (isSelected && !isCorrect) {
+                    buttonStyle = "bg-red-500/10 border-red-500 text-red-600 dark:text-red-400";
+                  } else {
+                    buttonStyle = "bg-surface/30 border-surfaceBorder/50 text-foreground/40 opacity-70";
+                  }
+                }
+
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => handleOptionSelect(option.id)}
+                    disabled={showExplanation}
+                    className={`text-left p-4 rounded-sm border-2 transition-all duration-300 flex items-start gap-3 ${buttonStyle}`}
+                  >
+                    <span className="font-bold flex-shrink-0 mt-0.5">{option.id}.</span>
+                    <div>
+                      <p className="font-bold text-[15px]">{option.text.hindi}</p>
+                      <p className="text-xs opacity-80 mt-1">{option.text.english}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Explanation Area */}
+            {showExplanation && (
+              <div className="mb-8 p-5 bg-amber-500/10 border border-amber-500/20 rounded-sm animate-in fade-in slide-in-from-bottom-4">
+                <span className="text-[11px] font-bold text-amber-500 uppercase tracking-widest block mb-2">
+                  Explanation
+                </span>
+                <p className="text-sm text-foreground/80 leading-relaxed font-medium">
+                  {currentQuestion.explanation.english}
+                </p>
+              </div>
+            )}
+
+            {/* Next Button */}
+            {selectedAnswer && (
+              <div className="flex justify-end border-t border-surfaceBorder pt-6">
+                <button
+                  onClick={handleNext}
+                  className="px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-sm shadow-md transition-all flex items-center gap-2"
+                >
+                  {currentIndex < dgPaper2Batch2021.length - 1 ? "Next Question" : "View Results"} <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+          </div>
+        ) : (
+          /* Completion State */
+          <div className="bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-xl p-10 text-center">
+            <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold text-foreground mb-2">Exam Completed!</h2>
+            <p className="text-foreground/70 mb-6">
+              You scored <span className="font-bold text-amber-500">{score}</span> out of {dgPaper2Batch2021.length}.
+            </p>
+            <button
+              onClick={handleRestart}
+              className="px-8 py-3.5 bg-amber-500 text-white font-bold rounded-sm hover:bg-amber-600 transition-colors inline-flex items-center gap-2"
+            >
+              <RotateCcw className="w-4 h-4" /> Retake Exam
+            </button>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
