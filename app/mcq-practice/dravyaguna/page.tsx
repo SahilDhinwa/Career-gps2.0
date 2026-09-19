@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Leaf, FileText, ChevronRight, Award, Beaker, BookOpen, FolderArchive } from "lucide-react";
+import { ArrowLeft, Leaf, FileText, ChevronRight, Award, Beaker, BookOpen, FolderArchive, Zap } from "lucide-react";
 
 // ==========================================
 // 🚀 MASTER DIRECTORY ROUTING
@@ -58,7 +58,7 @@ const PAPER_2_FOLDERS = [
   { 
     id: "p2-chapter", 
     title: "Active Recall & Flashcards", 
-    subtitle: "Master botanical names and plant profiles", 
+    subtitle: "More interactive sets coming soon", 
     icon: FolderArchive,
     link: "/mcq-practice/dravyaguna/paper-2/chapter-wise",
     accent: "text-emerald-500",
@@ -152,7 +152,30 @@ export default function DravyagunaHub() {
               Paper 2 <span className="text-foreground/50 text-xl font-normal hidden sm:inline">(Plant Profiles)</span>
             </h2>
           </div>
+
+          {/* FEATURED ACTIVE RECALL ENGINE */}
+          <Link href="/mcq-practice/dravyaguna/paper-2/chapter-wise/practice-set-1" className="group bg-gradient-to-br from-emerald-500/10 to-surface/40 backdrop-blur-sm border border-emerald-500/30 hover:border-emerald-500/60 rounded-sm p-5 md:p-8 flex items-center justify-between hover:shadow-lg transition-all duration-300 mb-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] md:text-[10px] font-bold px-3 py-1 uppercase tracking-widest rounded-bl-sm z-10 shadow-sm">Featured Engine</div>
+            <div className="absolute -right-10 -bottom-10 opacity-5 pointer-events-none">
+              <Zap className="w-48 h-48 text-emerald-500" />
+            </div>
+            
+            <div className="flex items-center gap-4 md:gap-6 w-full pr-10 relative z-10">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-emerald-500/20 rounded-sm flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                <Zap className="w-6 h-6 md:w-8 md:h-8 text-emerald-500 drop-shadow-md" />
+              </div>
+              <div className="truncate">
+                <h3 className="font-heading font-bold text-emerald-500 text-lg md:text-2xl mb-1 md:mb-2 truncate">Botanical Names & Family</h3>
+                <p className="text-foreground/70 font-medium text-xs md:text-sm truncate">Bilingual Active Recall Flashcards • 98 Core Drugs</p>
+              </div>
+            </div>
+            
+            <div className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors absolute right-4 md:right-8 z-10">
+              <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+            </div>
+          </Link>
           
+          {/* REGULAR DIRECTORY FOLDERS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {PAPER_2_FOLDERS.map((folder) => {
               const Icon = folder.icon;
