@@ -14,7 +14,7 @@ const careerAssets = [
     subtitle: "Unlocking Your True Personality Through Communication",
     shortSubtitle: "Unlocking Your True Personality",
     description: "A Guide for the Real World. Master the art of the aura, overcome the 'Invisible Wall', and command respect in every room you enter.",
-    price: "₹499", // Updated to Paid
+    price: "₹499", 
     originalPrice: "₹999",
     tag: "Flagship Release",
     color: "from-gray-900 to-black", 
@@ -28,12 +28,12 @@ const careerAssets = [
     subtitle: "A Mentor's Guide to Communication for the Ambitious",
     shortSubtitle: "A Mentor's Guide for the Ambitious",
     description: "Claim your space in a world that tries to make you feel small. This survival guide breaks down how to overcome hesitation, hack your learning style, and command respect in any environment.",
-    price: "₹499", // Updated to Paid
+    price: "₹499", 
     originalPrice: "₹1,299",
     tag: "New Release",
     color: "from-[#022c22] to-black", 
     coverBgImage: "/the_invisible_art.jpg", 
-  } 
+  },
   {
     id: "neetu-bhaiya",
     title: "NITU BHAIYA KE POHE",
@@ -41,13 +41,13 @@ const careerAssets = [
     author: "NITESH ZUCKERBERG", 
     subtitle: "OSHO KA BHAI SAWA DOSHO",
     shortSubtitle: "Apna ghee kaise khatam karawaen",
-    description: "Maggie Se Pahle Website Taiyar",
-    price: "FREE", // Updated to Paid
+    description: "Maggie Se Pahle Website Taiyar.",
+    price: "FREE", 
     originalPrice: "₹1,299",
-    tag: "New Release",
+    tag: "Masterpiece",
     color: "from-[#022c22] to-black", 
     coverBgImage: "/neetu-bhaiya.jpg", 
-      }
+  }
 ];
 
 export default function EBooksDirectory() {
@@ -145,7 +145,6 @@ export default function EBooksDirectory() {
         <div className="max-w-6xl mx-auto">
           
           <div className="mb-12 md:mb-16">
-            {/* Updated header text to reflect premium status */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-6 shadow-sm">
               <Sparkles className="w-4 h-4 text-warning" /> Premium Library
             </div>
