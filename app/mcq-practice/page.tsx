@@ -23,15 +23,6 @@ const TEST_MODULES = [
     status: "active"
   },
   {
-    id: "dravyaguna-2",
-    title: "Dravyaguna Vigyan",
-    part: "Part 2",
-    questions: "20 Questions",
-    icon: <Leaf className="w-6 h-6 text-amber-500" />,
-    link: "#",
-    status: "locked" // We will unlock this next!
-  },
-  {
     id: "rasa-1",
     title: "Rasa Shastra & B.K.",
     part: "Part 1",
