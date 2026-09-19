@@ -130,7 +130,7 @@ export default function Navbar() {
                 href={`/login?redirect=${encodeURIComponent(pathname)}`} 
                 className="text-sm font-bold text-foreground hover:text-primary transition-colors"
               >
-                Sign In
+                Login
               </Link>
               <Link 
                 href={`/signup?redirect=${encodeURIComponent(pathname)}`} 
