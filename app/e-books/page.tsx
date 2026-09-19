@@ -39,10 +39,10 @@ const careerAssets = [
   {
     id: "neetu-bhaiya",
     title: "NITU BHAIYA KE POHE",
-    coverTitle: "Nitu Bhaiya ka\nGhee Khatam",
+    coverTitle: "\nGhee Khatam",
     author: "NITESH ZUCKERBERG", 
     subtitle: "OSHO KA BHAI SAWA DOSHO",
-    shortSubtitle: "Apna ghee kaise khatam karawaen",
+    shortSubtitle: "Apna ghee kaise khatam karwaen",
     description: "Maggie Se Pahle Website Taiyar.",
     price: "FREE", 
     originalPrice: "₹1,299",
