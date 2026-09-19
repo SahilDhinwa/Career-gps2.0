@@ -33,7 +33,21 @@ const careerAssets = [
     tag: "New Release",
     color: "from-[#022c22] to-black", 
     coverBgImage: "/the_invisible_art.jpg", 
-  }
+  } 
+  {
+    id: "neetu-bhaiya",
+    title: "NITU BHAIYA KE POHE",
+    coverTitle: "Nitu Bhaiya ka\nGhee Khatam",
+    author: "NITESH ZUCKERBERG", 
+    subtitle: "OSHO KA BHAI SAWA DOSHO",
+    shortSubtitle: "Apna ghee kaise khatam karawaen",
+    description: "Maggie Se Pahle Website Taiyar",
+    price: "FREE", // Updated to Paid
+    originalPrice: "₹1,299",
+    tag: "New Release",
+    color: "from-[#022c22] to-black", 
+    coverBgImage: "/neetu-bhaiya.jpg", 
+      }
 ];
 
 export default function EBooksDirectory() {
