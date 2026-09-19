@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, Star, ShieldCheck, MessageCircle, Eye, X, BookOpen } from "lucide-react";
+import { Sparkles, Star, ShieldCheck, MessageCircle, Eye } from "lucide-react";
 
 // ==========================================
 // 📚 PREMIUM & FREE E-BOOKS REPOSITORY
@@ -20,7 +19,7 @@ const careerAssets = [
     tag: "Flagship Release",
     color: "from-gray-900 to-black", 
     coverBgImage: "/unspoken-aura-bg.jpg", 
-    fileUrl: "", // Paid books don't need a fileUrl exposed
+    fileUrl: "", 
   },
   {
     id: "invisible-art",
@@ -50,15 +49,13 @@ const careerAssets = [
     tag: "Masterpiece",
     color: "from-[#022c22] to-black", 
     coverBgImage: "/neetu-bhaiya.jpg", 
-    fileUrl: "/neetu-bhaiya.pdf", // The PDF file to read
+    fileUrl: "/neetu-bhaiya.pdf", 
   }
 ];
 
 export default function EBooksDirectory() {
-  const [viewingAsset, setViewingAsset] = useState<any | null>(null);
   const phoneNumber = "918769892303";
 
-  // Dynamically generates the WhatsApp link based on the book the user clicked
   const getWhatsappUrl = (bookTitle: string) => {
     const message = encodeURIComponent(`Hi Sahil, I want to purchase the E-Book: '${bookTitle}'!`);
     return `https://wa.me/${phoneNumber}?text=${message}`;
@@ -67,75 +64,20 @@ export default function EBooksDirectory() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col transition-colors duration-300">
       
+      {/* 3D Animated Background */}
       <style dangerouslySetInnerHTML={{__html: `
-        .emerald-vault {
-          position: fixed;
-          inset: 0;
-          overflow: hidden;
-          perspective: 1500px;
-          z-index: 0;
-          pointer-events: none;
-        }
-
-        .emerald-panel {
-          position: absolute;
-          border-radius: 16px;
-          background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 66, 50, 0.02) 100%);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          border-top: 1px solid rgba(16, 185, 129, 0.3);
-          border-left: 1px solid rgba(16, 185, 129, 0.3);
-          border-bottom: 1px solid rgba(16, 185, 129, 0.1);
-          border-right: 1px solid rgba(16, 185, 129, 0.1);
-          box-shadow: 
-            0 25px 50px -12px rgba(17, 66, 50, 0.15),
-            inset 0 0 40px rgba(16, 185, 129, 0.05);
-          transform-style: preserve-3d;
-        }
-        
-        .panel-1 {
-          width: 18vw; height: 85vh; top: -10%; left: 5%;
-          animation: pivot-glass-1 25s ease-in-out infinite alternate;
-        }
-        .panel-2 {
-          width: 25vw; height: 90vh; top: 15%; left: 25%;
-          background: linear-gradient(135deg, rgba(212, 175, 55, 0.06) 0%, rgba(16, 185, 129, 0.02) 100%);
-          border-top: 1px solid rgba(212, 175, 55, 0.3);
-          animation: pivot-glass-2 30s ease-in-out infinite alternate-reverse;
-        }
-        .panel-3 {
-          width: 15vw; height: 75vh; top: 5%; left: 55%;
-          animation: pivot-glass-3 20s ease-in-out infinite alternate;
-        }
-        .panel-4 {
-          width: 20vw; height: 110vh; top: -5%; right: 5%;
-          animation: pivot-glass-4 35s ease-in-out infinite alternate-reverse;
-        }
-        .panel-5 {
-          width: 30vw; height: 60vh; bottom: -10%; left: 40%;
-          animation: pivot-glass-5 28s ease-in-out infinite alternate;
-        }
-
-        @keyframes pivot-glass-1 {
-          0% { transform: rotateY(-35deg) rotateZ(5deg) translateY(0); }
-          100% { transform: rotateY(25deg) rotateZ(-2deg) translateY(40px); }
-        }
-        @keyframes pivot-glass-2 {
-          0% { transform: rotateY(20deg) rotateZ(-3deg) translateY(20px); }
-          100% { transform: rotateY(-30deg) rotateZ(4deg) translateY(-30px); }
-        }
-        @keyframes pivot-glass-3 {
-          0% { transform: rotateY(-15deg) rotateX(10deg) translateY(-20px); }
-          100% { transform: rotateY(40deg) rotateX(-5deg) translateY(20px); }
-        }
-        @keyframes pivot-glass-4 {
-          0% { transform: rotateY(35deg) rotateZ(2deg) translateY(0); }
-          100% { transform: rotateY(-20deg) rotateZ(-4deg) translateY(-50px); }
-        }
-        @keyframes pivot-glass-5 {
-          0% { transform: rotateX(45deg) rotateY(-10deg) translateX(0); }
-          100% { transform: rotateX(20deg) rotateY(25deg) translateX(-40px); }
-        }
+        .emerald-vault { position: fixed; inset: 0; overflow: hidden; perspective: 1500px; z-index: 0; pointer-events: none; }
+        .emerald-panel { position: absolute; border-radius: 16px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 66, 50, 0.02) 100%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(16, 185, 129, 0.3); border-left: 1px solid rgba(16, 185, 129, 0.3); border-bottom: 1px solid rgba(16, 185, 129, 0.1); border-right: 1px solid rgba(16, 185, 129, 0.1); box-shadow: 0 25px 50px -12px rgba(17, 66, 50, 0.15), inset 0 0 40px rgba(16, 185, 129, 0.05); transform-style: preserve-3d; }
+        .panel-1 { width: 18vw; height: 85vh; top: -10%; left: 5%; animation: pivot-glass-1 25s ease-in-out infinite alternate; }
+        .panel-2 { width: 25vw; height: 90vh; top: 15%; left: 25%; background: linear-gradient(135deg, rgba(212, 175, 55, 0.06) 0%, rgba(16, 185, 129, 0.02) 100%); border-top: 1px solid rgba(212, 175, 55, 0.3); animation: pivot-glass-2 30s ease-in-out infinite alternate-reverse; }
+        .panel-3 { width: 15vw; height: 75vh; top: 5%; left: 55%; animation: pivot-glass-3 20s ease-in-out infinite alternate; }
+        .panel-4 { width: 20vw; height: 110vh; top: -5%; right: 5%; animation: pivot-glass-4 35s ease-in-out infinite alternate-reverse; }
+        .panel-5 { width: 30vw; height: 60vh; bottom: -10%; left: 40%; animation: pivot-glass-5 28s ease-in-out infinite alternate; }
+        @keyframes pivot-glass-1 { 0% { transform: rotateY(-35deg) rotateZ(5deg) translateY(0); } 100% { transform: rotateY(25deg) rotateZ(-2deg) translateY(40px); } }
+        @keyframes pivot-glass-2 { 0% { transform: rotateY(20deg) rotateZ(-3deg) translateY(20px); } 100% { transform: rotateY(-30deg) rotateZ(4deg) translateY(-30px); } }
+        @keyframes pivot-glass-3 { 0% { transform: rotateY(-15deg) rotateX(10deg) translateY(-20px); } 100% { transform: rotateY(40deg) rotateX(-5deg) translateY(20px); } }
+        @keyframes pivot-glass-4 { 0% { transform: rotateY(35deg) rotateZ(2deg) translateY(0); } 100% { transform: rotateY(-20deg) rotateZ(-4deg) translateY(-50px); } }
+        @keyframes pivot-glass-5 { 0% { transform: rotateX(45deg) rotateY(-10deg) translateX(0); } 100% { transform: rotateX(20deg) rotateY(25deg) translateX(-40px); } }
       `}} />
 
       <div className="emerald-vault">
@@ -146,7 +88,7 @@ export default function EBooksDirectory() {
         <div className="emerald-panel panel-5"></div>
       </div>
 
-      <div className="relative z-10 flex-grow py-12 md:py-16 px-6">
+      <div className="relative z-10 flex-grow py-12 md:py-16 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
           
           <div className="mb-12 md:mb-16">
@@ -161,16 +103,16 @@ export default function EBooksDirectory() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             {careerAssets.map((asset) => (
               <div key={asset.id} className="bg-surface/80 backdrop-blur-md border border-surfaceBorder rounded-sm shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row overflow-hidden group">
                 
                 {/* Book Cover Area */}
-                <div className={`sm:w-2/5 p-6 md:p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
+                <div className={`w-full sm:w-2/5 py-10 px-4 sm:p-6 md:p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
                   <div className="absolute top-0 right-0 w-48 h-48 bg-warning/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                   
                   <div 
-                    className="w-2/3 sm:w-full max-w-[220px] aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-5 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
+                    className="w-[200px] sm:w-full max-w-[220px] aspect-[54/85] rounded-md md:rounded-lg shadow-2xl flex flex-col justify-between p-4 md:p-5 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
                     style={{
                       background: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9))`,
                       backgroundImage: `url(${asset.coverBgImage})`,
@@ -179,30 +121,30 @@ export default function EBooksDirectory() {
                       backgroundBlendMode: 'overlay'
                     }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/20"></div>
                     
-                    <div className="relative z-10 text-center mt-2">
-                      <p className="text-[9px] md:text-[10px] font-bold text-warning uppercase tracking-[0.3em] opacity-90">
+                    <div className="relative z-10 text-center mt-1 md:mt-2">
+                      <p className="text-[8px] md:text-[10px] font-bold text-warning uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-90">
                         Career GPS Exclusive
                       </p>
                     </div>
 
-                    <div className="relative z-10 text-center mb-4">
-                      <h3 className="font-heading font-bold text-white text-xl md:text-2xl leading-tight mb-2 drop-shadow-lg whitespace-pre-line">
+                    <div className="relative z-10 text-center mb-2 md:mb-4">
+                      <h3 className="font-heading font-bold text-white text-lg md:text-2xl leading-tight mb-1.5 md:mb-2 drop-shadow-lg whitespace-pre-line">
                         {asset.coverTitle}
                       </h3>
-                      <p className="text-[10px] md:text-xs text-gray-300 font-medium leading-relaxed px-1">
+                      <p className="text-[9px] md:text-xs text-gray-300 font-medium leading-snug px-1">
                         {asset.shortSubtitle}
                       </p>
-                      <div className="w-8 md:w-12 h-0.5 bg-warning mx-auto mt-4 opacity-80"></div>
+                      <div className="w-6 md:w-12 h-0.5 bg-warning mx-auto mt-3 md:mt-4 opacity-80"></div>
                     </div>
                     
-                    <div className="relative z-10 text-center mt-auto pt-4">
-                      <p className="text-[8px] md:text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-2">
+                    <div className="relative z-10 text-center mt-auto pb-1 md:pb-0">
+                      <p className="text-[7px] md:text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-1.5 md:mb-2">
                         A Guide for the Real World
                       </p>
-                      <div className="inline-block border-t border-white/20 pt-2">
-                        <p className="text-[10px] md:text-xs font-bold text-white tracking-[0.2em] uppercase drop-shadow-md">
+                      <div className="inline-block border-t border-white/20 pt-1.5 md:pt-2 w-full px-2">
+                        <p className="text-[9px] md:text-xs font-bold text-white tracking-[0.15em] md:tracking-[0.2em] uppercase drop-shadow-md truncate">
                           {asset.author}
                         </p>
                       </div>
@@ -221,9 +163,9 @@ export default function EBooksDirectory() {
                     </div>
                   </div>
 
-                  <h2 className="font-heading text-2xl font-bold text-foreground mb-1">{asset.title}</h2>
+                  <h2 className="font-heading text-xl md:text-2xl font-bold text-foreground mb-1">{asset.title}</h2>
                   
-                  <p className="text-sm font-medium text-foreground/50 mb-2">
+                  <p className="text-xs md:text-sm font-medium text-foreground/50 mb-2">
                     By <span className="text-primary font-bold">{asset.author}</span>
                   </p>
 
@@ -247,15 +189,17 @@ export default function EBooksDirectory() {
                       </span>
                     </div>
 
-                    {/* Conditional Button: Read Online for FREE, Buy via WhatsApp for PAID */}
+                    {/* DIRECT NATIVE LINK (NO IFRAME MODAL) */}
                     <div className="flex flex-col w-full">
                       {asset.price === "FREE" ? (
-                        <button 
-                          onClick={() => setViewingAsset(asset)}
+                        <a 
+                          href={asset.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="w-full bg-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
                         >
                           <Eye className="w-5 h-5" /> Read Online
-                        </button>
+                        </a>
                       ) : (
                         <a 
                           href={getWhatsappUrl(asset.title)}
@@ -280,41 +224,6 @@ export default function EBooksDirectory() {
           </div>
         </div>
       </div>
-
-      {/* THE RESPONSIVE IN-PAGE E-READER MODAL */}
-      {viewingAsset && (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
-          
-          <div className="flex justify-between items-center p-4 md:p-6 border-b border-surfaceBorder bg-surface shadow-sm safe-top">
-            <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                <BookOpen className="w-5 h-5 text-primary" />
-              </div>
-              <div className="truncate">
-                <h3 className="font-heading font-bold text-foreground leading-tight truncate">Career GPS E-Reader</h3>
-                <p className="text-xs text-foreground/50 font-medium truncate">{viewingAsset.title} by {viewingAsset.author}</p>
-              </div>
-            </div>
-            
-            <button 
-              onClick={() => setViewingAsset(null)}
-              className="px-4 py-2 ml-2 shrink-0 bg-surfaceBorder/30 hover:bg-surfaceBorder/50 text-foreground rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
-            >
-              <X className="w-4 h-4" /> <span className="hidden sm:inline">Close</span>
-            </button>
-          </div>
-
-          {/* Absolute Inset-0: The Ultimate iOS Safari Iframe Fix */}
-          <div className="relative flex-grow w-full bg-background md:p-6">
-            <iframe 
-              src={`${encodeURI(viewingAsset.fileUrl || "")}#toolbar=0`} 
-              className="absolute inset-0 w-full h-full md:rounded-sm md:shadow-2xl md:border border-surfaceBorder bg-white"
-              title={`Reading ${viewingAsset.title}`}
-            />
-          </div>
-       </div>
-      )}
-
     </div>
   );
 }
