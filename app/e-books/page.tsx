@@ -1,9 +1,10 @@
 "use client";
 
-import { Sparkles, Star, ShieldCheck, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { Sparkles, Star, ShieldCheck, MessageCircle, Eye, X, BookOpen } from "lucide-react";
 
 // ==========================================
-// 📚 PREMIUM E-BOOKS REPOSITORY
+// 📚 PREMIUM & FREE E-BOOKS REPOSITORY
 // ==========================================
 const careerAssets = [
   {
@@ -19,6 +20,7 @@ const careerAssets = [
     tag: "Flagship Release",
     color: "from-gray-900 to-black", 
     coverBgImage: "/unspoken-aura-bg.jpg", 
+    fileUrl: "", // Paid books don't need a fileUrl exposed
   },
   {
     id: "invisible-art",
@@ -33,6 +35,7 @@ const careerAssets = [
     tag: "New Release",
     color: "from-[#022c22] to-black", 
     coverBgImage: "/the_invisible_art.jpg", 
+    fileUrl: "",
   },
   {
     id: "neetu-bhaiya",
@@ -47,10 +50,12 @@ const careerAssets = [
     tag: "Masterpiece",
     color: "from-[#022c22] to-black", 
     coverBgImage: "/neetu-bhaiya.jpg", 
+    fileUrl: "/neetu-bhaiya.pdf", // The PDF file to read
   }
 ];
 
 export default function EBooksDirectory() {
+  const [viewingAsset, setViewingAsset] = useState<any | null>(null);
   const phoneNumber = "918769892303";
 
   // Dynamically generates the WhatsApp link based on the book the user clicked
@@ -231,23 +236,36 @@ export default function EBooksDirectory() {
                   <div className="mt-auto">
                     {/* Price Block */}
                     <div className="flex items-end gap-3 mb-4">
-                      <span className="text-3xl font-heading font-bold text-foreground drop-shadow-sm">{asset.price}</span>
+                      {asset.price === "FREE" ? (
+                        <span className="text-3xl font-heading font-bold text-success drop-shadow-sm">{asset.price}</span>
+                      ) : (
+                        <span className="text-3xl font-heading font-bold text-foreground drop-shadow-sm">{asset.price}</span>
+                      )}
                       <span className="text-sm font-medium text-foreground/40 line-through mb-1.5">{asset.originalPrice}</span>
                       <span className="text-[10px] font-bold text-success bg-success/10 px-2 py-1 rounded-sm mb-1.5 ml-auto border border-success/20">
                         LIMITED TIME
                       </span>
                     </div>
 
-                    {/* WhatsApp Purchase Button */}
+                    {/* Conditional Button: Read Online for FREE, Buy via WhatsApp for PAID */}
                     <div className="flex flex-col w-full">
-                      <a 
-                        href={getWhatsappUrl(asset.title)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full bg-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
-                      >
-                        <MessageCircle className="w-5 h-5 fill-current" /> Buy via WhatsApp
-                      </a>
+                      {asset.price === "FREE" ? (
+                        <button 
+                          onClick={() => setViewingAsset(asset)}
+                          className="w-full bg-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
+                        >
+                          <Eye className="w-5 h-5" /> Read Online
+                        </button>
+                      ) : (
+                        <a 
+                          href={getWhatsappUrl(asset.title)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full bg-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
+                        >
+                          <MessageCircle className="w-5 h-5 fill-current" /> Buy via WhatsApp
+                        </a>
+                      )}
                     </div>
                     
                     {/* Trust Badge */}
@@ -262,6 +280,41 @@ export default function EBooksDirectory() {
           </div>
         </div>
       </div>
+
+      {/* THE RESPONSIVE IN-PAGE E-READER MODAL */}
+      {viewingAsset && (
+        <div className="fixed inset-0 z-[100] flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
+          
+          <div className="flex justify-between items-center p-4 md:p-6 border-b border-surfaceBorder bg-surface shadow-sm safe-top">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                <BookOpen className="w-5 h-5 text-primary" />
+              </div>
+              <div className="truncate">
+                <h3 className="font-heading font-bold text-foreground leading-tight truncate">Career GPS E-Reader</h3>
+                <p className="text-xs text-foreground/50 font-medium truncate">{viewingAsset.title} by {viewingAsset.author}</p>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => setViewingAsset(null)}
+              className="px-4 py-2 ml-2 shrink-0 bg-surfaceBorder/30 hover:bg-surfaceBorder/50 text-foreground rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
+            >
+              <X className="w-4 h-4" /> <span className="hidden sm:inline">Close</span>
+            </button>
+          </div>
+
+          {/* Absolute Inset-0: The Ultimate iOS Safari Iframe Fix */}
+          <div className="relative flex-grow w-full bg-background md:p-6">
+            <iframe 
+              src={`${encodeURI(viewingAsset.fileUrl || "")}#toolbar=0`} 
+              className="absolute inset-0 w-full h-full md:rounded-sm md:shadow-2xl md:border border-surfaceBorder bg-white"
+              title={`Reading ${viewingAsset.title}`}
+            />
+          </div>
+       </div>
+      )}
+
     </div>
   );
 }
