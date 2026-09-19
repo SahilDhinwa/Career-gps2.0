@@ -1,8 +1,10 @@
 "use client";
 
-import { Download, Sparkles, Star, ShieldCheck, Eye, X, BookOpen } from "lucide-react";
-import { useState } from "react";
+import { Sparkles, Star, ShieldCheck, MessageCircle } from "lucide-react";
 
+// ==========================================
+// 📚 PREMIUM E-BOOKS REPOSITORY
+// ==========================================
 const careerAssets = [
   {
     id: "unspoken-aura",
@@ -12,12 +14,11 @@ const careerAssets = [
     subtitle: "Unlocking Your True Personality Through Communication",
     shortSubtitle: "Unlocking Your True Personality",
     description: "A Guide for the Real World. Master the art of the aura, overcome the 'Invisible Wall', and command respect in every room you enter.",
-    price: "FREE",
+    price: "₹499", // Updated to Paid
     originalPrice: "₹999",
     tag: "Flagship Release",
     color: "from-gray-900 to-black", 
     coverBgImage: "/unspoken-aura-bg.jpg", 
-    fileUrl: "/The Glass World.pdf" 
   },
   {
     id: "invisible-art",
@@ -27,23 +28,22 @@ const careerAssets = [
     subtitle: "A Mentor's Guide to Communication for the Ambitious",
     shortSubtitle: "A Mentor's Guide for the Ambitious",
     description: "Claim your space in a world that tries to make you feel small. This survival guide breaks down how to overcome hesitation, hack your learning style, and command respect in any environment.",
-    price: "FREE",
+    price: "₹499", // Updated to Paid
     originalPrice: "₹1,299",
     tag: "New Release",
     color: "from-[#022c22] to-black", 
     coverBgImage: "/the_invisible_art.jpg", 
-    fileUrl: "/The_Invisible_Art_of_Speaking.pdf" 
   }
 ];
 
-interface Asset {
-  title: string;
-  author: string;
-  fileUrl: string;
-}
-
 export default function EBooksDirectory() {
-  const [viewingAsset, setViewingAsset] = useState<Asset | null>(null);
+  const phoneNumber = "918769892303";
+
+  // Dynamically generates the WhatsApp link based on the book the user clicked
+  const getWhatsappUrl = (bookTitle: string) => {
+    const message = encodeURIComponent(`Hi Sahil, I want to purchase the E-Book: '${bookTitle}'!`);
+    return `https://wa.me/${phoneNumber}?text=${message}`;
+  };
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col transition-colors duration-300">
@@ -131,14 +131,15 @@ export default function EBooksDirectory() {
         <div className="max-w-6xl mx-auto">
           
           <div className="mb-12 md:mb-16">
+            {/* Updated header text to reflect premium status */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-sm font-bold text-primary mb-6 shadow-sm">
-              <Sparkles className="w-4 h-4 text-warning" /> Free Resources
+              <Sparkles className="w-4 h-4 text-warning" /> Premium Library
             </div>
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4 drop-shadow-sm">
-              Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Career Assets</span>
+              Exclusive <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Career Assets</span>
             </h1>
             <p className="text-base md:text-lg text-foreground/70 font-medium max-w-2xl bg-surface/40 backdrop-blur-[2px] rounded-lg p-2">
-              Download our exclusive guides and frameworks. Completely free, no login required. Master the soft skills you need to secure your global seat.
+              Invest in our flagship guides and frameworks. Master the soft skills you need to secure your global seat and command respect in any room.
             </p>
           </div>
 
@@ -150,7 +151,6 @@ export default function EBooksDirectory() {
                 <div className={`sm:w-2/5 p-6 md:p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden`}>
                   <div className="absolute top-0 right-0 w-48 h-48 bg-warning/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                   
-                  {/* Fixed max-width so it doesn't blow up on phones */}
                   <div 
                     className="w-2/3 sm:w-full max-w-[220px] aspect-[54/85] rounded-lg shadow-2xl flex flex-col justify-between p-5 transform group-hover:scale-105 transition-transform duration-500 relative z-10 border border-white/10 overflow-hidden"
                     style={{
@@ -216,33 +216,30 @@ export default function EBooksDirectory() {
                   </p>
 
                   <div className="mt-auto">
+                    {/* Price Block */}
                     <div className="flex items-end gap-3 mb-4">
-                      <span className="text-2xl font-bold text-success drop-shadow-sm">{asset.price}</span>
-                      <span className="text-sm font-medium text-foreground/40 line-through mb-1">{asset.originalPrice}</span>
+                      <span className="text-3xl font-heading font-bold text-foreground drop-shadow-sm">{asset.price}</span>
+                      <span className="text-sm font-medium text-foreground/40 line-through mb-1.5">{asset.originalPrice}</span>
+                      <span className="text-[10px] font-bold text-success bg-success/10 px-2 py-1 rounded-sm mb-1.5 ml-auto border border-success/20">
+                        LIMITED TIME
+                      </span>
                     </div>
 
-                    <div className="flex flex-col xl:flex-row gap-3">
-                      <button 
-                        onClick={() => setViewingAsset(asset)}
-                        className="flex-1 bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-colors flex items-center justify-center gap-2 shadow-md"
-                      >
-                        <Eye className="w-5 h-5" /> Read Online
-                      </button>
-                      
+                    {/* WhatsApp Purchase Button */}
+                    <div className="flex flex-col w-full">
                       <a 
-                        href={encodeURI(asset.fileUrl)} 
-                        download={`${asset.title.replace(/\s+/g, '_')}_${asset.author.replace(/\s+/g, '_')}.pdf`}
+                        href={getWhatsappUrl(asset.title)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 bg-gray-900 text-white font-bold py-3 px-4 rounded-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                        className="w-full bg-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
                       >
-                        <Download className="w-5 h-5" /> Download PDF
+                        <MessageCircle className="w-5 h-5 fill-current" /> Buy via WhatsApp
                       </a>
-
                     </div>
                     
-                    <p className="text-center text-xs text-foreground/50 mt-4 font-medium flex items-center justify-center gap-1">
-                      <ShieldCheck className="w-3 h-3 text-success" /> 100% Free • No Sign-Up Required
+                    {/* Trust Badge */}
+                    <p className="text-center text-xs text-foreground/50 mt-4 font-bold flex items-center justify-center gap-1.5 uppercase tracking-wider">
+                      <ShieldCheck className="w-3.5 h-3.5 text-success" /> Instant Digital Delivery
                     </p>
                   </div>
                 </div>
@@ -252,41 +249,6 @@ export default function EBooksDirectory() {
           </div>
         </div>
       </div>
-
-      {/* THE RESPONSIVE IN-PAGE E-READER MODAL */}
-      {viewingAsset && (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-background/95 backdrop-blur-md animate-in fade-in duration-300">
-          
-          <div className="flex justify-between items-center p-4 md:p-6 border-b border-surfaceBorder bg-surface shadow-sm safe-top">
-            <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                <BookOpen className="w-5 h-5 text-primary" />
-              </div>
-              <div className="truncate">
-                <h3 className="font-heading font-bold text-foreground leading-tight truncate">Career GPS E-Reader</h3>
-                <p className="text-xs text-foreground/50 font-medium truncate">{viewingAsset.title} by {viewingAsset.author}</p>
-              </div>
-            </div>
-            
-            <button 
-              onClick={() => setViewingAsset(null)}
-              className="px-4 py-2 ml-2 shrink-0 bg-surfaceBorder/30 hover:bg-surfaceBorder/50 text-foreground rounded-sm font-bold text-sm transition-colors flex items-center gap-2"
-            >
-              <X className="w-4 h-4" /> <span className="hidden sm:inline">Close</span>
-            </button>
-          </div>
-
-          {/* Absolute Inset-0: The Ultimate iOS Safari Iframe Fix */}
-          <div className="relative flex-grow w-full bg-background md:p-6">
-            <iframe 
-              src={`${encodeURI(viewingAsset.fileUrl)}#toolbar=0`} 
-              className="absolute inset-0 w-full h-full md:rounded-sm md:shadow-2xl md:border border-surfaceBorder bg-white"
-              title={`Reading ${viewingAsset.title}`}
-            />
-          </div>
-       </div>
-      )}
-
     </div>
   );
 }
