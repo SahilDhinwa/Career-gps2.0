@@ -7,6 +7,7 @@ import {
   Shuffle, 
   Eye, 
   ChevronRight, 
+  ChevronLeft,
   RotateCcw, 
   BookOpen,
   CheckCircle2,
@@ -137,7 +138,7 @@ export default function DravyagunaPaper2PracticeSet1() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [isMounted, setIsMounted] = useState(false); // Prevents hydration flash
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     handleResetAndShuffle();
@@ -157,6 +158,13 @@ export default function DravyagunaPaper2PracticeSet1() {
       setShowAnswer(false);
     } else {
       setIsCompleted(true);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+      setShowAnswer(true); // Automatically show the answer for the previous card
     }
   };
 
@@ -192,7 +200,7 @@ export default function DravyagunaPaper2PracticeSet1() {
             onClick={handleResetAndShuffle}
             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-500 px-3.5 py-2 rounded-sm hover:bg-amber-500 hover:text-white transition-all shadow-sm"
           >
-            <Shuffle className="w-3.5 h-3.5" /> Reshuffle Questions
+            <Shuffle className="w-3.5 h-3.5" /> Reshuffle
           </button>
         </div>
 
@@ -257,7 +265,7 @@ export default function DravyagunaPaper2PracticeSet1() {
             )}
 
             {/* Action Buttons */}
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex justify-center w-full">
               {!showAnswer ? (
                 <button
                   onClick={() => setShowAnswer(true)}
@@ -266,12 +274,21 @@ export default function DravyagunaPaper2PracticeSet1() {
                   <Eye className="w-5 h-5" /> Show Answer
                 </button>
               ) : (
-                <button
-                  onClick={handleNext}
-                  className="w-full sm:w-auto px-10 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base rounded-sm shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
-                >
-                  Next Question <ChevronRight className="w-5 h-5" />
-                </button>
+                <div className="flex w-full gap-3">
+                  <button
+                    onClick={handlePrevious}
+                    disabled={currentIndex === 0}
+                    className="flex-1 py-4 bg-surface hover:bg-surfaceBorder/40 border border-surfaceBorder text-foreground font-bold text-base rounded-sm shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-5 h-5" /> Previous
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base rounded-sm shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
+                  >
+                    Next Card <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
               )}
             </div>
 
