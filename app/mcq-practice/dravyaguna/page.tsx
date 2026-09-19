@@ -42,6 +42,16 @@ const PAPER_1_PRACTICE_TESTS = [
 ];
 
 // UPDATED: Replaced the locked placeholder with the active link to the Flashcard Test Engine
+// UPDATED PAPER 2 ARRAYS
+const PAPER_2_SPECIAL_TESTS = [
+  {
+    id: "p2-batch-2021",
+    title: "DG Paper 2 - 2021 (Main)",
+    subtitle: "Previous Year University Question Paper • 20 Questions",
+    link: "/mcq-practice/dravyaguna/paper-2/batch-2021"
+  }
+];
+
 const PAPER_2_TESTS = [
   { 
     id: "p2-practice-set-1", 
@@ -128,11 +138,37 @@ export default function DravyagunaHub() {
           </div>
         </div>
 
-        {/* PAPER 2 SECTION */}
+                {/* PAPER 2 SECTION */}
         <div className="mb-12">
           <h2 className="text-2xl font-heading font-bold text-foreground mb-6 flex items-center gap-2">
             <Leaf className="w-6 h-6 text-amber-500" /> Paper 2 (Plant Profiles)
           </h2>
+          
+          {/* NEW: PAPER 2 SPECIAL TESTS RENDERING */}
+          <div className="mb-6 space-y-4">
+            {PAPER_2_SPECIAL_TESTS.map((test) => (
+              <Link key={test.id} href={test.link} className="group bg-amber-500/5 backdrop-blur-sm border-2 border-amber-500/30 rounded-sm p-6 flex items-center justify-between hover:border-amber-500 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest rounded-bl-sm">Official Exam</div>
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 bg-amber-500/20 rounded-sm flex items-center justify-center shrink-0 border border-amber-500/30 group-hover:scale-110 transition-transform">
+                    <Award className="w-7 h-7 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-amber-500 text-xl md:text-2xl mb-1">{test.title}</h3>
+                    <p className="text-foreground/70 font-medium text-sm">{test.subtitle}</p>
+                  </div>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                  <ChevronRight className="w-5 h-5" />
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* MIXED RENDERER: Handles both active links and locked placeholders */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* ... Keep your existing PAPER_2_TESTS map loop here ... */}
+
           
           {/* MIXED RENDERER: Handles both active links and locked placeholders */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
