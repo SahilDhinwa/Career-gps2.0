@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Leaf, Beaker, FileText, ChevronRight, Lock, Award } from "lucide-react";
+import { ArrowLeft, Leaf, Beaker, FileText, ChevronRight, Lock, Award, BookOpen } from "lucide-react";
 
 // ==========================================
 // 🚀 ADD NEW TESTS HERE IN THE FUTURE!
@@ -29,22 +29,27 @@ const PAPER_1_SPECIAL_TESTS = [
 ];
 
 const PAPER_1_PRACTICE_TESTS = [
-  // Add the new Chapter 13 test right here:
-  { id: "chapter-11", title: "DG Practice Paper (Ch-11)", subtitle: "40 Questions • Modern Pharmacology", link: "/mcq-practice/dravyaguna/paper-1/chapter-11" }, // Newly Added!
+  { id: "chapter-11", title: "DG Practice Paper (Ch-11)", subtitle: "40 Questions • Modern Pharmacology", link: "/mcq-practice/dravyaguna/paper-1/chapter-11" }, 
   { id: "chapter-13", title: "DG Practice Paper (Ch-13)", subtitle: "20 Questions • Nomenclature & Taxonomy", link: "/mcq-practice/dravyaguna/paper-1/chapter-13" },
-  { id: "chapter-14", title: "DG Practice Paper (Ch-14)", subtitle: "20 Questions • Bheshaja Pariksha & Pharmacognosy", link: "/mcq-practice/dravyaguna/paper-1/chapter-14" }, // Newly Added!
-  { id: "chapter-15", title: "DG Practice Paper (Ch-15)", subtitle: "20 Questions • Drug Collection & GFCP", link: "/mcq-practice/dravyaguna/paper-1/chapter-15" }, // Newly Added!
-  { id: "chapter-16", title: "DG Practice Paper (Ch-16)", subtitle: "20 Questions • GCP & Conservation", link: "/mcq-practice/dravyaguna/paper-1/chapter-16" }, // Newly Added!
-  
+  { id: "chapter-14", title: "DG Practice Paper (Ch-14)", subtitle: "20 Questions • Bheshaja Pariksha & Pharmacognosy", link: "/mcq-practice/dravyaguna/paper-1/chapter-14" }, 
+  { id: "chapter-15", title: "DG Practice Paper (Ch-15)", subtitle: "20 Questions • Drug Collection & GFCP", link: "/mcq-practice/dravyaguna/paper-1/chapter-15" }, 
+  { id: "chapter-16", title: "DG Practice Paper (Ch-16)", subtitle: "20 Questions • GCP & Conservation", link: "/mcq-practice/dravyaguna/paper-1/chapter-16" }, 
   { id: "test-1", title: "DG Practice Paper 1", subtitle: "20 Questions • Siddhanta", link: "/mcq-practice/dravyaguna/paper-1/test-1" },
   { id: "test-2", title: "DG Practice Paper 2", subtitle: "Questions 21 - 40", link: "/mcq-practice/dravyaguna/paper-1/test-2" },
   { id: "test-3", title: "DG Practice Paper 3", subtitle: "Questions 41 - 60", link: "/mcq-practice/dravyaguna/paper-1/test-3" },
   { id: "test-4", title: "DG Practice Paper 4", subtitle: "Questions 61 - 80 (Fundamentals)", link: "/mcq-practice/dravyaguna/paper-1/test-4" },
-  { id: "test-5", title: "DG Practice Paper 5", subtitle: "Questions 81 - 100 (Comprehensive)", link: "/mcq-practice/dravyaguna/paper-1/test-5" }, // Added here!
-  ];
+  { id: "test-5", title: "DG Practice Paper 5", subtitle: "Questions 81 - 100 (Comprehensive)", link: "/mcq-practice/dravyaguna/paper-1/test-5" }, 
+];
 
+// UPDATED: Replaced the locked placeholder with the active link to the Flashcard Test Engine
 const PAPER_2_TESTS = [
-  { id: "p2-test-1", title: "DG Practice Paper 1", subtitle: "Coming Soon", status: "locked" }
+  { 
+    id: "p2-practice-set-1", 
+    title: "Botanical Names & Family", 
+    subtitle: "Active Recall Flashcards • 98 Core Drugs", 
+    status: "active",
+    link: "/mcq-practice/dravyaguna/paper-2/practice-set-1" 
+  }
 ];
 
 // ==========================================
@@ -129,23 +134,43 @@ export default function DravyagunaHub() {
             <Leaf className="w-6 h-6 text-amber-500" /> Paper 2 (Plant Profiles)
           </h2>
           
-          {/* LOCKED TESTS RENDERING */}
+          {/* MIXED RENDERER: Handles both active links and locked placeholders */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {PAPER_2_TESTS.map((test) => (
-              <div key={test.id} className="bg-surface/40 backdrop-blur-sm border border-dashed border-surfaceBorder rounded-sm p-6 flex items-center justify-between opacity-70 cursor-not-allowed">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-foreground/5 rounded-sm flex items-center justify-center shrink-0 border border-surfaceBorder">
-                    <Leaf className="w-6 h-6 text-foreground/40" />
+              test.status === "active" ? (
+                // ACTIVE LINK RENDERER
+                <Link key={test.id} href={test.link!} className="group bg-surface/80 backdrop-blur-sm border border-surfaceBorder rounded-sm p-6 flex items-center justify-between hover:border-amber-500/50 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 bg-amber-500/10 rounded-sm flex items-center justify-center shrink-0 border border-amber-500/20 group-hover:bg-amber-500/20 transition-colors relative overflow-hidden">
+                      <BookOpen className="w-6 h-6 text-amber-500 relative z-10" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-transparent"></div>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-foreground text-xl mb-1">{test.title}</h3>
+                      <p className="text-foreground/50 font-medium text-sm">{test.subtitle}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-foreground/60 text-xl mb-1">{test.title}</h3>
-                    <p className="text-foreground/40 font-medium text-sm">{test.subtitle}</p>
+                  <div className="w-10 h-10 rounded-full bg-foreground/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                    <ChevronRight className="w-5 h-5" />
+                  </div>
+                </Link>
+              ) : (
+                // LOCKED PLACEHOLDER RENDERER
+                <div key={test.id} className="bg-surface/40 backdrop-blur-sm border border-dashed border-surfaceBorder rounded-sm p-6 flex items-center justify-between opacity-70 cursor-not-allowed">
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 bg-foreground/5 rounded-sm flex items-center justify-center shrink-0 border border-surfaceBorder">
+                      <Leaf className="w-6 h-6 text-foreground/40" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-foreground/60 text-xl mb-1">{test.title}</h3>
+                      <p className="text-foreground/40 font-medium text-sm">{test.subtitle}</p>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-foreground/5 flex items-center justify-center text-foreground/40">
+                    <Lock className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-foreground/5 flex items-center justify-center text-foreground/40">
-                  <Lock className="w-4 h-4" />
-                </div>
-              </div>
+              )
             ))}
           </div>
         </div>
