@@ -116,7 +116,7 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-1.5">Base of Operations</p>
-                    <p className="text-foreground font-bold text-lg">Chanana, Jhunjhunu District, Rajasthan</p>
+                    <p className="text-foreground font-bold text-lg">Jhunjhunu District, Rajasthan</p>
                   </div>
                 </div>
 
