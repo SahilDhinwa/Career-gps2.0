@@ -94,7 +94,7 @@ export default function Footer() {
                 <div>
                   <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-0.5">Email Inquiries</p>
                   <a href="mailto:support@careergps.in" className="text-foreground font-bold hover:text-primary transition-colors">
-                    support@careergps.in
+                    sahilkumardhinwa82@gmail.com
                   </a>
                 </div>
               </li>
