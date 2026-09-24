@@ -42,6 +42,13 @@ const PREVIOUS_PAPERS = [
     link: "/pdfs/dg-1(2023).pdf" // EXACT match to your uploaded file
   },
   { 
+    id: 8, 
+    subject: "BAMS 2nd Prof - DG PAPER-2 (Batch 2023)", 
+    year: "Sept-Oct 2026", 
+    size: "2.7 MB", 
+    link: "/pdfs/dg-2(2023).pdf" // EXACT match to your uploaded file
+  },
+  { 
     id: 5, 
     subject: "BAMS 2nd Prof - Back Papers", 
     year: "July-Aug 2026", 
