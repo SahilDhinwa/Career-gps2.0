@@ -62,6 +62,13 @@ const PREVIOUS_PAPERS = [
     size: "2.3 MB", 
     link: "/pdfs/ras-paper-1(2023).pdf" // EXACT match to your uploaded file
   },
+  { 
+    id: 9, 
+    subject: "BAMS 2nd Prof - RAS SHASHTRA PAPER-1 (Batch 2023)", 
+    year: "Sept-Oct 2026", 
+    size: "4.7 MB", 
+    link: "/pdfs/ras-paper-2(2023).pdf" // EXACT match to your uploaded file
+  },
 ];
 
 export default function PreviousPapers() {
