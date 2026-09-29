@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Syne, DM_Sans } from 'next/font/google'
+import { Syne, DM_Sans, Kalam } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { ThemeProvider } from '../components/ThemeProvider'
-import { AuthProvider } from '../context/AuthContext' // NEW: Import the Brain
+import { AuthProvider } from '../context/AuthContext'
 
 // 1. Configure the Heading Font (Syne)
 const syne = Syne({ 
@@ -20,6 +20,14 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
+// 3. Configure the Handwritten Font (Kalam - supports Hindi/Devanagari)
+const kalam = Kalam({
+  weight: ['300', '400', '700'],
+  subsets: ['latin', 'devanagari'],
+  variable: '--font-kalam',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
   title: 'Career GPS | Global Scholarships & Roadmaps',
   description: 'Your step-by-step roadmap to a better future. Unlock fully funded global scholarships.',
@@ -31,26 +39,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    // suppressHydrationWarning is REQUIRED for next-themes to work perfectly
     <html lang="en" suppressHydrationWarning>
-      {/* 3. Inject the font variables and apply the default body font */}
-      <body className={`${syne.variable} ${dmSans.variable} font-body antialiased`}>
+      <body className={`${syne.variable} ${dmSans.variable} ${kalam.variable} font-body antialiased`}>
         <ThemeProvider 
           attribute="class" 
           defaultTheme="system" 
           enableSystem 
           disableTransitionOnChange
         >
-          {/* NEW: Wrap the App in the AuthProvider */}
           <AuthProvider>
-            {/* The Global Navigation Bar */}
             <Navbar />
-            
-            {/* The Dynamic Page Content */}
             <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
               {children}
             </main>
-            {/* NEW: Place the Footer here so it renders at the bottom of the screen */}
             <Footer />
           </AuthProvider>
         </ThemeProvider>
