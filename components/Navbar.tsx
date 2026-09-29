@@ -70,9 +70,6 @@ export default function Navbar() {
           <Link href="/pathways" className={getLinkStyle("/pathways")}>
             Pathways
           </Link>
-          <Link href="/scholarships" className={getLinkStyle("/scholarships")}>
-            Scholarships
-          </Link>
           <Link href="/e-books" className={getLinkStyle("/e-books")}>
             E-Books
           </Link>
@@ -174,9 +171,6 @@ export default function Navbar() {
           
           <Link href="/pathways" className={`block py-3 ${getLinkStyle("/pathways")}`}>
             Pathways
-          </Link>
-          <Link href="/scholarships" className={`block py-3 ${getLinkStyle("/scholarships")}`}>
-            Scholarships
           </Link>
           <Link href="/e-books" className={`block py-3 ${getLinkStyle("/e-books")}`}>
             E-Books
