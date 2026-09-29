@@ -1,9 +1,6 @@
 "use client";
 
 import React from "react";
-// In a real Next.js app, you would import the font in layout.tsx:
-// import { Patrick_Hand } from 'next/font/google'
-// const patrick = Patrick_Hand({ weight: '400', subsets: ['latin'] })
 
 export default function HandwrittenNotes() {
   return (
@@ -43,7 +40,7 @@ export default function HandwrittenNotes() {
             Drug definition
           </div>
           <span>→</span>
-          <span className="text-blue-700">Drogue' - dry herb.</span>
+          <span className="text-blue-700">Drogue&apos; - dry herb.</span>
         </div>
 
         <p className="text-blue-700 text-xl leading-relaxed mb-8 pl-4">
