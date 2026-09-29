@@ -95,7 +95,7 @@ export default function BAMSDashboard() {
           </Link>
 
           {/* 4. NEW Handwritten Notes */}
-          <Link href="/short-notes/pharmacology" className="group bg-[#fdfbf7] dark:bg-surface/90 backdrop-blur-md border border-slate-300 dark:border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+          <Link href="/short-notes" className="group bg-[#fdfbf7] dark:bg-surface/90 backdrop-blur-md border border-slate-300 dark:border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/notebook-dark.png')] opacity-20 pointer-events-none"></div>
             <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 bg-red-100/50 border border-red-200 dark:bg-amber-500/10 dark:border-amber-500/20 rounded-sm text-[9px] font-bold text-red-600 dark:text-amber-500 uppercase tracking-widest shadow-sm z-10">
               <Sparkles className="w-3 h-3" /> New
