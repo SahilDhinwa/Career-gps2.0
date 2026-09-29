@@ -17,7 +17,7 @@ export default function BAMSDashboard() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[100px]"></div>
       </div>
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Navigation */}
         <Link 
@@ -46,56 +46,71 @@ export default function BAMSDashboard() {
           </p>
         </div>
 
-        {/* The 3-Pillar Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        {/* The 4-Pillar Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* 1. MCQ Practice Module */}
-          <Link href="/mcq-practice" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-8">
+          <Link href="/mcq-practice" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="w-14 h-14 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <BrainCircuit className="w-7 h-7 text-amber-500" />
+            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+              <BrainCircuit className="w-6 h-6 text-amber-500" />
             </div>
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-3">Take MCQs</h2>
-            <p className="text-foreground/70 text-sm font-medium mb-8 flex-grow leading-relaxed">
+            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Take MCQs</h2>
+            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
               Test your knowledge with interactive, real-time quizzes covering Sutra Sthana, Nidana Sthana, and more.
             </p>
-            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-3 px-4 rounded-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
-              Launch Test Engine <ChevronRight className="w-4 h-4" />
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
+              Test Engine <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
 
           {/* 2. Previous Year Papers */}
-          <Link href="/bams-hub/papers" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-8">
+          <Link href="/bams-hub/papers" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="w-14 h-14 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <Download className="w-7 h-7 text-amber-500" />
+            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+              <Download className="w-6 h-6 text-amber-500" />
             </div>
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-3">Previous Papers</h2>
-            <p className="text-foreground/70 text-sm font-medium mb-8 flex-grow leading-relaxed">
+            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Past Papers</h2>
+            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
               A comprehensive PDF archive of previous year university question papers to analyze exam patterns.
             </p>
-            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-3 px-4 rounded-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
-              Access PDF Vault <ChevronRight className="w-4 h-4" />
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
+              PDF Vault <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
 
-          {/* 3. NEW Handwritten Notes */}
-          <Link href="/short-notes/pharmacology" className="group bg-[#fdfbf7] dark:bg-surface/90 backdrop-blur-md border border-slate-300 dark:border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-8">
+          {/* 3. ORIGINAL High-Yield Notes */}
+          <Link href="/bams-hub/notes" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+              <FileText className="w-6 h-6 text-amber-500" />
+            </div>
+            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Read Notes</h2>
+            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
+              Streamlined, highly organized revision notes covering Dravyaguna, Rasa Shastra, and Roga Nidana.
+            </p>
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
+              Study Vault <ChevronRight className="w-4 h-4" />
+            </div>
+          </Link>
+
+          {/* 4. NEW Handwritten Notes */}
+          <Link href="/short-notes/pharmacology" className="group bg-[#fdfbf7] dark:bg-surface/90 backdrop-blur-md border border-slate-300 dark:border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/notebook-dark.png')] opacity-20 pointer-events-none"></div>
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 bg-red-100/50 border border-red-200 dark:bg-amber-500/10 dark:border-amber-500/20 rounded-sm text-[10px] font-bold text-red-600 dark:text-amber-500 uppercase tracking-widest shadow-sm z-10">
-              <Sparkles className="w-3 h-3" /> New Format
+            <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 bg-red-100/50 border border-red-200 dark:bg-amber-500/10 dark:border-amber-500/20 rounded-sm text-[9px] font-bold text-red-600 dark:text-amber-500 uppercase tracking-widest shadow-sm z-10">
+              <Sparkles className="w-3 h-3" /> New
             </div>
             
-            <div className="w-14 h-14 bg-slate-100 dark:bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-slate-200 dark:border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500 relative z-10">
-              <PenTool className="w-6 h-6 text-slate-700 dark:text-amber-500" />
+            <div className="w-12 h-12 bg-slate-100 dark:bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-slate-200 dark:border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500 relative z-10">
+              <PenTool className="w-5 h-5 text-slate-700 dark:text-amber-500" />
             </div>
             
-            <h2 className="font-heading text-2xl font-bold text-slate-800 dark:text-foreground mb-3 relative z-10" style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}>Handwritten Notes</h2>
-            <p className="text-slate-600 dark:text-foreground/70 text-sm font-medium mb-8 flex-grow leading-relaxed relative z-10">
-              Streamlined, highly readable short notes for quick revision. Starting with Dravyaguna Pharmacology.
+            <h2 className="font-heading text-xl font-bold text-slate-800 dark:text-foreground mb-3 relative z-10" style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}>Handwritten</h2>
+            <p className="text-slate-600 dark:text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed relative z-10">
+              Highly readable short notes for quick revision. Starting with Dravyaguna Pharmacology.
             </p>
             
-            <div className="w-full bg-slate-800 dark:bg-amber-500/10 border border-slate-700 dark:border-amber-500/20 text-white dark:text-amber-500 font-bold py-3 px-4 rounded-sm hover:bg-slate-700 dark:group-hover:bg-amber-500 dark:group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
+            <div className="w-full bg-slate-800 dark:bg-amber-500/10 border border-slate-700 dark:border-amber-500/20 text-white dark:text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm hover:bg-slate-700 dark:group-hover:bg-amber-500 dark:group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
               Open Notebook <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
