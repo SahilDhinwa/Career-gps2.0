@@ -13,8 +13,8 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-[#fdfbf7] dark:bg-[#0a0a0a] p-8 md:p-12 lg:p-16 flex justify-center selection:bg-red-200 dark:selection:bg-rose-900 transition-colors duration-300">
       <div 
         className="max-w-3xl w-full text-slate-800 dark:text-slate-200" 
-        style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}
-      >
+        style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive, sans-serif" }}
+        >
         {children}
       </div>
     </div>
