@@ -10,7 +10,6 @@ import {
   Layers, 
   Flame, 
   CheckCircle2, 
-  AlertCircle, 
   Sparkles,
   BookOpen,
   ChevronRight,
@@ -133,7 +132,7 @@ export default function ObesityInteractiveModule() {
             Obesity & Sthaulya: <span className="text-amber-500">Pathophysiology Engine</span>
           </h1>
           <p className="text-foreground/70 font-medium text-sm md:text-base max-w-3xl leading-relaxed">
-            A comprehensive, multi-layered clinical framework detailing neuroendocrine feedback, adipocyte inflammation, metabolic endotoxemia, and classical *Medoroga* pathology.
+            A comprehensive, multi-layered clinical framework detailing neuroendocrine feedback, adipocyte inflammation, metabolic endotoxemia, and classical Medoroga pathology.
           </p>
         </div>
 
@@ -306,10 +305,10 @@ export default function ObesityInteractiveModule() {
             <div className="bg-surface/60 border border-surfaceBorder p-5 rounded-sm">
               <h4 className="font-bold text-foreground text-sm mb-1">Key Shloka Concept (Charaka Sutrasthana 21/4)</h4>
               <p className="text-xs text-foreground/60 italic leading-relaxed">
-                "मेदसाऽऽवृतमार्गत्वात् पुष्यन्ति नान्ये धातवः | तस्मात् स केवलं मेदः पुष्यति न बलं न च ॥"
+                &quot;मेदसाऽऽवृतमार्गत्वात् पुष्यन्ति नान्ये धातवः | तस्मात् स केवलं मेदः पुष्यति न बलं न च ॥&quot;
               </p>
               <p className="text-xs text-foreground/80 mt-2 leading-relaxed">
-                Due to the occlusion of circulatory channels (*Srotorodha*) by excessive *Meda*, the remaining *Dhatus* (Mamsa, Asthi, Majja, Shukra) are deprived of optimal nourishment, leading to the clinical paradox of physical weakness (*Daurbalya*) despite body mass enlargement.
+                Due to the occlusion of circulatory channels (Srotorodha) by excessive Meda, the remaining Dhatus (Mamsa, Asthi, Majja, Shukra) are deprived of optimal nourishment, leading to the clinical paradox of physical weakness (Daurbalya) despite body mass enlargement.
               </p>
             </div>
           </div>
@@ -321,7 +320,7 @@ export default function ObesityInteractiveModule() {
             <span className="text-xs font-mono text-amber-500 font-bold uppercase tracking-widest block mb-2">Interactive Case Evaluation</span>
             <h3 className="text-lg md:text-xl font-bold text-foreground mb-3">Case Scenario: 42-Year-Old Executive</h3>
             <p className="text-xs md:text-sm text-foreground/70 leading-relaxed mb-6">
-              A 42-year-old male presents with chronic fatigue, BMI of 33.4 kg/m², elevated fasting insulin (24 µIU/mL), and acanthosis nigricans over the nape of the neck. In Ayurvedic evaluation, he exhibits *Atikshudha* (morbidly elevated hunger), *Swedaabadha* (profuse perspiration), and *Kshudrashwasa* on mild exertion. Which physiological factor accounts for his unrelenting hunger despite abundant fat stores?
+              A 42-year-old male presents with chronic fatigue, BMI of 33.4 kg/m², elevated fasting insulin (24 µIU/mL), and acanthosis nigricans over the nape of the neck. In Ayurvedic evaluation, he exhibits Atikshudha (morbidly elevated hunger), Swedaabadha (profuse perspiration), and Kshudrashwasa on mild exertion. Which physiological factor accounts for his unrelenting hunger despite abundant fat stores?
             </p>
 
             <div className="space-y-3 mb-6">
@@ -373,12 +372,12 @@ export default function ObesityInteractiveModule() {
                 {selectedDiagnosis === 1 ? (
                   <p>
                     <strong className="block mb-1">Correct Clinical Synthesis:</strong>
-                    Modern physiology demonstrates that high circulating leptin fails to curb hunger due to hypothalamic resistance (SOCS3 over-expression). Classical Ayurveda describes *Medovaha Srotorodha*, where trapped *Samana Vata* excites *Kosthagni*, producing persistent, intensified hunger (*Atikshudha*).
+                    Modern physiology demonstrates that high circulating leptin fails to curb hunger due to hypothalamic resistance (SOCS3 over-expression). Classical Ayurveda describes Medovaha Srotorodha, where trapped Samana Vata excites Kosthagni, producing persistent, intensified hunger (Atikshudha).
                   </p>
                 ) : (
                   <p>
                     <strong className="block mb-1">Incorrect Assessment:</strong>
-                    Review the neuroendocrine and Ayurvedic mechanisms in the tabs above. Satiety failure in hyperleptinemic states involves hypothalamic resistance coupled with classical *Samana Vata* entrapment.
+                    Review the neuroendocrine and Ayurvedic mechanisms in the tabs above. Satiety failure in hyperleptinemic states involves hypothalamic resistance coupled with classical Samana Vata entrapment.
                   </p>
                 )}
               </div>
