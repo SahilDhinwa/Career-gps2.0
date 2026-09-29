@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import BamsReels from "@/components/BamsReels";
-
-// Added Instagram, Play, Eye, and ArrowRight for the Reels section
-import { ArrowLeft, Leaf, BookOpen, FileText, BrainCircuit, Sparkles, Download, Clock, ChevronRight, Instagram, Play, Eye, ArrowRight } from "lucide-react";
+import { ArrowLeft, Leaf, BookOpen, FileText, BrainCircuit, Sparkles, Download, ChevronRight, PenTool } from "lucide-react";
 import AyurvedicBackground from "@/components/AyurvedicBackground"; 
 
 export default function BAMSDashboard() {
@@ -81,21 +79,24 @@ export default function BAMSDashboard() {
             </div>
           </Link>
 
-          {/* 3. High-Yield Notes */}
-          <Link href="/bams-hub/notes" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-sm text-[10px] font-bold text-amber-500 uppercase tracking-widest shadow-sm">
-              <Sparkles className="w-3 h-3" /> New
+          {/* 3. NEW Handwritten Notes */}
+          <Link href="/short-notes/pharmacology" className="group bg-[#fdfbf7] dark:bg-surface/90 backdrop-blur-md border border-slate-300 dark:border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-8">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/notebook-dark.png')] opacity-20 pointer-events-none"></div>
+            <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 bg-red-100/50 border border-red-200 dark:bg-amber-500/10 dark:border-amber-500/20 rounded-sm text-[10px] font-bold text-red-600 dark:text-amber-500 uppercase tracking-widest shadow-sm z-10">
+              <Sparkles className="w-3 h-3" /> New Format
             </div>
-            <div className="w-14 h-14 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <FileText className="w-7 h-7 text-amber-500" />
+            
+            <div className="w-14 h-14 bg-slate-100 dark:bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-slate-200 dark:border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500 relative z-10">
+              <PenTool className="w-6 h-6 text-slate-700 dark:text-amber-500" />
             </div>
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-3">Read Notes</h2>
-            <p className="text-foreground/70 text-sm font-medium mb-8 flex-grow leading-relaxed">
-              Streamlined, highly organized revision notes covering Dravyaguna, Rasa Shastra, and Roga Nidana.
+            
+            <h2 className="font-heading text-2xl font-bold text-slate-800 dark:text-foreground mb-3 relative z-10" style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}>Handwritten Notes</h2>
+            <p className="text-slate-600 dark:text-foreground/70 text-sm font-medium mb-8 flex-grow leading-relaxed relative z-10">
+              Streamlined, highly readable short notes for quick revision. Starting with Dravyaguna Pharmacology.
             </p>
-            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-3 px-4 rounded-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
-              Open Study Vault <ChevronRight className="w-4 h-4" />
+            
+            <div className="w-full bg-slate-800 dark:bg-amber-500/10 border border-slate-700 dark:border-amber-500/20 text-white dark:text-amber-500 font-bold py-3 px-4 rounded-sm hover:bg-slate-700 dark:group-hover:bg-amber-500 dark:group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
+              Open Notebook <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
           
