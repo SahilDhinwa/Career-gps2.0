@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "next-themes";
-import { Compass, User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon } from "lucide-react";
+import { Compass, User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon, Activity } from "lucide-react";
 
 export default function Navbar() {
   const { user, userData, isLoading } = useAuth();
@@ -66,7 +66,7 @@ export default function Navbar() {
         </Link>
 
         {/* DESKTOP CENTRAL LINKS */}
-        <div className="hidden md:flex items-center gap-7 font-medium text-sm">
+        <div className="hidden md:flex items-center gap-5 lg:gap-7 font-medium text-sm">
           <Link href="/pathways" className={getLinkStyle("/pathways")}>
             Pathways
           </Link>
@@ -80,6 +80,18 @@ export default function Navbar() {
             Vault
           </Link>
           
+          {/* NEW: Clinical Modules Link */}
+          <Link 
+            href="/interactive-topics" 
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
+              pathname.includes("/interactive-topics")
+                ? "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
+                : "bg-surface text-foreground/70 border-surfaceBorder hover:text-indigo-500 hover:border-indigo-500/30"
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" /> Clinical Modules
+          </Link>
+
           <Link 
             href="/bams-hub" 
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
@@ -173,9 +185,21 @@ export default function Navbar() {
             Action Vault
           </Link>
 
+          {/* NEW: Mobile Clinical Modules Link */}
+          <Link 
+            href="/interactive-topics" 
+            className={`flex items-center gap-2 py-3 mt-2 rounded-sm font-bold transition-all ${
+              pathname.includes("/interactive-topics")
+                ? "bg-indigo-500/10 text-indigo-500 px-4 border border-indigo-500/20"
+                : "text-foreground/80 hover:text-indigo-500 px-4 border border-transparent"
+            }`}
+          >
+            <Activity className="w-4 h-4" /> Clinical Modules
+          </Link>
+
           <Link 
             href="/bams-hub" 
-            className={`flex items-center gap-2 py-3 mt-2 rounded-sm font-bold transition-all ${
+            className={`flex items-center gap-2 py-3 rounded-sm font-bold transition-all ${
               pathname.includes("/bams-hub") || pathname.includes("/mcq-practice")
                 ? "bg-amber-500/10 text-amber-500 px-4 border border-amber-500/20"
                 : "text-foreground/80 hover:text-amber-500 px-4 border border-transparent"
