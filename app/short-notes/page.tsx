@@ -8,10 +8,10 @@ const NOTEBOOK_INDEX = [
   {
     subject: "Roga Nidan & Vikriti Vigyan",
     topics: [
-      { name: "अतिसार", link: "/short-notes/roga-nidana/atisara", status: "New" },
+      { name: "अतिसार", link: "/short-notes/roga-nidan/atisara", status: "New" },
       { name: "आमवात", link: "/short-notes/roga-nidan/amavata", status: "New" },
 
-      { name: "Tuberculosis (Rajayakshma / TB)", link: "/short-notes/roga-nidana/tuberculosis", status: "New" },
+      { name: "Tuberculosis (Rajayakshma / TB)", link: "/short-notes/roga-nidan/tuberculosis", status: "New" },
       { 
         name: "12 High-Yield Clinical Conditions (RA, Malaria, Dengue, etc.)", 
   link: "/short-notes/roga-nidan/clinical-compendium", 
