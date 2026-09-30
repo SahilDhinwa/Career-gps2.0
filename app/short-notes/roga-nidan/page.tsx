@@ -170,6 +170,13 @@ export default function RogaNidanIndex() {
               Skin Diseases & Lesions
             </Link>
           </li>
+          {/* NEW LINK ADDED HERE */}
+          <li className="flex items-center gap-3">
+            <span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)] font-bold">★</span>
+            <Link href="/short-notes/roga-nidan/systemic-disorders" className="text-blue-700 dark:text-[#e8dcc4] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] underline-offset-4 transition-all font-bold">
+              Systemic & Endocrine Disorders (Diabetes, MI, UTI)
+            </Link>
+          </li>
         </ul>
       </div>
 
