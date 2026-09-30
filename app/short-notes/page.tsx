@@ -15,6 +15,16 @@ const NOTEBOOK_INDEX = [
   link: "/short-notes/roga-nidan/clinical-compendium", 
   status: "New"
       },
+      { 
+  name: "Skin Diseases (Eczema, Psoriasis, Leprosy)", 
+  link: "/short-notes/roga-nidan/skin-diseases", 
+  status: "New" 
+      },
+      { 
+  name: "Common Neurologic & Spine Disorders (Stroke, Parkinson's)", 
+  link: "/short-notes/roga-nidan/neuro-spine", 
+  status: "New" 
+      },
       { name: "Diabetes Mellitus (Prameha)", link: "#", status: "Coming Soon" },
     ]
   },
