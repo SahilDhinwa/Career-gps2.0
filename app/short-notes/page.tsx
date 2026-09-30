@@ -10,6 +10,11 @@ const NOTEBOOK_INDEX = [
     topics: [
       { name: "Tuberculosis (Rajayakshma / TB)", link: "/short-notes/roga-nidana/tuberculosis", status: "New" },
       { name: "अतिसार", link: "/short-notes/roga-nidana/atisara", status: "New" },
+      { 
+        name: "12 High-Yield Clinical Conditions (RA, Malaria, Dengue, etc.)", 
+  link: "/short-notes/roga-nidan/clinical-compendium", 
+  status: "New"
+      },
       { name: "Diabetes Mellitus (Prameha)", link: "#", status: "Coming Soon" },
     ]
   },
