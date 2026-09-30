@@ -69,6 +69,13 @@ const PREVIOUS_PAPERS = [
     size: "4.7 MB", 
     link: "/pdfs/ras-paper-2(2023).pdf" // EXACT match to your uploaded file
   },
+  { 
+    id: 10, 
+    subject: "BAMS 2nd Prof - ROG NIDAN PAPER-1 (Batch 2023)", 
+    year: "Sept-Oct 2026", 
+    size: "3.1 MB", 
+    link: "/pdfs/rog-nidan-1(2023).pdf" // EXACT match to your uploaded file
+  },
 ];
 
 export default function PreviousPapers() {
