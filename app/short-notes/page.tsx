@@ -9,6 +9,7 @@ const NOTEBOOK_INDEX = [
     subject: "Roga Nidan & Vikriti Vigyan",
     topics: [
       { name: "Tuberculosis (Rajayakshma / TB)", link: "/short-notes/roga-nidana/tuberculosis", status: "New" },
+      { name: "अतिसार", link: "/short-notes/roga-nidana/atisara", status: "New" },
       { name: "Diabetes Mellitus (Prameha)", link: "#", status: "Coming Soon" },
     ]
   },
