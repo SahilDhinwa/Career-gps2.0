@@ -202,7 +202,37 @@ export default function AgadaTantraChapter7() {
           </div>
         </div>
       </div>
+      {/* ========================================== */}
+      {/* ADDITIONAL EXAM TOPICS (NCISM SYLLABUS)      */}
+      {/* ========================================== */}
+      <div className="relative flex py-8 items-center">
+        <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
+      </div>
 
+      <div className="mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+            Additional Exam Topics (NCISM)
+          </HandwrittenBox>
+        </div>
+        <div className="space-y-6 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">1. अभ्यंग, लेप, वस्त्र, पादुका एवं आभरण विष (Contact Poisons):</NAccent>
+            <p className="mb-4 opacity-80">प्राचीन काल में शत्रुओं को मारने के लिए उनके दैनिक उपयोग की वस्तुओं में विष मिला दिया जाता था।</p>
+            
+            <ul className="space-y-3 list-disc list-inside">
+              <li><NText bold>अभ्यंग / उद्वर्तन विष:</NText> मालिश के तेल (Massage oil) या उबटन में विष मिलाना। <br/><NText bold>लक्षण:</NText> त्वचा पर भयंकर चकत्ते, पसीना आना और मांसपेशियों में दर्द।</li>
+              
+              <li><NText bold>वस्त्र (Clothes) / पादुका (Footwear) / आभरण (Jewelry) विष:</NText> कपड़ों, जूतों या गहनों पर विष का लेप लगा देना। <br/><NText bold>लक्षण:</NText> शरीर के जिस हिस्से पर वे पहने जाते हैं, वहां की त्वचा जल जाती है (Contact Dermatitis), सूजन आती है और घाव (Ulcers) बन जाते हैं।</li>
+              
+              <li><NText bold>चिकित्सा (Management):</NText> तुरंत उन कपड़ों या गहनों को उतार कर फेंक दें। त्वचा को शीतल औषधियों (पंचवल्कल) के काढ़े से धोएं और चंदन या दशांग लेप लगाएं।</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+      
     </HandwrittenCanvas>
   );
               }
