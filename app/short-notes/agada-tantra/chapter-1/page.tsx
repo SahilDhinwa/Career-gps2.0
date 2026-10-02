@@ -154,12 +154,10 @@ export default function AgadaTantraChapter1() {
         </div>
       </div>
 
-      {/* 7. Factors Modifying Action of Poison (NEW UPDATE) */}
-      <div className="mb-10">
+      {/* 7. Factors Modifying Action of Poison */}
+      <div className="mb-12">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
-          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
-            7. विष के प्रभाव को बदलने वाले कारक (Factors Modifying Poison)
-          </HandwrittenBox>
+          <HandwrittenBox>7. विष के प्रभाव को बदलने वाले कारक (Factors Modifying Poison)</HandwrittenBox>
         </div>
         <div className="pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
           <NText className="leading-relaxed block mb-6">
@@ -201,6 +199,54 @@ export default function AgadaTantraChapter1() {
               </ul>
             </NCard>
           </div>
+        </div>
+      </div>
+
+      {/* ========================================== */}
+      {/* 8. MISSING TOPICS / EXAM ESSENTIALS          */}
+      {/* ========================================== */}
+      <div className="relative flex py-8 items-center">
+        <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
+      </div>
+
+      <div className="mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+            8. NCISM Syllabus - Additional Exam Topics
+          </HandwrittenBox>
+        </div>
+        <div className="space-y-6 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">1. विष, मद्य और ओज के गुणों में अंतर (Diff b/w Visha, Madya & Oja):</NAccent>
+            <ul className="space-y-2 list-disc list-inside">
+              <li><NText bold>ओज (Ojas):</NText> शरीर की इम्युनिटी। इसके 10 गुण होते हैं (गुरु, शीत, मृदु, श्लक्ष्ण, बहल, मधुर, स्थिर, प्रसन्न, पिच्छिल, स्निग्ध)।</li>
+              <li><NText bold>विष (Visha):</NText> ओज के बिल्कुल विपरीत 10 गुण (लघु, उष्ण, तीक्ष्ण, रूक्ष, आशु, व्यवायी, विकाशी, सूक्ष्म, विशद, <NAccent bold>अपाकी</NAccent>)।</li>
+              <li><NText bold>मद्य (Madya / Alcohol):</NText> मद्य में विष के समान ही गुण होते हैं, केवल एक गुण का अंतर होता है। विष में &apos;अपाकी&apos; (जो न पचे) गुण होता है, जबकि मद्य में <NAccent bold>&apos;अम्ल&apos; (Sour)</NAccent> रस होता है।</li>
+            </ul>
+          </div>
+
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">2. विष वर्धक भाव एवं विष संकट (Visha Vardhaka & Sankata):</NAccent>
+            <ul className="space-y-2">
+              <li><NText bold>विष वर्धक भाव:</NText> वे कारण जो विष के प्रभाव को बढ़ा देते हैं (जैसे- क्रोध करना, भूख, धूप में घूमना, और तिल/कुलत्थ/शराब का सेवन)।</li>
+              <li><NText bold>विष संकट:</NText> जब तीन प्रतिकूल परिस्थितियां एक साथ मिल जाएं, तो उसे विष संकट कहते हैं (यह मृत्यु का कारण बनता है)। <br/>१. विष की प्रकृति, २. रोगी की प्रकृति, और ३. काल (Season) — यदि तीनों समान हों (जैसे पित्त प्रकृति वाले को ग्रीष्म ऋतु में पित्त-प्रकोपक विष का काटना)।</li>
+            </ul>
+          </div>
+
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">3. विषवेग और वेगान्तर (Vishavega & Vegantara):</NAccent>
+            <ul className="space-y-2 list-disc list-inside">
+              <li><NText bold>विषवेग (Poisonous Impulse):</NText> शरीर की 7 कलाओं (Kalas - Layers) को विष द्वारा एक-एक करके पार करने की अवस्था को &apos;विषवेग&apos; कहते हैं। मनुष्य में 7 विषवेग (7 stages of poisoning) होते हैं।</li>
+              <li><NText bold>वेगान्तर:</NText> एक कला से दूसरी कला में विष के जाने के बीच का जो समय (Time interval) होता है, उसे &apos;वेगान्तर&apos; कहते हैं। इसी समय में चिकित्सक को चिकित्सा (Antidote) करनी चाहिए।</li>
+            </ul>
+          </div>
+
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">4. विष पीत और विषमुक्त लक्षण (Signs of Recovery):</NAccent>
+            <p>जब विष पूरी तरह शरीर से निकल जाता है, तो रोगी के दोष अपनी प्राकृत अवस्था में आ जाते हैं, जीभ का रंग सामान्य हो जाता है, भूख लगने लगती है (अग्नि दीप्ति), और इन्द्रियां (Senses) ठीक से काम करने लगती हैं।</p>
+          </div>
+
         </div>
       </div>
 
