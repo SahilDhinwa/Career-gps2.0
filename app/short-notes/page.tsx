@@ -12,7 +12,7 @@ const NOTEBOOK_INDEX = [
       { name: "View Complete Roga Nidan Syllabus & Index", link: "/short-notes/roga-nidan", status: "Active" }
     ]
   },  
-        {
+          {
     subject: "Agada Tantra (Toxicology)",
     topics: [
       { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "Active" },
@@ -24,7 +24,9 @@ const NOTEBOOK_INDEX = [
       { name: "Chapter 6: Environmental Toxicology", link: "/short-notes/agada-tantra/chapter-6", status: "Active" },
       { name: "Chapter 7: Contact Dermatitis", link: "/short-notes/agada-tantra/chapter-7", status: "Active" },
       { name: "Chapter 8: Agada Yogas (Therapeutic Formulations)", link: "/short-notes/agada-tantra/chapter-8", status: "Active" },
-      { name: "Chapter 9: Sthavara Visha (Plant Poisons)", link: "/short-notes/agada-tantra/chapter-9", status: "New" }
+      { name: "Chapter 9: Sthavara Visha (Plant Poisons)", link: "/short-notes/agada-tantra/chapter-9", status: "Active" },
+      { name: "Chapter 10: Sthavara Visha (Metallic Poisons)", link: "/short-notes/agada-tantra/chapter-10", status: "Active" },
+      { name: "Chapter 11: Jangama Visha (Animal Poisoning)", link: "/short-notes/agada-tantra/chapter-11", status: "New" }
     ]
   },
   {
