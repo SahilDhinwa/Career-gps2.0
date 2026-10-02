@@ -173,8 +173,8 @@ export default function RogaNidanIndex() {
             <span className="text-lg font-bold text-slate-800 dark:text-[#e8dcc4] group-hover:text-red-600 dark:group-hover:text-[#ff0055] transition-colors">
               Neuro & Spine Disorders
             </span>
-            <span className="text-sm text-slate-500 dark:text-[#8b7355] mt-1 font-sans">Stroke, Parkinson's, Sciatica</span>
-          </Link>
+            <span className="text-sm text-slate-500 dark:text-[#8b7355] mt-1 font-sans">Stroke, Parkinson&apos;s, Sciatica</span>
+  </Link>
 
           <Link 
             href="/short-notes/roga-nidan/skin-diseases" 
