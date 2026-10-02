@@ -81,7 +81,7 @@ export default function AgadaTantraChapter9() {
             <ul className="space-y-2 list-disc list-inside">
               <li><NText bold>Opisthotonos:</NText> Body spasms and arches backward like a bow, resting only on the head and heels.</li>
               <li><NText bold>Risus Sardonicus:</NText> A fixed, unnatural, rigid smile due to facial muscle spasms.</li>
-              <li><NAccent bold className="italic">Note:</NAccent> The patient remains completely conscious and in severe pain during convulsions.</li>
+              <li><NAccent bold className="italic">Note:</NText> The patient remains completely conscious and in severe pain during convulsions.</li>
             </ul>
           </div>
 
@@ -241,7 +241,7 @@ export default function AgadaTantraChapter9() {
           <div className="p-4 border-2 border-[var(--theme-border)] rounded-sm bg-white/20 dark:bg-black/10">
             <NAccent bold className="block mb-2 text-lg">Clinical Features (Symptoms):</NAccent>
             <ul className="space-y-2 list-disc list-inside">
-              <li><NText bold>Tingling & Numbness:</NText> "Pins and needles" sensation starting from lips/tongue spreading to body <span className="italic opacity-80">(Pathognomonic sign)</span>.</li>
+              <li><NText bold>Tingling & Numbness:</NText> &quot;Pins and needles&quot; sensation starting from lips/tongue spreading to body <span className="italic opacity-80">(Pathognomonic sign)</span>.</li>
               <li><NText bold>Cardiac Signs:</NText> Severe arrhythmias, bradycardia, severe hypotension.</li>
               <li><NText bold>Hippus:</NText> Pupils alternately dilate and contract.</li>
             </ul>
