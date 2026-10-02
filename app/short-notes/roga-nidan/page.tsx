@@ -204,7 +204,7 @@ export default function RogaNidanIndex() {
             
             {/* Subject Header */}
             <div className="flex items-center gap-4 text-2xl mb-6">
-              <HandwrittenBox borderColor="border-slate-800 dark:border-[#8b7355]" className="bg-slate-100 dark:bg-[#251e17]">
+              <HandwrittenBox>
                 {section.srotas}
               </HandwrittenBox>
               <div className="flex-grow border-b-2 border-dashed border-slate-300 dark:border-[#8b7355]"></div>
