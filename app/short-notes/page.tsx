@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/components/HandwrittenCanvas";
+import { NAccent, NText } from "@/components/NoteElements";
 
 const NOTEBOOK_INDEX = [
   {
@@ -42,21 +43,19 @@ export default function ShortNotesIndex() {
       <div className="mb-8">
         <Link 
           href="/bams-hub" 
-          // Updated to dark ink (#5c4d3c) for visibility
-          className="inline-flex items-center gap-2 text-slate-500 dark:text-[#5c4d3c] hover:text-red-600 dark:hover:text-[#ff0055] transition-colors font-bold text-lg font-sans"
+          className="inline-flex items-center gap-2 text-[var(--theme-text)] opacity-70 hover:opacity-100 hover:text-[var(--theme-accent)] transition-colors font-bold text-lg font-sans"
         >
           <ArrowLeft className="w-5 h-5" /> Back to BAMS Hub
         </Link>
       </div>
 
-      <HandwrittenTitle badge={<>Index<br/><span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_8px_rgba(255,0,85,0.7)]">Page</span></>}>
+      <HandwrittenTitle badge={<>Index<br/><NAccent>Page</NAccent></>}>
         Quick Revision Notebook
       </HandwrittenTitle>
 
-      {/* Text updated to #3a2f24 (Dark Ink) so it doesn't disappear into the paper */}
-      <p className="text-blue-700 dark:text-[#3a2f24] font-bold text-xl leading-relaxed mb-12 text-center max-w-2xl mx-auto">
+      <NText className="font-bold text-xl leading-relaxed mb-12 text-center max-w-2xl mx-auto block" bold>
         Select a subject below to open the handwritten quick-notes. Perfect for last-minute exam revision and OPD quick references.
-      </p>
+      </NText>
 
       <div className="space-y-12">
         {NOTEBOOK_INDEX.map((section, idx) => (
@@ -64,46 +63,45 @@ export default function ShortNotesIndex() {
             
             {/* Subject Header */}
             <div className="flex items-center gap-4 text-2xl mb-6">
-              {/* Box background set to transparent so the vintage paper shows through */}
-              <HandwrittenBox borderColor="border-slate-800 dark:border-[#3a2f24]" className="bg-slate-100 dark:bg-transparent">
+              {/* Removed obsolete borderColor and custom background classes */}
+              <HandwrittenBox>
                 {section.subject}
               </HandwrittenBox>
-              <div className="flex-grow border-b-2 border-dashed border-slate-300 dark:border-[#8b7355]"></div>
+              <div className="flex-grow border-b-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
             </div>
 
             {/* Topics List */}
             <ul className="space-y-4 pl-4 md:pl-12 text-xl">
               {section.topics.map((topic, topicIdx) => (
                 <li key={topicIdx} className="flex items-center gap-3">
-                  <span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)] font-bold">→</span>
+                  <NAccent className="font-bold">→</NAccent>
                   
                   {topic.link !== "#" ? (
                     <Link 
                       href={topic.link} 
-                      // Text updated to #3a2f24 (Dark Ink)
-                      className="text-blue-700 dark:text-[#3a2f24] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] hover:decoration-red-600 dark:hover:decoration-[#ff0055] underline-offset-4 transition-all font-bold"
+                      className="text-[var(--theme-text)] hover:text-[var(--theme-accent)] underline decoration-[var(--theme-border)] opacity-80 hover:opacity-100 hover:decoration-[var(--theme-accent)] underline-offset-4 transition-all font-bold"
                     >
                       {topic.name}
                     </Link>
                   ) : (
-                    <span className="text-slate-500 dark:text-[#8b7355] line-through decoration-slate-300 dark:decoration-[#8b7355]">
+                    <span className="text-[var(--theme-text)] opacity-50 line-through decoration-[var(--theme-border)]">
                       {topic.name}
                     </span>
                   )}
 
-                  {/* Status Badges - Backgrounds made transparent so they look hand-stamped on the paper */}
+                  {/* Status Badges */}
                   {topic.status === "New" && (
-                    <span className="text-[12px] font-sans font-bold bg-red-100 dark:bg-transparent text-red-600 dark:text-[#ff0055] px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-red-200 dark:border-[#ff0055]/50">
+                    <span className="text-[12px] font-sans font-bold bg-transparent text-[var(--theme-accent)] px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-[var(--theme-accent)] opacity-90">
                       New
                     </span>
                   )}
                   {topic.status === "Active" && (
-                    <span className="text-[12px] font-sans font-bold bg-emerald-100 dark:bg-transparent text-emerald-600 dark:text-emerald-700 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-emerald-200 dark:border-emerald-700/50">
+                    <span className="text-[12px] font-sans font-bold bg-transparent text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-emerald-600/50">
                       Active
                     </span>
                   )}
                   {topic.status === "Coming Soon" && (
-                    <span className="text-[12px] font-sans font-bold bg-slate-100 dark:bg-transparent text-slate-500 dark:text-[#5c4d3c] px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-slate-200 dark:border-[#8b7355]/50">
+                    <span className="text-[12px] font-sans font-bold bg-transparent text-[var(--theme-text)] opacity-60 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-[var(--theme-border)]">
                       Draft
                     </span>
                   )}
