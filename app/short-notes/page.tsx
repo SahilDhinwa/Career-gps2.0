@@ -18,6 +18,7 @@ const NOTEBOOK_INDEX = [
       { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "Active" },
       { name: "Chapter 2: Visha Chikitsa (Management)", link: "/short-notes/agada-tantra/chapter-2", status: "Active" },
       { name: "Chapter 3: Vishakta Aahara & Viruddha Ahara", link: "/short-notes/agada-tantra/chapter-3", status: "New" }
+      { name: "Chapter 4: Garavisha & Dooshivisha", link: "/short-notes/agada-tantra/chapter-4", status: "New" }
     ]
   },
   {
