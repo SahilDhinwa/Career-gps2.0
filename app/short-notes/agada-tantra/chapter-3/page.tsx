@@ -142,7 +142,36 @@ export default function AgadaTantraChapter3() {
           </ul>
         </NCard>
       </div>
+      {/* ========================================== */}
+      {/* ADDITIONAL EXAM TOPICS (NCISM SYLLABUS)      */}
+      {/* ========================================== */}
+      <div className="relative flex py-8 items-center">
+        <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
+      </div>
 
+      <div className="mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+            Additional Exam Topics (NCISM)
+          </HandwrittenBox>
+        </div>
+        <div className="space-y-6 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">1. आमविष (Amavisha):</NAccent>
+            <p>अग्निमांद्य (Weak digestion) के कारण जब भोजन ठीक से नहीं पचता, तो वह पेट में सड़ने लगता है। इस सड़े हुए अन्न रस को &apos;आम&apos; कहते हैं। जब यह आम शरीर में बहुत अधिक रुक जाता है, तो यह विष के समान भयंकर लक्षण (उल्टी, दस्त, मूर्च्छा) उत्पन्न करता है, जिसे <NText bold>आमविष</NText> कहते हैं।</p>
+          </div>
+
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">2. आधुनिक विष परीक्षण तकनीकें (Analytical Techniques):</NAccent>
+            <ul className="space-y-2 list-disc list-inside">
+              <li><NText bold>Chromatography:</NText> (TLC, HPLC, Gas Chromatography) - Used to separate and identify complex organic poisons and drugs in blood or urine.</li>
+              <li><NText bold>Mass Spectrometry (MS):</NText> Used to find the exact molecular weight and structure of the unknown toxin.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
     </HandwrittenCanvas>
   );
 }
