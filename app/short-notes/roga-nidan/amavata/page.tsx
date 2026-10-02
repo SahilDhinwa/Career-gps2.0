@@ -213,4 +213,4 @@ export default function AmavataNotes() {
 
     </HandwrittenCanvas>
   );
-}8
+}
