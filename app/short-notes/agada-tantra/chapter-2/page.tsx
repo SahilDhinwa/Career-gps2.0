@@ -124,6 +124,46 @@ export default function AgadaTantraChapter2() {
 
         </div>
       </div>
+            {/* ========================================== */}
+      {/* ADDITIONAL EXAM TOPICS (NCISM SYLLABUS)      */}
+      {/* ========================================== */}
+      <div className="relative flex py-8 items-center">
+        <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
+      </div>
+
+      <div className="mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+            Additional Exam Topics (NCISM)
+          </HandwrittenBox>
+        </div>
+        <div className="space-y-6 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">1. संदिग्ध विषाक्तता में चिकित्सक के कर्तव्य (Duties of Practitioner):</NAccent>
+            <p className="mb-2 italic opacity-80">(Very Important PYQ)</p>
+            <ul className="space-y-2 list-disc list-inside">
+              <li>सबसे पहले पुलिस को तुरंत सूचित करें (Information to Police under CrPC Section 39).</li>
+              <li>रोगी की जान बचाना (Resuscitation) चिकित्सक का पहला कर्तव्य है।</li>
+              <li>रोगी के उल्टी (Vomit), पेट की सफाई (Gastric lavage washings), मल-मूत्र और कपड़ों को सील (Seal) करके Forensic Science Laboratory (FSL) भेजें।</li>
+              <li>विषाक्तता का प्रकार (Homicidal/Suicidal) निर्धारित करने के लिए Dying Declaration (मृत्यु पूर्व कथन) मजिस्ट्रेट द्वारा दर्ज करवाएं।</li>
+            </ul>
+          </div>
+
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">2. मृत शरीर में विषाक्तता का निदान (Diagnosis in Dead):</NAccent>
+            <p className="mb-2 font-bold">Postmortem Findings:</p>
+            <ul className="space-y-2 list-disc list-inside">
+              <li><NText bold>Cyanide:</NText> Cherry-red color of blood.</li>
+              <li><NText bold>Carbon Monoxide:</NText> Bright cherry-red lividity.</li>
+              <li><NText bold>Nitric Acid:</NText> Yellow discoloration of tissues.</li>
+              <li>Stomach mucosa examination reveals severe inflammation, ulceration, or unabsorbed poison tablets.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+      
 
     </HandwrittenCanvas>
   );
