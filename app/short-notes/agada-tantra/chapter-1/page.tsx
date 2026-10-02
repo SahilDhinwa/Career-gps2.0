@@ -26,7 +26,7 @@ export default function AgadaTantraChapter1() {
             <NAccent className="mr-1 md:mr-2">»</NAccent>
             <NText bold className="underline decoration-[var(--theme-border)]">अगद तन्त्र (Agada Tantra):</NText> यह अष्टांग आयुर्वेद की एक प्रमुख शाखा है। &apos;गद&apos; का अर्थ है रोग या विष, और &apos;अगद&apos; का अर्थ है जो विष को नष्ट करे। यह शाखा विषैले जीवों, पौधों और धातुओं के प्रभाव, लक्षणों और उनकी चिकित्सा से संबंधित है।
           </li>
-          <li className="leading-relaxed p-3 md:p-4 border-l-2 md:border-l-4 border-[var(--theme-accent)] bg-black/5 mt-2">
+          <li className="leading-relaxed p-3 md:p-4 border-l-2 md:border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5 mt-2">
             <NText bold className="text-lg md:text-2xl block mb-1">विष (Visha):</NText>
             जो पदार्थ शरीर में प्रवेश कर विषाद (भयंकर कष्ट या अवसाद) उत्पन्न करे, उसे विष कहते हैं। <br/>
             <NAccent className="italic text-sm md:text-lg">&quot;विषाद जननत्वाच्च विषमित्यभिधीयते&quot;</NAccent><br/>
@@ -83,7 +83,7 @@ export default function AgadaTantraChapter1() {
         <div className="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 pl-1 md:pl-8">
           <NCard title="स्थावर विष (Sthavara)">
             <NText bold className="mb-1 md:mb-2 text-sm md:text-base block">Plant/Mineral Origin (10):</NText>
-            <ul className="grid grid-cols-2 gap-x-2 gap-y-1">
+            <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[var(--theme-text)]">
               <li>• मूल (Root)</li><li>• पत्र (Leaves)</li>
               <li>• फल (Fruit)</li><li>• पुष्प (Flower)</li>
               <li>• त्वक् (Bark)</li><li>• क्षीर (Latex)</li>
@@ -94,7 +94,7 @@ export default function AgadaTantraChapter1() {
 
           <NCard title="जाङ्गम विष (Jangama)">
             <NText bold className="mb-1 md:mb-2 text-sm md:text-base block">Animal Origin (16 - प्रमुख):</NText>
-            <ul className="grid grid-cols-2 gap-x-2 gap-y-1">
+            <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[var(--theme-text)]">
               <li>• दृष्टि (Gaze)</li><li>• निःश्वास (Breath)</li>
               <li>• दंष्ट्रा (Fangs)</li><li>• नख (Nails)</li>
               <li>• मूत्र (Urine)</li><li>• पुरीष (Feces)</li>
@@ -102,6 +102,55 @@ export default function AgadaTantraChapter1() {
               <li>• आर्तव (Menses)</li><li>• अस्थि (Bone)</li>
             </ul>
           </NCard>
+        </div>
+      </div>
+
+      {/* 5. Movement of Poison (RESTORED) */}
+      <div className="mb-8 md:mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox>5. विष की गति (Movement of Poison)</HandwrittenBox>
+        </div>
+        <NText className="pl-3 md:pl-10 mb-4 block text-lg md:text-xl font-bold">
+          शरीर में दोषों के आधार पर विष 3 दिशाओं में गति करता है:
+        </NText>
+        <ul className="space-y-3 md:space-y-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          <li className="flex gap-2 md:gap-3">
+            <NAccent bold>↑</NAccent>
+            <span><NText bold>ऊर्ध्व गति (Urdhwa):</NText> वात और कफ (Vata-Kapha) की प्रधानता। <br/><span className="italic opacity-80">(लक्षण: उल्टी, श्वास कष्ट)</span></span>
+          </li>
+          <li className="flex gap-2 md:gap-3">
+            <NAccent bold>↓</NAccent>
+            <span><NText bold>अधो गति (Adho):</NText> वात और पित्त (Vata-Pitta) की प्रधानता। <br/><span className="italic opacity-80">(लक्षण: दस्त, मूत्र में रक्त)</span></span>
+          </li>
+          <li className="flex gap-2 md:gap-3">
+            <NAccent bold>↔</NAccent>
+            <span><NText bold>तिर्यक् गति (Tiryak):</NText> विष बाहरी हिस्सों (त्वचा/मांसपेशियां) में फैलता है। <br/><span className="italic opacity-80">(लक्षण: चकत्ते, सूजन)</span></span>
+          </li>
+        </ul>
+      </div>
+
+      {/* 6. Modern Toxicokinetics (RESTORED) */}
+      <div className="mb-8 md:mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox>6. Modern Toxicokinetics</HandwrittenBox>
+        </div>
+        
+        <div className="pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          <div className="mb-6">
+            <NAccent bold className="block mb-2 underline decoration-[var(--theme-border)]">Routes of Administration:</NAccent>
+            <p className="leading-relaxed">
+              Poisons can enter the body via Inhalation (lungs), Ingestion (GI tract), Injection (IV/IM), or Absorption (skin/mucous membranes).
+            </p>
+          </div>
+
+          <div>
+            <NAccent bold className="block mb-2 underline decoration-[var(--theme-border)]">Mode of Action:</NAccent>
+            <ul className="space-y-2 md:space-y-3 list-disc list-inside">
+              <li><NText bold>Local Action:</NText> Destruction or irritation at the site of contact (e.g., Corrosive acids).</li>
+              <li><NText bold>Systemic Action:</NText> Absorbed into the bloodstream affecting distant organs (e.g., Neurotoxins).</li>
+              <li><NText bold>Combined Action:</NText> Exhibits both local and systemic effects (e.g., Carbolic acid).</li>
+            </ul>
+          </div>
         </div>
       </div>
 
