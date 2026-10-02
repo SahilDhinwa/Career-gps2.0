@@ -148,36 +148,54 @@ export default function RogaNidanIndex() {
         Complete BAMS 2nd Prof syllabus categorized by Srotas (Body Channels). Select an active topic below to access the high-yield handwritten notes.
       </p>
 
-      {/* Specialty Compendiums Link at the top */}
-      <div className="mb-12 p-6 border-2 border-dashed border-red-600 dark:border-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.3)] bg-red-50/50 dark:bg-[#ff0055]/5 rounded-sm">
-        <h3 className="text-2xl font-bold text-slate-800 dark:text-[#e8dcc4] mb-4">Quick Revision Compendiums:</h3>
-        <ul className="space-y-3 pl-4 text-xl">
-          <li className="flex items-center gap-3">
-            <span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)] font-bold">★</span>
-            <Link href="/short-notes/roga-nidan/clinical-compendium" className="text-blue-700 dark:text-[#e8dcc4] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] underline-offset-4 transition-all font-bold">
-              12 High-Yield Clinical Conditions (Modern)
-            </Link>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)] font-bold">★</span>
-            <Link href="/short-notes/roga-nidan/neuro-spine" className="text-blue-700 dark:text-[#e8dcc4] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] underline-offset-4 transition-all font-bold">
-              Neuro & Spine Disorders Compendium
-            </Link>
-          </li>
-          <li className="flex items-center gap-3">
-            <span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)] font-bold">★</span>
-            <Link href="/short-notes/roga-nidan/skin-diseases" className="text-blue-700 dark:text-[#e8dcc4] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] underline-offset-4 transition-all font-bold">
+            {/* Specialty Compendiums - Now styled as clickable cards */}
+      <div className="mb-12">
+        <h3 className="text-2xl font-bold text-slate-800 dark:text-[#e8dcc4] mb-6 flex items-center gap-3">
+          <span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)]">⚡</span> 
+          Quick Revision Compendiums
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link 
+            href="/short-notes/roga-nidan/clinical-compendium" 
+            className="group flex flex-col p-4 border-2 border-slate-300 dark:border-[#8b7355] bg-white dark:bg-[#1a110a]/50 hover:bg-slate-50 dark:hover:bg-[#251e17] hover:border-red-600 dark:hover:border-[#ff0055] dark:hover:drop-shadow-[0_0_8px_rgba(255,0,85,0.3)] rounded-lg transition-all duration-300"
+          >
+            <span className="text-lg font-bold text-slate-800 dark:text-[#e8dcc4] group-hover:text-red-600 dark:group-hover:text-[#ff0055] transition-colors">
+              12 High-Yield Clinical Conditions
+            </span>
+            <span className="text-sm text-slate-500 dark:text-[#8b7355] mt-1 font-sans">Modern pathology & diagnostics</span>
+          </Link>
+
+          <Link 
+            href="/short-notes/roga-nidan/neuro-spine" 
+            className="group flex flex-col p-4 border-2 border-slate-300 dark:border-[#8b7355] bg-white dark:bg-[#1a110a]/50 hover:bg-slate-50 dark:hover:bg-[#251e17] hover:border-red-600 dark:hover:border-[#ff0055] dark:hover:drop-shadow-[0_0_8px_rgba(255,0,85,0.3)] rounded-lg transition-all duration-300"
+          >
+            <span className="text-lg font-bold text-slate-800 dark:text-[#e8dcc4] group-hover:text-red-600 dark:group-hover:text-[#ff0055] transition-colors">
+              Neuro & Spine Disorders
+            </span>
+            <span className="text-sm text-slate-500 dark:text-[#8b7355] mt-1 font-sans">Stroke, Parkinson's, Sciatica</span>
+          </Link>
+
+          <Link 
+            href="/short-notes/roga-nidan/skin-diseases" 
+            className="group flex flex-col p-4 border-2 border-slate-300 dark:border-[#8b7355] bg-white dark:bg-[#1a110a]/50 hover:bg-slate-50 dark:hover:bg-[#251e17] hover:border-red-600 dark:hover:border-[#ff0055] dark:hover:drop-shadow-[0_0_8px_rgba(255,0,85,0.3)] rounded-lg transition-all duration-300"
+          >
+            <span className="text-lg font-bold text-slate-800 dark:text-[#e8dcc4] group-hover:text-red-600 dark:group-hover:text-[#ff0055] transition-colors">
               Skin Diseases & Lesions
-            </Link>
-          </li>
-          {/* NEW LINK ADDED HERE */}
-          <li className="flex items-center gap-3">
-            <span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)] font-bold">★</span>
-            <Link href="/short-notes/roga-nidan/systemic-disorders" className="text-blue-700 dark:text-[#e8dcc4] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] underline-offset-4 transition-all font-bold">
-              Systemic & Endocrine Disorders (Diabetes, MI, UTI)
-            </Link>
-          </li>
-        </ul>
+            </span>
+            <span className="text-sm text-slate-500 dark:text-[#8b7355] mt-1 font-sans">Eczema, Psoriasis, Leprosy</span>
+          </Link>
+
+          <Link 
+            href="/short-notes/roga-nidan/systemic-disorders" 
+            className="group flex flex-col p-4 border-2 border-slate-300 dark:border-[#8b7355] bg-white dark:bg-[#1a110a]/50 hover:bg-slate-50 dark:hover:bg-[#251e17] hover:border-red-600 dark:hover:border-[#ff0055] dark:hover:drop-shadow-[0_0_8px_rgba(255,0,85,0.3)] rounded-lg transition-all duration-300"
+          >
+            <span className="text-lg font-bold text-slate-800 dark:text-[#e8dcc4] group-hover:text-red-600 dark:group-hover:text-[#ff0055] transition-colors">
+              Systemic & Endocrine Disorders
+            </span>
+            <span className="text-sm text-slate-500 dark:text-[#8b7355] mt-1 font-sans">Diabetes, MI, UTI</span>
+          </Link>
+        </div>
       </div>
 
       <div className="space-y-12">
