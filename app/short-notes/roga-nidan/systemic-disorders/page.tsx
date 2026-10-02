@@ -1,6 +1,7 @@
 "use client";
 
 import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/components/HandwrittenCanvas";
+import { NText, NAccent } from "@/components/NoteElements";
 
 const SYSTEMIC_TOPICS = [
   {
@@ -82,81 +83,81 @@ const SYSTEMIC_TOPICS = [
 export default function SystemicDisordersCompendium() {
   return (
     <HandwrittenCanvas>
-      <HandwrittenTitle badge={<>High-Yield<br/><span className="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_8px_rgba(255,0,85,0.7)]">Pathology</span></>}>
+      <HandwrittenTitle badge={<>High-Yield<br/><NAccent>Pathology</NAccent></>}>
         Systemic & Endocrine Disorders
       </HandwrittenTitle>
 
       <div className="text-center mb-12">
-        <p className="text-blue-700 dark:text-green-400 text-xl max-w-2xl mx-auto leading-relaxed">
+        <NText className="text-xl max-w-2xl mx-auto leading-relaxed block">
           6 Core High-Yield Topics covering Cardiovascular, GI, Metabolic, and Renal pathologies. Optimized for quick viva and exam revision.
-        </p>
+        </NText>
       </div>
 
       <div className="space-y-12">
         {SYSTEMIC_TOPICS.map((item) => (
           <div 
             key={item.num}
-            className="p-6 md:p-8 border-2 border-slate-800 dark:border-[#8b7355] bg-white/60 dark:bg-[#251e17]/70 shadow-sm relative"
+            className="p-6 md:p-8 border-2 border-[var(--theme-border)] bg-white/20 dark:bg-black/10 shadow-sm relative text-[var(--theme-text)]"
             style={{ borderRadius: "15px 225px 15px 255px/255px 15px 225px 15px" }}
           >
             {/* Header / Number */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div className="flex items-center gap-3">
-                <HandwrittenBox borderColor="border-red-600 dark:border-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)]" textColor="text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)]" className="text-xl font-bold">
+                <HandwrittenBox className="text-xl font-bold">
                   #{item.num}
                 </HandwrittenBox>
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-[#e8dcc4]">
+                <h2 className="text-2xl md:text-3xl font-bold text-[var(--theme-text)]">
                   {item.title}
                 </h2>
               </div>
-              <span className="text-sm font-sans font-bold uppercase tracking-wider px-3 py-1 bg-slate-100 dark:bg-[#1a110a] text-slate-600 dark:text-[#8b7355] rounded-sm border border-slate-300 dark:border-[#8b7355]/30">
+              <span className="text-sm font-sans font-bold uppercase tracking-wider px-3 py-1 bg-[var(--theme-border)]/10 text-[var(--theme-text)] rounded-sm border border-[var(--theme-border)] opacity-80">
                 {item.subtitle}
               </span>
             </div>
 
             {/* Introduction */}
             <div className="mb-4 text-xl">
-              <span className="font-bold underline decoration-slate-400 dark:decoration-slate-600 text-slate-800 dark:text-[#e8dcc4] mr-2">
+              <span className="font-bold underline decoration-[var(--theme-border)] text-[var(--theme-text)] mr-2">
                 Introduction:
               </span>
-              <span className="text-blue-700 dark:text-green-400 leading-relaxed">
+              <span className="text-[var(--theme-text)] leading-relaxed">
                 {item.intro}
               </span>
             </div>
 
             {/* Cause */}
             <div className="mb-4 text-xl">
-              <span className="font-bold text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)] mr-2">
+              <NAccent bold className="mr-2">
                 Cause / Etiology:
-              </span>
-              <span className="text-slate-800 dark:text-[#e8dcc4]">
+              </NAccent>
+              <NText>
                 {item.cause}
-              </span>
+              </NText>
             </div>
 
             {/* Types */}
             <div className="mb-4 text-xl">
-              <span className="font-bold text-slate-800 dark:text-[#e8dcc4] block mb-2 underline decoration-slate-400 dark:decoration-slate-600">
+              <span className="font-bold text-[var(--theme-text)] block mb-2 underline decoration-[var(--theme-border)]">
                 Types / Classification:
               </span>
-              <ul className="pl-6 space-y-1.5 list-disc list-inside marker:text-red-600 dark:marker:text-[#ff0055] text-blue-700 dark:text-green-400">
+              <ul className="pl-6 space-y-1.5 list-disc list-inside marker:text-[var(--theme-accent)] text-[var(--theme-text)]">
                 {item.types.map((t, idx) => (
                   <li key={idx}>
-                    <span className="font-bold text-slate-800 dark:text-[#e8dcc4]">{t.name}: </span>
-                    <span>{t.desc}</span>
+                    <NText bold>{t.name}: </NText>
+                    <NText>{t.desc}</NText>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* Tests */}
-            <div className="pt-4 border-t-2 border-dashed border-slate-300 dark:border-[#8b7355]/30 text-xl flex flex-wrap items-baseline gap-2">
-              <span className="font-bold text-red-600 dark:text-[#ff0055] dark:drop-shadow-[0_0_6px_rgba(255,0,85,0.8)]">
+            <div className="pt-4 border-t-2 border-dashed border-[var(--theme-border)] opacity-90 text-xl flex flex-wrap items-baseline gap-2">
+              <NAccent bold>
                 Diagnostic Tests:
-              </span>
-              <span className="text-blue-700 dark:text-green-400 font-medium">
+              </NAccent>
+              <NText className="font-medium">
                 {item.tests}
-              </span>
+              </NText>
             </div>
           </div>
         ))}
