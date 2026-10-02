@@ -225,6 +225,35 @@ export default function AgadaTantraChapter6() {
         </div>
       </div>
 
+      {/* 6. Toxicovigilance (NEW TOPIC ADDED) */}
+      <div className="mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+            6. Toxicovigilance (6.4)
+          </HandwrittenBox>
+        </div>
+        <div className="space-y-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          <div>
+            <NAccent bold className="block mb-1 underline decoration-[var(--theme-border)]">Definition:</NAccent>
+            <p>Toxicovigilance is the active, ongoing science and process of detecting, evaluating, monitoring, and preventing toxic risks associated with chemical exposures, environmental pollutants, agrochemicals, and severe drug reactions in a community.</p>
+          </div>
+
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-accent)]/5">
+            <NAccent bold className="block mb-2">Primary Objectives:</NAccent>
+            <ul className="space-y-3 list-disc list-inside">
+              <li>To identify early warning signs of emerging toxicological hazards (e.g., an accidental industrial chemical leak or a new pattern of household poisoning).</li>
+              <li>To collect and analyze toxicological and epidemiological data from Poison Control Centers (PCCs) and hospital emergency departments.</li>
+              <li>To alert government bodies (like the Pollution Control Board or FSSAI) to take regulatory actions, such as banning hazardous chemicals or recalling toxic consumer products, to protect public health.</li>
+            </ul>
+          </div>
+
+          <div className="p-4 border-2 border-[var(--theme-border)] rounded-sm bg-white/20 dark:bg-black/10">
+            <NAccent bold className="block mb-2 text-lg">Difference from Pharmacovigilance:</NAccent>
+            <p>While <NText bold>Pharmacovigilance</NText> strictly monitors the adverse side effects and safety of pharmaceutical drugs at normal therapeutic doses, <NText bold>Toxicovigilance</NText> covers a much broader spectrum, monitoring severe toxicities, deliberate overdoses, and accidental exposures to all chemical, biological, and environmental agents.</p>
+          </div>
+        </div>
+      </div>
+
     </HandwrittenCanvas>
   );
 }
