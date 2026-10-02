@@ -12,15 +12,16 @@ const NOTEBOOK_INDEX = [
       { name: "View Complete Roga Nidan Syllabus & Index", link: "/short-notes/roga-nidan", status: "Active" }
     ]
   },  
-    {
+  {
     subject: "Agada Tantra (Toxicology)",
     topics: [
       { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "Active" },
       { name: "Chapter 2: Visha Chikitsa (Management)", link: "/short-notes/agada-tantra/chapter-2", status: "Active" },
       { name: "Chapter 3: Vishakta Aahara & Viruddha Ahara", link: "/short-notes/agada-tantra/chapter-3", status: "Active" },
-      { name: "Chapter 3 (DETAILED): Vishakta Aahara & Viruddha Ahara", link: "/short-notes/agada-tantra/chapter-3-detailed", status: "New" },
+      { name: "Chapter 3 (DETAILED): Vishakta Aahara & Viruddha Ahara", link: "/short-notes/agada-tantra/chapter-3-detailed", status: "Active" },
       { name: "Chapter 4: Garavisha & Dooshivisha", link: "/short-notes/agada-tantra/chapter-4", status: "Active" },
-      { name: "Chapter 5: Visha Upadrava & Hazards", link: "/short-notes/agada-tantra/chapter-5", status: "New" }
+      { name: "Chapter 5: Visha Upadrava & Hazards", link: "/short-notes/agada-tantra/chapter-5", status: "Active" },
+      { name: "Chapter 6: Environmental Toxicology", link: "/short-notes/agada-tantra/chapter-6", status: "New" }
     ]
   },
   {
