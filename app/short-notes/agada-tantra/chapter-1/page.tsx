@@ -1,175 +1,107 @@
 "use client";
 
 import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/components/HandwrittenCanvas";
+import { NText, NAccent, NList, NCard } from "@/components/NoteElements";
 
 export default function AgadaTantraChapter1() {
   return (
     <HandwrittenCanvas>
-      <HandwrittenTitle badge={<>Agada<br/><span className="text-red-600 dark:text-[#991b1b]">Tantra</span></>}>
+      <HandwrittenTitle badge={<>Agada<br/><NAccent>Tantra</NAccent></>}>
         Chapter 1: Concepts of Agada Tantra
       </HandwrittenTitle>
 
-      <div className="text-center mb-10">
-        <span className="inline-block px-4 py-1.5 border-2 border-dashed border-slate-400 dark:border-[#8b7355] text-slate-600 dark:text-[#3a2f24] font-bold text-sm tracking-widest uppercase rounded-sm transform -rotate-1">
+      <div className="text-center mb-6 md:mb-10">
+        <span className="inline-block px-2 py-1 md:px-4 md:py-1.5 border-2 border-dashed border-[var(--theme-border)] text-[var(--theme-text)] opacity-80 font-bold text-xs md:text-sm tracking-widest uppercase rounded-sm transform -rotate-1">
           अगद तन्त्र के मूल सिद्धांत
         </span>
       </div>
 
       {/* 1. Introduction & Definitions */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 text-2xl mb-4 pl-2">
+      <div className="mb-8 md:mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>1. परिचय और परिभाषा (Intro & Definitions)</HandwrittenBox>
         </div>
-        <ul className="space-y-4 pl-6 md:pl-10 text-xl text-blue-700 dark:text-[#3a2f24]">
+        <NList>
           <li className="leading-relaxed">
-            <span className="text-red-600 dark:text-[#991b1b] font-bold mr-2">»</span>
-            <span className="font-bold underline decoration-slate-400 dark:decoration-[#8b7355] text-slate-800 dark:text-[#3a2f24]">अगद तन्त्र (Agada Tantra):</span> यह अष्टांग आयुर्वेद की एक प्रमुख शाखा है। &apos;गद&apos; का अर्थ है रोग या विष, और &apos;अगद&apos; का अर्थ है जो विष को नष्ट करे। यह शाखा विषैले जीवों, पौधों और धातुओं के प्रभाव, लक्षणों और उनकी चिकित्सा से संबंधित है।
+            <NAccent className="mr-1 md:mr-2">»</NAccent>
+            <NText bold className="underline decoration-[var(--theme-border)]">अगद तन्त्र (Agada Tantra):</NText> यह अष्टांग आयुर्वेद की एक प्रमुख शाखा है। &apos;गद&apos; का अर्थ है रोग या विष, और &apos;अगद&apos; का अर्थ है जो विष को नष्ट करे। यह शाखा विषैले जीवों, पौधों और धातुओं के प्रभाव, लक्षणों और उनकी चिकित्सा से संबंधित है।
           </li>
-          <li className="leading-relaxed p-4 border-l-4 border-red-600 dark:border-[#991b1b] bg-slate-50/50 dark:bg-transparent mt-2">
-            <span className="font-bold text-slate-800 dark:text-[#3a2f24] text-2xl block mb-1">विष (Visha):</span>
+          <li className="leading-relaxed p-3 md:p-4 border-l-2 md:border-l-4 border-[var(--theme-accent)] bg-black/5 mt-2">
+            <NText bold className="text-lg md:text-2xl block mb-1">विष (Visha):</NText>
             जो पदार्थ शरीर में प्रवेश कर विषाद (भयंकर कष्ट या अवसाद) उत्पन्न करे, उसे विष कहते हैं। <br/>
-            <span className="italic text-red-600 dark:text-[#991b1b] font-bold">&quot;विषाद जननत्वाच्च विषमित्यभिधीयते&quot;</span><br/>
+            <NAccent className="italic text-sm md:text-lg">&quot;विषाद जननत्वाच्च विषमित्यभिधीयते&quot;</NAccent><br/>
             विष शरीर के दोष (Dosha), धातु (Dhatu) और मल (Mala) को बहुत तेजी से दूषित कर प्राणों का नाश करता है।
           </li>
-        </ul>
+        </NList>
       </div>
 
       {/* 2. Modern Toxicological Concepts */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 text-2xl mb-4 pl-2">
-          <HandwrittenBox borderColor="border-blue-600 dark:border-[#8b7355]" textColor="text-blue-700 dark:text-[#3a2f24]">2. Modern Toxicological Concepts</HandwrittenBox>
+      <div className="mb-8 md:mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox>2. Modern Toxicological Concepts</HandwrittenBox>
         </div>
-        <p className="text-red-600 dark:text-[#991b1b] font-bold text-lg pl-6 md:pl-10 mb-4 italic">
+        <NAccent className="text-sm md:text-lg pl-3 md:pl-10 mb-3 md:mb-4 italic block">
           *For a 10-mark question, distinguishing between these modern terms is mandatory:
-        </p>
-        <ul className="space-y-4 pl-6 md:pl-10 text-xl text-blue-700 dark:text-[#3a2f24]">
-          <li><span className="font-bold text-slate-800 dark:text-[#3a2f24]">Toxicology:</span> The scientific study of adverse effects that occur in living organisms due to chemicals, poisons, or toxins.</li>
-          <li><span className="font-bold text-slate-800 dark:text-[#3a2f24]">Poison:</span> Any substance causing harm via a <span className="font-bold text-red-600 dark:text-[#991b1b]">passive entry mechanism</span> (ingested, inhaled, or absorbed). E.g., Heavy metals, Cyanide.</li>
-          <li><span className="font-bold text-slate-800 dark:text-[#3a2f24]">Venom:</span> A specialized biological poison <span className="font-bold text-red-600 dark:text-[#991b1b]">actively injected</span> through a physical apparatus (fangs, stinger).</li>
-          <li><span className="font-bold text-slate-800 dark:text-[#3a2f24]">Toxin:</span> A poisonous substance produced <span className="font-bold text-red-600 dark:text-[#991b1b]">naturally within living cells</span> (e.g., Bacterial toxins, Ricin).</li>
-        </ul>
+        </NAccent>
+        <NList>
+          <li><NText bold>Toxicology:</NText> The scientific study of adverse effects that occur in living organisms due to chemicals, poisons, or toxins.</li>
+          <li><NText bold>Poison:</NText> Any substance causing harm via a <NAccent>passive entry mechanism</NAccent> (ingested, inhaled, or absorbed). E.g., Heavy metals, Cyanide.</li>
+          <li><NText bold>Venom:</NText> A specialized biological poison <NAccent>actively injected</NAccent> through a physical apparatus (fangs, stinger).</li>
+          <li><NText bold>Toxin:</NText> A poisonous substance produced <NAccent>naturally within living cells</NAccent> (e.g., Bacterial toxins, Ricin).</li>
+        </NList>
       </div>
 
       {/* 3. Properties of Visha (10 Properties) */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 text-2xl mb-4 pl-2">
-          <HandwrittenBox borderColor="border-red-600 dark:border-[#991b1b]" textColor="text-red-600 dark:text-[#991b1b]">
-            3. विष के १० गुण (10 Properties of Visha)
-          </HandwrittenBox>
+      <div className="mb-8 md:mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox>3. विष के १० गुण (10 Properties of Visha)</HandwrittenBox>
         </div>
-        <p className="text-slate-800 dark:text-[#3a2f24] text-xl pl-6 md:pl-10 mb-6 font-bold leading-relaxed border-b-2 border-dashed border-slate-300 dark:border-[#8b7355] pb-4">
-          आचार्य चरक और सुश्रुत के अनुसार विष के गुण शरीर के <span className="text-red-600 dark:text-[#991b1b]">ओजस् (Ojas - Immunity)</span> के गुणों के ठीक विपरीत होते हैं:
-        </p>
+        <NText className="pl-3 md:pl-10 mb-4 md:mb-6 leading-relaxed border-b-2 border-dashed border-[var(--theme-border)] pb-3 md:pb-4 block" bold>
+          आचार्य चरक और सुश्रुत के अनुसार विष के गुण शरीर के <NAccent>ओजस् (Ojas - Immunity)</NAccent> के गुणों के ठीक विपरीत होते हैं:
+        </NText>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 pl-6 md:pl-10 text-xl text-blue-700 dark:text-[#3a2f24]">
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">1.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">लघु (Laghu):</span> हल्का - सभी मार्गों में तेजी से फैलता है।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">2.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">रूक्ष (Ruksha):</span> सूखा - वात दोष को अत्यधिक कुपित करता है।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">3.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">आशु (Ashu):</span> शीघ्र - प्रवेश करते ही तुरंत असर करता है।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">4.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">विशद (Vishada):</span> स्पष्ट - बिना रुके स्रोतों में फैलता है।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">5.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">व्यवायी (Vyavayi):</span> पचने से पहले ही पूरे शरीर में फैल जाना।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">6.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">विकाशी (Vikashi):</span> ओज का नाश और धातुओं के बंधन शिथिल करना।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">7.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">सूक्ष्म (Sukshma):</span> सबसे छोटे स्रोतों (Micro-channels) में प्रवेश।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">8.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">उष्ण (Ushna):</span> गर्म - पित्त और रक्त को तेजी से दूषित करना।</span></div>
-          <div className="flex gap-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">9.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">तीक्ष्ण (Tikshna):</span> भेदक - शरीर के मर्म स्थानों (Vital organs) को नष्ट करना।</span></div>
-          <div className="flex gap-2 col-span-1 md:col-span-2"><span className="text-slate-800 dark:text-[#8b7355] font-bold">10.</span> <span><span className="font-bold text-red-600 dark:text-[#991b1b]">अपाकी (Apaki) / अनिर्देश्य रस:</span> जो पचता नहीं है अथवा जिसका कोई स्पष्ट स्वाद (Taste) न हो।</span></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 md:gap-x-6 md:gap-y-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">1.</span> <span><NAccent>लघु (Laghu):</NAccent> हल्का - सभी मार्गों में तेजी से फैलता है।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">2.</span> <span><NAccent>रूक्ष (Ruksha):</NAccent> सूखा - वात दोष कुपित।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">3.</span> <span><NAccent>आशु (Ashu):</NAccent> शीघ्र - प्रवेश करते ही असर।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">4.</span> <span><NAccent>विशद (Vishada):</NAccent> स्पष्ट - बिना रुके फैलता है।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">5.</span> <span><NAccent>व्यवायी (Vyavayi):</NAccent> पचने से पहले फैलना।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">6.</span> <span><NAccent>विकाशी (Vikashi):</NAccent> ओज का नाश।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">7.</span> <span><NAccent>सूक्ष्म (Sukshma):</NAccent> छोटे स्रोतों में प्रवेश।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">8.</span> <span><NAccent>उष्ण (Ushna):</NAccent> गर्म - पित्त/रक्त को दूषित।</span></div>
+          <div className="flex gap-1 md:gap-2"><span className="opacity-70 font-bold">9.</span> <span><NAccent>तीक्ष्ण (Tikshna):</NAccent> भेदक - मर्म नष्ट करना।</span></div>
+          <div className="flex gap-1 md:gap-2 sm:col-span-2"><span className="opacity-70 font-bold">10.</span> <span><NAccent>अपाकी (Apaki):</NAccent> पचता नहीं है।</span></div>
         </div>
       </div>
 
       {/* 4. Sites of Visha */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 text-2xl mb-4 pl-2">
-          <HandwrittenBox>4. विष के अधिष्ठान (Sites / Sources of Visha)</HandwrittenBox>
+      <div className="mb-8 md:mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox>4. विष के अधिष्ठान (Sites)</HandwrittenBox>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pl-4 md:pl-8 text-xl">
-          <div className="p-4 border-2 border-slate-300 dark:border-[#8b7355] rounded-sm bg-slate-50/50 dark:bg-transparent">
-            <span className="font-bold text-red-600 dark:text-[#991b1b] text-2xl mb-3 block border-b border-slate-300 dark:border-[#8b7355] pb-2">
-              स्थावर विष (Sthavara)
-            </span>
-            <p className="text-slate-800 dark:text-[#3a2f24] font-bold mb-2">Plant/Mineral Origin (10 अधिष्ठान):</p>
-            <ul className="text-blue-700 dark:text-[#3a2f24] grid grid-cols-2 gap-2">
-              <li>• मूल (Root)</li>
-              <li>• पत्र (Leaves)</li>
-              <li>• फल (Fruit)</li>
-              <li>• पुष्प (Flower)</li>
-              <li>• त्वक् (Bark)</li>
-              <li>• क्षीर (Latex)</li>
-              <li>• सार (Heartwood)</li>
-              <li>• निर्यास (Resin)</li>
-              <li>• धातु (Minerals)</li>
-              <li>• कन्द (Bulb)</li>
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 pl-1 md:pl-8">
+          <NCard title="स्थावर विष (Sthavara)">
+            <NText bold className="mb-1 md:mb-2 text-sm md:text-base block">Plant/Mineral Origin (10):</NText>
+            <ul className="grid grid-cols-2 gap-x-2 gap-y-1">
+              <li>• मूल (Root)</li><li>• पत्र (Leaves)</li>
+              <li>• फल (Fruit)</li><li>• पुष्प (Flower)</li>
+              <li>• त्वक् (Bark)</li><li>• क्षीर (Latex)</li>
+              <li>• सार (Wood)</li><li>• निर्यास (Resin)</li>
+              <li>• धातु (Minerals)</li><li>• कन्द (Bulb)</li>
             </ul>
-          </div>
+          </NCard>
 
-          <div className="p-4 border-2 border-slate-300 dark:border-[#8b7355] rounded-sm bg-slate-50/50 dark:bg-transparent">
-            <span className="font-bold text-red-600 dark:text-[#991b1b] text-2xl mb-3 block border-b border-slate-300 dark:border-[#8b7355] pb-2">
-              जाङ्गम विष (Jangama)
-            </span>
-            <p className="text-slate-800 dark:text-[#3a2f24] font-bold mb-2">Animal Origin (16 अधिष्ठान - प्रमुख):</p>
-            <ul className="text-blue-700 dark:text-[#3a2f24] columns-2 gap-2 space-y-1">
-              <li>दृष्टि (Gaze)</li>
-              <li>निःश्वास (Breath)</li>
-              <li>दंष्ट्रा (Fangs)</li>
-              <li>नख (Nails)</li>
-              <li>मूत्र (Urine)</li>
-              <li>पुरीष (Feces)</li>
-              <li>शुक्र (Semen)</li>
-              <li>लाला (Saliva)</li>
-              <li>आर्तव (Menses)</li>
-              <li>तुण्ड (Beak)</li>
-              <li>अस्थि (Bone)</li>
-              <li>पित्त (Bile)</li>
-              <li>शूक (Bristles)</li>
-              <li>शव (Carcass)</li>
+          <NCard title="जाङ्गम विष (Jangama)">
+            <NText bold className="mb-1 md:mb-2 text-sm md:text-base block">Animal Origin (16 - प्रमुख):</NText>
+            <ul className="grid grid-cols-2 gap-x-2 gap-y-1">
+              <li>• दृष्टि (Gaze)</li><li>• निःश्वास (Breath)</li>
+              <li>• दंष्ट्रा (Fangs)</li><li>• नख (Nails)</li>
+              <li>• मूत्र (Urine)</li><li>• पुरीष (Feces)</li>
+              <li>• शुक्र (Semen)</li><li>• लाला (Saliva)</li>
+              <li>• आर्तव (Menses)</li><li>• अस्थि (Bone)</li>
             </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* 5. Movement of Poison */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 text-2xl mb-4 pl-2">
-          <HandwrittenBox>5. विष की गति (Movement of Poison)</HandwrittenBox>
-        </div>
-        <p className="text-slate-800 dark:text-[#3a2f24] text-xl pl-6 md:pl-10 mb-4 font-bold">शरीर में दोषों के आधार पर विष 3 दिशाओं में गति करता है:</p>
-        <ul className="space-y-4 pl-6 md:pl-10 text-xl text-blue-700 dark:text-[#3a2f24]">
-          <li className="flex gap-3">
-            <span className="text-red-600 dark:text-[#991b1b] font-bold">↑</span>
-            <span><span className="font-bold text-slate-800 dark:text-[#3a2f24]">ऊर्ध्व गति (Urdhwa):</span> वात और कफ (Vata-Kapha) की प्रधानता। <br/><span className="italic text-slate-600 dark:text-[#8b7355]">(लक्षण: उल्टी, श्वास कष्ट)</span></span>
-          </li>
-          <li className="flex gap-3">
-            <span className="text-red-600 dark:text-[#991b1b] font-bold">↓</span>
-            <span><span className="font-bold text-slate-800 dark:text-[#3a2f24]">अधो गति (Adho):</span> वात और पित्त (Vata-Pitta) की प्रधानता। <br/><span className="italic text-slate-600 dark:text-[#8b7355]">(लक्षण: दस्त, मूत्र में रक्त)</span></span>
-          </li>
-          <li className="flex gap-3">
-            <span className="text-red-600 dark:text-[#991b1b] font-bold">↔</span>
-            <span><span className="font-bold text-slate-800 dark:text-[#3a2f24]">तिर्यक् गति (Tiryak):</span> विष बाहरी हिस्सों (त्वचा/मांसपेशियां) में फैलता है। <br/><span className="italic text-slate-600 dark:text-[#8b7355]">(लक्षण: चकत्ते, सूजन)</span></span>
-          </li>
-        </ul>
-      </div>
-
-      {/* 6. Modern Toxicokinetics */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 text-2xl mb-4 pl-2">
-          <HandwrittenBox borderColor="border-blue-600 dark:border-[#8b7355]" textColor="text-blue-700 dark:text-[#3a2f24]">6. Modern Toxicokinetics</HandwrittenBox>
-        </div>
-        
-        <div className="pl-6 md:pl-10 text-xl">
-          <div className="mb-6">
-            <span className="font-bold text-red-600 dark:text-[#991b1b] block mb-2 underline decoration-slate-400 dark:decoration-[#8b7355]">Routes of Administration:</span>
-            <p className="text-blue-700 dark:text-[#3a2f24] leading-relaxed">
-              Poisons can enter the body via Inhalation (lungs), Ingestion (GI tract), Injection (IV/IM), or Absorption (skin/mucous membranes).
-            </p>
-          </div>
-
-          <div>
-            <span className="font-bold text-red-600 dark:text-[#991b1b] block mb-2 underline decoration-slate-400 dark:decoration-[#8b7355]">Mode of Action:</span>
-            <ul className="space-y-3 text-blue-700 dark:text-[#3a2f24] list-disc list-inside marker:text-red-600 dark:marker:text-[#991b1b]">
-              <li><span className="font-bold text-slate-800 dark:text-[#3a2f24]">Local Action:</span> Destruction or irritation at the site of contact (e.g., Corrosive acids).</li>
-              <li><span className="font-bold text-slate-800 dark:text-[#3a2f24]">Systemic Action:</span> Absorbed into the bloodstream affecting distant organs (e.g., Neurotoxins).</li>
-              <li><span className="font-bold text-slate-800 dark:text-[#3a2f24]">Combined Action:</span> Exhibits both local and systemic effects (e.g., Carbolic acid).</li>
-            </ul>
-          </div>
+          </NCard>
         </div>
       </div>
 
