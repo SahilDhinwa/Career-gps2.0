@@ -42,7 +42,8 @@ export default function ShortNotesIndex() {
       <div className="mb-8">
         <Link 
           href="/bams-hub" 
-          className="inline-flex items-center gap-2 text-slate-500 dark:text-[#d4c5b0] hover:text-red-600 dark:hover:text-[#ff0055] transition-colors font-bold text-lg font-sans"
+          // Updated to dark ink (#5c4d3c) for visibility
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-[#5c4d3c] hover:text-red-600 dark:hover:text-[#ff0055] transition-colors font-bold text-lg font-sans"
         >
           <ArrowLeft className="w-5 h-5" /> Back to BAMS Hub
         </Link>
@@ -52,7 +53,8 @@ export default function ShortNotesIndex() {
         Quick Revision Notebook
       </HandwrittenTitle>
 
-      <p className="text-blue-700 dark:text-[#e8dcc4] text-xl leading-relaxed mb-12 text-center max-w-2xl mx-auto">
+      {/* Text updated to #3a2f24 (Dark Ink) so it doesn't disappear into the paper */}
+      <p className="text-blue-700 dark:text-[#3a2f24] font-bold text-xl leading-relaxed mb-12 text-center max-w-2xl mx-auto">
         Select a subject below to open the handwritten quick-notes. Perfect for last-minute exam revision and OPD quick references.
       </p>
 
@@ -62,7 +64,8 @@ export default function ShortNotesIndex() {
             
             {/* Subject Header */}
             <div className="flex items-center gap-4 text-2xl mb-6">
-              <HandwrittenBox borderColor="border-slate-800 dark:border-[#8b7355]" className="bg-slate-100 dark:bg-[#1a110a]">
+              {/* Box background set to transparent so the vintage paper shows through */}
+              <HandwrittenBox borderColor="border-slate-800 dark:border-[#3a2f24]" className="bg-slate-100 dark:bg-transparent">
                 {section.subject}
               </HandwrittenBox>
               <div className="flex-grow border-b-2 border-dashed border-slate-300 dark:border-[#8b7355]"></div>
@@ -77,7 +80,8 @@ export default function ShortNotesIndex() {
                   {topic.link !== "#" ? (
                     <Link 
                       href={topic.link} 
-                      className="text-blue-700 dark:text-[#e8dcc4] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] hover:decoration-red-600 dark:hover:decoration-[#ff0055] underline-offset-4 transition-all"
+                      // Text updated to #3a2f24 (Dark Ink)
+                      className="text-blue-700 dark:text-[#3a2f24] hover:text-red-600 dark:hover:text-[#ff0055] underline decoration-slate-300 dark:decoration-[#8b7355] hover:decoration-red-600 dark:hover:decoration-[#ff0055] underline-offset-4 transition-all font-bold"
                     >
                       {topic.name}
                     </Link>
@@ -87,19 +91,19 @@ export default function ShortNotesIndex() {
                     </span>
                   )}
 
-                  {/* Status Badge */}
+                  {/* Status Badges - Backgrounds made transparent so they look hand-stamped on the paper */}
                   {topic.status === "New" && (
-                    <span className="text-[12px] font-sans font-bold bg-red-100 dark:bg-[#1a110a] text-red-600 dark:text-[#ff0055] px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-red-200 dark:border-[#ff0055]/50">
+                    <span className="text-[12px] font-sans font-bold bg-red-100 dark:bg-transparent text-red-600 dark:text-[#ff0055] px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-red-200 dark:border-[#ff0055]/50">
                       New
                     </span>
                   )}
                   {topic.status === "Active" && (
-                    <span className="text-[12px] font-sans font-bold bg-emerald-100 dark:bg-[#1a110a] text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-emerald-200 dark:border-emerald-900">
+                    <span className="text-[12px] font-sans font-bold bg-emerald-100 dark:bg-transparent text-emerald-600 dark:text-emerald-700 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-emerald-200 dark:border-emerald-700/50">
                       Active
                     </span>
                   )}
                   {topic.status === "Coming Soon" && (
-                    <span className="text-[12px] font-sans font-bold bg-slate-100 dark:bg-[#1a110a] text-slate-500 dark:text-[#d4c5b0] px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-slate-200 dark:border-[#8b7355]/50">
+                    <span className="text-[12px] font-sans font-bold bg-slate-100 dark:bg-transparent text-slate-500 dark:text-[#5c4d3c] px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-slate-200 dark:border-[#8b7355]/50">
                       Draft
                     </span>
                   )}
