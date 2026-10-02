@@ -49,7 +49,7 @@ const NOTE_THEMES: NoteTheme[] = [
     borderDark: "#475569",
     accentLight: "#2563eb", // Blue 600
     accentDark: "#38bdf8",  // Sky 400
-    swatchColor: "#0f172a",
+    swatchColor: "#1e293b",
   },
   {
     id: "sepia",
@@ -64,13 +64,38 @@ const NOTE_THEMES: NoteTheme[] = [
     accentDark: "#fb923c",
     swatchColor: "#8b7355",
   },
+  {
+    id: "puredark",
+    name: "Pure Dark (AMOLED)",
+    bgLight: "#ffffff", // Pure white for light mode counterpart
+    bgDark: "#000000",  // AMOLED Pitch Black
+    textLight: "#000000", 
+    textDark: "#e2e8f0",  // Slate 200 (Soft off-white for reading)
+    borderLight: "#000000",
+    borderDark: "#475569", // Slate 600 (Subtle borders)
+    accentLight: "#dc2626", // Red 600
+    accentDark: "#f87171",  // Red 400 (Bright and legible on black)
+    swatchColor: "#000000",
+  },
 ];
 
 // 2. MAIN CANVAS WRAPPER
 export function HandwrittenCanvas({ children }: { children: ReactNode }) {
-  const [activeThemeId, setActiveThemeId] = useState<string>("vintage");
+  // Set initial state. We'll default to 'puredark' if we want it as the primary dark mode base.
+  // We use 'vintage' as the absolute default, but we'll let users slide to 'puredark' easily.
+  const [activeThemeId, setActiveThemeId] = useState<string>("vintage"); 
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
+
+  // If you want "Pure Dark" to AUTOMATICALLY be selected when a user first switches to Dark Mode, 
+  // you can uncomment this block. However, usually, it's better to let the user pick via the slider.
+  /*
+  useEffect(() => {
+    if (resolvedTheme === "dark" && activeThemeId === "vintage") {
+      setActiveThemeId("puredark");
+    }
+  }, [resolvedTheme]);
+  */
 
   useEffect(() => setMounted(true), []);
 
@@ -90,7 +115,7 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
         '--theme-accent': isDark ? theme.accentDark : theme.accentLight,
       } as React.CSSProperties}
     >
-      {/* Background Image (only for dark mode if specified) */}
+      {/* Background Image (only for dark mode if specified AND if we aren't overriding it with pure dark) */}
       {isDark && theme.bgImageDark && (
         <div className="absolute inset-0 z-0" 
              style={{
@@ -156,20 +181,18 @@ export function HandwrittenTitle({ children, badge }: { children: ReactNode; bad
   );
 }
 
-// 4. HANDWRITTEN BOX
-// 4. HANDWRITTEN BOX
+// 4. HANDWRITTEN BOX (WITH OPTIONAL PROPS FIXED)
 export function HandwrittenBox({ 
   children, 
   className = "",
-  borderColor, // Added optional prop
-  textColor    // Added optional prop
+  borderColor, 
+  textColor    
 }: { 
   children: ReactNode; 
   className?: string;
-  borderColor?: string; // Defined as optional string
-  textColor?: string;   // Defined as optional string
+  borderColor?: string; 
+  textColor?: string;   
 }) {
-  // If a manual color is passed, use it. Otherwise, use the default theme variable.
   const finalBorderClass = borderColor || "border-[var(--theme-border)]";
   const finalTextClass = textColor || "text-[var(--theme-text)]";
 
@@ -182,4 +205,3 @@ export function HandwrittenBox({
     </div>
   );
 }
-
