@@ -17,6 +17,7 @@ const NOTEBOOK_INDEX = [
       { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "New" },
       { name: "Chapter 2: (Coming Soon)", link: "#", status: "Coming Soon" }
     ]
+  },
   {
     subject: "Dravyaguna Vigyan",
     topics: [
