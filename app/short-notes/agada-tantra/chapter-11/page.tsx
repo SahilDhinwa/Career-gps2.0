@@ -157,7 +157,8 @@ export default function AgadaTantraChapter11() {
         <div className="space-y-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <NCard title="Brown Recluse Spider">
-              <p className="mt-2"><NText bold>Cytotoxic venom.</NText> Causes severe local tissue necrosis (सड़न), an ulcerating deep wound, and a classic <NAccent bold>"red, white, and blue" bullseye lesion.</NAccent></p>
+              {/* FIXED LINE HERE: Replaced "" with &quot; */}
+              <p className="mt-2"><NText bold>Cytotoxic venom.</NText> Causes severe local tissue necrosis (सड़न), an ulcerating deep wound, and a classic <NAccent bold>&quot;red, white, and blue&quot; bullseye lesion.</NAccent></p>
             </NCard>
             <NCard title="Black Widow Spider">
               <p className="mt-2"><NText bold>Neurotoxic venom.</NText> Causes severe muscle cramps, abdominal rigidity <NAccent bold>(board-like abdomen)</NAccent>, and profuse sweating.</p>
