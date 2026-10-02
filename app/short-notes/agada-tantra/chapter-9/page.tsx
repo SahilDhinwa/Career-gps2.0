@@ -6,7 +6,7 @@ import { NText, NAccent, NCard } from "@/components/NoteElements";
 export default function AgadaTantraChapter9() {
   return (
     <HandwrittenCanvas>
-      <HandwrittenTitle badge={<>Agada<br/><NAccent>Tantra</NAccent></>}>
+      <HandwrittenTitle badge="Agada Tantra">
         Chapter 9: Sthavara Visha
       </HandwrittenTitle>
 
@@ -23,9 +23,7 @@ export default function AgadaTantraChapter9() {
         </NText>
       </div>
 
-      {/* ========================================== */}
-      {/* 1. KUCHALA / NUX VOMICA                      */}
-      {/* ========================================== */}
+      {/* 1. KUCHALA / NUX VOMICA */}
       <div className="relative flex py-8 items-center">
         <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
       </div>
@@ -85,7 +83,7 @@ export default function AgadaTantraChapter9() {
             </ul>
           </div>
 
-          {/* Differential Diagnosis - CRITICAL EXAM TOPIC */}
+          {/* Differential Diagnosis */}
           <div className="p-4 border-2 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent)]/5 rounded-sm">
             <NAccent bold className="block mb-3 text-xl text-center">सापेक्ष निदान (Differential Diagnosis)</NAccent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,9 +117,7 @@ export default function AgadaTantraChapter9() {
         </div>
       </div>
 
-      {/* ========================================== */}
-      {/* 2. DHATURA                                 */}
-      {/* ========================================== */}
+      {/* 2. DHATURA */}
       <div className="relative flex py-8 items-center">
         <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
       </div>
@@ -132,7 +128,6 @@ export default function AgadaTantraChapter9() {
         </HandwrittenBox>
       </div>
 
-      {/* Dhatura: Ayurvedic */}
       <div className="mb-8">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part A: आयुर्वेदिक परिप्रेक्ष्य</HandwrittenBox>
@@ -154,7 +149,6 @@ export default function AgadaTantraChapter9() {
         </div>
       </div>
 
-      {/* Dhatura: Modern & 9 D's */}
       <div className="mb-12">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part B: Modern Toxicological Perspective</HandwrittenBox>
@@ -165,7 +159,6 @@ export default function AgadaTantraChapter9() {
             <li><NText bold>Fatal Dose & Period:</NText> 100 to 125 seeds. Fatal period is around 24 hours.</li>
           </ul>
 
-          {/* The 9 D's */}
           <NCard title="Clinical Features: The Classic 9 D's of Datura">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 mt-2">
               <div><NAccent bold>1. Dryness:</NAccent> Extreme dryness of mouth/skin.</div>
@@ -173,27 +166,24 @@ export default function AgadaTantraChapter9() {
               <div><NAccent bold>3. Dilated Pupils:</NAccent> Loss of light reflex.</div>
               <div><NAccent bold>4. Dry Hot Skin:</NAccent> Hyperthermia.</div>
               <div><NAccent bold>5. Drunken Gait:</NAccent> Staggering walk.</div>
-              <div><NAccent bold>6. Delirium:</NAccent> Muttering meaningless words.</div>
+              <div><NAccent bold>6. Delirium:</NAccent> Meaningless muttering.</div>
               <div><NAccent bold>7. Drowsiness:</NAccent> Severe sleepiness/coma.</div>
               <div><NAccent bold>8. Dysarthria:</NAccent> Difficulty speaking.</div>
-              <div><NAccent bold>9. Death:</NAccent> Respiratory center failure.</div>
+              <div><NAccent bold>9. Death:</NAccent> Respiratory failure.</div>
             </div>
           </NCard>
 
-          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-accent)]/5">
             <NAccent bold className="block mb-2 text-lg">Modern Management & Antidote:</NAccent>
             <ul className="space-y-2 list-disc list-inside">
-              <li><NText bold>Specific Antidote:</NText> <NAccent bold>Physostigmine</NAccent> (1-2 mg IV). Neostigmine/Pilocarpine also used.</li>
+              <li><NText bold>Specific Antidote:</NText> <NAccent bold>Physostigmine</NAccent> (1-2 mg IV).</li>
               <li><NText bold>Gastric Lavage:</NText> Wash with KMnO4 or Tannic acid.</li>
-              <li><NText bold>Symptomatic:</NText> Cold sponging/ice packs for hyperthermia.</li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* ========================================== */}
-      {/* 3. VATSNABHA / ACONITE                       */}
-      {/* ========================================== */}
+      {/* 3. VATSNABHA */}
       <div className="relative flex py-8 items-center">
         <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
       </div>
@@ -204,7 +194,6 @@ export default function AgadaTantraChapter9() {
         </HandwrittenBox>
       </div>
 
-      {/* Vatsnabha: Ayurvedic */}
       <div className="mb-8">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part A: आयुर्वेदिक परिप्रेक्ष्य</HandwrittenBox>
@@ -213,20 +202,19 @@ export default function AgadaTantraChapter9() {
           <ul className="list-disc list-inside space-y-2">
             <li><NText bold>पर्याय:</NText> &apos;मीठा विष&apos; (Sweet poison)। यह <NAccent bold>महाविष</NAccent> वर्ग का सर्वप्रमुख द्रव्य है।</li>
             <li><NText bold>विष अधिष्ठान:</NText> मूल (Tuberous root)।</li>
-            <li><NText bold>लक्षण:</NText> गले/होठों में सूई चुभने जैसी पीड़ा। गर्दन टूट कर गिर जाती है (ग्रीवाभंजन), आंखों के आगे अंधेरा छा जाता है, हृदय गति रुकने से मृत्यु।</li>
+            <li><NText bold>लक्षण:</NText> गले/होठों में सूई चुभने जैसी पीड़ा। गर्दन टूट कर गिर जाती है (ग्रीवाभंजन), हृदय गति रुकने से मृत्यु।</li>
           </ul>
 
           <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
             <NAccent bold className="block mb-1">चिकित्सा (Management):</NAccent>
             <ul className="list-disc list-inside space-y-1">
-              <li><NText bold>टंकण भस्म (Borax):</NText> यह वत्सनाभ का श्रेष्ठ प्रतिविष (Antidote) है। इसे गाय के घी के साथ चटाएं।</li>
+              <li><NText bold>टंकण भस्म (Borax):</NText> यह वत्सनाभ का श्रेष्ठ प्रतिविष है। इसे गाय के घी के साथ चटाएं।</li>
               <li>अर्जुन की छाल का काढ़ा हृदय को बल देने के लिए पिलाएं।</li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Vatsnabha: Modern */}
       <div className="mb-10">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part B: Modern Toxicological Perspective</HandwrittenBox>
@@ -235,15 +223,13 @@ export default function AgadaTantraChapter9() {
           <ul className="list-disc list-inside space-y-2">
             <li><NText bold>Constituents:</NText> Potent cardiac/neurotoxic alkaloid <NAccent bold>Aconitine</NAccent>.</li>
             <li><NText bold>Fatal Dose & Period:</NText> 1g root or 2-5mg pure Aconitine. Fatal in 1-6 hrs.</li>
-            <li><NText bold>Action:</NText> Myocardium & CNS. Initially stimulates, then paralyzes nerves.</li>
           </ul>
 
           <div className="p-4 border-2 border-[var(--theme-border)] rounded-sm bg-white/20 dark:bg-black/10">
             <NAccent bold className="block mb-2 text-lg">Clinical Features (Symptoms):</NAccent>
             <ul className="space-y-2 list-disc list-inside">
-              <li><NText bold>Tingling & Numbness:</NText> &quot;Pins and needles&quot; sensation starting from lips/tongue spreading to body <span className="italic opacity-80">(Pathognomonic sign)</span>.</li>
+              <li><NText bold>Tingling & Numbness:</NText> &quot;Pins and needles&quot; sensation starting from lips/tongue.</li>
               <li><NText bold>Cardiac Signs:</NText> Severe arrhythmias, bradycardia, severe hypotension.</li>
-              <li><NText bold>Hippus:</NText> Pupils alternately dilate and contract.</li>
             </ul>
           </div>
 
