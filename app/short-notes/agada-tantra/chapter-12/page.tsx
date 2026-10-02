@@ -124,7 +124,8 @@ export default function AgadaTantraChapter12() {
             <li>Severe, agonizing, and burning pain from the mouth down to the stomach.</li>
             <li><NText bold>Chemical burns:</NText> Lips, mouth, and tongue show severe burns/discoloration.</li>
             <li><NText bold>Dysphagia:</NText> Severe difficulty in swallowing.</li>
-            <li><NText bold>Vomiting:</NText> Vomitus contains altered blood, looking like <NAccent bold>"coffee-grounds"</NAccent>, mixed with shredded mucous membranes.</li>
+            {/* FIXED LINE HERE: Replaced "" with &quot; */}
+            <li><NText bold>Vomiting:</NText> Vomitus contains altered blood, looking like <NAccent bold>&quot;coffee-grounds&quot;</NAccent>, mixed with shredded mucous membranes.</li>
             <li><NText bold>Shock:</NText> Severe hypovolemic and neurogenic shock due to extreme pain and fluid loss.</li>
           </ul>
         </div>
@@ -143,7 +144,7 @@ export default function AgadaTantraChapter12() {
             <NAccent bold className="block mb-3 text-2xl text-center">STRICTLY CONTRAINDICATED (क्या बिल्कुल नहीं करना है):</NAccent>
             <ul className="space-y-4">
               <li>
-                <NText bold className="block text-lg">1. DO NOT Induce Vomiting (Emesis):</NText> 
+                <NText bold className="block text-lg">1. DO NOT Indউট Vomiting (Emesis):</NText> 
                 उल्टी बिल्कुल नहीं करानी चाहिए। If the patient vomits, the corrosive acid/alkali will burn the esophagus and mouth a second time as it comes up.
               </li>
               <li>
