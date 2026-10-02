@@ -253,7 +253,38 @@ export default function AgadaTantraChapter6() {
           </div>
         </div>
       </div>
+      {/* ========================================== */}
+      {/* ADDITIONAL EXAM TOPICS (NCISM SYLLABUS)      */}
+      {/* ========================================== */}
+      <div className="relative flex py-8 items-center">
+        <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
+      </div>
 
+      <div className="mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+            Additional Exam Topics (NCISM)
+          </HandwrittenBox>
+        </div>
+        <div className="space-y-6 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+            <NAccent bold className="block mb-2 text-xl">1. Biological & Chemical Warfare (जैविक एवं रासायनिक युद्ध):</NAccent>
+            
+            <NText bold className="block mb-1 mt-3">Chemical Warfare:</NText>
+            <p className="mb-2">Using highly toxic chemicals to kill or incapacitate the enemy.</p>
+            <ul className="space-y-2 list-disc list-inside mb-4">
+              <li><NText bold>Blister Agents (War gas):</NText> Mustard gas (यह PYQ में पूछा गया है), causes severe chemical burns and blisters.</li>
+              <li><NText bold>Nerve Agents:</NText> Sarin, Tabun, VX gas (Extremely lethal organophosphates that destroy the nervous system).</li>
+            </ul>
+
+            <NText bold className="block mb-1">Biological Warfare:</NText>
+            <p>Intentional release of deadly viruses, bacteria, or toxins (e.g., Anthrax spores, Botulinum toxin, Smallpox) as weapons of mass destruction.</p>
+          </div>
+
+        </div>
+      </div>
+      
     </HandwrittenCanvas>
   );
 }
