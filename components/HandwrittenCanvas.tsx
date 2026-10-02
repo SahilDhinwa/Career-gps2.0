@@ -157,13 +157,29 @@ export function HandwrittenTitle({ children, badge }: { children: ReactNode; bad
 }
 
 // 4. HANDWRITTEN BOX
-export function HandwrittenBox({ children, className = "" }: { children: ReactNode; className?: string }) {
+// 4. HANDWRITTEN BOX
+export function HandwrittenBox({ 
+  children, 
+  className = "",
+  borderColor, // Added optional prop
+  textColor    // Added optional prop
+}: { 
+  children: ReactNode; 
+  className?: string;
+  borderColor?: string; // Defined as optional string
+  textColor?: string;   // Defined as optional string
+}) {
+  // If a manual color is passed, use it. Otherwise, use the default theme variable.
+  const finalBorderClass = borderColor || "border-[var(--theme-border)]";
+  const finalTextClass = textColor || "text-[var(--theme-text)]";
+
   return (
     <div 
-      className={`border-2 px-2 py-0.5 md:px-3 md:py-1 text-base md:text-xl inline-block border-[var(--theme-border)] text-[var(--theme-text)] ${className}`}
+      className={`border-2 px-2 py-0.5 md:px-3 md:py-1 text-base md:text-xl inline-block ${finalBorderClass} ${finalTextClass} ${className}`}
       style={handDrawnBorder}
     >
       {children}
     </div>
   );
 }
+
