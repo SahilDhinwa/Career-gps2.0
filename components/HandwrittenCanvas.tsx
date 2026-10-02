@@ -94,7 +94,7 @@ const NOTE_THEMES: NoteTheme[] = [
 
 // 2. MAIN CANVAS WRAPPER
 export function HandwrittenCanvas({ children }: { children: ReactNode }) {
-  const [activeThemeId, setActiveThemeId] = useState<string>("vintage");
+  const [activeThemeId, setActiveThemeId] = useState<string>("midnight");
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
 
