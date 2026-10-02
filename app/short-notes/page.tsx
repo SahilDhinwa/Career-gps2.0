@@ -12,7 +12,7 @@ const NOTEBOOK_INDEX = [
       { name: "View Complete Roga Nidan Syllabus & Index", link: "/short-notes/roga-nidan", status: "Active" }
     ]
   },  
-    {
+      {
     subject: "Agada Tantra (Toxicology)",
     topics: [
       { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "Active" },
@@ -22,7 +22,8 @@ const NOTEBOOK_INDEX = [
       { name: "Chapter 4: Garavisha & Dooshivisha", link: "/short-notes/agada-tantra/chapter-4", status: "Active" },
       { name: "Chapter 5: Visha Upadrava & Hazards", link: "/short-notes/agada-tantra/chapter-5", status: "Active" },
       { name: "Chapter 6: Environmental Toxicology", link: "/short-notes/agada-tantra/chapter-6", status: "Active" },
-      { name: "Chapter 7: Contact Dermatitis", link: "/short-notes/agada-tantra/chapter-7", status: "New" }
+      { name: "Chapter 7: Contact Dermatitis", link: "/short-notes/agada-tantra/chapter-7", status: "Active" },
+      { name: "Chapter 8: Agada Yogas (Therapeutic Formulations)", link: "/short-notes/agada-tantra/chapter-8", status: "New" }
     ]
   },
   {
