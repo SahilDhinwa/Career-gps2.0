@@ -19,7 +19,7 @@ export default function AgadaTantraChapter2() {
       {/* 1. General Principles - 24 Modalities */}
       <div className="mb-8 md:mb-12">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
-          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+          </HandwrittenBox>
             1. चतुर्विंशति उपक्रम (Charaka&apos;s 24 Modalities)
           </HandwrittenBox>
         </div>
