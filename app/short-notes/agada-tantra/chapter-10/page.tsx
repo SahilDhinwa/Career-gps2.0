@@ -6,8 +6,8 @@ import {
   NCard,
   NAccent,
   NTable
-} from '@/components/ui/AgadaTantraUi';
-import { HandwrittenBox } from '@/components/ui/HandwrittenBox';
+} from "@/components/HandwrittenCanvas";
+import { HandwrittenBox } from "@/components/NoteElements";
 
 export default function DhatuVishaPage() {
   return (
