@@ -105,7 +105,7 @@ export default function AgadaTantraChapter1() {
         </div>
       </div>
 
-      {/* 5. Movement of Poison (RESTORED) */}
+      {/* 5. Movement of Poison */}
       <div className="mb-8 md:mb-10">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>5. विष की गति (Movement of Poison)</HandwrittenBox>
@@ -129,7 +129,7 @@ export default function AgadaTantraChapter1() {
         </ul>
       </div>
 
-      {/* 6. Modern Toxicokinetics (RESTORED) */}
+      {/* 6. Modern Toxicokinetics */}
       <div className="mb-8 md:mb-10">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>6. Modern Toxicokinetics</HandwrittenBox>
@@ -150,6 +150,56 @@ export default function AgadaTantraChapter1() {
               <li><NText bold>Systemic Action:</NText> Absorbed into the bloodstream affecting distant organs (e.g., Neurotoxins).</li>
               <li><NText bold>Combined Action:</NText> Exhibits both local and systemic effects (e.g., Carbolic acid).</li>
             </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* 7. Factors Modifying Action of Poison (NEW UPDATE) */}
+      <div className="mb-10">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
+          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
+            7. विष के प्रभाव को बदलने वाले कारक (Factors Modifying Poison)
+          </HandwrittenBox>
+        </div>
+        <div className="pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          <NText className="leading-relaxed block mb-6">
+            विष हमेशा एक जैसा असर नहीं करता। कुछ विशेष परिस्थितियों (Factors) के कारण विष का प्रभाव (Toxicity) या तो बहुत भयंकर हो जाता है या कम हो जाता है। परीक्षा (5-marks) के लिए इसे आयुर्वेद और आधुनिक दोनों दृष्टिकोणों से लिखना चाहिए:
+          </NText>
+
+          <NCard title="1. आयुर्वेदिक दृष्टिकोण (Ayurvedic Factors)">
+            <NText className="block mb-3 font-bold opacity-80">आचार्य सुश्रुत के अनुसार विष निम्नलिखित भावों के आधार पर अपना प्रभाव बदलता है:</NText>
+            <ul className="space-y-3 list-disc list-inside">
+              <li><NText bold>देश (Desha - Habitat/Place):</NText> यदि विष &apos;अनूप देश&apos; (Marshy/Wet land) में उत्पन्न हुआ हो या रोगी वहां रहता हो, तो कफ दोष के बढ़ने से विष का प्रभाव अधिक घातक होता है।</li>
+              <li><NText bold>काल (Kala - Season/Time):</NText> &apos;ग्रीष्म ऋतु&apos; (Summer) और &apos;शरद ऋतु&apos; (Autumn) में पित्त के प्रकोप के कारण विष बहुत तेजी से फैलता है। बादल छाए रहने (दुर्दिन) पर विष अधिक कुपित होता है।</li>
+              <li><NText bold>प्रकृति (Prakriti - Constitution):</NText> यदि विष के गुण और व्यक्ति की प्रकृति समान हों (जैसे पित्त प्रकृति वाले व्यक्ति को उष्ण विष का काटना), तो मृत्यु शीघ्र होती है।</li>
+              <li><NText bold>सात्म्य (Satmya - Tolerance):</NText> यदि कोई व्यक्ति रोज़ थोड़ी-थोड़ी मात्रा में विष का सेवन करता है (जैसे अफीम या तंबाकू खाने की आदत), तो उसका शरीर विष का अभ्यस्त (Tolerant) हो जाता है और घातक मात्रा भी उस पर असर नहीं करती।</li>
+            </ul>
+          </NCard>
+
+          <div className="mt-6">
+            <NCard title="2. Modern Toxicological Concepts">
+              <ul className="space-y-4 list-disc list-inside">
+                <li>
+                  <NText bold>Quantity / Dose (मात्रा):</NText> A large dose usually produces acute, fatal toxicity, whereas small, repeated doses produce chronic toxicity. <span className="italic opacity-80">(However, idiosyncrasy can make even a small dose fatal).</span>
+                </li>
+                <li>
+                  <NText bold>Route of Administration (प्रवेश का मार्ग):</NText> The toxicity is highest and fastest if the poison enters through Intravenous (IV) injection or Inhalation (lungs). It is comparatively slower if ingested orally due to liver metabolism (First-pass effect).
+                </li>
+                <li>
+                  <NText bold>State of the Poison (विष की भौतिक स्थिति):</NText>
+                  <ul className="list-[circle] list-inside pl-6 mt-2 space-y-1">
+                    <li><NAccent bold>Physical state:</NAccent> Gases and liquids are absorbed much faster than solid pills or powders.</li>
+                    <li><NAccent bold>Chemical state:</NAccent> Poisons act rapidly when dissolved in water or alcohol (e.g., Arsenic is more toxic in a soluble form).</li>
+                  </ul>
+                </li>
+                <li>
+                  <NText bold>Age and Health of the Patient (उम्र और स्वास्थ्य):</NText> Infants and the elderly are highly susceptible to poisons due to weaker liver and kidney functions. A healthy adult can resist toxicity better.
+                </li>
+                <li>
+                  <NText bold>Stomach Contents (आमाशय की स्थिति):</NText> A poison consumed on an empty stomach is absorbed immediately. If the stomach is full of food (especially fatty food), the absorption of the poison is delayed.
+                </li>
+              </ul>
+            </NCard>
           </div>
         </div>
       </div>
