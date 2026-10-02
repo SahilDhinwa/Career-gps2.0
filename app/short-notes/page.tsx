@@ -12,6 +12,12 @@ const NOTEBOOK_INDEX = [
     ]
   },
   {
+    subject: "Agada Tantra (Toxicology)",
+    topics: [
+      { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "New" },
+      { name: "Chapter 2: (Coming Soon)", link: "#", status: "Coming Soon" }
+    ]
+  {
     subject: "Dravyaguna Vigyan",
     topics: [
       { name: "Basic Pharmacology Definitions", link: "/short-notes/dravyaguna/pharmacology", status: "Active" },
