@@ -151,7 +151,7 @@ export default function SkinDiseasesCompendium() {
             {/* Header / Number */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div className="flex items-center gap-3">
-                <HandwrittenBox borderColor="border-red-600 dark:border-rose-400" textColor="text-red-600 dark:text-rose-400" className="text-xl font-bold">
+                <HandwrittenBox>
                   #{item.num}
                 </HandwrittenBox>
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-[#f0e6d2]">
