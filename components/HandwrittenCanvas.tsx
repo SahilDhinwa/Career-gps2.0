@@ -15,7 +15,7 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
         {/* Dark Mode Background Image Layer (Light Vintage Paper) */}
         <div className="absolute inset-0 hidden dark:block z-0" 
              style={{
-                 backgroundImage: "url('/vintage-paper.jpg')", // Ensure this image is in your 'public' folder
+                 backgroundImage: "url('/vintage-page.jpg')", // Ensure this image is in your 'public' folder
                  backgroundSize: "cover",
                  backgroundRepeat: "no-repeat",
                  backgroundAttachment: "fixed",
