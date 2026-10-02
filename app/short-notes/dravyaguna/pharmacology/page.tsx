@@ -24,7 +24,7 @@ export default function PharmacologyNotes() {
       {/* Types Section */}
       <div className="mb-10">
         <div className="flex items-center gap-4 text-2xl mb-4">
-          <HandwrittenBox borderColor="border-red-600" className="rounded-[50%]">
+          <HandwrittenBox>
             Type
           </HandwrittenBox>
           <span className="text-slate-800">→</span>
