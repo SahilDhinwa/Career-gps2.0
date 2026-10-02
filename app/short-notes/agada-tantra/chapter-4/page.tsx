@@ -279,33 +279,7 @@ export default function AgadaTantraChapter4() {
           </div>
         </div>
       </div>
-      {/* ========================================== */}
-      {/* ADDITIONAL EXAM TOPICS (NCISM SYLLABUS)      */}
-      {/* ========================================== */}
-      <div className="relative flex py-8 items-center">
-        <div className="flex-grow border-t-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
-      </div>
 
-      <div className="mb-10">
-        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
-          <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
-            Additional Exam Topics (NCISM)
-          </HandwrittenBox>
-        </div>
-        <div className="space-y-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
-          
-          <div className="p-4 border-2 border-[var(--theme-border)] rounded-sm bg-white/20 dark:bg-black/10">
-            <NAccent bold className="block mb-2 text-xl">1. Endocrine Disrupters (अंतःस्रावी विघटनकारी रसायन):</NAccent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><NText bold>Definition:</NText> These are synthetic chemicals that interfere with the body&apos;s natural hormonal (endocrine) system.</li>
-              <li><NText bold>Sources:</NText> BPA (Bisphenol A) found in plastic bottles, Phthalates in cosmetics, and certain pesticides.</li>
-              <li><NText bold>Pathology:</NText> They mimic natural hormones (like estrogen) or block hormone receptors, leading to severe reproductive issues (Infertility), early puberty, and an increased risk of breast/prostate cancer.</li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-      
     </HandwrittenCanvas>
   );
           }
