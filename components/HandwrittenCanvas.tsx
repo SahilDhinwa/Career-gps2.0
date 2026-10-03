@@ -89,6 +89,19 @@ const NOTE_THEMES: NoteTheme[] = [
     accentLight: "#e11d48", // Ruby red
     accentDark: "#fbbf24",  // Soft royal gold for high contrast
     swatchColor: "#881337", // Velvet color for the slider
+  },
+  {
+    id: "babypink",
+    name: "Baby Pink",
+    bgLight: "#fdf2f8",     // Soft baby pink
+    bgDark: "#1f111a",      // Deep charcoal with a pink hue
+    textLight: "#4c0519",   // Deep rose for readable contrast
+    textDark: "#fce7f3",    // Light baby pink text for dark mode
+    borderLight: "#be185d", // Medium pink border
+    borderDark: "#f472b6",  // Bright pink border for dark mode
+    accentLight: "#e11d48", // Rose accent
+    accentDark: "#fda4af",  // Soft rose accent for dark mode
+    swatchColor: "#fbcfe8", // Baby pink for the theme slider button
   }
 ];
 
