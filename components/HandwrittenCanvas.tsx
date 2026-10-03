@@ -117,6 +117,19 @@ const NOTE_THEMES: NoteTheme[] = [
   "swatchColor": "#cde6e3"
   },
   {
+  "id": "charcoal-cyan",
+  "name": "Deep Charcoal (Cyan)",
+  "bgLight": "#f0f4f5",
+  "bgDark": "#121214",
+  "textLight": "#212d31",
+  "textDark": "#eceff1",
+  "borderLight": "#b2c1c6",
+  "borderDark": "#90a4ae",
+  "accentLight": "#00b4d8",
+  "accentDark": "#4deeea",
+  "swatchColor": "#121214"
+  },
+  {
     id: "babypink",
     name: "Baby Pink",
     bgLight: "#fdf2f8",
