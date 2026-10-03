@@ -6,7 +6,7 @@ import { NText, NAccent, NCard } from "@/components/NoteElements";
 export default function AgadaTantraChapter9() {
   return (
     <HandwrittenCanvas>
-      <HandwrittenTitle badge={<>Agada<br/><NAccent>Tantra</NAccent></>}>
+      <HandwrittenTitle badge="Agada Tantra">
         Chapter 9: Sthavara Visha
       </HandwrittenTitle>
 
@@ -49,17 +49,17 @@ export default function AgadaTantraChapter9() {
           <ul className="list-disc list-inside space-y-2">
             <li><NText bold>परिचय एवं पर्याय:</NText> कुचला को &apos;कुपीलु&apos;, &apos;विषतिन्दुक&apos; और &apos;काकपीलुक&apos; भी कहा जाता है। यह &apos;उपविष&apos; वर्ग में आता है।</li>
             <li><NText bold>विष अधिष्ठान:</NText> फल और बीज (Fruits and Seeds)।</li>
-            <li><NText bold>विषाक्तता के लक्षण (Symptoms):</NText> बिना शोधन (Purification) सेवन करने पर भयंकर आक्षेप (Convulsions) आते हैं। शरीर धनुष के समान टेढ़ा हो जाता है <span className="italic opacity-80">(आयामो धनुराकारः)</span>। श्वास रुकने से मृत्यु हो जाती है।</li>
+            <li><NText bold>विषाक्तता के लक्षण (Symptoms):</NText> बिना शोधन (Purification) सेवन करने पर भयंकर आक्षेप (Convulsions) आते हैं। शरीर धनुष के समान टेढ़ा हो जाता है <span className="italic opacity-80">(आयामो धनुराकारः)</span>। रोगी की आंखें बाहर की ओर निकल आती हैं और श्वास रुकने से मृत्यु हो जाती है।</li>
           </ul>
 
           <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
             <NAccent bold className="block mb-1">कुचला शोधन (Purification):</NAccent>
-            <NText>कुचला के बीजों को 7 दिनों तक कांजी या गोमूत्र में भिगोकर रखा जाता है, फिर छिलका निकालकर गाय के दूध में स्वेदन (Boiling) किया जाता है। अंत में गोघृत में भून लिया जाता है।</NText>
+            <NText>कुचला के बीजों को 7 दिनों तक कांजी या गोमूत्र में भिगोकर रखा जाता है, फिर छिलका निकालकर गाय के दूध में स्वेदन (Boiling) किया जाता है। अंत में गोघृत में भून लिया जाता है。</NText>
           </div>
 
           <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
             <NAccent bold className="block mb-1">चिकित्सा (Management):</NAccent>
-            <NText>दौरे शांत करने के लिए रोगी को गाय का घी (Go-ghrita) पिलाना चाहिए और पूरे शरीर पर गर्म तेल की मालिश (Abhyanga) और स्वेदन करना चाहिए।</NText>
+            <NText>दौरे शांत करने के लिए रोगी को गाय का घी (Go-ghrita) पिलाना चाहिए और पूरे शरीर पर गर्म तेल की मालिश (Abhyanga) और स्वेदन करना चाहिए。</NText>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function AgadaTantraChapter9() {
             </ul>
           </div>
 
-          {/* Differential Diagnosis - CRITICAL EXAM TOPIC */}
+          {/* Differential Diagnosis */}
           <div className="p-4 border-2 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent)]/5 rounded-sm">
             <NAccent bold className="block mb-3 text-xl text-center">सापेक्ष निदान (Differential Diagnosis)</NAccent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -112,8 +112,8 @@ export default function AgadaTantraChapter9() {
             <NAccent bold className="block mb-2 text-lg">Modern Management:</NAccent>
             <ul className="space-y-2 list-disc list-inside">
               <li><NText bold>Isolation:</NText> Keep in a completely dark and quiet room (noise/light triggers convulsions).</li>
-              <li><NText bold>Control Convulsions:</NText> Short-acting Barbiturates (Diazepam) IV immediately.</li>
-              <li><NText bold>Caution:</NText> <NAccent bold>Emetics and Gastric Lavage are strictly contraindicated</NAccent> initially as inserting the tube triggers fatal spasms. Do it only after controlling convulsions.</li>
+              <li><NText bold>Control Convulsions:</NText> Short-acting Barbiturates (Diazepam or Phenobarbitone) IV immediately.</li>
+              <li><NText bold>Caution:</NText> <NAccent bold>Emetics and Gastric Lavage are strictly contraindicated</NAccent> initially as inserting the tube triggers fatal spasms. Do it only after controlling convulsions using Activated Charcoal or KMnO4.</li>
             </ul>
           </div>
         </div>
@@ -132,7 +132,6 @@ export default function AgadaTantraChapter9() {
         </HandwrittenBox>
       </div>
 
-      {/* Dhatura: Ayurvedic */}
       <div className="mb-8">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part A: आयुर्वेदिक परिप्रेक्ष्य</HandwrittenBox>
@@ -154,7 +153,6 @@ export default function AgadaTantraChapter9() {
         </div>
       </div>
 
-      {/* Dhatura: Modern & 9 D's */}
       <div className="mb-12">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part B: Modern Toxicological Perspective</HandwrittenBox>
@@ -165,22 +163,24 @@ export default function AgadaTantraChapter9() {
             <li><NText bold>Fatal Dose &amp; Period:</NText> 100 to 125 seeds. Fatal period is around 24 hours.</li>
           </ul>
 
-          {/* The 9 D's */}
           <NCard title="Clinical Features: The Classic 9 D's of Datura">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 mt-2">
-              <div><NAccent bold>1. Dryness:</NAccent> Extreme dryness of mouth/skin.</div>
+              <div><NAccent bold>1. Dryness:</NAccent> Extreme dryness of mouth, throat, and skin.</div>
               <div><NAccent bold>2. Dysphagia:</NAccent> Difficulty swallowing.</div>
-              <div><NAccent bold>3. Dilated Pupils:</NAccent> Loss of light reflex.</div>
-              <div><NAccent bold>4. Dry Hot Skin:</NAccent> Hyperthermia.</div>
+              <div><NAccent bold>3. Dilated Pupils:</NAccent> Widening of the pupils (loss of light reflex).</div>
+              <div><NAccent bold>4. Dry Hot Skin:</NAccent> The skin becomes red, hot, and dry (Hyperthermia).</div>
               <div><NAccent bold>5. Drunken Gait:</NAccent> Staggering walk.</div>
-              <div><NAccent bold>6. Delirium:</NAccent> Muttering meaningless words.</div>
+              <div className="md:col-span-2">
+                <NAccent bold>6. Delirium:</NAccent> Muttering meaningless words constantly (बुदबुदाना). <br/>
+                <span className="italic opacity-80 text-sm md:text-base">* This specific symptom is frequently asked in MCQs and SAQs.</span>
+              </div>
               <div><NAccent bold>7. Drowsiness:</NAccent> Severe sleepiness/coma.</div>
               <div><NAccent bold>8. Dysarthria:</NAccent> Difficulty speaking.</div>
               <div><NAccent bold>9. Death:</NAccent> Respiratory center failure.</div>
             </div>
           </NCard>
 
-          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-accent)]/5">
             <NAccent bold className="block mb-2 text-lg">Modern Management &amp; Antidote:</NAccent>
             <ul className="space-y-2 list-disc list-inside">
               <li><NText bold>Specific Antidote:</NText> <NAccent bold>Physostigmine</NAccent> (1-2 mg IV). Neostigmine/Pilocarpine also used.</li>
@@ -204,7 +204,6 @@ export default function AgadaTantraChapter9() {
         </HandwrittenBox>
       </div>
 
-      {/* Vatsnabha: Ayurvedic */}
       <div className="mb-8">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part A: आयुर्वेदिक परिप्रेक्ष्य</HandwrittenBox>
@@ -213,7 +212,7 @@ export default function AgadaTantraChapter9() {
           <ul className="list-disc list-inside space-y-2">
             <li><NText bold>पर्याय:</NText> &apos;मीठा विष&apos; (Sweet poison)। यह <NAccent bold>महाविष</NAccent> वर्ग का सर्वप्रमुख द्रव्य है।</li>
             <li><NText bold>विष अधिष्ठान:</NText> मूल (Tuberous root)।</li>
-            <li><NText bold>लक्षण:</NText> गले/होठों में सूई चुभने जैसी पीड़ा। गर्दन टूट कर गिर जाती है (ग्रीवाभंजन), आंखों के आगे अंधेरा छा जाता है, हृदय गति रुकने से मृत्यु।</li>
+            <li><NText bold>लक्षण:</NText> भक्षण करते ही गले/होठों में सूई चुभने जैसी पीड़ा। गर्दन टूट कर गिर जाती है (ग्रीवाभंजन), आंखों के आगे अंधेरा छा जाता है, हृदय गति रुकने से मृत्यु।</li>
           </ul>
 
           <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
@@ -226,7 +225,6 @@ export default function AgadaTantraChapter9() {
         </div>
       </div>
 
-      {/* Vatsnabha: Modern */}
       <div className="mb-10">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox>Part B: Modern Toxicological Perspective</HandwrittenBox>
@@ -241,18 +239,18 @@ export default function AgadaTantraChapter9() {
           <div className="p-4 border-2 border-[var(--theme-border)] rounded-sm bg-white/20 dark:bg-black/10">
             <NAccent bold className="block mb-2 text-lg">Clinical Features (Symptoms):</NAccent>
             <ul className="space-y-2 list-disc list-inside">
-              <li><NText bold>Tingling &amp; Numbness:</NText> &quot;Pins and needles&quot; sensation starting from lips/tongue spreading to body <span className="italic opacity-80">(Pathognomonic sign)</span>.</li>
+              <li><NText bold>Tingling &amp; Numbness:</NText> &quot;Pins and needles&quot; sensation starting from lips, tongue, and mouth, spreading to the whole body <span className="italic opacity-80">(Pathognomonic sign - सबसे प्रमुख लक्षण)</span>.</li>
               <li><NText bold>Cardiac Signs:</NText> Severe arrhythmias, bradycardia, severe hypotension.</li>
-              <li><NText bold>Hippus:</NText> Pupils alternately dilate and contract.</li>
+              <li><NText bold>Hippus:</NText> Pupils alternately dilate and contract (आंखों की पुतलियों का सिकुड़ना और फैलना).</li>
             </ul>
           </div>
 
           <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5">
             <NAccent bold className="block mb-2 text-lg">Modern Management:</NAccent>
             <ul className="space-y-2 list-disc list-inside">
-              <li><NText bold>Gastric Lavage:</NText> With Activated Charcoal or Tannic acid.</li>
-              <li><NText bold>Caution:</NText> <NAccent bold>Vomiting (Emesis) is contraindicated</NAccent> as the effort can cause immediate cardiac arrest.</li>
-              <li><NText bold>Cardiac Support:</NText> Atropine (1mg IV) for bradycardia, Amiodarone for arrhythmias.</li>
+              <li><NText bold>Gastric Lavage:</NText> With Activated Charcoal or Tannic acid (which precipitates the alkaloids).</li>
+              <li><NText bold>Caution:</NText> <NAccent bold>Vomiting (Emesis) is contraindicated</NAccent> as the effort can cause immediate cardiac arrest (heart failure) due to a weakened heart.</li>
+              <li><NText bold>Cardiac Support:</NText> Atropine (1mg IV) for bradycardia, Amiodarone for arrhythmias (to stabilize the heart rate).</li>
             </ul>
           </div>
         </div>
