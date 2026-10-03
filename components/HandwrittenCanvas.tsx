@@ -105,7 +105,7 @@ const NOTE_THEMES: NoteTheme[] = [
   }
 ];
 
-// 2. MAIN CANVAS WRAPPER (WITH NEW ROTATING WHEEL)
+// 2. MAIN CANVAS WRAPPER (WITH 6-SLIDE SMOOTH WHEEL)
 export function HandwrittenCanvas({ children }: { children: ReactNode }) {
   const [activeThemeId, setActiveThemeId] = useState<string>("midnight");
   const [mounted, setMounted] = useState(false);
@@ -174,58 +174,58 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
       )}
 
       {/* ========================================= */}
-      {/* ROTATING HALF-CIRCLE THEME SELECTOR WHEEL */}
+      {/* 6-SLIDE SMOOTH THEME SELECTOR WHEEL         */}
       {/* ========================================= */}
-      <div className="w-full max-w-sm flex flex-col items-center mt-2 mb-10 z-20">
+      <div className="w-full max-w-md flex flex-col items-center mt-2 mb-10 z-20">
         
         {/* Carousel Container */}
         <div 
-          className="relative w-full h-32 overflow-hidden flex justify-center items-start touch-pan-y pt-4"
+          className="relative w-full h-36 overflow-hidden flex justify-center items-start touch-pan-y pt-4"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Subtle Dotted Arc Background (Visual Enhancement) */}
-          <div className="absolute top-0 w-full h-full flex justify-center pointer-events-none opacity-20">
-            <svg className="w-64 h-32" viewBox="0 0 100 50">
-               {/* Draws a nice downward curving arc */}
-               <path d="M 5 -10 Q 50 65 95 -10" fill="none" stroke="var(--theme-border)" strokeWidth="1.5" strokeDasharray="3 3" />
-            </svg>
-          </div>
-
           {NOTE_THEMES.map((t, index) => {
             // Calculate the infinite looping offset
             let diff = index - activeIndex;
             const len = NOTE_THEMES.length;
-            const half = Math.floor(len / 2);
+            const half = Math.floor(len / 2); // For 6 items, half is 3
             
+            // Normalize diff to wrap around the circle (-2, -1, 0, 1, 2, 3)
             if (diff > half) diff -= len;
             else if (diff < -half) diff += len;
 
-            // Default hidden state (Top, Small, Invisible)
-            let styleClasses = "opacity-0 scale-50 -translate-y-10 pointer-events-none z-0";
+            // Default hidden state (Top back of the wheel, Invisible)
+            let styleClasses = "opacity-0 scale-50 -translate-y-8 pointer-events-none z-0";
             
             if (diff === 0) {
-               // ACTIVE CENTER: Lowest point, Largest, Fully Visible
+               // ACTIVE CENTER
                styleClasses = "opacity-100 scale-[1.35] translate-y-12 z-30 shadow-lg border border-white/20";
             } else if (diff === -1) {
-               // LEFT ITEM: Slightly higher, smaller, clickable
-               styleClasses = "opacity-60 scale-95 -translate-x-20 translate-y-2 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-sm";
+               // IMMEDIATE LEFT
+               styleClasses = "opacity-80 scale-100 -translate-x-[4.5rem] translate-y-5 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-md";
             } else if (diff === 1) {
-               // RIGHT ITEM: Slightly higher, smaller, clickable
-               styleClasses = "opacity-60 scale-95 translate-x-20 translate-y-2 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-sm";
+               // IMMEDIATE RIGHT
+               styleClasses = "opacity-80 scale-100 translate-x-[4.5rem] translate-y-5 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-md";
+            } else if (diff === -2) {
+               // OUTER LEFT (Makes it look like a bigger circle)
+               styleClasses = "opacity-40 scale-[0.70] -translate-x-[8.5rem] translate-y-0 z-10 cursor-pointer hover:opacity-60 shadow-sm";
+            } else if (diff === 2) {
+               // OUTER RIGHT (Makes it look like a bigger circle)
+               styleClasses = "opacity-40 scale-[0.70] translate-x-[8.5rem] translate-y-0 z-10 cursor-pointer hover:opacity-60 shadow-sm";
             }
+            // diff 3 or -3 is the 6th item, hidden in the back.
 
             return (
                <button
                   key={t.id}
                   onClick={() => setActiveThemeId(t.id)}
-                  // The cubic-bezier adds a nice "spring" effect when rotating
+                  // Elastic bouncy spring effect for smooth rotation
                   className={`absolute top-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex-shrink-0 w-10 h-14 md:w-12 md:h-16 rounded-sm ${styleClasses}`}
                   style={{ backgroundColor: t.swatchColor, ...handDrawnBorder }}
                   title={t.name}
                >
-                 {/* Optional: Add a tiny active indicator inside the swatch */}
+                 {/* Center star indicator */}
                  {diff === 0 && (
                    <span className="absolute inset-0 flex items-center justify-center text-white/50 text-xs">
                      ✦
@@ -237,7 +237,7 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
         </div>
 
         {/* Current Theme Label */}
-        <p className="text-sm md:text-base font-bold opacity-80 text-[var(--theme-text)] mt-4 transition-all duration-300" style={{ fontFamily: "var(--font-kalam)" }}>
+        <p className="text-sm md:text-base font-bold opacity-80 text-[var(--theme-text)] mt-2 transition-all duration-300" style={{ fontFamily: "var(--font-kalam)" }}>
           Paper: {theme.name}
         </p>
       </div>
