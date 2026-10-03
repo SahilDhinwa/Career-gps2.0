@@ -29,12 +29,12 @@ const NOTE_THEMES: NoteTheme[] = [
     name: "Classic Vintage",
     bgLight: "#fdfbf7",
     bgDark: "#1a110a",
-    textLight: "#1e293b", // Slate 800
-    textDark: "#3a2f24",  // Dark Ink
+    textLight: "#1e293b",
+    textDark: "#3a2f24",
     borderLight: "#1e293b",
     borderDark: "#3a2f24",
-    accentLight: "#dc2626", // Red 600
-    accentDark: "#991b1b",  // Crimson
+    accentLight: "#dc2626",
+    accentDark: "#991b1b",
     bgImageDark: "url('/vintage-page.jpg')",
     swatchColor: "#d4c5b0",
   },
@@ -42,13 +42,13 @@ const NOTE_THEMES: NoteTheme[] = [
     id: "midnight",
     name: "Midnight Blue",
     bgLight: "#f8fafc",
-    bgDark: "#0f172a", // Slate 900
+    bgDark: "#0f172a",
     textLight: "#334155",
     textDark: "#cbd5e1",
     borderLight: "#475569",
     borderDark: "#475569",
-    accentLight: "#2563eb", // Blue 600
-    accentDark: "#38bdf8",  // Sky 400
+    accentLight: "#2563eb",
+    accentDark: "#38bdf8",
     swatchColor: "#1e293b",
   },
   {
@@ -67,54 +67,86 @@ const NOTE_THEMES: NoteTheme[] = [
   {
     id: "puredark",
     name: "Pure Dark (AMOLED)",
-    bgLight: "#ffffff", 
-    bgDark: "#000000",  // Pitch Black
-    textLight: "#000000", 
-    textDark: "#e2e8f0",  // Soft Slate
+    bgLight: "#ffffff",
+    bgDark: "#000000",
+    textLight: "#000000",
+    textDark: "#e2e8f0",
     borderLight: "#000000",
-    borderDark: "#475569", 
-    accentLight: "#dc2626", 
-    accentDark: "#f87171",  // Bright Red
+    borderDark: "#475569",
+    accentLight: "#dc2626",
+    accentDark: "#f87171",
     swatchColor: "#000000",
   },
   {
     id: "velvet",
     name: "Royal Velvet",
-    bgLight: "#fff5f7",     // Soft rose-tinted cream
-    bgDark: "#270810",      // Deep rich velvet burgundy
-    textLight: "#4c0519",   // Dark burgundy ink
-    textDark: "#fce7f3",    // Pale pink/cream text
-    borderLight: "#9f1239", 
-    borderDark: "#5a1827",  // Muted dark red border
-    accentLight: "#e11d48", // Ruby red
-    accentDark: "#fbbf24",  // Soft royal gold for high contrast
-    swatchColor: "#881337", // Velvet color for the slider
+    bgLight: "#fff5f7",
+    bgDark: "#270810",
+    textLight: "#4c0519",
+    textDark: "#fce7f3",
+    borderLight: "#9f1239",
+    borderDark: "#5a1827",
+    accentLight: "#e11d48",
+    accentDark: "#fbbf24",
+    swatchColor: "#881337",
   },
   {
     id: "babypink",
     name: "Baby Pink",
-    bgLight: "#fdf2f8",     // Soft baby pink
-    bgDark: "#1f111a",      // Deep charcoal with a pink hue
-    textLight: "#4c0519",   // Deep rose for readable contrast
-    textDark: "#fce7f3",    // Light baby pink text for dark mode
-    borderLight: "#be185d", // Medium pink border
-    borderDark: "#f472b6",  // Bright pink border for dark mode
-    accentLight: "#e11d48", // Rose accent
-    accentDark: "#fda4af",  // Soft rose accent for dark mode
-    swatchColor: "#fbcfe8", // Baby pink for the theme slider button
+    bgLight: "#fdf2f8",
+    bgDark: "#1f111a",
+    textLight: "#4c0519",
+    textDark: "#fce7f3",
+    borderLight: "#be185d",
+    borderDark: "#f472b6",
+    accentLight: "#e11d48",
+    accentDark: "#fda4af",
+    swatchColor: "#fbcfe8",
   }
 ];
 
-// 2. MAIN CANVAS WRAPPER
+// 2. MAIN CANVAS WRAPPER (WITH NEW ROTATING WHEEL)
 export function HandwrittenCanvas({ children }: { children: ReactNode }) {
   const [activeThemeId, setActiveThemeId] = useState<string>("midnight");
   const [mounted, setMounted] = useState(false);
+  
+  // SWIPE STATE
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
   const { resolvedTheme } = useTheme();
 
   useEffect(() => setMounted(true), []);
 
   const theme = NOTE_THEMES.find((t) => t.id === activeThemeId) || NOTE_THEMES[0];
+  const activeIndex = NOTE_THEMES.findIndex((t) => t.id === activeThemeId);
   const isDark = resolvedTheme === "dark";
+
+  // TOUCH/SWIPE HANDLERS FOR THE CAROUSEL
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart === null || touchEnd === null) return;
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 40;
+
+    if (distance > minSwipeDistance) {
+      // Swipe Left -> Next Theme
+      const nextIndex = (activeIndex + 1) % NOTE_THEMES.length;
+      setActiveThemeId(NOTE_THEMES[nextIndex].id);
+    } else if (distance < -minSwipeDistance) {
+      // Swipe Right -> Previous Theme
+      const prevIndex = (activeIndex - 1 + NOTE_THEMES.length) % NOTE_THEMES.length;
+      setActiveThemeId(NOTE_THEMES[prevIndex].id);
+    }
+  };
 
   if (!mounted) return null;
 
@@ -123,13 +155,12 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
       className="min-h-screen p-3 sm:p-6 md:p-12 lg:p-16 flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden"
       style={{
         backgroundColor: isDark ? theme.bgDark : theme.bgLight,
-        // THESE 3 VARIABLES CONTROL EVERYTHING AUTOMATICALLY
         '--theme-text': isDark ? theme.textDark : theme.textLight,
         '--theme-border': isDark ? theme.borderDark : theme.borderLight,
         '--theme-accent': isDark ? theme.accentDark : theme.accentLight,
       } as React.CSSProperties}
     >
-      {/* Background Image (only for dark mode if specified) */}
+      {/* Background Image */}
       {isDark && theme.bgImageDark && (
         <div className="absolute inset-0 z-0" 
              style={{
@@ -142,28 +173,77 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
         />
       )}
 
-      {/* Theme Slider */}
-      <div className="w-full max-w-4xl z-20 mb-6 md:mb-10 flex flex-col items-center">
-        <p className="text-sm mb-3 font-bold opacity-70 text-[var(--theme-text)]" style={{ fontFamily: "var(--font-kalam)" }}>
-          Current Paper: {theme.name}
-        </p>
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar w-full justify-center px-4">
-          {NOTE_THEMES.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActiveThemeId(t.id)}
-              className={`flex-shrink-0 w-8 h-12 md:w-10 md:h-16 rounded-sm snap-center transition-all duration-300 transform shadow-sm ${
-                activeThemeId === t.id 
-                  ? "scale-110 ring-2 ring-offset-2 ring-[var(--theme-accent)] ring-offset-transparent" 
-                  : "opacity-60 hover:opacity-100 hover:scale-105"
-              }`}
-              style={{ backgroundColor: t.swatchColor, ...handDrawnBorder }}
-              title={t.name}
-            />
-          ))}
-        </div>
-      </div>
+      {/* ========================================= */}
+      {/* ROTATING HALF-CIRCLE THEME SELECTOR WHEEL */}
+      {/* ========================================= */}
+      <div className="w-full max-w-sm flex flex-col items-center mt-2 mb-10 z-20">
+        
+        {/* Carousel Container */}
+        <div 
+          className="relative w-full h-32 overflow-hidden flex justify-center items-start touch-pan-y pt-4"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Subtle Dotted Arc Background (Visual Enhancement) */}
+          <div className="absolute top-0 w-full h-full flex justify-center pointer-events-none opacity-20">
+            <svg className="w-64 h-32" viewBox="0 0 100 50">
+               {/* Draws a nice downward curving arc */}
+               <path d="M 5 -10 Q 50 65 95 -10" fill="none" stroke="var(--theme-border)" strokeWidth="1.5" strokeDasharray="3 3" />
+            </svg>
+          </div>
 
+          {NOTE_THEMES.map((t, index) => {
+            // Calculate the infinite looping offset
+            let diff = index - activeIndex;
+            const len = NOTE_THEMES.length;
+            const half = Math.floor(len / 2);
+            
+            if (diff > half) diff -= len;
+            else if (diff < -half) diff += len;
+
+            // Default hidden state (Top, Small, Invisible)
+            let styleClasses = "opacity-0 scale-50 -translate-y-10 pointer-events-none z-0";
+            
+            if (diff === 0) {
+               // ACTIVE CENTER: Lowest point, Largest, Fully Visible
+               styleClasses = "opacity-100 scale-[1.35] translate-y-12 z-30 shadow-lg border border-white/20";
+            } else if (diff === -1) {
+               // LEFT ITEM: Slightly higher, smaller, clickable
+               styleClasses = "opacity-60 scale-95 -translate-x-20 translate-y-2 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-sm";
+            } else if (diff === 1) {
+               // RIGHT ITEM: Slightly higher, smaller, clickable
+               styleClasses = "opacity-60 scale-95 translate-x-20 translate-y-2 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-sm";
+            }
+
+            return (
+               <button
+                  key={t.id}
+                  onClick={() => setActiveThemeId(t.id)}
+                  // The cubic-bezier adds a nice "spring" effect when rotating
+                  className={`absolute top-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex-shrink-0 w-10 h-14 md:w-12 md:h-16 rounded-sm ${styleClasses}`}
+                  style={{ backgroundColor: t.swatchColor, ...handDrawnBorder }}
+                  title={t.name}
+               >
+                 {/* Optional: Add a tiny active indicator inside the swatch */}
+                 {diff === 0 && (
+                   <span className="absolute inset-0 flex items-center justify-center text-white/50 text-xs">
+                     ✦
+                   </span>
+                 )}
+               </button>
+            );
+          })}
+        </div>
+
+        {/* Current Theme Label */}
+        <p className="text-sm md:text-base font-bold opacity-80 text-[var(--theme-text)] mt-4 transition-all duration-300" style={{ fontFamily: "var(--font-kalam)" }}>
+          Paper: {theme.name}
+        </p>
+      </div>
+      {/* ========================================= */}
+
+      {/* Main Content Area */}
       <div 
         className="max-w-4xl w-full z-10 relative overflow-hidden text-[var(--theme-text)]" 
         style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive, sans-serif" }}
