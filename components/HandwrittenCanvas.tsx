@@ -39,6 +39,19 @@ const NOTE_THEMES: NoteTheme[] = [
     swatchColor: "#d4c5b0",
   },
   {
+  "id": "charcoal-lavender",
+  "name": "Deep Charcoal (Lavender)",
+  "bgLight": "#f1f3f4",
+  "bgDark": "#121214",
+  "textLight": "#263238",
+  "textDark": "#eceff1",
+  "borderLight": "#cfd8dc",
+  "borderDark": "#90a4ae",
+  "accentLight": "#6200ee",
+  "accentDark": "#bb86fc",
+  "swatchColor": "#121214"
+  },
+  {
     id: "midnight",
     name: "Midnight Blue",
     bgLight: "#f8fafc",
