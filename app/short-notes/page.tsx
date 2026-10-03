@@ -12,7 +12,7 @@ const NOTEBOOK_INDEX = [
       { name: "View Complete Roga Nidan Syllabus & Index", link: "/short-notes/roga-nidan", status: "Active" }
     ]
   },  
-  {
+    {
     subject: "Agada Tantra (Toxicology)",
     topics: [
       { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "Active" },
@@ -28,7 +28,11 @@ const NOTEBOOK_INDEX = [
       { name: "Chapter 10: Sthavara Visha (Metallic Poisons)", link: "/short-notes/agada-tantra/chapter-10", status: "Active" },
       { name: "Chapter 11: Jangama Visha (Animal Poisoning)", link: "/short-notes/agada-tantra/chapter-11", status: "Active" },
       { name: "Chapter 12: Kritrima Visha (Corrosive Poisons)", link: "/short-notes/agada-tantra/chapter-12", status: "Active" },
-      { name: "Chapter 13: Substances of Abuse (Narcotics)", link: "/short-notes/agada-tantra/chapter-13", status: "New" }
+      { name: "Chapter 13: Substances of Abuse (Narcotics)", link: "/short-notes/agada-tantra/chapter-13", status: "Active" },
+      { name: "Chapter 15: Forensic Medicine & Legal Procedures", link: "/short-notes/agada-tantra/chapter-15", status: "Active" },
+      { name: "Chapter 16: Medical Ethics & Duties of Practitioner", link: "/short-notes/agada-tantra/chapter-16", status: "Active" },
+      { name: "Chapter 18: Personal Identity (Forensic)", link: "/short-notes/agada-tantra/chapter-18", status: "Active" },
+      { name: "Chapter 19: Forensic Thanatology (Death Study)", link: "/short-notes/agada-tantra/chapter-19", status: "New" }
     ]
   },
   {
