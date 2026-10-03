@@ -39,6 +39,32 @@ const NOTE_THEMES: NoteTheme[] = [
     swatchColor: "#d4c5b0",
   },
   {
+  "id": "wabi-sabi-indigo",
+  "name": "Indigo Stone",
+  "bgLight": "#f4f6f9",
+  "bgDark": "#0f131a",
+  "textLight": "#1a2536",
+  "textDark": "#e2e8f0",
+  "borderLight": "#94a3b8",
+  "borderDark": "#475569",
+  "accentLight": "#2563eb",
+  "accentDark": "#38bdf8",
+  "swatchColor": "#cbd5e1"
+  },
+  {
+  "id": "oxidized-copper",
+  "name": "Verdigris Slate",
+  "bgLight": "#f1f6f4",
+  "bgDark": "#111714",
+  "textLight": "#16221c",
+  "textDark": "#e4ede9",
+  "borderLight": "#627d70",
+  "borderDark": "#3d5248",
+  "accentLight": "#701a75",
+  "accentDark": "#f472b6",
+  "swatchColor": "#cbdcd4"
+},
+  {
   "id": "charcoal-lavender",
   "name": "Deep Charcoal (Lavender)",
   "bgLight": "#f1f3f4",
@@ -51,6 +77,19 @@ const NOTE_THEMES: NoteTheme[] = [
   "accentDark": "#bb86fc",
   "swatchColor": "#121214"
   },
+    {
+  "id": "cyber-terminal",
+  "name": "Amber Terminal",
+  "bgLight": "#fffcf5",
+  "bgDark": "#16140f",
+  "textLight": "#2c220f",
+  "textDark": "#f7e8cc",
+  "borderLight": "#d4b373",
+  "borderDark": "#8f7647",
+  "accentLight": "#d97706",
+  "accentDark": "#fbbf24",
+  "swatchColor": "#f7e8cc"
+    },
   {
     id: "midnight",
     name: "Midnight Blue",
