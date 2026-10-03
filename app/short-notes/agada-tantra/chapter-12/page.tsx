@@ -6,20 +6,21 @@ import { NText, NAccent, NCard } from "@/components/NoteElements";
 export default function AgadaTantraChapter12() {
   return (
     <HandwrittenCanvas>
-      <HandwrittenTitle badge={<>Agada<br/><NAccent>Tantra</NAccent></>}>
+      {/* FIXED VERCEL ERROR: Removed JSX fragment from badge */}
+      <HandwrittenTitle badge="Agada Tantra">
         Chapter 12: कृत्रिम विष (Corrosive Poisons)
       </HandwrittenTitle>
 
       <div className="text-center mb-6 md:mb-10">
         <span className="inline-block px-2 py-1 md:px-4 md:py-1.5 border-2 border-dashed border-[var(--theme-border)] text-[var(--theme-text)] opacity-80 font-bold text-xs md:text-sm tracking-widest uppercase rounded-sm transform -rotate-1 bg-white/30 dark:bg-transparent">
-          Kritrima Visha - Acids & Alkalis
+          Kritrima Visha - Acids &amp; Alkalis
         </span>
       </div>
 
       {/* Introduction */}
       <div className="mb-10 pl-1 md:pl-2">
         <NText className="leading-relaxed block text-lg md:text-xl pl-3 md:pl-8 border-l-4 border-[var(--theme-accent)]">
-          <NAccent bold>विषय प्रवेश (Introduction):</NAccent> कृत्रिम विष (Artificial Poisons) वे रसायन होते हैं जो प्रकृति में स्वतंत्र रूप से नहीं पाए जाते, बल्कि कारखानों या प्रयोगशालाओं में रसायनों के संयोग से बनाए जाते हैं। आधुनिक विष विज्ञान में इस अध्याय के अंतर्गत मुख्य रूप से <NText bold>दाहक विषों (Corrosive Poisons)</NText> यानी तीव्र अम्लों (Acids) और क्षारों (Alkalis) का अध्ययन किया जाता है।
+          <NAccent bold>विषय प्रवेश (Introduction):</NAccent> कृत्रिम विष (Artificial Poisons) वे रसायन होते हैं जो प्रकृति में स्वतंत्र रूप से नहीं पाए जाते, बल्कि कारखानों या प्रयोगशालाओं में रसायनों के संयोग से बनाए जाते हैं। आधुनिक विष विज्ञान में इस अध्याय के अंतर्गत मुख्य रूप से <NText bold>&apos;दाहक विषों&apos; (Corrosive Poisons)</NText> यानी तीव्र अम्लों (Acids) और क्षारों (Alkalis) का अध्ययन किया जाता है।
         </NText>
       </div>
 
@@ -77,17 +78,17 @@ export default function AgadaTantraChapter12() {
       {/* 1 & 2. Definition & Classification */}
       <div className="mb-8 md:mb-10">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
-          <HandwrittenBox>1 & 2. Definition & Classification</HandwrittenBox>
+          <HandwrittenBox>1 &amp; 2. Definition &amp; Classification</HandwrittenBox>
         </div>
         <div className="space-y-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
-          <p><NText bold>Definition:</NText> Corrosive poisons are highly active chemicals that cause severe local tissue destruction, inflammation, and deep chemical burns immediately upon contact.</p>
+          <p><NText bold>Definition:</NText> Corrosive poisons are highly active chemicals that cause severe local tissue destruction, inflammation, and deep chemical burns immediately upon contact with the skin, mucous membranes, or gastrointestinal tract.</p>
           
           <div className="p-4 border border-[var(--theme-border)] rounded-sm bg-white/20 dark:bg-black/10">
-            <NAccent bold className="block mb-2 text-lg">Classification:</NAccent>
+            <NAccent bold className="block mb-2 text-lg">Classification (दाहक विषों का वर्गीकरण):</NAccent>
             <ul className="space-y-2 list-disc list-inside">
               <li><NText bold>Mineral Acids (खनिज अम्ल):</NText> Sulphuric Acid ($H_2SO_4$), Nitric Acid ($HNO_3$), Hydrochloric Acid (HCl).</li>
               <li><NText bold>Organic Acids (कार्बनिक अम्ल):</NText> Carbolic Acid (Phenol), Oxalic Acid, Acetic Acid.</li>
-              <li><NText bold>Alkalis (क्षार):</NText> Sodium Hydroxide (NaOH), Potassium Hydroxide (KOH), Ammonia.</li>
+              <li><NText bold>Alkalis (क्षार):</NText> Sodium Hydroxide (Caustic Soda - NaOH), Potassium Hydroxide (Caustic Potash - KOH), Ammonia.</li>
             </ul>
           </div>
         </div>
@@ -105,11 +106,11 @@ export default function AgadaTantraChapter12() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
           <div className="p-4 border-2 border-[var(--theme-border)] rounded-sm">
             <NAccent bold className="block mb-2 text-xl underline decoration-[var(--theme-border)]">Acids (अम्ल):</NAccent>
-            <p>They cause <NAccent bold>Coagulative Necrosis</NAccent>. Acids extract water from the tissues and coagulate (harden) the cellular proteins. This forms a hard, dry scab (Eschar) which actually limits the acid from penetrating deeper into the tissues.</p>
+            <p>They cause <NAccent bold>Coagulative Necrosis</NAccent> (कोएगुलेटिव नेक्रोसिस). Acids extract water from the tissues and coagulate (harden) the cellular proteins. This forms a hard, dry scab (Eschar) which actually limits the acid from penetrating deeper into the tissues. <span className="italic opacity-80">(Note: Acids mostly perforate the Stomach).</span></p>
           </div>
           <div className="p-4 border-2 border-[var(--theme-border)] rounded-sm">
             <NAccent bold className="block mb-2 text-xl underline decoration-[var(--theme-border)]">Alkalis (क्षार):</NAccent>
-            <p>They cause <NAccent bold>Liquefactive Necrosis</NAccent>. Alkalis dissolve cellular proteins and saponify fats (फैट को साबुन में बदलते हैं). Because they liquefy tissues, alkalis penetrate much deeper, making them significantly more dangerous for the esophagus and stomach.</p>
+            <p>They cause <NAccent bold>Liquefactive Necrosis</NAccent> (लिक्विफैक्टिव नेक्रोसिस). Alkalis dissolve cellular proteins and saponify fats (फैट को साबुन में बदल देते हैं). Because they liquefy tissues, alkalis penetrate much deeper, making them significantly more dangerous for the esophagus and stomach. <span className="italic opacity-80">(Note: Alkalis mostly perforate the Esophagus).</span></p>
           </div>
         </div>
       </div>
@@ -122,11 +123,10 @@ export default function AgadaTantraChapter12() {
         <div className="pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
           <ul className="space-y-3 list-[circle] list-inside marker:text-[var(--theme-accent)]">
             <li>Severe, agonizing, and burning pain from the mouth down to the stomach.</li>
-            <li><NText bold>Chemical burns:</NText> Lips, mouth, and tongue show severe burns/discoloration.</li>
+            <li><NText bold>Chemical burns:</NText> Lips, mouth, and tongue show severe burns and discoloration.</li>
             <li><NText bold>Dysphagia:</NText> Severe difficulty in swallowing.</li>
-            {/* FIXED LINE HERE: Replaced "" with &quot; */}
-            <li><NText bold>Vomiting:</NText> Vomitus contains altered blood, looking like <NAccent bold>&quot;coffee-grounds&quot;</NAccent>, mixed with shredded mucous membranes.</li>
-            <li><NText bold>Shock:</NText> Severe hypovolemic and neurogenic shock due to extreme pain and fluid loss.</li>
+            <li><NText bold>Vomiting:</NText> The vomitus often contains altered blood, looking like <NAccent bold>&quot;coffee-grounds&quot;</NAccent> (कॉफी-ग्राउंड वोमिटस), mixed with shredded mucous membranes.</li>
+            <li><NText bold>Shock:</NText> The patient goes into severe hypovolemic and neurogenic shock due to extreme pain and fluid loss.</li>
           </ul>
         </div>
       </div>
@@ -135,21 +135,23 @@ export default function AgadaTantraChapter12() {
       <div className="mb-10">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
           <HandwrittenBox borderColor="border-[var(--theme-accent)]" textColor="text-[var(--theme-accent)]">
-            5. Modern Management & STRICT CONTRAINDICATIONS
+            5. Modern Management &amp; STRICT CONTRAINDICATIONS
           </HandwrittenBox>
         </div>
         
         <div className="space-y-6 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          <p className="font-bold italic">This is the most critical part for the exam.</p>
+
           <div className="p-4 border-2 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent)]/5 rounded-sm">
             <NAccent bold className="block mb-3 text-2xl text-center">STRICTLY CONTRAINDICATED (क्या बिल्कुल नहीं करना है):</NAccent>
             <ul className="space-y-4">
               <li>
-                <NText bold className="block text-lg">1. DO NOT Indউট Vomiting (Emesis):</NText> 
+                <NText bold className="block text-lg">1. DO NOT Induce Vomiting (Emesis):</NText> 
                 उल्टी बिल्कुल नहीं करानी चाहिए। If the patient vomits, the corrosive acid/alkali will burn the esophagus and mouth a second time as it comes up.
               </li>
               <li>
                 <NText bold className="block text-lg">2. NO Gastric Lavage (Stomach Wash):</NText> 
-                पेट की सफाई (ट्यूब डालना) सख्त मना है। The walls of the esophagus and stomach become extremely thin and necrotic (सड़ जाना). Inserting a Ryle&apos;s tube can instantly <NAccent bold>puncture/perforate</NAccent> the stomach, causing immediate death.
+                पेट की सफाई (ट्यूब डालना) सख्त मना है। The walls of the esophagus and stomach become extremely thin and necrotic (सड़ जाना). Inserting a Ryle&apos;s tube can instantly <NAccent bold>puncture/perforate</NAccent> (छेद करना) the stomach, causing immediate death.
               </li>
             </ul>
           </div>
@@ -158,7 +160,7 @@ export default function AgadaTantraChapter12() {
             <NText bold className="block mb-2 text-xl">Treatment Protocol:</NText>
             <ul className="space-y-2 list-disc list-inside">
               <li><NText bold>Dilution:</NText> Give plenty of water or cold milk to dilute the poison.</li>
-              <li><NText bold>Demulcents:</NText> Give egg white (Albumen), olive oil, or melted butter to soothe and protect the stomach lining.</li>
+              <li><NText bold>Demulcents (शांतिदायक पदार्थ):</NText> Give egg white (Albumen), olive oil, or melted butter to soothe and protect the stomach lining.</li>
               <li><NText bold>Analgesics:</NText> Administer strong painkillers like Morphine IV to manage excruciating pain and prevent neurogenic shock.</li>
               <li><NText bold>IV Fluids:</NText> Administer normal saline to manage shock and dehydration.</li>
             </ul>
@@ -166,35 +168,45 @@ export default function AgadaTantraChapter12() {
         </div>
       </div>
 
-      {/* 6. Specific Corrosive Poisons */}
+      {/* 6. Specific Corrosive Poisons & Vitriolage */}
       <div className="mb-10">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 pl-1 md:pl-2">
-          <HandwrittenBox>6. Specific Corrosive Poisons (Key Features)</HandwrittenBox>
+          <HandwrittenBox>6. Specific Corrosives &amp; Vitriolage</HandwrittenBox>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
-          
-          <NCard title="Sulphuric Acid">
-            <ul className="space-y-2 mt-2">
-              <li><NText bold>Oil of Vitriol</NText> (गन्धक का तेज़ाब).</li>
-              <li>Leaves a characteristic <NAccent bold>black/brown eschar</NAccent> (काले छाले) because it chars organic matter.</li>
-            </ul>
-          </NCard>
+        
+        <div className="space-y-6 pl-3 md:pl-10 text-base md:text-xl text-[var(--theme-text)]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <NCard title="Sulphuric Acid (H2SO4)">
+              <ul className="space-y-2 mt-2">
+                <li>Known as <NText bold>Oil of Vitriol</NText> (गन्धक का तेज़ाब).</li>
+                <li>Leaves a characteristic <NAccent bold>black or brown eschar</NAccent> (काले रंग के छाले) because it chars (carbonizes) organic matter.</li>
+              </ul>
+            </NCard>
 
-          <NCard title="Nitric Acid">
-            <ul className="space-y-2 mt-2">
-              <li><NText bold>Aqua Fortis</NText> (शोरे का अम्ल).</li>
-              <li>Causes a characteristic <NAccent bold>yellow discoloration</NAccent> of the skin (Xanthoproteic reaction).</li>
-            </ul>
-          </NCard>
+            <NCard title="Nitric Acid (HNO3)">
+              <ul className="space-y-2 mt-2">
+                <li>Known as <NText bold>Aqua Fortis</NText> (शोरे का अम्ल).</li>
+                <li>Causes a characteristic <NAccent bold>yellow discoloration</NAccent> of the skin and tissues (due to the Xanthoproteic reaction).</li>
+              </ul>
+            </NCard>
 
-          <NCard title="Carbolic Acid (Phenol)">
-            <ul className="space-y-2 mt-2 text-sm md:text-base">
-              <li>Has a local anesthetic effect (patient feels less pain initially).</li>
-              <li>Turns urine dark green/black <NAccent bold>(Carboluria)</NAccent>.</li>
-              <li><NText bold className="italic">Note:</NText> Gastric lavage CAN be done cautiously here, as it doesn&apos;t perforate severely like mineral acids.</li>
-            </ul>
-          </NCard>
+            <NCard title="Carbolic Acid (Phenol)">
+              <ul className="space-y-2 mt-2 text-sm md:text-base">
+                <li>Has a local anesthetic effect, so the patient feels surprisingly less pain initially.</li>
+                <li>Turns the urine dark green or black <NAccent bold>(Carboluria)</NAccent>.</li>
+                <li><NText bold className="italic">Note:</NText> Gastric lavage CAN be done cautiously here, as it doesn&apos;t severely perforate the stomach like mineral acids.</li>
+              </ul>
+            </NCard>
+          </div>
 
+          {/* ADDED: VITRIOLAGE - VERY IMPORTANT FOR EXAM */}
+          <div className="p-4 border-l-4 border-[var(--theme-accent)] bg-[var(--theme-border)]/5 mt-6">
+            <NAccent bold className="block mb-2 text-xl">Vitriolage (विट्रियोलेज़ / Acid Attack) - Important for Exam:</NAccent>
+            <ul className="space-y-2 list-disc list-inside">
+              <li><NText bold>Definition:</NText> किसी व्यक्ति पर बदले या नफरत की भावना से जानबूझकर तेज़ाब (मुख्य रूप से Sulphuric acid / Oil of Vitriol) फेंकना &apos;विट्रियोलेज़&apos; कहलाता है।</li>
+              <li><NText bold>Medico-Legal:</NText> यह एक गंभीर अपराध है जो IPC की धारा 326A और 326B के अंतर्गत आता है।</li>
+            </ul>
+          </div>
         </div>
       </div>
 
