@@ -91,6 +91,19 @@ const NOTE_THEMES: NoteTheme[] = [
     swatchColor: "#881337",
   },
   {
+  "id": "pastelsage",
+  "name": "Pastel Sage",
+  "bgLight": "#f2f7f5",
+  "bgDark": "#121a15",
+  "textLight": "#1e2a22",
+  "textDark": "#f0f5f2",
+  "borderLight": "#5a6b60",
+  "borderDark": "#7e9486",
+  "accentLight": "#0fa3b1",
+  "accentDark": "#38bdf8",
+  "swatchColor": "#cde6e3"
+  },
+  {
     id: "babypink",
     name: "Baby Pink",
     bgLight: "#fdf2f8",
