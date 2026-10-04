@@ -33,7 +33,7 @@ const BAMS_REELS_DATA = [
     views: "15K Views",
     title: "Rasa Shastra Yogas: The Ultimate 1-Minute Revision",
     gradient: "from-yellow-950 to-black",
-    videoLink: "https://instagram.com"
+    videoLink: "https://www.instagram.com/reel/Dd_a00HzIMo/?stkn=M2FlMXdsNWxyaXkx"
   }
 ];
 // ============================================================================
