@@ -5,6 +5,9 @@ import { ArrowLeft } from "lucide-react";
 import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/components/HandwrittenCanvas";
 import { NAccent, NText } from "@/components/NoteElements";
 
+// ==========================================
+// MASTER INDEX DATA
+// ==========================================
 const NOTEBOOK_INDEX = [
   {
     subject: "Roga Nidan & Vikriti Vigyan",
@@ -14,6 +17,12 @@ const NOTEBOOK_INDEX = [
   },  
   {
     subject: "Agada Tantra (Toxicology)",
+    featuredBanner: {
+      badge: "🔥 Exam Special (PYQ)",
+      title: "Batch 22 Main Paper: Solved MCQs",
+      subtitle: "Click here to practice all previous year questions with detailed explanations!",
+      link: "/short-notes/agada-tantra/batch-22-mcqs"
+    },
     topics: [
       { name: "Chapter 1: Concepts of Agada Tantra", link: "/short-notes/agada-tantra/chapter-1", status: "Active" },
       { name: "Chapter 2: Visha Chikitsa (Management)", link: "/short-notes/agada-tantra/chapter-2", status: "Active" },
@@ -28,7 +37,7 @@ const NOTEBOOK_INDEX = [
       { name: "Chapter 10: Sthavara Visha (Metallic Poisons)", link: "/short-notes/agada-tantra/chapter-10", status: "Active" },
       { name: "Chapter 11: Jangama Visha (Animal Poisoning)", link: "/short-notes/agada-tantra/chapter-11", status: "Active" },
       { name: "Chapter 12: Kritrima Visha (Corrosive Poisons)", link: "/short-notes/agada-tantra/chapter-12", status: "Active" },
-      { name: "Chapter 12 (DETAILED): Kritrima Visha (Synthetic Poisons)", link: "/short-notes/agada-tantra/chapter-12-detailed", status: "New" },
+      { name: "Chapter 12 (DETAILED): Kritrima Visha (Synthetic Poisons)", link: "/short-notes/agada-tantra/chapter-12-detailed", status: "Active" },
       { name: "Chapter 13: Substances of Abuse (Narcotics)", link: "/short-notes/agada-tantra/chapter-13", status: "Active" },
       { name: "Chapter 15: Forensic Medicine & Legal Procedures", link: "/short-notes/agada-tantra/chapter-15", status: "Active" },
       { name: "Chapter 16: Medical Ethics & Duties of Practitioner", link: "/short-notes/agada-tantra/chapter-16", status: "Active" },
@@ -67,48 +76,13 @@ export default function ShortNotesIndex() {
         </Link>
       </div>
 
-      {/* FIXED VERCEL ERROR: Removed JSX fragment from badge */}
       <HandwrittenTitle badge="Index Page">
         Quick Revision Notebook
       </HandwrittenTitle>
 
-      <NText className="font-bold text-xl leading-relaxed mb-8 text-center max-w-2xl mx-auto block">
+      <NText className="font-bold text-xl leading-relaxed mb-12 text-center max-w-2xl mx-auto block">
         Select a subject below to open the handwritten quick-notes. Perfect for last-minute exam revision and OPD quick references.
       </NText>
-
-      {/* ========================================== */}
-      {/* FEATURED MCQ BANNER (TOP OF THE PAGE)      */}
-      {/* ========================================== */}
-      <div className="w-full flex justify-center mb-16 mt-6 px-2 md:px-4">
-        <Link href="/short-notes/agada-tantra/batch-22-mcqs" className="w-full max-w-3xl group block">
-          <div 
-            className="relative p-6 md:p-8 border-4 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent)]/10 text-center transition-all duration-300 transform group-hover:scale-105 group-hover:shadow-xl group-hover:bg-[var(--theme-accent)]/15"
-            style={{ borderRadius: "255px 15px 225px 15px/15px 225px 15px 255px" }}
-          >
-            {/* Top Tape Effect (कागज चिपकाने वाला टेप) */}
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-20 h-6 bg-[var(--theme-border)] opacity-40 -rotate-2"></div>
-            
-            {/* Animated Badge */}
-            <span className="inline-block px-4 py-1.5 mb-4 text-xs md:text-sm font-black tracking-widest uppercase bg-[var(--theme-accent)] text-[var(--theme-bgLight)] dark:text-white rounded-sm shadow-md animate-bounce">
-              🔥 Exam Special (PYQ)
-            </span>
-
-            {/* Title */}
-            <h2 
-              className="text-2xl md:text-4xl font-black text-[var(--theme-text)] mb-3 transition-colors group-hover:text-[var(--theme-accent)]" 
-              style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}
-            >
-              Batch 22 Main Paper: Solved MCQs
-            </h2>
-
-            {/* Subtitle */}
-            <p className="text-sm md:text-lg text-[var(--theme-text)] opacity-80 font-bold" style={{ fontFamily: "var(--font-kalam)" }}>
-              Click here to practice all previous year questions with detailed explanations!
-            </p>
-          </div>
-        </Link>
-      </div>
-      {/* ========================================== */}
 
       <div className="space-y-12">
         {NOTEBOOK_INDEX.map((section, idx) => (
@@ -121,6 +95,42 @@ export default function ShortNotesIndex() {
               </HandwrittenBox>
               <div className="flex-grow border-b-2 border-dashed border-[var(--theme-border)] opacity-60"></div>
             </div>
+
+            {/* ========================================== */}
+            {/* DYNAMIC FEATURED BANNER (Inside Subject)   */}
+            {/* ========================================== */}
+            {section.featuredBanner && (
+              <div className="w-full mb-8 mt-2 pl-2 md:pl-8 pr-2">
+                <Link href={section.featuredBanner.link} className="w-full max-w-3xl group block">
+                  <div 
+                    className="relative p-5 md:p-6 border-[3px] border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent)]/5 text-center transition-all duration-300 transform group-hover:scale-[1.02] group-hover:shadow-md group-hover:bg-[var(--theme-accent)]/10"
+                    style={{ borderRadius: "255px 15px 225px 15px/15px 225px 15px 255px" }}
+                  >
+                    {/* Top Tape Effect */}
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-16 h-5 bg-[var(--theme-border)] opacity-40 -rotate-2"></div>
+                    
+                    {/* Animated Badge */}
+                    <span className="inline-block px-3 py-1 mb-3 text-xs md:text-sm font-black tracking-widest uppercase bg-[var(--theme-accent)] text-[var(--theme-bgLight)] dark:text-white rounded-sm shadow-sm animate-bounce">
+                      {section.featuredBanner.badge}
+                    </span>
+
+                    {/* Title */}
+                    <h2 
+                      className="text-xl md:text-3xl font-black text-[var(--theme-text)] mb-2 transition-colors group-hover:text-[var(--theme-accent)]" 
+                      style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}
+                    >
+                      {section.featuredBanner.title}
+                    </h2>
+
+                    {/* Subtitle */}
+                    <p className="text-sm md:text-base text-[var(--theme-text)] opacity-80 font-bold" style={{ fontFamily: "var(--font-kalam)" }}>
+                      {section.featuredBanner.subtitle}
+                    </p>
+                  </div>
+                </Link>
+              </div>
+            )}
+            {/* ========================================== */}
 
             {/* Topics List */}
             <ul className="space-y-4 pl-4 md:pl-12 text-xl">
