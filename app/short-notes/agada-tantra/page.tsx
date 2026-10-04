@@ -34,9 +34,12 @@ const THEORY_CHAPTERS = [
 // ==========================================
 // 📝 2. PYQ PAPERS REPOSITORY (Add new papers here)
 // ==========================================
+// ==========================================
+// 📝 2. PYQ PAPERS REPOSITORY (Add new papers here)
+// ==========================================
 const PYQ_PAPERS = [
   { name: "Batch 22 Main Paper: Solved MCQs", link: "/short-notes/agada-tantra/batch-22-mcqs", status: "Active" },
-  { name: "Batch 21 Main Paper: Solved MCQs", link: "#", status: "Coming Soon" },
+  { name: "Batch 21 Main Paper: Solved MCQs", link: "/short-notes/agada-tantra/batch-21-mcqs", status: "New" }, // 👇 Link Updated!
   { name: "Batch 23 Main Paper: Solved MCQs", link: "#", status: "Coming Soon" }
 ];
 
