@@ -67,13 +67,48 @@ export default function ShortNotesIndex() {
         </Link>
       </div>
 
-      <HandwrittenTitle badge={<>Index<br/><NAccent>Page</NAccent></>}>
+      {/* FIXED VERCEL ERROR: Removed JSX fragment from badge */}
+      <HandwrittenTitle badge="Index Page">
         Quick Revision Notebook
       </HandwrittenTitle>
 
-      <NText className="font-bold text-xl leading-relaxed mb-12 text-center max-w-2xl mx-auto block" bold>
+      <NText className="font-bold text-xl leading-relaxed mb-8 text-center max-w-2xl mx-auto block">
         Select a subject below to open the handwritten quick-notes. Perfect for last-minute exam revision and OPD quick references.
       </NText>
+
+      {/* ========================================== */}
+      {/* FEATURED MCQ BANNER (TOP OF THE PAGE)      */}
+      {/* ========================================== */}
+      <div className="w-full flex justify-center mb-16 mt-6 px-2 md:px-4">
+        <Link href="/short-notes/agada-tantra/batch-22-mcqs" className="w-full max-w-3xl group block">
+          <div 
+            className="relative p-6 md:p-8 border-4 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent)]/10 text-center transition-all duration-300 transform group-hover:scale-105 group-hover:shadow-xl group-hover:bg-[var(--theme-accent)]/15"
+            style={{ borderRadius: "255px 15px 225px 15px/15px 225px 15px 255px" }}
+          >
+            {/* Top Tape Effect (कागज चिपकाने वाला टेप) */}
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-20 h-6 bg-[var(--theme-border)] opacity-40 -rotate-2"></div>
+            
+            {/* Animated Badge */}
+            <span className="inline-block px-4 py-1.5 mb-4 text-xs md:text-sm font-black tracking-widest uppercase bg-[var(--theme-accent)] text-[var(--theme-bgLight)] dark:text-white rounded-sm shadow-md animate-bounce">
+              🔥 Exam Special (PYQ)
+            </span>
+
+            {/* Title */}
+            <h2 
+              className="text-2xl md:text-4xl font-black text-[var(--theme-text)] mb-3 transition-colors group-hover:text-[var(--theme-accent)]" 
+              style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}
+            >
+              Batch 22 Main Paper: Solved MCQs
+            </h2>
+
+            {/* Subtitle */}
+            <p className="text-sm md:text-lg text-[var(--theme-text)] opacity-80 font-bold" style={{ fontFamily: "var(--font-kalam)" }}>
+              Click here to practice all previous year questions with detailed explanations!
+            </p>
+          </div>
+        </Link>
+      </div>
+      {/* ========================================== */}
 
       <div className="space-y-12">
         {NOTEBOOK_INDEX.map((section, idx) => (
@@ -81,7 +116,6 @@ export default function ShortNotesIndex() {
             
             {/* Subject Header */}
             <div className="flex items-center gap-4 text-2xl mb-6">
-              {/* Removed obsolete borderColor and custom background classes */}
               <HandwrittenBox>
                 {section.subject}
               </HandwrittenBox>
