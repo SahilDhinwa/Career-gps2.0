@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { ArrowLeft, BookOpen, PenTool, Lock } from "lucide-react";
 import { HandwrittenCanvas, HandwrittenTitle } from "@/components/HandwrittenCanvas";
-import { NText } from "@/components/NoteElements";
 
 // ==========================================
 // SOLID & THEME-ADAPTIVE DASHBOARD INDEX
@@ -65,12 +64,13 @@ export default function ShortNotesMasterIndex() {
         Quick Revision Hub
       </HandwrittenTitle>
 
-      <NText 
-        className="font-bold text-xl md:text-2xl leading-relaxed mb-10 text-center max-w-2xl mx-auto block opacity-80"
+      {/* FIXED: Removed NText and replaced with standard <p> to avoid style prop error */}
+      <p 
+        className="text-[var(--theme-text)] font-bold text-xl md:text-2xl leading-relaxed mb-10 text-center max-w-2xl mx-auto block opacity-80"
         style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}
       >
         Choose your subject below. Access high-yield handwritten notes and solved PYQs instantly.
-      </NText>
+      </p>
 
       {/* ========================================== */}
       {/* SOLID CARD LAYOUT (MATCHING ROG NIDAN NOTES) */}
