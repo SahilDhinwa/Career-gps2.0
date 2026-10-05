@@ -6,10 +6,10 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 import { HandwrittenCanvas } from "@/components/HandwrittenCanvas";
 
 // ================================================================
-// 📝 MCQ DATA ARRAY (BATCH 21) - WITH HINDI EXPLANATIONS
+// 📝 MCQ DATA ARRAY (BATCH 21) - WITH TABLE FOR Q1
 // ================================================================
 const QUESTIONS = [
-    {
+  {
     id: 1,
     question: "क्षारगद का प्रयोग किस विष वेग की चिकित्सा में किया जाता है।",
     translation: "(Ksharagada is indicated in which vega chikitsa.)",
@@ -20,7 +20,59 @@ const QUESTIONS = [
       { key: "D", text: "D. तीसरे (Third)" }
     ],
     answerKey: "D",
-    explanation: "चरक संहिता (चिकित्सा 23/64) और सुश्रुत संहिता (कल्प 2) के अनुसार, स्थावर विष के तीसरे वेग (Third stage) की चिकित्सा में 'क्षारगद' (Kshara Agada), नस्य और अंजन का प्रयोग करने का स्पष्ट निर्देश है (श्लोक: 'तृतीये क्षारमगदं नस्यमञ्जनमेव च')।"
+    explanation: (
+      <div>
+        <p className="mb-3">
+          चरक संहिता (चिकित्सा 23/64) और सुश्रुत संहिता (कल्प 2) के अनुसार, स्थावर विष के <strong>तीसरे वेग (Third stage)</strong> की चिकित्सा में 'क्षारगद' (Kshara Agada), नस्य और अंजन का प्रयोग करने का स्पष्ट निर्देश है (श्लोक: &apos;तृतीये क्षारमगदं नस्यमञ्जनमेव च&apos;)।
+        </p>
+        
+        {/* Vega Chikitsa Table from Image Reference */}
+        <div className="mt-4 overflow-x-auto border border-amber-900/30 rounded-lg">
+          <table className="w-full text-xs md:text-sm text-left border-collapse">
+            <thead>
+              <tr className="bg-amber-900/20 text-amber-950 dark:text-amber-100 border-b border-amber-900/30">
+                <th className="p-2 border-r border-amber-900/30">वेग (Vega)</th>
+                <th className="p-2">चरक अनुसार (च. चि. 23/45-51)[span_2](start_span)[span_2](end_span)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-amber-900/20">
+              <tr>
+                <td className="p-2 font-bold border-r border-amber-900/30">प्रथम[span_3](start_span)[span_3](end_span)</td>
+                <td className="p-2">त्वक-मांस गत-दहन, रक्त गत-विस्रावण, हृदयावरण, वमन[span_4](start_span)[span_4](end_span)</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-bold border-r border-amber-900/30">द्वितीय[span_5](start_span)[span_5](end_span)</td>
+                <td className="p-2">विरेचन, हृदयावरण इत्यादि[span_6](start_span)[span_6](end_span)</td>
+              </tr>
+              <tr className="bg-amber-400/20 font-bold">
+                <td className="p-2 border-r border-amber-900/30">तृतीय[span_7](start_span)[span_7](end_span)</td>
+                <td className="p-2">शोफहर एवं लेखन क्षारागद का पान (नस्य एवं अंजन)[span_8](start_span)[span_8](end_span)</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-bold border-r border-amber-900/30">चतुर्थ[span_9](start_span)[span_9](end_span)</td>
+                <td className="p-2">गोमय रस का कपित्थ पत्र रस-मधु-सर्पि के साथ पान[span_10](start_span)[span_10](end_span)</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-bold border-r border-amber-900/30">पंचम[span_11](start_span)[span_11](end_span)</td>
+                <td className="p-2">कपिकच्छु एवं शिरीष पत्र रस का नेत्रों में आश्व्योतन, अंजन एवं नस्य[span_12](start_span)[span_12](end_span)</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-bold border-r border-amber-900/30">षष्ठम[span_13](start_span)[span_13](end_span)</td>
+                <td className="p-2">संज्ञास्थापन औषधियों का प्रयोग[span_14](start_span)[span_14](end_span)</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-bold border-r border-amber-900/30">सप्तम[span_15](start_span)[span_15](end_span)</td>
+                <td className="p-2">विषपानं दष्टानां विषपीते दशनं चान्ते (विपरीत विष पान)[span_16](start_span)[span_16](end_span)</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-bold border-r border-amber-900/30">अष्टम[span_17](start_span)[span_17](end_span)</td>
+                <td className="p-2">पलाश बीज चूर्ण + अर्द्धभाग मयूर पित्त का पान अथवा बृहतिफाणित ग्रहधूम, गोपित्त एवं निम्ब पत्र रस का पान[span_18](start_span)[span_18](end_span)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )
   },
   {
     id: 2,
@@ -271,15 +323,20 @@ const QUESTIONS = [
   }
 ];
 
-export default function Batch21MainPaperMCQs() {
-  // State to track which questions have their answers revealed
-  const [revealedQs, setRevealedQs] = useState<number[]>([]);
+type StudentAnswers = {
+  [questionId: number]: string;
+};
 
-  // Function to toggle the sticky note reveal for a specific question
-  const toggleReveal = (id: number) => {
-    setRevealedQs((prev) => 
-      prev.includes(id) ? prev.filter((qId) => qId !== id) : [...prev, id]
-    );
+export default function Batch21MainPaperMCQs() {
+  const [studentAnswers, setStudentAnswers] = useState<StudentAnswers>({});
+
+  const handleOptionClick = (questionId: number, selectedKey: string) => {
+    if (studentAnswers[questionId]) return;
+
+    setStudentAnswers((prev) => ({
+      ...prev,
+      [questionId]: selectedKey
+    }));
   };
 
   return (
@@ -301,23 +358,24 @@ export default function Batch21MainPaperMCQs() {
           <Sparkles className="w-3 h-3" /> Batch 21 Solved
         </span>
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[var(--theme-text)] font-serif tracking-tight mb-4">
-          Agada Tantra Main Paper
+          Batch 21 Main Paper
         </h1>
         <p className="text-base md:text-lg text-[var(--theme-text)] opacity-70 font-sans max-w-2xl mx-auto">
-          Attempt the questions below. Click &quot;Check Answer&quot; to reveal the correct option and read the detailed explanation.
+          Attempt the questions below. Click an option to lock in your answer and instantly reveal the explanation.
         </p>
       </div>
 
       {/* Questions Container */}
       <div className="w-full max-w-4xl mx-auto space-y-8 px-4 pb-20">
         {QUESTIONS.map((q) => {
-          const isRevealed = revealedQs.includes(q.id);
+          const studentSelection = studentAnswers[q.id];
+          const isAnswered = !!studentSelection;
 
           return (
             <div key={q.id} className="relative flex flex-col">
               
-              {/* Main Question Card (Bento Style) */}
-              <div className="relative z-10 p-6 md:p-8 rounded-[1.5rem] border border-[var(--theme-border)]/20 bg-white/70 dark:bg-black/50 backdrop-blur-md shadow-sm">
+              {/* Main Question Card */}
+              <div className="relative z-10 p-6 md:p-8 rounded-[1.5rem] border border-[var(--theme-border)] bg-white dark:bg-[#111111] shadow-sm">
                 
                 {/* Question Text */}
                 <div className="flex gap-3 md:gap-4 mb-6">
@@ -335,56 +393,49 @@ export default function Batch21MainPaperMCQs() {
                 </div>
 
                 {/* Options List */}
-                <div className="space-y-3 mb-6 ml-2 md:ml-10 font-sans">
+                <div className="space-y-3 mb-2 ml-2 md:ml-10 font-sans">
                   {q.options.map((opt) => {
                     const isCorrectOption = opt.key === q.answerKey;
+                    const isSelectedByStudent = opt.key === studentSelection;
                     
-                    // Smart Highlight Logic: Green if revealed and correct
-                    const highlightClass = isRevealed && isCorrectOption
-                      ? "bg-emerald-100 border-emerald-500 text-emerald-900 dark:bg-emerald-900/40 dark:border-emerald-400 dark:text-emerald-200 shadow-md transform scale-[1.01]"
-                      : "bg-transparent border-[var(--theme-border)]/10 text-[var(--theme-text)] opacity-80 hover:bg-[var(--theme-text)]/5";
+                    let highlightClass = "bg-transparent border-[var(--theme-border)]/20 text-[var(--theme-text)] hover:bg-[var(--theme-text)]/5 cursor-pointer";
+                    
+                    if (isAnswered) {
+                      highlightClass = "bg-transparent border-[var(--theme-border)]/20 text-[var(--theme-text)] opacity-60 cursor-default";
+                      
+                      if (isCorrectOption) {
+                        highlightClass = "bg-emerald-100 border-emerald-500 text-emerald-900 dark:bg-emerald-900/50 dark:border-emerald-400 dark:text-emerald-100 shadow-md transform scale-[1.01] z-10";
+                      } else if (isSelectedByStudent && !isCorrectOption) {
+                        highlightClass = "bg-rose-100 border-rose-500 text-rose-900 dark:bg-rose-900/50 dark:border-rose-400 dark:text-rose-100 shadow-inner";
+                      }
+                    }
 
                     return (
                       <div 
                         key={opt.key} 
-                        className={`px-5 py-3 rounded-xl border-2 transition-all duration-500 ease-out font-medium text-base md:text-lg ${highlightClass}`}
+                        onClick={() => handleOptionClick(q.id, opt.key)}
+                        className={`px-5 py-3 rounded-xl border-2 transition-all duration-300 ease-out font-medium text-base md:text-lg ${highlightClass}`}
                       >
                         {opt.text}
                       </div>
                     );
                   })}
                 </div>
-
-                {/* Pill Button Container (Right Aligned) */}
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => toggleReveal(q.id)}
-                    className={`px-6 py-2.5 rounded-full font-bold text-sm md:text-base font-sans shadow-md hover:-translate-y-0.5 transition-all duration-300
-                      ${isRevealed 
-                        ? "bg-[var(--theme-border)]/20 text-[var(--theme-text)] hover:bg-[var(--theme-border)]/30" 
-                        : "bg-[var(--theme-accent)] text-white hover:shadow-[var(--theme-accent)]/30"}
-                    `}
-                  >
-                    {isRevealed ? "Hide Answer" : "Check Answer"}
-                  </button>
-                </div>
               </div>
 
-              {/* Sticky Note Reveal (Explanation Slide-Down) */}
+              {/* Sticky Note Reveal */}
               <div 
                 className={`relative z-0 mx-4 md:mx-10 rounded-b-2xl overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] shadow-inner
-                  ${isRevealed ? "max-h-96 opacity-100 translate-y-0 pt-6 pb-5 px-6 border-x border-b border-amber-200/50" : "max-h-0 opacity-0 -translate-y-10 pt-0 pb-0 px-6 border-transparent"}
+                  ${isAnswered ? "max-h-[800px] opacity-100 translate-y-0 pt-6 pb-5 px-6 border-x border-b border-amber-300 dark:border-amber-700/50 bg-amber-100 dark:bg-amber-900/40" : "max-h-0 opacity-0 -translate-y-10 pt-0 pb-0 px-6 border-transparent bg-amber-100 dark:bg-amber-900/40"}
                 `}
-                // Classic soft yellow sticky note color that adapts well
-                style={{ backgroundColor: "rgba(253, 230, 138, 0.4)" }} 
               >
                 <div className="font-sans text-amber-950 dark:text-amber-100">
-                  <span className="inline-block px-2 py-0.5 mb-2 text-xs font-black uppercase tracking-widest bg-amber-400/30 text-amber-900 dark:text-amber-200 rounded-md">
+                  <span className="inline-block px-2 py-0.5 mb-3 text-xs font-black uppercase tracking-widest bg-amber-400/50 dark:bg-amber-700/80 text-amber-900 dark:text-amber-50 rounded-md">
                     Correct Option: {q.answerKey}
                   </span>
-                  <p className="text-sm md:text-base font-medium leading-relaxed">
+                  <div className="text-sm md:text-base font-medium leading-relaxed">
                     {q.explanation}
-                  </p>
+                  </div>
                 </div>
               </div>
 
