@@ -6,14 +6,13 @@ import { HandwrittenCanvas, HandwrittenTitle } from "@/components/HandwrittenCan
 import { NText } from "@/components/NoteElements";
 
 // ==========================================
-// COLOR-CODED DASHBOARD INDEX
+// COLOR-CODED DASHBOARD INDEX (WITH HANDWRITTEN FONTS)
 // ==========================================
 const MASTER_INDEX = [
   {
     subject: "Agada Tantra (Toxicology)",
     icon: "🐍",
     status: "live",
-    // Purple Theme for Poison/Toxicology
     themeClasses: {
       bg: "bg-fuchsia-100/80 dark:bg-fuchsia-900/20",
       border: "border-fuchsia-400 dark:border-fuchsia-700/80",
@@ -30,7 +29,6 @@ const MASTER_INDEX = [
     subject: "Roga Nidan & Vikriti Vigyan",
     icon: "🔬",
     status: "live",
-    // Rose/Red Theme for Blood/Pathology
     themeClasses: {
       bg: "bg-rose-100/80 dark:bg-rose-900/20",
       border: "border-rose-400 dark:border-rose-700/80",
@@ -47,7 +45,6 @@ const MASTER_INDEX = [
     subject: "Dravyaguna Vigyan",
     icon: "🌿",
     status: "draft",
-    // Emerald/Green Theme for Herbs/Plants
     themeClasses: {
       bg: "bg-emerald-100/80 dark:bg-emerald-900/20",
       border: "border-emerald-400 dark:border-emerald-700/80",
@@ -64,7 +61,6 @@ const MASTER_INDEX = [
     subject: "Rasa Shastra & Bhaishajya",
     icon: "⚗️",
     status: "draft",
-    // Amber/Orange Theme for Minerals/Alchemy/Fire
     themeClasses: {
       bg: "bg-amber-100/80 dark:bg-amber-900/20",
       border: "border-amber-400 dark:border-amber-700/80",
@@ -97,7 +93,11 @@ export default function ShortNotesMasterIndex() {
         Quick Revision Hub
       </HandwrittenTitle>
 
-      <NText className="font-bold text-lg md:text-xl leading-relaxed mb-10 text-center max-w-2xl mx-auto block opacity-80">
+      {/* NEW: Added Handwritten Font to the Subtitle for a notebook feel */}
+      <NText 
+        className="font-bold text-xl md:text-2xl leading-relaxed mb-10 text-center max-w-2xl mx-auto block opacity-80"
+        style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}
+      >
         Choose your subject below. Access high-yield handwritten notes and solved PYQs instantly.
       </NText>
 
@@ -125,7 +125,7 @@ export default function ShortNotesMasterIndex() {
               <div className="flex items-start gap-4 mb-6">
                 <div className="text-4xl md:text-5xl drop-shadow-sm">{section.icon}</div>
                 <div>
-                  <h2 className={`text-2xl md:text-3xl font-black ${section.themeClasses.text} leading-tight`} style={{ fontFamily: "var(--font-kalam)" }}>
+                  <h2 className={`text-3xl md:text-4xl font-black ${section.themeClasses.text} leading-tight`} style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}>
                     {section.subject}
                   </h2>
                   {!isLive && (
@@ -145,12 +145,17 @@ export default function ShortNotesMasterIndex() {
                     <Link 
                       key={topicIdx}
                       href={topic.link} 
-                      className={`group flex items-center justify-between w-full p-3 md:p-4 border-2 border-dashed ${section.themeClasses.border} ${section.themeClasses.btnBg} ${section.themeClasses.btnHover} transition-all rounded-sm`}
+                      // NEW: Added hover:-rotate-1 for a playful tilt on hover
+                      className={`group flex items-center justify-between w-full p-3 md:p-4 border-2 border-dashed ${section.themeClasses.border} ${section.themeClasses.btnBg} ${section.themeClasses.btnHover} transition-all duration-300 rounded-sm hover:-rotate-1 hover:scale-[1.02]`}
                       style={{ borderRadius: "15px 255px 15px 225px/225px 15px 255px 15px" }}
                     >
                       <div className="flex items-center gap-3">
                         <Icon className={`w-5 h-5 ${section.themeClasses.text} group-hover:text-white transition-colors`} />
-                        <span className={`font-bold text-base md:text-lg ${section.themeClasses.text} group-hover:text-white transition-colors`}>
+                        {/* NEW: Applied Handwritten Font to the Button Text */}
+                        <span 
+                          className={`font-bold text-lg md:text-xl ${section.themeClasses.text} group-hover:text-white transition-colors`}
+                          style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}
+                        >
                           {topic.name}
                         </span>
                       </div>
@@ -166,7 +171,10 @@ export default function ShortNotesMasterIndex() {
                     >
                       <div className="flex items-center gap-3">
                         <Icon className={`w-5 h-5 ${section.themeClasses.text}`} />
-                        <span className={`font-bold text-base md:text-lg ${section.themeClasses.text} line-through decoration-[var(--theme-border)]`}>
+                        <span 
+                          className={`font-bold text-lg md:text-xl ${section.themeClasses.text} line-through decoration-[var(--theme-border)]`}
+                          style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive" }}
+                        >
                           {topic.name}
                         </span>
                       </div>
