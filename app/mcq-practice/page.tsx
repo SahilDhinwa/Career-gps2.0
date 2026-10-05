@@ -13,6 +13,15 @@ const TEST_MODULES = [
     link: "/mcq-practice/charaka",
     status: "active"
   },
+    {
+    id: "agadtantra",
+    title: "Agad Tantra",
+    part: "All Papers",
+    questions: "Subject Hub",
+    icon: <BookOpen className="w-6 h-6 text-amber-500" />,
+    link: "/mcq-practice/agad-tantra",
+    status: "active"
+  },
   {
     id: "dravyaguna",
     title: "Dravyaguna Vigyan",
