@@ -38,7 +38,7 @@ export default function AgadaTantraPYQ() {
       {/* Back Navigation */}
       <div className="mb-10 w-full max-w-5xl mx-auto">
         <Link 
-          href="/short-notes/agad-tantra" 
+          href="/short-notes/agada-tantra" 
           className="inline-flex items-center gap-2 text-[var(--theme-text)] opacity-60 hover:opacity-100 hover:text-[var(--theme-accent)] transition-all font-semibold text-sm md:text-base font-sans tracking-wide"
         >
           <ArrowLeft className="w-5 h-5" /> Back to Subject Index
