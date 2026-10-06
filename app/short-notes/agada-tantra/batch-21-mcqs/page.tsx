@@ -25,55 +25,54 @@ const QUESTIONS = [
         <p className="mb-3">
           चरक संहिता (चिकित्सा 23/64) और सुश्रुत संहिता (कल्प 2) के अनुसार, स्थावर विष के <strong>तीसरे वेग (Third stage)</strong> की चिकित्सा में &apos;क्षारगद&apos; (Kshara Agada), नस्य और अंजन का प्रयोग करने का स्पष्ट निर्देश है (श्लोक: &apos;तृतीये क्षारमगदं नस्यमञ्जनमेव च&apos;)।
         </p>
-        
         {/* Vega Chikitsa Table from Image Reference */}
         <div className="mt-4 overflow-x-auto border border-amber-900/30 rounded-lg">
           <table className="w-full text-xs md:text-sm text-left border-collapse">
             <thead>
               <tr className="bg-amber-900/20 text-amber-950 dark:text-amber-100 border-b border-amber-900/30">
                 <th className="p-2 border-r border-amber-900/30">वेग (Vega)</th>
-                <th className="p-2">चरक अनुसार (च. चि. 23/45-51)[span_2](start_span)[span_2](end_span)</th>
+                <th className="p-2">चरक अनुसार (च. चि. 23/45-51)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-amber-900/20">
               <tr>
-                <td className="p-2 font-bold border-r border-amber-900/30">प्रथम[span_3](start_span)[span_3](end_span)</td>
-                <td className="p-2">त्वक-मांस गत-दहन, रक्त गत-विस्रावण, हृदयावरण, वमन[span_4](start_span)[span_4](end_span)</td>
+                <td className="p-2 font-bold border-r border-amber-900/30">प्रथम</td>
+                <td className="p-2">त्वक-मांस गत-दहन, रक्त गत-विस्रावण, हृदयावरण, वमन</td>
               </tr>
               <tr>
-                <td className="p-2 font-bold border-r border-amber-900/30">द्वितीय[span_5](start_span)[span_5](end_span)</td>
-                <td className="p-2">विरेचन, हृदयावरण इत्यादि[span_6](start_span)[span_6](end_span)</td>
+                <td className="p-2 font-bold border-r border-amber-900/30">द्वितीय</td>
+                <td className="p-2">विरेचन, हृदयावरण इत्यादि</td>
               </tr>
               <tr className="bg-amber-400/20 font-bold">
-                <td className="p-2 border-r border-amber-900/30">तृतीय[span_7](start_span)[span_7](end_span)</td>
-                <td className="p-2">शोफहर एवं लेखन क्षारागद का पान (नस्य एवं अंजन)[span_8](start_span)[span_8](end_span)</td>
+                <td className="p-2 border-r border-amber-900/30">तृतीय</td>
+                <td className="p-2">शोफहर एवं लेखन क्षारागद का पान (नस्य एवं अंजन)</td>
               </tr>
               <tr>
-                <td className="p-2 font-bold border-r border-amber-900/30">चतुर्थ[span_9](start_span)[span_9](end_span)</td>
-                <td className="p-2">गोमय रस का कपित्थ पत्र रस-मधु-सर्पि के साथ पान[span_10](start_span)[span_10](end_span)</td>
+                <td className="p-2 font-bold border-r border-amber-900/30">चतुर्थ</td>
+                <td className="p-2">गोमय रस का कपित्थ पत्र रस-मधु-सर्पि के साथ पान</td>
               </tr>
               <tr>
-                <td className="p-2 font-bold border-r border-amber-900/30">पंचम[span_11](start_span)[span_11](end_span)</td>
-                <td className="p-2">कपिकच्छु एवं शिरीष पत्र रस का नेत्रों में आश्व्योतन, अंजन एवं नस्य[span_12](start_span)[span_12](end_span)</td>
+                <td className="p-2 font-bold border-r border-amber-900/30">पंचम</td>
+                <td className="p-2">कपिकच्छु एवं शिरीष पत्र रस का नेत्रों में आश्व्योतन, अंजन एवं नस्य</td>
               </tr>
               <tr>
-                <td className="p-2 font-bold border-r border-amber-900/30">षष्ठम[span_13](start_span)[span_13](end_span)</td>
-                <td className="p-2">संज्ञास्थापन औषधियों का प्रयोग[span_14](start_span)[span_14](end_span)</td>
+                <td className="p-2 font-bold border-r border-amber-900/30">षष्ठम</td>
+                <td className="p-2">संज्ञास्थापन औषधियों का प्रयोग</td>
               </tr>
               <tr>
-                <td className="p-2 font-bold border-r border-amber-900/30">सप्तम[span_15](start_span)[span_15](end_span)</td>
-                <td className="p-2">विषपानं दष्टानां विषपीते दशनं चान्ते (विपरीत विष पान)[span_16](start_span)[span_16](end_span)</td>
+                <td className="p-2 font-bold border-r border-amber-900/30">सप्तम</td>
+                <td className="p-2">विषपानं दष्टानां विषपीते दशनं चान्ते (विपरीत विष पान)</td>
               </tr>
               <tr>
-                <td className="p-2 font-bold border-r border-amber-900/30">अष्टम[span_17](start_span)[span_17](end_span)</td>
-                <td className="p-2">पलाश बीज चूर्ण + अर्द्धभाग मयूर पित्त का पान अथवा बृहतिफाणित ग्रहधूम, गोपित्त एवं निम्ब पत्र रस का पान[span_18](start_span)[span_18](end_span)</td>
+                <td className="p-2 font-bold border-r border-amber-900/30">अष्टम</td>
+                <td className="p-2">पलाश बीज चूर्ण + अर्द्धभाग मयूर पित्त का पान अथवा बृहतिफाणित ग्रहधूम, गोपित्त एवं निम्ब पत्र रस का पान</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    )
-  },
+      )
+    },
   {
     id: 2,
     question: "निम्न में से विष वृद्धि का हेतु नहीं है।",
