@@ -266,7 +266,7 @@ export default function Batch2021AgadaTest() {
       <div className="absolute top-0 left-0 w-full h-[500px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none -translate-y-1/2"></div>
       
       <div className="max-w-3xl mx-auto relative z-10">
-        <Link href="/mcq-practice/agada-tantra" className="inline-flex items-center gap-2 text-foreground/60 hover:text-amber-500 transition-colors mb-8 font-bold text-sm bg-surface/50 px-4 py-2 rounded-sm border border-surfaceBorder backdrop-blur-sm">
+        <Link href="/mcq-practice/agad-tantra" className="inline-flex items-center gap-2 text-foreground/60 hover:text-amber-500 transition-colors mb-8 font-bold text-sm bg-surface/50 px-4 py-2 rounded-sm border border-surfaceBorder backdrop-blur-sm">
           <ArrowLeft className="w-4 h-4" /> Back to Agada Tantra Hub
         </Link>
 
