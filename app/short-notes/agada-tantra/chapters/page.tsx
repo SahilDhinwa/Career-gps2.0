@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, Scale } from "lucide-react";
 import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/components/HandwrittenCanvas";
 import { NAccent, NText } from "@/components/NoteElements";
 
@@ -44,6 +44,28 @@ export default function AgadaTantraChapters() {
       <NText className="font-bold text-xl leading-relaxed mb-8 text-center max-w-2xl mx-auto block">
         Complete syllabus notes for Agada Tantra.
       </NText>
+
+      {/* HIGHLIGHTED CHEAT SHEET BANNER */}
+      <Link href="/short-notes/agada-tantra/ipc-crpc-bns-notes" className="group block mb-12 max-w-4xl mx-auto font-sans">
+        <div className="bg-[var(--theme-accent)]/10 border-2 border-[var(--theme-accent)]/40 hover:border-[var(--theme-accent)] rounded-2xl p-5 md:p-6 transition-all duration-300 shadow-sm relative overflow-hidden flex items-center justify-between">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-accent)]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+          
+          <div className="flex items-center gap-4 md:gap-6 relative z-10 w-full pr-8">
+            <div className="w-14 h-14 bg-[var(--theme-accent)]/20 rounded-xl flex items-center justify-center shrink-0 border border-[var(--theme-accent)]/30 group-hover:scale-110 transition-transform">
+              <Scale className="w-7 h-7 text-[var(--theme-accent)]" />
+            </div>
+            <div>
+              <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-[var(--theme-accent)] mb-1 block">Special Compendium</span>
+              <h3 className="font-bold text-xl md:text-2xl text-[var(--theme-text)] mb-1">IPC/CrPC to BNS/BNSS Master List</h3>
+              <p className="text-sm md:text-base text-[var(--theme-text)] opacity-70 font-medium leading-snug">High-yield comparative cheat sheet for forensic sections.</p>
+            </div>
+          </div>
+          
+          <div className="w-10 h-10 shrink-0 rounded-full bg-[var(--theme-accent)]/20 flex items-center justify-center text-[var(--theme-accent)] group-hover:bg-[var(--theme-accent)] group-hover:text-white transition-colors relative z-10 hidden sm:flex">
+            <ArrowRight className="w-5 h-5" />
+          </div>
+        </div>
+      </Link>
 
       <div className="relative">
         <div className="flex items-center gap-4 text-2xl mb-6">
