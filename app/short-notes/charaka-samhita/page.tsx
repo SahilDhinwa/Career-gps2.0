@@ -8,7 +8,7 @@ import { NAccent, NText } from "@/components/NoteElements";
 const CHARAKA_CHAPTERS = [
   { name: "Chapter 1: Dirghanjivitiya Adhyaya (Quest for Longevity)", link: "#", status: "Draft" },
   { name: "Chapter 13: Snehadhyaya (Oleation Therapy)", link: "/short-notes/charaka-samhita/chapter-13", status: "Active" },
-  { name: "Chapter 14: Svedadhyaya (Fomentation Therapy)", link: "/short-notes/charaka-samhita/chapter-14", status: "Active" }
+  { name: "Chapter 14: Svedadhyaya (Fomentation Therapy)", link: "/short-notes/charaka-samhita/chapter-14", status: "Active" },
   { name: "Chapter 25: Yajjah Purushiya (Origin of Man & Disease)", link: "#", status: "Draft" },
   { name: "Chapter 26: Atreyabhadrakapyiya (Discourse on Tastes)", link: "#", status: "Draft" }
 ];
