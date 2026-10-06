@@ -76,8 +76,8 @@ export default function AgadaTantraHub() {
         {/* ========================================== */}
         <div className="mb-12">
           
-          {/* FEATURED ACTIVE RECALL ENGINE FOR FORENSICS */}
-          <Link href="/mcq-practice/agad-tantra/chapter-wise/ipc-crpc-sections" className="group bg-gradient-to-br from-emerald-500/10 to-surface/40 backdrop-blur-sm border border-emerald-500/30 hover:border-emerald-500/60 rounded-sm p-5 md:p-8 flex items-center justify-between hover:shadow-lg transition-all duration-300 mb-8 relative overflow-hidden">
+          {/* FEATURED ACTIVE RECALL ENGINE FOR FORENSICS (UPDATED LINK) */}
+          <Link href="/mcq-practice/agad-tantra/ipc-crpc-sections" className="group bg-gradient-to-br from-emerald-500/10 to-surface/40 backdrop-blur-sm border border-emerald-500/30 hover:border-emerald-500/60 rounded-sm p-5 md:p-8 flex items-center justify-between hover:shadow-lg transition-all duration-300 mb-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] md:text-[10px] font-bold px-3 py-1 uppercase tracking-widest rounded-bl-sm z-10 shadow-sm">Featured Engine</div>
             <div className="absolute -right-10 -bottom-10 opacity-5 pointer-events-none">
               <Scale className="w-48 h-48 text-emerald-500" />
