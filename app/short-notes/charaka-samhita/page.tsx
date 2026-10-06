@@ -26,7 +26,7 @@ const STHANA_MODULES = [
     title: "Sharira Sthana Hub",
     description: "Anatomy, embryology, and philosophical concepts of the human body.",
     link: "/short-notes/charaka-samhita/sharir",
-    status: "locked"
+    status: "active"
   },
   {
     title: "Indriya Sthana Hub",
