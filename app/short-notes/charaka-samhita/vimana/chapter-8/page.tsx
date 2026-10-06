@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Users, MessageSquare, Gavel, FileText, Target, Activity, Clock } from "lucide-react";
+import { ArrowLeft, BookOpen, Users, MessageSquare, Clock } from "lucide-react";
 import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/components/HandwrittenCanvas";
 import { NText, NAccent, NCard } from "@/components/NoteElements";
 
@@ -104,13 +104,35 @@ export default function CharakaVimanaChapter8() {
       </div>
 
       {/* ========================================== */}
-      {/* 1. TYPES OF DEBATES & 2. PARISHAD            */}
+      {/* RESTORED: 1. ADHYAYANA & 2. ADHYAPANA        */}
+      {/* ========================================== */}
+      <div className="mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <NCard title="1. अध्ययन विधि (Method of Learning)">
+            <ul className="space-y-3 font-medium opacity-90 text-sm md:text-base">
+              <li><NAccent bold>i. शास्त्र परीक्षा:</NAccent> अपने अध्ययन के लिए निर्मल, तार्किक और सिद्धान्तों से युक्त ग्रन्थ का चुनाव।</li>
+              <li><NAccent bold>ii. आचार्य परीक्षा:</NAccent> गुरु का चुनाव (श्रुत-सम्पन्न, अक्लिष्ट-कर्मा और अनुद्विग्न होना चाहिए)।</li>
+              <li><NAccent bold>iii. अध्ययन क्रम:</NAccent> प्रातःकाल उठकर, पवित्र होकर अध्ययन करने के नियम।</li>
+            </ul>
+          </NCard>
+          <NCard title="2. अध्यापन विधि (Method of Teaching)">
+            <ul className="space-y-3 font-medium opacity-90 text-sm md:text-base">
+              <li><NAccent bold>i. शिष्य परीक्षा:</NAccent> किस विद्यार्थी को पढ़ाया जाए (शिष्य शान्त, कुलीन और मेधावी होना चाहिए)।</li>
+              <li><NAccent bold>ii. उपनयन संस्कार:</NAccent> शिष्य को दीक्षा देना।</li>
+              <li><NAccent bold>iii. अध्यापन क्रम:</NAccent> पढ़ाने की विधि।</li>
+            </ul>
+          </NCard>
+        </div>
+      </div>
+
+      {/* ========================================== */}
+      {/* 3. TYPES OF DEBATES & 4. PARISHAD            */}
       {/* ========================================== */}
       <div className="mb-14 grid grid-cols-1 md:grid-cols-2 gap-8">
         
         {/* Debates Flowchart */}
         <div className="bg-surface/50 border border-surfaceBorder rounded-2xl p-6">
-          <h3 className="text-xl font-bold text-foreground mb-4 border-b border-surfaceBorder pb-2">1. तद्विद्य सम्भाषा के प्रकार</h3>
+          <h3 className="text-xl font-bold text-foreground mb-4 border-b border-surfaceBorder pb-2">3. तद्विद्य सम्भाषा के प्रकार</h3>
           <p className="text-sm opacity-80 mb-4 font-medium">ज्ञानवर्धन के लिए वैद्यों की चर्चा (Debates) 2 प्रकार की होती है:</p>
           
           <div className="space-y-4">
@@ -127,7 +149,7 @@ export default function CharakaVimanaChapter8() {
 
         {/* Parishad */}
         <div className="bg-surface/50 border border-surfaceBorder rounded-2xl p-6">
-          <h3 className="text-xl font-bold text-foreground mb-4 border-b border-surfaceBorder pb-2">2. परिषद् के प्रकार (Assembly)</h3>
+          <h3 className="text-xl font-bold text-foreground mb-4 border-b border-surfaceBorder pb-2">4. परिषद् के प्रकार (Assembly)</h3>
           
           <NText bold className="text-[var(--theme-accent)] mb-2 block">A. ज्ञान के आधार पर (2 Types):</NText>
           <ul className="mb-5 pl-4 space-y-1">
@@ -145,11 +167,11 @@ export default function CharakaVimanaChapter8() {
       </div>
 
       {/* ========================================== */}
-      {/* 3. वादी के प्रकार (OPPONENT)                  */}
+      {/* 5. वादी के प्रकार (OPPONENT)                  */}
       {/* ========================================== */}
       <div className="mb-14">
         <div className="flex items-center gap-3 mb-6">
-          <HandwrittenBox>3. वादी के प्रकार (Types of Opponent)</HandwrittenBox>
+          <HandwrittenBox>5. वादी के प्रकार (Types of Opponent)</HandwrittenBox>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="flex flex-col p-4 bg-rose-500/5 border border-rose-500/20 rounded-xl text-center">
@@ -168,51 +190,71 @@ export default function CharakaVimanaChapter8() {
       </div>
 
       {/* ========================================== */}
-      {/* 4. वाद मार्ग - 44 पद (44 VADA MARGA)         */}
+      {/* 6. वाद मार्ग - 44 पद (44 VADA MARGA)         */}
       {/* ========================================== */}
       <div className="mb-14">
         <div className="flex items-center gap-3 mb-6">
           <HandwrittenBox borderColor="border-amber-500/50" textColor="text-amber-600 dark:text-amber-400">
-            4. वाद मार्ग - 44 पद (Terms of Debate)
+            6. वाद मार्ग - 44 पद (Terms of Debate)
           </HandwrittenBox>
         </div>
         <p className="opacity-80 mb-6 font-medium text-lg text-center max-w-3xl mx-auto">
           विगृह्य सम्भाषा (Hostile debate) में प्रयोग होने वाले 44 पारिभाषिक शब्द और उनके प्रकार:
         </p>
 
-        {/* 44 Items Grid Layout */}
+        {/* 44 Items Grid Layout (With Highlights for Sub-types) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {VADA_MARGA.map((item) => (
-            <div key={item.id} className="p-4 bg-surface border border-surfaceBorder rounded-xl hover:border-[var(--theme-accent)]/50 transition-colors shadow-sm flex flex-col">
-              <div className="flex items-start gap-2 mb-2">
-                <span className="text-xs font-black bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] px-2 py-1 rounded-md shrink-0">
-                  {item.id}
-                </span>
-                <h4 className="font-bold text-[var(--theme-text)]">{item.name}</h4>
-              </div>
-              <p className="text-sm opacity-80 font-medium mb-3 flex-grow">{item.desc}</p>
-              
-              {/* Render subtypes if they exist using roman numerals */}
-              {item.types && (
-                <div className="mt-auto bg-[var(--theme-border)]/5 border-t border-[var(--theme-border)]/20 pt-2 pb-1 px-1 rounded-b-lg">
-                  <ul className="space-y-1.5 text-xs font-medium opacity-90">
-                    {item.types.map((type, idx) => (
-                      <li key={idx} className="leading-tight">{type}</li>
-                    ))}
-                  </ul>
+          {VADA_MARGA.map((item) => {
+            const hasTypes = !!item.types; // Check if this box has sub-types
+            
+            return (
+              <div 
+                key={item.id} 
+                className={`p-4 rounded-xl transition-all shadow-sm flex flex-col relative overflow-hidden ${
+                  hasTypes 
+                    ? "bg-[var(--theme-accent)]/5 border-2 border-[var(--theme-accent)]/50" 
+                    : "bg-surface border border-surfaceBorder hover:border-[var(--theme-accent)]/40"
+                }`}
+              >
+                {/* Decorative highlight glow for items with types */}
+                {hasTypes && (
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--theme-accent)]/10 blur-xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+                )}
+                
+                <div className="flex items-start gap-2 mb-2 relative z-10">
+                  <span className={`text-xs font-black px-2 py-1 rounded-md shrink-0 ${
+                    hasTypes 
+                      ? "bg-[var(--theme-accent)] text-white" 
+                      : "bg-[var(--theme-accent)]/10 text-[var(--theme-accent)]"
+                  }`}>
+                    {item.id}
+                  </span>
+                  <h4 className="font-bold text-[var(--theme-text)]">{item.name}</h4>
                 </div>
-              )}
-            </div>
-          ))}
+                <p className="text-sm opacity-80 font-medium mb-3 flex-grow relative z-10">{item.desc}</p>
+                
+                {/* Render subtypes if they exist using roman numerals */}
+                {hasTypes && (
+                  <div className="mt-auto bg-[var(--theme-accent)]/10 border-t border-[var(--theme-accent)]/20 pt-2 pb-1 px-2 -mx-2 -mb-2 rounded-b-lg relative z-10">
+                    <ul className="space-y-1.5 text-xs font-medium opacity-90 text-[var(--theme-text)]">
+                      {item.types?.map((type, idx) => (
+                        <li key={idx} className="leading-tight">{type}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* ========================================== */}
-      {/* 5. दशविध परीक्ष्य भाव (10 PARIKSHYA BHAVA)   */}
+      {/* 7. दशविध परीक्ष्य भाव (10 PARIKSHYA BHAVA)   */}
       {/* ========================================== */}
       <div className="mb-14">
         <div className="flex items-center gap-3 mb-6">
-          <HandwrittenBox>5. दशविध परीक्ष्य भाव (10 Factors to Examine)</HandwrittenBox>
+          <HandwrittenBox>7. दशविध परीक्ष्य भाव (10 Factors to Examine)</HandwrittenBox>
         </div>
         <p className="opacity-80 mb-6 font-medium text-lg">चिकित्सा आरम्भ करने से पहले वैद्य को इन 10 भावों की जांच करनी चाहिए:</p>
         
@@ -259,12 +301,12 @@ export default function CharakaVimanaChapter8() {
       </div>
 
       {/* ========================================== */}
-      {/* 6. दशविध आतुर परीक्षा (10 ATURA PARIKSHA)    */}
+      {/* 8. दशविध आतुर परीक्षा (10 ATURA PARIKSHA)    */}
       {/* ========================================== */}
       <div className="mb-14">
         <div className="flex items-center gap-3 mb-6">
           <HandwrittenBox borderColor="border-blue-500/50" textColor="text-blue-600 dark:text-blue-400">
-            6. दशविध आतुर परीक्षा (10-Fold Patient Examination)
+            8. दशविध आतुर परीक्षा (10-Fold Patient Examination)
           </HandwrittenBox>
         </div>
         <p className="opacity-80 mb-6 font-medium text-lg">रोगी का बल और रोग का बल मापने के लिए रोगी की 10 प्रकार की परीक्षाएं की जाती हैं:</p>
