@@ -13,7 +13,7 @@ const MASTER_INDEX = [
     icon: "🐍",
     status: "live",
     topics: [
-      { name: "Theory Chapters & Syllabus", link: "/short-notes/agada-tantra/chapters", type: "theory", isReady: true },
+      { name: "Theory Chapters & Syllabus", link: "/short-notes/agada-tantra", type: "theory", isReady: true },
       { name: "Previous Year Papers (PYQ)", link: "/short-notes/agada-tantra/pyq", type: "pyq", isReady: true }
     ]
   },
