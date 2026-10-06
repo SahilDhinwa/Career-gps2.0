@@ -49,14 +49,14 @@ export default function CharakaSharirChapter6() {
             </HandwrittenTitle>
           </div>
 
-          <div className="text-center mb-[32px]">
-            <span className="inline-block px-3 border-b-2 border-dashed border-[var(--theme-accent)] text-[var(--theme-accent)] font-bold text-sm md:text-base tracking-widest uppercase transform -rotate-1 leading-[32px] bg-[var(--theme-bg)]/80">
+          <div className="text-center mb-[32px] h-[32px] flex items-center justify-center">
+            <span className="inline-block px-3 border-b-2 border-dashed border-[var(--theme-accent)] text-[var(--theme-accent)] font-bold text-sm md:text-base tracking-widest uppercase transform -rotate-1 bg-[var(--theme-bg)]/80">
               आहार परिणामकर भाव (6 Factors for Digestion)
             </span>
           </div>
 
           {/* ========================================== */}
-          {/* Q&A STYLE INTRODUCTION (Like Reference Image) */}
+          {/* Q&A STYLE INTRODUCTION (100% Content Intact) */}
           {/* ========================================== */}
           <div className="mb-[64px]">
             <div className="flex gap-3 mb-[32px]">
@@ -70,7 +70,7 @@ export default function CharakaSharirChapter6() {
               <span className="font-bold text-[var(--theme-text)] shrink-0 w-8 opacity-70 leading-[32px]">Ans.</span>
               <div className="text-base md:text-lg opacity-90 font-medium">
                 <p className="leading-[32px] mb-[32px]">
-                  आचार्य चरक ने इसका वर्णन चरक संहिता के <NAccent bold>'शारीर स्थान', अध्याय 6 ('शरीरविचय शारीर')</NAccent> में किया है।
+                  आचार्य चरक ने इसका वर्णन चरक संहिता के <NAccent bold>'शारीर स्थान', अध्याय 6 ('शरीरविचय शारीर' अध्याय)</NAccent> में किया है।
                 </p>
                 <p className="leading-[32px] mb-[32px]">
                   <NText bold>आहार परिणामकर भाव: </NText> 
@@ -84,10 +84,13 @@ export default function CharakaSharirChapter6() {
             </div>
           </div>
 
-          <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto mb-[64px]"></div>
+          {/* Divider Line (Placed inside a 32px box to maintain perfect grid alignment) */}
+          <div className="h-[32px] flex items-center justify-center mb-[32px]">
+            <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
+          </div>
 
           {/* ========================================== */}
-          {/* THE 6 FACTORS (PLAIN TEXT & LIST FORMAT)     */}
+          {/* THE 6 FACTORS (100% Content Intact)          */}
           {/* ========================================== */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-xl md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
@@ -160,11 +163,11 @@ export default function CharakaSharirChapter6() {
               <div className="mb-[32px]">
                 <div className="flex gap-2 items-start">
                   <span className="font-bold text-[var(--theme-accent)] shrink-0 leading-[32px]">6.</span>
-                  <NAccent bold className="text-xl leading-[32px]">समयोग (Samayoga - Proper Combination)</NAccent>
+                  <NAccent bold className="text-xl leading-[32px]">समयोग (Samayoga - Proper Combination / Balance)</NAccent>
                 </div>
                 <div className="pl-6 opacity-90 font-medium">
                   <p className="leading-[32px]"><NText bold>सरल अर्थ:</NText> इसका अर्थ है उचित तालमेल या सही नियम।</p>
-                  <p className="leading-[32px]"><NText bold>कार्य (Action):</NText> <NAccent bold>"समयोगस्त्वेषां परिणामधातुसाम्यकरः सम्पद्यते"</NAccent>। ऊपर बताए गए पाँचों भावों (ऊष्मा, वायु, क्लेद, स्नेह, काल) का एक-दूसरे के साथ सही तालमेल होना, और 'अष्ट आहार विधि' का पालन करना ही समयोग है। यही संतुलित अवस्था भोजन को शरीर के लिए फायदेमंद (धातु-साम्यकर) बनाती है।</p>
+                  <p className="leading-[32px]"><NText bold>कार्य (Action):</NText> <NAccent bold>"समयोगस्त्वेषां परिणामधातुसाम्यकरः सम्पद्यते"</NAccent>। ऊपर बताए गए पाँचों भावों (ऊष्मा, वायु, क्लेद, स्नेह, काल) का एक-दूसरे के साथ सही तालमेल होना, और 'अष्ट आहार विधि' (भोजन करने के नियम, सही मात्रा आदि) का पालन करना ही समयोग है। यही संतुलित अवस्था भोजन को शरीर के लिए फायदेमंद (धातु-साम्यकर) बनाती है।</p>
                 </div>
               </div>
 
@@ -172,7 +175,7 @@ export default function CharakaSharirChapter6() {
           </div>
 
           {/* ========================================== */}
-          {/* SUMMARY SECTION                              */}
+          {/* SUMMARY SECTION (100% Content Intact)        */}
           {/* ========================================== */}
           <div className="mb-[64px]">
             <NText bold className="text-lg md:text-xl text-[var(--theme-accent)] block uppercase tracking-widest opacity-80 leading-[32px] mb-[32px]">
