@@ -209,15 +209,8 @@ const NOTE_THEMES: NoteTheme[] = [
   }
 ];
 
-// 2. MAIN CANVAS WRAPPER (WITH NOTEBOOK LINES & MARGIN)
-// 2. MAIN CANVAS WRAPPER (WITH OPTIONAL NOTEBOOK LINES & MARGIN)
-export function HandwrittenCanvas({ 
-  children, 
-  showLines = false // NEW: Defaults to false so menus don't have lines
-}: { 
-  children: ReactNode;
-  showLines?: boolean;
-}) {
+// 2. MAIN CANVAS WRAPPER (CLEAN - NO RULERS HERE)
+export function HandwrittenCanvas({ children }: { children: ReactNode }) {
   const [activeThemeId, setActiveThemeId] = useState<string>("midnight");
   const [mounted, setMounted] = useState(false);
   
@@ -233,7 +226,6 @@ export function HandwrittenCanvas({
   const activeIndex = NOTE_THEMES.findIndex((t) => t.id === activeThemeId);
   const isDark = resolvedTheme === "dark";
 
-  // TOUCH/SWIPE HANDLERS FOR THE CAROUSEL
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -259,29 +251,19 @@ export function HandwrittenCanvas({
 
   if (!mounted) return null;
 
-  const activeBorderColor = isDark ? theme.borderDark : theme.borderLight;
-
-  // Conditionally apply the notebook background ONLY if showLines is true
-  const notebookBackground = showLines 
-    ? `linear-gradient(90deg, transparent 48px, rgba(239, 68, 68, 0.45) 48px, rgba(239, 68, 68, 0.45) 50px, transparent 50px),
-       repeating-linear-gradient(transparent, transparent 31px, ${activeBorderColor} 31px, ${activeBorderColor} 32px)`
-    : "none"; // If false, no lines!
-
   return (
     <div 
       className="min-h-screen p-3 sm:p-6 md:p-12 lg:p-16 flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden"
       style={{
         backgroundColor: isDark ? theme.bgDark : theme.bgLight,
-        backgroundImage: notebookBackground, // Uses our conditional logic
-        backgroundAttachment: "local",
         '--theme-text': isDark ? theme.textDark : theme.textLight,
-        '--theme-border': activeBorderColor,
+        '--theme-border': isDark ? theme.borderDark : theme.borderLight,
         '--theme-accent': isDark ? theme.accentDark : theme.accentLight,
         '--theme-accent-bg': isDark ? theme.accentBgDark : theme.accentBgLight,
       } as React.CSSProperties}
     >
       {/* Background Image */}
-      {isDark && theme.bgImageDark && !showLines && (
+      {isDark && theme.bgImageDark && (
         <div className="absolute inset-0 z-0" 
              style={{
                  backgroundImage: theme.bgImageDark, 
@@ -348,11 +330,57 @@ export function HandwrittenCanvas({
 
       {/* Main Content Area */}
       <div 
-        className={`max-w-4xl w-full z-10 relative overflow-hidden text-[var(--theme-text)] ${showLines ? "pl-4 sm:pl-8 md:pl-12" : ""}`} 
+        className="max-w-4xl w-full z-10 relative overflow-hidden text-[var(--theme-text)]" 
         style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive, sans-serif" }}
       >
         {children}
       </div>
+    </div>
+  );
+}
+
+// 3. HANDWRITTEN TITLE
+export function HandwrittenTitle({ children, badge }: { children: ReactNode; badge?: ReactNode }) {
+  return (
+    <div className="relative text-center mb-6 md:mb-12 mt-4 md:mt-0">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl inline-block relative font-bold px-2 text-[var(--theme-text)]">
+        {children}
+        <div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-[2px] transform -rotate-1 bg-[var(--theme-border)] opacity-80"></div>
+        <div className="absolute -bottom-2 md:-bottom-3 left-2 w-[95%] h-[1px] transform rotate-1 bg-[var(--theme-border)] opacity-80"></div>
+      </h1>
+      {badge && (
+        <div 
+          className="absolute top-0 right-0 border-2 px-2 py-0.5 md:px-3 md:py-1 text-xs md:text-lg font-bold shadow-sm hidden sm:block border-[var(--theme-accent)] bg-transparent text-[var(--theme-text)]"
+          style={handDrawnBorder}
+        >
+          {badge}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 4. HANDWRITTEN BOX
+export function HandwrittenBox({ 
+  children, 
+  className = "",
+  borderColor, 
+  textColor    
+}: { 
+  children: ReactNode; 
+  className?: string;
+  borderColor?: string; 
+  textColor?: string;   
+}) {
+  const finalBorderClass = borderColor || "border-[var(--theme-border)]";
+  const finalTextClass = textColor || "text-[var(--theme-text)]";
+
+  return (
+    <div 
+      className={`border-2 px-2 py-0.5 md:px-3 md:py-1 text-base md:text-xl inline-block ${finalBorderClass} ${finalTextClass} ${className}`}
+      style={handDrawnBorder}
+    >
+      {children}
     </div>
   );
 }
