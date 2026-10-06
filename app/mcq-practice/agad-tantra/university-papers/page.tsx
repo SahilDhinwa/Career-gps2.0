@@ -30,7 +30,7 @@ export default function AgadaTantraUniversityPapers() {
     <div className="min-h-screen bg-background relative overflow-hidden pt-8 md:pt-12 pb-24 px-4 md:px-6">
       <div className="max-w-4xl mx-auto relative z-10">
         
-        <Link href="/mcq-practice/agada-tantra" className="inline-flex items-center gap-2 text-foreground/60 hover:text-amber-500 transition-colors mb-8 font-bold text-sm">
+        <Link href="/mcq-practice/agad-tantra" className="inline-flex items-center gap-2 text-foreground/60 hover:text-amber-500 transition-colors mb-8 font-bold text-sm">
           <ArrowLeft className="w-4 h-4" /> Back to Agada Tantra Hub
         </Link>
 
