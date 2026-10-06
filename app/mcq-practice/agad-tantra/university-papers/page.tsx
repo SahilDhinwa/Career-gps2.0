@@ -8,7 +8,7 @@ const OFFICIAL_TESTS = [
     id: "batch-2023", 
     title: "Agada Tantra - 2023 (Main)", 
     subtitle: "Previous Year University Question Paper • 20 Questions", 
-    link: "/mcq-practice/agad-tantra/university-papers/batch-2023" 
+    link: "#" isReady "false" 
   },
   { 
     id: "batch-2022", 
