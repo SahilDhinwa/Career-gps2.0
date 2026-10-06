@@ -8,19 +8,19 @@ const OFFICIAL_TESTS = [
     id: "batch-2023", 
     title: "Agada Tantra - 2023 (Main)", 
     subtitle: "Previous Year University Question Paper • 20 Questions", 
-    link: "/mcq-practice/agada-tantra/university-papers/batch-2023" 
+    link: "/mcq-practice/agad-tantra/university-papers/batch-2023" 
   },
   { 
     id: "batch-2022", 
     title: "Agada Tantra - 2022 (Main)", 
     subtitle: "Previous Year University Question Paper • 20 Questions", 
-    link: "/mcq-practice/agada-tantra/university-papers/batch-2022" 
+    link: "/mcq-practice/agad-tantra/university-papers/batch-2022" 
   },
   { 
     id: "batch-2021", 
     title: "Agada Tantra - 2021 (Main)", 
     subtitle: "Previous Year University Question Paper • 20 Questions", 
-    link: "/mcq-practice/agada-tantra/university-papers/batch-2021" 
+    link: "/mcq-practice/agad-tantra/university-papers/batch-2021" 
   }
 ];
 
