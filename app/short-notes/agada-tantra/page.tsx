@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Scale } from "lucide-react";
+import { ArrowLeft, ArrowRight, Scale, Award } from "lucide-react";
 import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/components/HandwrittenCanvas";
 import { NAccent, NText } from "@/components/NoteElements";
 
@@ -28,9 +28,11 @@ const THEORY_CHAPTERS = [
   { name: "Chapter 20: Asphyxial Deaths", link: "/short-notes/agada-tantra/chapter-20", status: "Active" }
 ];
 
-export default function AgadaTantraChapters() {
+export default function AgadaTantraHub() {
   return (
     <HandwrittenCanvas>
+      
+      {/* Top Navigation */}
       <div className="mb-8">
         <Link href="/short-notes" className="inline-flex items-center gap-2 text-[var(--theme-text)] opacity-70 hover:opacity-100 hover:text-[var(--theme-accent)] transition-colors font-bold text-lg font-sans">
           <ArrowLeft className="w-5 h-5" /> Back to Master Index
@@ -42,31 +44,55 @@ export default function AgadaTantraChapters() {
       </HandwrittenTitle>
 
       <NText className="font-bold text-xl leading-relaxed mb-8 text-center max-w-2xl mx-auto block">
-        Complete syllabus notes for Agada Tantra.
+        Complete syllabus notes and solved university papers for Agada Tantra.
       </NText>
 
-      {/* HIGHLIGHTED CHEAT SHEET BANNER */}
-      <Link href="/short-notes/agada-tantra/ipc-crpc-bns-notes" className="group block mb-12 max-w-4xl mx-auto font-sans">
-        <div className="bg-[var(--theme-accent)]/10 border-2 border-[var(--theme-accent)]/40 hover:border-[var(--theme-accent)] rounded-2xl p-5 md:p-6 transition-all duration-300 shadow-sm relative overflow-hidden flex items-center justify-between">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-accent)]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-          
-          <div className="flex items-center gap-4 md:gap-6 relative z-10 w-full pr-8">
-            <div className="w-14 h-14 bg-[var(--theme-accent)]/20 rounded-xl flex items-center justify-center shrink-0 border border-[var(--theme-accent)]/30 group-hover:scale-110 transition-transform">
-              <Scale className="w-7 h-7 text-[var(--theme-accent)]" />
-            </div>
-            <div>
-              <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-[var(--theme-accent)] mb-1 block">Special Compendium</span>
-              <h3 className="font-bold text-xl md:text-2xl text-[var(--theme-text)] mb-1">IPC/CrPC to BNS/BNSS Master List</h3>
-              <p className="text-sm md:text-base text-[var(--theme-text)] opacity-70 font-medium leading-snug">High-yield comparative cheat sheet for forensic sections.</p>
+      {/* ========================================== */}
+      {/* FEATURED SECTIONS (QUICK LINKS)          */}
+      {/* ========================================== */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12 max-w-5xl mx-auto font-sans">
+        
+        {/* 1. IPC/CrPC Compendium Banner */}
+        <Link href="/short-notes/agada-tantra/ipc-crpc-bns-notes" className="group block">
+          <div className="bg-[var(--theme-accent)]/10 border-2 border-[var(--theme-accent)]/40 hover:border-[var(--theme-accent)] rounded-2xl p-5 transition-all duration-300 shadow-sm relative overflow-hidden h-full flex flex-col justify-center">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-accent)]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            
+            <div className="flex items-start gap-4 relative z-10">
+              <div className="w-12 h-12 bg-[var(--theme-accent)]/20 rounded-xl flex items-center justify-center shrink-0 border border-[var(--theme-accent)]/30 group-hover:scale-110 transition-transform">
+                <Scale className="w-6 h-6 text-[var(--theme-accent)]" />
+              </div>
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--theme-accent)] mb-1 block">Special Compendium</span>
+                <h3 className="font-bold text-lg text-[var(--theme-text)] mb-1">IPC/CrPC to BNS/BNSS</h3>
+                <p className="text-sm text-[var(--theme-text)] opacity-70 font-medium">High-yield comparative cheat sheet.</p>
+              </div>
             </div>
           </div>
-          
-          <div className="w-10 h-10 shrink-0 rounded-full bg-[var(--theme-accent)]/20 flex items-center justify-center text-[var(--theme-accent)] group-hover:bg-[var(--theme-accent)] group-hover:text-white transition-colors relative z-10 hidden sm:flex">
-            <ArrowRight className="w-5 h-5" />
-          </div>
-        </div>
-      </Link>
+        </Link>
 
+        {/* 2. PYQ Solved Papers Banner */}
+        <Link href="/short-notes/agada-tantra/pyq" className="group block">
+          <div className="bg-emerald-500/10 border-2 border-emerald-500/40 hover:border-emerald-500 rounded-2xl p-5 transition-all duration-300 shadow-sm relative overflow-hidden h-full flex flex-col justify-center">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            
+            <div className="flex items-start gap-4 relative z-10">
+              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:scale-110 transition-transform">
+                <Award className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-1 block">University Exams</span>
+                <h3 className="font-bold text-lg text-[var(--theme-text)] mb-1">PYQ Solved Papers</h3>
+                <p className="text-sm text-[var(--theme-text)] opacity-70 font-medium">Interactive solutions for 2021, 2022, 2023.</p>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+      </div>
+
+      {/* ========================================== */}
+      {/* THEORY CHAPTERS LIST                     */}
+      {/* ========================================== */}
       <div className="relative">
         <div className="flex items-center gap-4 text-2xl mb-6">
           <HandwrittenBox>Theory Chapters (Syllabus)</HandwrittenBox>
@@ -85,6 +111,7 @@ export default function AgadaTantraChapters() {
           ))}
         </ul>
       </div>
+      
     </HandwrittenCanvas>
   );
 }
