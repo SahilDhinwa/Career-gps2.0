@@ -260,6 +260,17 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
       className="min-h-screen p-3 sm:p-6 md:p-12 lg:p-16 flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden"
       style={{
         backgroundColor: isDark ? theme.bgDark : theme.bgLight,
+        // ========================================================
+        // ADDED RULED NOTEBOOK LINES HERE (Uses theme border color)
+        // ========================================================
+        backgroundImage: `repeating-linear-gradient(
+          transparent, 
+          transparent 31px, 
+          ${isDark ? theme.borderDark : theme.borderLight} 31px, 
+          ${isDark ? theme.borderDark : theme.borderLight} 32px
+        )`,
+        backgroundAttachment: "local",
+        // ========================================================
         '--theme-text': isDark ? theme.textDark : theme.textLight,
         '--theme-border': isDark ? theme.borderDark : theme.borderLight,
         '--theme-accent': isDark ? theme.accentDark : theme.accentLight,
