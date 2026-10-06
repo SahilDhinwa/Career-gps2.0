@@ -18,6 +18,15 @@ const MASTER_INDEX = [
     ]
   },
   {
+    subject: "Charaka Samhita (Purvardha)",
+    icon: "📜",
+    status: "live",
+    topics: [
+      { name: "Theory Chapters & Syllabus", link: "/short-notes/charaka-samhita", type: "theory", isReady: true },
+      { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
+    ]
+  },
+  {
     subject: "Roga Nidan & Vikriti Vigyan",
     icon: "🔬",
     status: "live",
