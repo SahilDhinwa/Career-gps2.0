@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, XCircle, RotateCcw, Scale, BrainCircuit, Sparkles, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RotateCcw, Scale, BrainCircuit, Sparkles, BookOpen } from "lucide-react";
 
 // ==========================================
 // 🧠 ACTIVE RECALL DATA (IPC/CrPC to BNS/BNSS)
