@@ -35,6 +35,16 @@ const MASTER_INDEX = [
       { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
     ]
   },  
+  // NEWLY ADDED: Swasth Vritta
+  {
+    subject: "Swasth Vritta & Yoga",
+    icon: "🧘‍♂️",
+    status: "live",
+    topics: [
+      { name: "Theory Chapters & Syllabus", link: "/short-notes/swasth-vritta", type: "theory", isReady: true },
+      { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
+    ]
+  },
   {
     subject: "Dravyaguna Vigyan",
     icon: "🌿",
