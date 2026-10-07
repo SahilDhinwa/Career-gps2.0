@@ -25,6 +25,7 @@ export default function Chapter10Index() {
         </div>
         
         <ul className="space-y-4 pl-4 md:pl-12 text-lg md:text-xl font-medium">
+          {/* Part 1 */}
           <li className="flex items-center gap-3">
             <NAccent className="font-bold">→</NAccent>
             <Link href="/short-notes/swasth-vritta/paper-1/chapter-10-naturopathy/part-1" className="text-[var(--theme-text)] hover:text-[var(--theme-accent)] underline decoration-[var(--theme-border)] opacity-90 hover:opacity-100 hover:decoration-[var(--theme-accent)] underline-offset-4 transition-all font-bold">
@@ -32,10 +33,23 @@ export default function Chapter10Index() {
             </Link>
             <span className="text-[10px] md:text-xs font-sans font-bold bg-transparent text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-emerald-600/50">Active</span>
           </li>
+
+          {/* Part 2 */}
           <li className="flex items-center gap-3">
             <NAccent className="font-bold">→</NAccent>
-            <span className="text-[var(--theme-text)] opacity-50">Part 2: Mud Therapy & Sun Bath</span>
-            <span className="text-[9px] md:text-[10px] font-sans font-bold bg-transparent text-[var(--theme-text)] opacity-40 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-[var(--theme-text)]/30">Active</span>
+            <Link href="/short-notes/swasth-vritta/paper-1/chapter-10-naturopathy/part-2" className="text-[var(--theme-text)] hover:text-[var(--theme-accent)] underline decoration-[var(--theme-border)] opacity-90 hover:opacity-100 hover:decoration-[var(--theme-accent)] underline-offset-4 transition-all font-bold">
+              Part 2: Mud Therapy & Sun Bath
+            </Link>
+            <span className="text-[10px] md:text-xs font-sans font-bold bg-transparent text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-emerald-600/50">Active</span>
+          </li>
+
+          {/* Part 3 */}
+          <li className="flex items-center gap-3">
+            <NAccent className="font-bold">→</NAccent>
+            <Link href="/short-notes/swasth-vritta/paper-1/chapter-10-naturopathy/part-3" className="text-[var(--theme-text)] hover:text-[var(--theme-accent)] underline decoration-[var(--theme-border)] opacity-90 hover:opacity-100 hover:decoration-[var(--theme-accent)] underline-offset-4 transition-all font-bold">
+              Part 3: Water and Touch Therapies
+            </Link>
+            <span className="text-[10px] md:text-xs font-sans font-bold bg-transparent text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-emerald-600/50">Active</span>
           </li>
         </ul>
       </div>
