@@ -10,11 +10,11 @@ export default function NaturopathyPart3() {
     <HandwrittenCanvas>
       {/* 
         =========================================================
-        NOTEBOOK PAPER WRAPPER (Perfect 32px Grid & Handwriting)
+        NOTEBOOK PAPER WRAPPER (Optimized for Mobile & Desktop Mode)
         =========================================================
       */}
       <div
-        className="w-full min-h-screen relative overflow-hidden"
+        className="w-full min-h-screen relative overflow-hidden text-[var(--theme-text)]"
         style={{
           fontFamily: "var(--font-kalam), 'Patrick Hand', cursive, sans-serif",
           backgroundImage: `
@@ -62,7 +62,7 @@ export default function NaturopathyPart3() {
           </div>
 
           {/* ========================================== */}
-          {/* 7. HYDROTHERAPY                              */}
+          {/* 7. HYDROTHERAPY & FLOWCHART                  */}
           {/* ========================================== */}
           <div className="mb-[32px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] m-0 underline decoration-[var(--theme-border)]/30 underline-offset-8">
@@ -77,21 +77,42 @@ export default function NaturopathyPart3() {
                 <span className="font-bold text-[var(--theme-accent)]">Simple Explanation:</span> जल ही जीवन है। पानी का अलग-अलग तापमान (ठंडा, गरम, या गुनगुना) शरीर पर अलग-अलग असर डालता है। पानी के इसी गुण का इस्तेमाल करके बीमारियों को ठीक करना जल चिकित्सा कहलाता है।
               </p>
 
-              {/* TRADITIONAL HEADING STYLE ADDED HERE */}
-              <div className="text-center mb-[32px]">
-                <span className="font-bold text-[var(--theme-accent)] text-base md:text-xl leading-[32px] inline-block">
-                  -: तापमान के आधार पर पानी के प्रकार :-
-                </span>
+              {/* ========================================== */}
+              {/* FLOWCHART: WATER TYPES                     */}
+              {/* ========================================== */}
+              <div className="my-[32px] p-4 border-2 border-dashed border-[var(--theme-border)]/60 rounded-2xl bg-[var(--theme-bg)]/40">
+                <div className="text-center font-bold text-[var(--theme-accent)] text-base md:text-xl mb-2">
+                  -: तापमान के आधार पर पानी के प्रकार (Types of Water) :-
+                </div>
+                <div className="text-center text-xl font-bold text-[var(--theme-accent)] mb-2">↓</div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                  <div className="border border-[var(--theme-border)]/50 p-3 rounded-xl bg-white/40 dark:bg-black/20 shadow-xs">
+                    <span className="font-bold text-sm md:text-base text-[var(--theme-accent)]">① Cold Water</span>
+                    <p className="text-xs md:text-sm opacity-80 mt-1 m-0">(ठंडा पानी)</p>
+                  </div>
+                  <div className="border border-[var(--theme-border)]/50 p-3 rounded-xl bg-white/40 dark:bg-black/20 shadow-xs">
+                    <span className="font-bold text-sm md:text-base text-[var(--theme-accent)]">② Hot Water/Steam</span>
+                    <p className="text-xs md:text-sm opacity-80 mt-1 m-0">(गर्म पानी/भाप)</p>
+                  </div>
+                  <div className="border border-[var(--theme-border)]/50 p-3 rounded-xl bg-white/40 dark:bg-black/20 shadow-xs">
+                    <span className="font-bold text-sm md:text-base text-[var(--theme-accent)]">③ Neutral Water</span>
+                    <p className="text-xs md:text-sm opacity-80 mt-1 m-0">(गुनगुना पानी)</p>
+                  </div>
+                </div>
               </div>
 
-              {/* TRADITIONAL NUMBERING ① ② ③ */}
+              {/* Detailed Explanations of Water Types */}
+              <span className="font-bold text-[var(--theme-accent)] text-base md:text-xl leading-[32px] block mb-[32px]">
+                विस्तृत विवरण (Detailed Explanation):
+              </span>
+
               <div className="mb-[32px]">
                 <div className="grid grid-cols-[24px_1fr] md:grid-cols-[40px_1fr]">
                   <span className="font-bold text-[var(--theme-accent)] text-base md:text-xl leading-[32px]">①</span>
                   <span className="font-bold text-[var(--theme-accent)] text-base md:text-xl leading-[32px]">Cold Water (ठंडा पानी):</span>
                 </div>
                 <div className="pl-[24px] md:pl-[40px]">
-                  <p className="leading-[32px] m-0">Stimulates the body, wakes up the nervous system, and reduces fever. (यह शरीर को चुस्त बनाता है और बुखार की गर्मी को कम करता है)।</p>
+                  <p className="leading-[32px] m-0">Stimulates the body, wakes up the nervous system, and reduces fever. (यह शरीर को चुस्त बनाता है और बुखार की गर्मी को कम करता है).</p>
                 </div>
               </div>
 
@@ -101,7 +122,7 @@ export default function NaturopathyPart3() {
                   <span className="font-bold text-[var(--theme-accent)] text-base md:text-xl leading-[32px]">Hot Water/Steam (गर्म पानी/भाप):</span>
                 </div>
                 <div className="pl-[24px] md:pl-[40px]">
-                  <p className="leading-[32px] m-0">Relaxes the muscles, opens up pores, and promotes sweating to remove toxins. (यह मांसपेशियों को आराम देता है और पसीने के जरिए गंदगी बाहर निकालता है)।</p>
+                  <p className="leading-[32px] m-0">Relaxes the muscles, opens up pores, and promotes sweating to remove toxins. (यह मांसपेशियों को आराम देता है और पसीने के जरिए गंदगी बाहर निकालता है).</p>
                 </div>
               </div>
 
@@ -115,7 +136,7 @@ export default function NaturopathyPart3() {
                 </div>
               </div>
 
-              {/* STANDARD BULLET LIST */}
+              {/* Therapeutic Effects */}
               <span className="font-bold text-[var(--theme-accent)] text-base md:text-xl leading-[32px] block mb-[32px]">
                 Therapeutic Effects of Hydrotherapy (जल चिकित्सा के फायदे):
               </span>
@@ -162,7 +183,7 @@ export default function NaturopathyPart3() {
             </div>
           </div>
 
-          {/* Section Divider (Creates a beautiful 2-line gap for next major heading) */}
+          {/* Section Divider */}
           <div className="w-full h-[64px] mb-[32px] relative flex flex-col items-center justify-center">
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mt-[32px]"></div>
           </div>
