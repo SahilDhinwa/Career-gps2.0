@@ -3,60 +3,53 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { HandwrittenCanvas } from "@/components/HandwrittenCanvas";
-import { NText, NAccent } from "@/components/NoteElements";
 
 export default function CharakaSharirChapter6() {
   return (
     <HandwrittenCanvas>
       {/* 
         =========================================================
-        STRICT 32px NOTEBOOK GRID (Perfected for Mobile & Desktop)
+        THE PERFECT 32px GRID:
+        1. font-family is forced to Kalam for BOTH mobile & desktop.
+        2. background-size: "100% 32px" completely prevents line drifting on mobile.
         =========================================================
       */}
       <div
         className="w-full min-h-screen relative overflow-hidden text-[var(--theme-text)]"
         style={{
-          // Red Margin Line at 56px + Horizontal Ruled Lines every 32px
+          fontFamily: "var(--font-kalam), 'Patrick Hand', cursive, sans-serif",
           backgroundImage: `
             linear-gradient(90deg, transparent 56px, rgba(239, 68, 68, 0.45) 56px, rgba(239, 68, 68, 0.45) 58px, transparent 58px),
-            repeating-linear-gradient(transparent, transparent 31px, var(--theme-border) 31px, var(--theme-border) 32px)
+            linear-gradient(transparent 31px, var(--theme-border) 31px, var(--theme-border) 32px)
           `,
+          backgroundSize: "100% 100%, 100% 32px",
           backgroundAttachment: "local",
-          // Pushes the background down slightly so text sits perfectly ON the line
-          backgroundPosition: "0 6px",
+          backgroundPosition: "0 0, 0 6px", // Aligns the lines properly behind the text
         }}
       >
-        {/* 
-          CONTENT START 
-          Using text-sm for mobile to fit more words per line (keeping desktop ratio).
-          m-0 is strictly applied to paragraphs to prevent browser margins from breaking the grid.
-        */}
-        <div className="pl-[72px] sm:pl-[84px] pr-4 sm:pr-8 py-[32px] w-full font-sans md:font-kalam">
+        <div className="pl-[72px] sm:pl-[84px] pr-4 sm:pr-8 py-[32px] w-full">
           
           {/* Top Navigation */}
           <div className="mb-[32px] h-[32px] flex items-center">
             <Link 
               href="/short-notes/charaka-samhita/sharir" 
-              className="inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-[var(--theme-accent)] transition-colors font-bold text-xs md:text-base leading-[32px]"
+              className="inline-flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-[var(--theme-accent)] transition-colors font-bold text-sm md:text-base leading-[32px]"
             >
               <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" /> Back to Sharira Hub
             </Link>
           </div>
 
-          {/* Main Chapter Title (Custom Grid-Aligned to prevent badge overlap) */}
+          {/* Main Chapter Title & Badge */}
           <div className="relative w-full text-center min-h-[64px] mb-[32px] flex flex-col justify-center">
-            <h1 className="text-xl sm:text-3xl md:text-4xl font-bold inline-block relative mx-auto leading-[32px] px-2">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-bold inline-block relative mx-auto leading-[32px] px-2 m-0">
               अध्याय 6: शरीरविचय शारीर
               <div className="absolute -bottom-1 left-0 w-full h-[2px] transform -rotate-1 bg-[var(--theme-border)] opacity-80"></div>
               <div className="absolute -bottom-2 left-2 w-[95%] h-[1px] transform rotate-1 bg-[var(--theme-border)] opacity-80"></div>
             </h1>
             
-            {/* 
-              FIXED BADGE: Anchored to the top right of the page container, 
-              ensuring it NEVER overlaps the main title on mobile!
-            */}
+            {/* FIXED BADGE: Securely anchored to the top right to prevent overlapping */}
             <div 
-              className="absolute top-0 right-0 md:right-4 border-2 px-2 py-0.5 md:px-3 md:py-1 text-[10px] md:text-sm font-bold shadow-sm border-[var(--theme-accent)] bg-[var(--theme-bg)] leading-[20px] md:leading-[24px]"
+              className="absolute top-0 right-0 border-2 px-2 py-0.5 md:px-3 md:py-1 text-[10px] md:text-sm font-bold shadow-sm border-[var(--theme-accent)] bg-white dark:bg-black leading-[20px] md:leading-[24px]"
               style={{ borderRadius: "255px 15px 225px 15px/15px 225px 15px 255px" }}
             >
               Charaka<br/><span className="text-[var(--theme-accent)]">Sharira</span>
@@ -65,7 +58,7 @@ export default function CharakaSharirChapter6() {
 
           {/* Subtitle */}
           <div className="text-center h-[32px] mb-[32px]">
-            <span className="inline-block px-2 border-b-2 border-dashed border-[var(--theme-accent)] text-[var(--theme-accent)] font-bold text-xs md:text-base tracking-widest uppercase transform -rotate-1 leading-[30px]">
+            <span className="inline-block px-2 border-b-2 border-dashed border-[var(--theme-accent)] text-[var(--theme-accent)] font-bold text-xs md:text-base tracking-widest uppercase transform -rotate-1 leading-[30px] bg-white/50 dark:bg-black/50">
               आहार परिणामकर भाव (6 Factors)
             </span>
           </div>
@@ -74,16 +67,15 @@ export default function CharakaSharirChapter6() {
           {/* Q&A STYLE INTRODUCTION                       */}
           {/* ========================================== */}
           <div className="mb-[64px]">
-            {/* Used Grid to prevent text wrapping under the "Q." on mobile */}
             <div className="grid grid-cols-[24px_1fr] md:grid-cols-[40px_1fr] mb-[32px]">
-              <span className="font-bold text-[var(--theme-accent)] text-sm md:text-xl leading-[32px]">Q.</span>
-              <span className="font-bold text-sm md:text-xl leading-[32px] underline decoration-[var(--theme-border)]/40 underline-offset-4">
+              <span className="font-bold text-[var(--theme-accent)] text-base md:text-xl leading-[32px]">Q.</span>
+              <span className="font-bold text-base md:text-xl leading-[32px] underline decoration-[var(--theme-border)]/40 underline-offset-4">
                 'आहार परिणामकर भाव' किस अध्याय में है और यह क्या हैं?
               </span>
             </div>
             
-            <div className="grid grid-cols-[28px_1fr] md:grid-cols-[40px_1fr]">
-              <span className="font-bold opacity-70 text-sm md:text-xl leading-[32px]">Ans.</span>
+            <div className="grid grid-cols-[32px_1fr] md:grid-cols-[40px_1fr]">
+              <span className="font-bold opacity-70 text-base md:text-xl leading-[32px]">Ans.</span>
               <div className="text-sm md:text-lg opacity-90 font-medium">
                 <p className="leading-[32px] mb-[32px] m-0">
                   आचार्य चरक ने इसका वर्णन चरक संहिता के <span className="text-[var(--theme-accent)] font-bold">'शारीर स्थान', अध्याय 6 ('शरीरविचय शारीर')</span> में किया है।
@@ -108,7 +100,7 @@ export default function CharakaSharirChapter6() {
           {/* THE 6 FACTORS                                */}
           {/* ========================================== */}
           <div className="mb-[64px]">
-            <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
+            <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] m-0 underline decoration-[var(--theme-border)]/30 underline-offset-8">
               षट् आहार परिणामकर भाव
             </h3>
 
