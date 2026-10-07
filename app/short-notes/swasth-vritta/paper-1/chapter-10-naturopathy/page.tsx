@@ -35,7 +35,7 @@ export default function Chapter10Index() {
           <li className="flex items-center gap-3">
             <NAccent className="font-bold">→</NAccent>
             <span className="text-[var(--theme-text)] opacity-50">Part 2: Mud Therapy & Sun Bath</span>
-            <span className="text-[9px] md:text-[10px] font-sans font-bold bg-transparent text-[var(--theme-text)] opacity-40 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-[var(--theme-text)]/30">Draft</span>
+            <span className="text-[9px] md:text-[10px] font-sans font-bold bg-transparent text-[var(--theme-text)] opacity-40 px-2 py-0.5 rounded-sm uppercase tracking-wider ml-2 border border-[var(--theme-text)]/30">Active</span>
           </li>
         </ul>
       </div>
