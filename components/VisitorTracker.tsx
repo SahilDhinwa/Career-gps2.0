@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Pencil } from "lucide-react";
 
 export function VisitorTracker() {
   const [name, setName] = useState<string>("");
@@ -44,22 +44,18 @@ export function VisitorTracker() {
     // STEP B: Handle Exact GPS Smartly
     if ("geolocation" in navigator) {
       try {
-        // Silently check if permission was already granted previously
         const perm = await navigator.permissions.query({ name: "geolocation" });
         
-        // If they just logged in, OR if they already have location ON
         if (isFirstLogin || perm.state === "granted") {
           try {
             const position = await new Promise<GeolocationPosition>((resolve, reject) => {
               navigator.geolocation.getCurrentPosition(resolve, reject);
             });
-            // Overwrite IP coords with Exact GPS coords
             fetchedCoords = {
               lat: position.coords.latitude.toFixed(4),
               lng: position.coords.longitude.toFixed(4),
             };
           } catch (err) {
-            // User clicked "Deny" on the popup. Do nothing, it falls back to IP automatically!
             console.log("GPS denied. Using IP location silently.");
           }
         }
@@ -85,7 +81,7 @@ export function VisitorTracker() {
     }
   };
 
-  // 3. Handle Form Submission for New Users
+  // 3. Handle Form Submission
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const finalName = inputName.trim() || "Anonymous Scholar";
@@ -93,18 +89,24 @@ export function VisitorTracker() {
     setIsNameSet(true);
     
     const currentVisits = parseInt(localStorage.getItem("bams_hub_visits") || "0");
-    const newVisits = currentVisits + 1;
+    const newVisits = currentVisits === 0 ? 1 : currentVisits;
     
     localStorage.setItem("bams_user_name", finalName);
-    localStorage.setItem("bams_hub_visits", newVisits.toString());
     
-    // Trigger tracking. 'true' forces the browser to ask for location just this once!
+    // Trigger tracking
     fetchLocationAndSend(finalName, newVisits, true);
+  };
+
+  // 4. Handle Edit Button Click
+  const handleEditClick = () => {
+    setIsNameSet(false);
+    // If they were anonymous, leave the box blank for them. Otherwise, let them edit their current name.
+    setInputName(name === "Anonymous Scholar" ? "" : name);
   };
 
   if (isLoading) return null;
 
-  // UI STATE 1: Beautiful In-Page Form (Only for new users)
+  // UI STATE 1: Beautiful In-Page Form
   if (!isNameSet) {
     return (
       <div className="flex flex-col items-center justify-center p-6 mb-8 rounded-2xl bg-white/60 dark:bg-black/40 border border-amber-500/30 shadow-lg backdrop-blur-md w-full max-w-md mx-auto transition-all">
@@ -115,7 +117,7 @@ export function VisitorTracker() {
             type="text"
             value={inputName}
             onChange={(e) => setInputName(e.target.value)}
-            placeholder="e.g. Dr. Rahul"
+            placeholder="e.g. Dr. Sahil"
             className="flex-1 px-4 py-2.5 rounded-lg bg-white dark:bg-black border border-[var(--theme-border)] focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm font-medium"
           />
           <button 
@@ -129,11 +131,20 @@ export function VisitorTracker() {
     );
   }
 
-  // UI STATE 2: Clean, Simple Interactive Greeting (Zero tracking data shown)
+  // UI STATE 2: Clean Greeting with Hover Edit Button
   return (
-    <div className="flex items-center justify-center gap-2 px-6 py-2.5 mb-8 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-500 w-fit mx-auto transition-all hover:bg-amber-500/20 shadow-sm cursor-default">
+    <div className="group flex items-center justify-center gap-2 px-6 py-2.5 mb-8 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-500 w-fit mx-auto transition-all hover:bg-amber-500/20 shadow-sm cursor-default">
       <Sparkles className="w-4 h-4" />
       <span className="font-bold text-sm tracking-wide">Namaste, {name}!</span>
+      
+      {/* The Edit Button (Only visible on hover) */}
+      <button 
+        onClick={handleEditClick}
+        className="ml-1 p-1 rounded-full text-amber-600/50 hover:text-amber-600 dark:text-amber-500/50 dark:hover:text-amber-500 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100"
+        title="Edit Name"
+      >
+        <Pencil className="w-3.5 h-3.5" />
+      </button>
     </div>
   );
 }
