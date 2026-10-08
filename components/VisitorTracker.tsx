@@ -115,7 +115,7 @@ export function VisitorTracker() {
             type="text"
             value={inputName}
             onChange={(e) => setInputName(e.target.value)}
-            placeholder="e.g. Dr. Sahil"
+            placeholder="e.g. Dr. Rahul"
             className="flex-1 px-4 py-2.5 rounded-lg bg-white dark:bg-black border border-[var(--theme-border)] focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm font-medium"
           />
           <button 
