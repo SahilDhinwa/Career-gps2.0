@@ -25,6 +25,9 @@ export async function POST(request: Request) {
     const { name, ip, coords, visits } = body;
 
     // --- YOUR DETAILED SERVER LOGS ---
+    console.log("=== 🔍 DEBUGGING ENV VARS ===");
+    console.log(`CURRENT PROJECT ID IN VERCEL: "${process.env.FIREBASE_PROJECT_ID}"`);
+    console.log("===============================");
     console.log("=== 🚨 NEW VISITOR RECEIVED IN BACKEND 🚨 ===");
     console.log(`👤 Name:   ${name}`);
     console.log(`🌐 IP:     ${ip}`);
