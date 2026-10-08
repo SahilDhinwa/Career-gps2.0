@@ -10,8 +10,8 @@ if (!admin.apps.length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
-    // Explicitly routing to your database URL to fix the 5 NOT_FOUND error for older projects
-    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.firebaseio.com`
+    // The critical fix for Vercel: Declare projectId at the root level so Firestore can see it
+    projectId: process.env.FIREBASE_PROJECT_ID,
   });
 }
 
@@ -20,14 +20,13 @@ const db = admin.firestore();
 
 export async function POST(request: Request) {
   try {
-    // 3. Receive the data sent from your frontend
     const body = await request.json();
     const { name, ip, coords, visits } = body;
 
-    // --- YOUR DETAILED SERVER LOGS ---
     console.log("=== 🔍 DEBUGGING ENV VARS ===");
     console.log(`CURRENT PROJECT ID IN VERCEL: "${process.env.FIREBASE_PROJECT_ID}"`);
     console.log("===============================");
+    
     console.log("=== 🚨 NEW VISITOR RECEIVED IN BACKEND 🚨 ===");
     console.log(`👤 Name:   ${name}`);
     console.log(`🌐 IP:     ${ip}`);
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
     }
     console.log("=============================================");
 
-    // 4. Save the data into a Firebase collection named "visitors"
+    // 4. Save the data into Firestore
     const docRef = await db.collection("visitors").add({
       name: name || "Anonymous",
       ip: ip || "Unknown",
@@ -50,7 +49,6 @@ export async function POST(request: Request) {
 
     console.log(`✅ SUCCESS! Saved ${name} to Firebase with ID: ${docRef.id}`);
 
-    // 5. Send success response back to the frontend
     return NextResponse.json(
       { success: true, message: "Visitor saved to Firebase Database!" },
       { status: 200 }
