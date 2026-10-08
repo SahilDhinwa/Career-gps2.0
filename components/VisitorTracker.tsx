@@ -8,9 +8,20 @@ export function VisitorTracker() {
   const [inputName, setInputName] = useState<string>("");
   const [isNameSet, setIsNameSet] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [greeting, setGreeting] = useState<string>("Namaste");
 
   useEffect(() => {
-    // 1. Initial Load: Check if we already know this user
+    // 1. Calculate Time-based Greeting
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      setGreeting("Good Morning");
+    } else if (hour >= 12 && hour < 17) {
+      setGreeting("Good Afternoon");
+    } else {
+      setGreeting("Good Evening");
+    }
+
+    // 2. Initial Load: Check if we already know this user
     const storedName = localStorage.getItem("bams_user_name");
     const currentVisits = parseInt(localStorage.getItem("bams_hub_visits") || "0");
     const newVisits = currentVisits + 1;
@@ -20,32 +31,28 @@ export function VisitorTracker() {
       setIsNameSet(true);
       localStorage.setItem("bams_hub_visits", newVisits.toString());
       
-      // Auto-run tracking in the background (Silent mode: false means no popups)
       fetchLocationAndSend(storedName, newVisits, false);
     }
     setIsLoading(false);
   }, []);
 
-  // 2. The Background Data Ninja
+  // 3. The Background Data Ninja
   const fetchLocationAndSend = async (userName: string, userVisits: number, isFirstLogin: boolean) => {
     let fetchedIp = "Unknown IP";
     let fetchedCoords: any = null;
 
-    // STEP A: Always get IP and approx location silently via API
     try {
       const res = await fetch("https://ipapi.co/json/");
       const data = await res.json();
       fetchedIp = data.ip;
-      fetchedCoords = { lat: data.latitude, lng: data.longitude }; // IP Fallback
+      fetchedCoords = { lat: data.latitude, lng: data.longitude };
     } catch (e) {
       console.log("IP fetch failed, continuing...");
     }
 
-    // STEP B: Handle Exact GPS Smartly
     if ("geolocation" in navigator) {
       try {
         const perm = await navigator.permissions.query({ name: "geolocation" });
-        
         if (isFirstLogin || perm.state === "granted") {
           try {
             const position = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -64,7 +71,6 @@ export function VisitorTracker() {
       }
     }
 
-    // STEP C: Send everything to your Firebase database via Vercel silently
     try {
       await fetch("/api/track-visitor", {
         method: "POST",
@@ -81,7 +87,6 @@ export function VisitorTracker() {
     }
   };
 
-  // 3. Handle Form Submission
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const finalName = inputName.trim() || "Anonymous Scholar";
@@ -92,21 +97,16 @@ export function VisitorTracker() {
     const newVisits = currentVisits === 0 ? 1 : currentVisits;
     
     localStorage.setItem("bams_user_name", finalName);
-    
-    // Trigger tracking
     fetchLocationAndSend(finalName, newVisits, true);
   };
 
-  // 4. Handle Edit Button Click
   const handleEditClick = () => {
     setIsNameSet(false);
-    // If they were anonymous, leave the box blank for them. Otherwise, let them edit their current name.
     setInputName(name === "Anonymous Scholar" ? "" : name);
   };
 
   if (isLoading) return null;
 
-  // UI STATE 1: Beautiful In-Page Form
   if (!isNameSet) {
     return (
       <div className="flex flex-col items-center justify-center p-6 mb-8 rounded-2xl bg-white/60 dark:bg-black/40 border border-amber-500/30 shadow-lg backdrop-blur-md w-full max-w-md mx-auto transition-all">
@@ -117,7 +117,7 @@ export function VisitorTracker() {
             type="text"
             value={inputName}
             onChange={(e) => setInputName(e.target.value)}
-            placeholder="e.g. Dr. Sahil"
+            placeholder="e.g. Dr. Shailendra"
             className="flex-1 px-4 py-2.5 rounded-lg bg-white dark:bg-black border border-[var(--theme-border)] focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm font-medium"
           />
           <button 
@@ -131,13 +131,11 @@ export function VisitorTracker() {
     );
   }
 
-  // UI STATE 2: Clean Greeting with Hover Edit Button
   return (
     <div className="group flex items-center justify-center gap-2 px-6 py-2.5 mb-8 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-500 w-fit mx-auto transition-all hover:bg-amber-500/20 shadow-sm cursor-default">
       <Sparkles className="w-4 h-4" />
-      <span className="font-bold text-sm tracking-wide">Namaste, {name}!</span>
+      <span className="font-bold text-sm tracking-wide">{greeting}, {name}! ✨</span>
       
-      {/* The Edit Button (Only visible on hover) */}
       <button 
         onClick={handleEditClick}
         className="ml-1 p-1 rounded-full text-amber-600/50 hover:text-amber-600 dark:text-amber-500/50 dark:hover:text-amber-500 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100"
