@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import BamsReels from "@/components/BamsReels";
+// 1. IMPORT THE TRACKER COMPONENT
+import { VisitorTracker } from "@/components/VisitorTracker";
 import { ArrowLeft, Leaf, BookOpen, FileText, BrainCircuit, Sparkles, Download, ChevronRight, PenTool } from "lucide-react";
 import AyurvedicBackground from "@/components/AyurvedicBackground"; 
 
@@ -26,6 +28,9 @@ export default function BAMSDashboard() {
         >
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
+
+        {/* 🚀 2. ADD THE VISITOR TRACKER HERE 🚀 */}
+        <VisitorTracker />
 
         {/* Dashboard Header */}
         <div className="bg-surface/80 backdrop-blur-md border border-surfaceBorder p-8 md:p-12 mb-10 rounded-sm shadow-xl relative overflow-hidden">
