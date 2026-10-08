@@ -10,35 +10,25 @@ if (!admin.apps.length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
-    // The critical fix for Vercel: Declare projectId at the root level so Firestore can see it
     projectId: process.env.FIREBASE_PROJECT_ID,
   });
 }
 
-// 2. Get access to your Firestore Database
 const db = admin.firestore();
+
+// 2. THE FIX: Force Vercel to use standard HTTP REST instead of failing gRPC
+db.settings({ preferRest: true });
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, ip, coords, visits } = body;
 
-    console.log("=== 🔍 DEBUGGING ENV VARS ===");
-    console.log(`CURRENT PROJECT ID IN VERCEL: "${process.env.FIREBASE_PROJECT_ID}"`);
-    console.log("===============================");
-    
     console.log("=== 🚨 NEW VISITOR RECEIVED IN BACKEND 🚨 ===");
     console.log(`👤 Name:   ${name}`);
     console.log(`🌐 IP:     ${ip}`);
-    console.log(`📈 Visits: ${visits}`);
-    if (coords && coords.lat) {
-      console.log(`📍 Coords: Lat ${coords.lat}, Lng ${coords.lng}`);
-    } else {
-      console.log(`📍 Coords: Location Denied / IP Fallback`);
-    }
-    console.log("=============================================");
-
-    // 4. Save the data into Firestore
+    
+    // 3. Save the data into Firestore
     const docRef = await db.collection("visitors").add({
       name: name || "Anonymous",
       ip: ip || "Unknown",
@@ -50,7 +40,7 @@ export async function POST(request: Request) {
     console.log(`✅ SUCCESS! Saved ${name} to Firebase with ID: ${docRef.id}`);
 
     return NextResponse.json(
-      { success: true, message: "Visitor saved to Firebase Database!" },
+      { success: true, message: "Visitor saved!" },
       { status: 200 }
     );
 
