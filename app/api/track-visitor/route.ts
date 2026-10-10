@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import * as admin from "firebase-admin";
 
-// 1. Initialize Firebase Admin with your Realtime Database URL
+// 1. Initialize Firebase strictly for Firestore
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -10,44 +10,44 @@ if (!admin.apps.length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
-    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.firebaseio.com`,
+    // Critical: Tell the server exactly which project to look at
+    projectId: process.env.FIREBASE_PROJECT_ID,
   });
 }
 
-// 2. Access Firebase Realtime Database instead of Firestore
-const db = admin.database();
+const db = admin.firestore();
+
+// 2. THE FIX: Force Vercel to bypass its blocked ports and use standard HTTP
+db.settings({ preferRest: true, ignoreUndefinedProperties: true });
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, ip, coords, visits } = body;
 
-    console.log("=== 🚨 NEW VISITOR RECEIVED (Realtime DB) 🚨 ===");
+    console.log("=== 🚨 STRICT FIRESTORE TRACKER ENGAGED 🚨 ===");
     console.log(`👤 Name:   ${name}`);
     console.log(`🌐 IP:     ${ip}`);
     console.log(`📈 Visits: ${visits}`);
 
-    // 3. Push data into the "visitors" node in Realtime Database
-    const visitorsRef = db.ref("visitors");
-    const newVisitorRef = visitorsRef.push();
-    
-    await newVisitorRef.set({
+    // 3. Save directly to Cloud Firestore
+    const docRef = await db.collection("visitors").add({
       name: name || "Anonymous",
       ip: ip || "Unknown",
       visits: visits || 1,
       coordinates: coords || "Location Denied",
-      visitedAt: new Date().toISOString(),
+      visitedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    console.log(`✅ SUCCESS! Saved ${name} to Realtime Database with key: ${newVisitorRef.key}`);
+    console.log(`✅ SUCCESS! Saved ${name} to FIRESTORE with ID: ${docRef.id}`);
 
     return NextResponse.json(
-      { success: true, message: "Visitor saved to Realtime Database!" },
+      { success: true, message: "Visitor saved to Firestore successfully!" },
       { status: 200 }
     );
 
-  } catch (error) {
-    console.error("Realtime Database Error:", error);
+  } catch (error: any) {
+    console.error("Firestore Error:", error.message);
     return NextResponse.json(
       { success: false, error: "Failed to save data" },
       { status: 500 }
