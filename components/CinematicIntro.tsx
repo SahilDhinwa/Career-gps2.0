@@ -130,7 +130,7 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
           @keyframes batman-blackout { 0%, 75% { opacity: 0; } 100% { opacity: 1; } }
           @keyframes batman-status-pulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
           .batman-background-scene { animation: batman-scene-fade 10s linear forwards; }
-          .batman-viewport-container { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #000; }
+          .batman-viewport-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; background: #000; }
           .batman-emblem { transform-box: fill-box; transform-origin: center; animation: batman-emblem-zoom 10s cubic-bezier(0.25, 1, 0.5, 1) forwards; will-change: transform, opacity; }
           .batman-blackout { animation: batman-blackout 10s linear forwards; }
           .batman-status { animation: batman-status-pulse 1s ease-in-out infinite; }
@@ -138,23 +138,31 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
         `}</style>
 
         <div className="batman-viewport-container z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid meet" className="w-full h-full object-cover pointer-events-none absolute inset-0" role="img" aria-label="Batman mode activated">
+          
+          {/* LAYER 1: BACKGROUND (Stretches edge-to-edge to eliminate the frame) */}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full z-0 pointer-events-none" aria-hidden="true">
             <defs>
               <radialGradient id="bg" cx="50%" cy="46%" r="78%"><stop offset="0" stopColor="#251011"/><stop offset=".42" stopColor="#0b0809"/><stop offset="1" stopColor="#020202"/></radialGradient>
               <radialGradient id="smoke" cx="50%" cy="50%" r="50%"><stop offset="0" stopColor="#a64d4d" stopOpacity=".48"/><stop offset=".48" stopColor="#632d30" stopOpacity=".26"/><stop offset="1" stopColor="#120d0e" stopOpacity="0"/></radialGradient>
+              <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" seed="14"/><feColorMatrix values=".3 0 0 0 .1 .3 0 0 0 .08 .3 0 0 0 .08 0 0 0 .13 0"/></filter>
+            </defs>
+            <g className="batman-background-scene">
+              <rect x="0" y="0" width="1536" height="864" fill="url(#bg)"/>
+              <ellipse cx="768" cy="390" rx="920" ry="620" fill="url(#smoke)" opacity=".65"/>
+              <rect x="0" y="0" width="1536" height="864" filter="url(#grain)" opacity=".22"/>
+            </g>
+          </svg>
+
+          {/* LAYER 2: FOREGROUND (Keeps exact proportional size and center alignment) */}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full z-10 pointer-events-none" role="img" aria-label="Batman mode activated">
+            <defs>
               <linearGradient id="batStroke" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffb1a9"/><stop offset=".38" stopColor="#ff514a"/><stop offset="1" stopColor="#ff1e24"/></linearGradient>
               <linearGradient id="barFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#ff5c5c"/><stop offset="1" stopColor="#e93236"/></linearGradient>
               <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="blur"/><feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.8 0 0.1 0 0 0.02 0 0 0.1 0 0.02 0 0 0 1 0" result="redblur"/><feMerge><feMergeNode in="redblur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="15"/></filter>
-              <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" seed="14"/><feColorMatrix values=".3 0 0 0 .1 .3 0 0 0 .08 .3 0 0 0 .08 0 0 0 .13 0"/></filter>
-              <clipPath id="frame"><rect x="0" y="0" width="1536" height="864"/></clipPath>
             </defs>
 
-            <g clipPath="url(#frame)" className="batman-background-scene">
-              <rect x="0" y="0" width="1536" height="864" fill="url(#bg)"/>
-              <ellipse cx="768" cy="390" rx="920" ry="620" fill="url(#smoke)" opacity=".65"/>
-              <rect x="0" y="0" width="1536" height="864" filter="url(#grain)" opacity=".22" pointerEvents="none"/>
-
+            <g className="batman-background-scene">
               <g fontFamily="Arial, Helvetica, sans-serif" textAnchor="middle">
                 <text x="768" y="694" fontSize="21" fill="#ff625f" opacity=".96">BATMAN MODE ACTIVATED</text>
                 <text x="768" y="723" fontSize="17" fill="#95696a" opacity=".92" className="batman-status">{status}</text>
