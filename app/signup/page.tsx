@@ -5,9 +5,9 @@ import { auth, db, googleProvider } from "../../lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { Mail, Lock, User, ArrowRight, ShieldCheck, Chrome } from "lucide-react";
-import { useTheme } from "next-themes";
 import CinematicIntro from "../../components/CinematicIntro";
 
 function SignupForm() {
@@ -57,6 +57,7 @@ function SignupForm() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
@@ -73,6 +74,7 @@ function SignupForm() {
     setIsLoading(true);
     setError("");
     let user;
+
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
       user = userCredential.user;
@@ -82,12 +84,13 @@ function SignupForm() {
       setIsLoading(false);
       return;
     }
+
     await createFirestoreUser(user, user.displayName);
     triggerCinematicSuccess();
   };
 
   return (
-    <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10">
+    <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10 transition-colors duration-300">
       <div className="text-center mb-8">
         <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Create Account</h1>
         <p className="text-foreground/60 font-medium">Join Veblen Good and build your roadmap.</p>
@@ -106,7 +109,7 @@ function SignupForm() {
             type="text" 
             required
             placeholder="Full Name" 
-            className="w-full bg-background border border-surfaceBorder text-foreground rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -118,7 +121,7 @@ function SignupForm() {
             type="email" 
             required
             placeholder="Email Address" 
-            className="w-full bg-background border border-surfaceBorder text-foreground rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -130,7 +133,7 @@ function SignupForm() {
             type="password" 
             required
             placeholder="Password (Min. 6 characters)" 
-            className="w-full bg-background border border-surfaceBorder text-foreground rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -139,7 +142,7 @@ function SignupForm() {
         <button 
           type="submit" 
           disabled={isLoading}
-          className="w-full bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-colors flex items-center justify-center gap-2 shadow-md disabled:opacity-70"
+          className="w-full bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-70 cursor-pointer"
         >
           {isLoading ? (
             <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -159,7 +162,7 @@ function SignupForm() {
         onClick={handleGoogleSignup}
         disabled={isLoading}
         type="button"
-        className="w-full bg-surface text-foreground border border-surfaceBorder font-bold py-3 px-4 rounded-sm hover:bg-background transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6"
+        className="w-full bg-surface text-foreground border border-surfaceBorder font-bold py-3 px-4 rounded-sm hover:bg-background transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6 cursor-pointer"
       >
         <Chrome className="w-5 h-5 text-blue-500" /> Sign up with Google
       </button>
@@ -182,7 +185,7 @@ function SignupForm() {
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-warning/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
       
