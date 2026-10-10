@@ -55,7 +55,10 @@ export default function AboutPage() {
             {/* Badges - UPDATED for Veblen Good */}
             <div className="flex flex-wrap justify-center gap-3 mb-4">
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary/10 text-xs font-bold text-primary border border-primary/20 shadow-sm uppercase tracking-wider">
-                <Compass className="w-3.5 h-3.5" /> Founder & Architect
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-3.5 h-3.5 shrink-0">
+                <path d="M 75 55 A 25 25 0 1 1 50 25 L 50 33 A 17 17 0 1 0 58 55 L 45 55 L 45 47 L 75 47 Z" fill="currentColor"/>
+                <path d="M 22 20 L 50 82 L 78 20 L 64 20 L 50 56 L 36 20 Z" fill="currentColor" className="opacity-60"/>
+              </svg>  Founder & Architect
               </span>
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-xs font-bold text-[#D4AF37] border border-[#D4AF37]/20 shadow-sm uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5" /> Veblen Good
@@ -67,13 +70,16 @@ export default function AboutPage() {
               Sahil Dhinwa
             </h1>
             <p className="text-foreground/60 font-bold text-lg mb-10 uppercase tracking-widest leading-relaxed max-w-lg">
-              KOTA to Global: <br className="md:hidden" /> Democratizing International Education
+              RURAL to Global: <br className="md:hidden" /> Democratizing International Education
             </p>
 
             {/* Origin Story Placeholder - UPDATED for Veblen Good */}
             <div className="max-w-2xl w-full mx-auto bg-background/50 border border-dashed border-[#D4AF37]/30 rounded-sm p-8 mb-12 relative group shadow-inner">
               <div className="absolute inset-0 bg-gradient-to-br from-[#0B1A14]/5 via-transparent to-[#D4AF37]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-sm"></div>
-              <Compass className="w-10 h-10 text-foreground/15 mx-auto mb-5" />
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-10 h-10 text-foreground/20 mx-auto mb-5">
+                <path d="M 75 55 A 25 25 0 1 1 50 25 L 50 33 A 17 17 0 1 0 58 55 L 45 55 L 45 47 L 75 47 Z" fill="currentColor"/>
+                <path d="M 22 20 L 50 82 L 78 20 L 64 20 L 50 56 L 36 20 Z" fill="currentColor" className="opacity-60"/>
+              </svg>
               <h3 className="font-heading text-2xl font-bold text-foreground mb-4">The Origin Story</h3>
               <p className="text-foreground/80 font-medium leading-relaxed">
                 The full narrative behind <span className="text-[#D4AF37] font-bold">Veblen Good</span>—from the fields of Kota to establishing fully-funded pathways at world-class institutions—is currently being documented.
