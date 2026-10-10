@@ -17,42 +17,41 @@
 
   /* DARK MODE (The Premium Night Vault) */
   .dark {
-    --background: #0A0A0A; /* Extremely deep, rich hacker gray/black */
-    --foreground: #FBFBF9; /* Crisp off-white text for readability */
+    --background: #0A0A0A; 
+    --foreground: #FBFBF9; 
     
-    /* We slightly brighten the primary greens and golds so they pop against the dark background */
     --primary: #165c46; 
     --primaryHover: #1d7a5d; 
     --success: #35c4b3; 
     --warning: #e6c245; 
     
-    --surface: #121212; /* Slightly elevated dark color for your cards */
-    --surfaceBorder: #262626; /* Very subtle dark gray borders */
+    --surface: #121212; 
+    --surfaceBorder: #262626; 
   }
+
   /* THE BATMAN COMMAND CENTER THEME */
-[data-theme='batman'] {
-  --background: 0 0% 2%; /* Pitch Black */
-  --foreground: 0 0% 80%; /* Kevlar Gray */
-  --surface: 0 0% 5%; /* Dark Matte Charcoal */
-  --surfaceBorder: 0 100% 25%; /* Blood Red Border */
-  
-  /* Primary & Accents converted to Vengeance Red and Warning Amber */
-  --primary: 0 100% 40%; /* Crimson Red */
-  --primaryHover: 0 100% 30%; 
-  --success: 135 100% 40%; 
-  --warning: 35 100% 50%; 
-  --danger: 0 100% 40%; 
+  [data-theme='batman'] {
+    --background: #050505; /* Pitch Black */
+    --foreground: #CCCCCC; /* Kevlar Gray */
+    --surface: #0D0D0D; /* Dark Matte Charcoal */
+    --surfaceBorder: #660000; /* Blood Red Border */
+    
+    /* Primary & Accents converted to Vengeance Red and Warning Amber */
+    --primary: #CC0000; /* Crimson Red */
+    --primaryHover: #990000; 
+    --success: #00CC33; 
+    --warning: #FFAA00; 
+  }
+
+  /* Make Veblen Good Logo adapt to Batman Theme */
+  [data-theme='batman'] svg path[fill="#D4AF37"] {
+    fill: #dc2626 !important; 
+  }
+  [data-theme='batman'] svg path[fill="#F3F4F6"] {
+    fill: #52525b !important; 
+  }
 }
 
-/* Make Veblen Good Logo adapt to Batman Theme */
-[data-theme='batman'] svg path[fill="#D4AF37"] {
-  fill: #dc2626 !important; 
-}
-[data-theme='batman'] svg path[fill="#F3F4F6"] {
-  fill: #52525b !important; 
-}
-  
-}
 /* Hide scrollbar for Chrome, Safari and Opera */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
