@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "next-themes";
-import { Compass, User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon, Activity } from "lucide-react";
+import { User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon, Activity } from "lucide-react";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const { user, userData, isLoading } = useAuth();
@@ -17,7 +18,7 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Check if we are on the home page for the Netflix transparent effect
+  // Check if we are on the home page for the transparent effect
   const isLandingPage = pathname === "/";
 
   useEffect(() => {
@@ -55,15 +56,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-12 md:h-14 flex items-center justify-between">
         
-        {/* LOGO */}
-        <Link href="/" className="flex items-center gap-2 group z-50">
-          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
-            <Compass className="w-5 h-5 text-primary" />
-          </div>
-          <span className="font-heading font-bold text-lg md:text-xl text-foreground tracking-tight group-hover:text-primary transition-colors">
-            Career GPS
-          </span>
-        </Link>
+        {/* NEW VEBLEN GOOD LOGO */}
+        <Logo />
 
         {/* DESKTOP CENTRAL LINKS */}
         <div className="hidden md:flex items-center gap-5 lg:gap-7 font-medium text-sm">
@@ -77,7 +71,6 @@ export default function Navbar() {
             Vault
           </Link>
           
-          {/* NEW: Clinical Modules Link */}
           <Link 
             href="/interactive-topics" 
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
@@ -120,7 +113,7 @@ export default function Navbar() {
               <Loader2 className="w-4 h-4 animate-spin text-foreground/30" />
             </div>
           ) : user ? (
-            /* Circular Profile Avatar (Visible on Desktop AND Mobile) */
+            /* Circular Profile Avatar */
             <Link href="/profile" className="group">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-emerald-700 p-0.5 shadow-sm transform group-hover:scale-105 transition-all">
                 <div className="w-full h-full rounded-full bg-surface flex items-center justify-center border border-background overflow-hidden">
@@ -179,7 +172,6 @@ export default function Navbar() {
             Action Vault
           </Link>
 
-          {/* NEW: Mobile Clinical Modules Link */}
           <Link 
             href="/interactive-topics" 
             className={`flex items-center gap-2 py-3 mt-2 rounded-sm font-bold transition-all ${
