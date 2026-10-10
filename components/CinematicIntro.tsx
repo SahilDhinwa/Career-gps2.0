@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface CinematicIntroProps {
   isActive: boolean;
@@ -24,41 +25,43 @@ export default function CinematicIntro({
   mode,
 }: CinematicIntroProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
   const [progress, setProgress] = useState(0);
 
+  // DYNAMIC BATMAN LOADING: runs for exactly 5 seconds.
   useEffect(() => {
-    if (!isActive) {
+    if (!isActive || mode !== "batman") {
       setProgress(0);
       return;
     }
 
-    const startTime = performance.now();
-    let frameId = 0;
+    let animationFrameId = 0;
     let cancelled = false;
+    const startTime = performance.now();
 
     const updateProgress = (now: number) => {
       if (cancelled) return;
 
-      const elapsed = now - startTime;
+      const elapsed = Math.max(0, now - startTime);
       const nextProgress = Math.min(100, (elapsed / 5000) * 100);
 
       setProgress(nextProgress);
 
       if (elapsed < 5000) {
-        frameId = window.requestAnimationFrame(updateProgress);
+        animationFrameId =
+          window.requestAnimationFrame(updateProgress);
       }
     };
 
-    frameId = window.requestAnimationFrame(updateProgress);
+    animationFrameId =
+      window.requestAnimationFrame(updateProgress);
 
     return () => {
       cancelled = true;
-      window.cancelAnimationFrame(frameId);
+      window.cancelAnimationFrame(animationFrameId);
     };
   }, [isActive, mode]);
-  
-  // AUDIO: Play the correct intro sound.
+
+  // AUDIO: play the correct intro sound.
   useEffect(() => {
     if (!isActive) return;
 
@@ -80,7 +83,7 @@ export default function CinematicIntro({
     };
   }, [isActive, mode]);
 
-  // BATMAN: Ember particle effect.
+  // BATMAN: animated ember particle effect.
   useEffect(() => {
     if (!isActive || mode !== "batman") return;
 
@@ -170,7 +173,8 @@ export default function CinematicIntro({
         ctx.restore();
       }
 
-      animationFrameId = window.requestAnimationFrame(animate);
+      animationFrameId =
+        window.requestAnimationFrame(animate);
     };
 
     resizeCanvas();
@@ -189,8 +193,27 @@ export default function CinematicIntro({
 
   if (!isActive) return null;
 
-  // BATMAN MODE: Everything is embedded in this one file.
+  // BATMAN MODE
   if (mode === "batman") {
+    const status =
+      progress < 25
+        ? "INITIALIZING SYSTEM..."
+        : progress < 50
+          ? "ESTABLISHING SECURE CONNECTION..."
+          : progress < 75
+            ? "LOADING NIGHTFALL PROTOCOL..."
+            : progress < 100
+              ? "VERIFYING ACCESS..."
+              : "SYSTEM READY";
+
+    const terminalLines = [
+      "SYSTEM ENGAGED",
+      "ENCRYPTION INITIALIZING // SIGNAL LOCK",
+      "TRACKING SCANNING NETWORK",
+      "PROTOCOL NIGHTFALL",
+      "ACCESS AUTHORIZED",
+    ];
+
     return (
       <div className="fixed inset-0 z-[9999] overflow-hidden bg-black select-none">
         <style>{`
@@ -199,21 +222,17 @@ export default function CinematicIntro({
               transform: scale(0.72);
               opacity: 0;
             }
-
             10% {
               opacity: 1;
             }
-
             72% {
               transform: scale(2.35);
               opacity: 1;
             }
-
             91% {
               transform: scale(5.2);
               opacity: 1;
             }
-
             100% {
               transform: scale(6.4);
               opacity: 0;
@@ -224,7 +243,6 @@ export default function CinematicIntro({
             0%, 70% {
               opacity: 1;
             }
-
             100% {
               opacity: 0;
             }
@@ -234,8 +252,16 @@ export default function CinematicIntro({
             0%, 72% {
               opacity: 0;
             }
-
             100% {
+              opacity: 1;
+            }
+          }
+
+          @keyframes batman-status-pulse {
+            0%, 100% {
+              opacity: 0.65;
+            }
+            50% {
               opacity: 1;
             }
           }
@@ -256,10 +282,15 @@ export default function CinematicIntro({
             animation: batman-blackout 5s linear forwards;
           }
 
+          .batman-status {
+            animation: batman-status-pulse 1s ease-in-out infinite;
+          }
+
           @media (prefers-reduced-motion: reduce) {
             .batman-background-scene,
             .batman-emblem,
-            .batman-blackout {
+            .batman-blackout,
+            .batman-status {
               animation: none;
               will-change: auto;
             }
@@ -283,7 +314,7 @@ export default function CinematicIntro({
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1536 864"
           preserveAspectRatio="xMidYMid meet"
-          className="absolute inset-0 h-full w-full z-10 pointer-events-none"
+          className="absolute inset-0 z-10 h-full w-full pointer-events-none"
           role="img"
           aria-label="Batman mode activated"
         >
@@ -342,10 +373,7 @@ export default function CinematicIntro({
               width="200%"
               height="200%"
             >
-              <feGaussianBlur
-                stdDeviation="5"
-                result="blur"
-              />
+              <feGaussianBlur stdDeviation="5" result="blur" />
               <feColorMatrix
                 in="blur"
                 type="matrix"
@@ -385,29 +413,20 @@ export default function CinematicIntro({
             </clipPath>
           </defs>
 
-          {/* BACKGROUND SCENE: stays still; grid removed. */}
+          {/* BACKGROUND SCENE: original appearance, without grids. */}
           <g
             clipPath="url(#frame)"
             className="batman-background-scene"
           >
             <rect width="1536" height="864" fill="#000" />
 
-            
-<rect
-  x="576"
-  y="743"
-  width={384 * (progress / 100)}
-  height="12"
-  fill="url(#barFill)"
-  opacity=".95"
->
-  <animate
-    attributeName="opacity"
-    values="0.8;1;0.8"
-    dur="0.8s"
-    repeatCount="indefinite"
-  />
-</rect>
+            <rect
+              x="143"
+              y="46"
+              width="1250"
+              height="722"
+              fill="url(#bg)"
+            />
 
             <ellipse
               cx="768"
@@ -446,6 +465,7 @@ export default function CinematicIntro({
               opacity=".5"
             />
 
+            {/* Background sparks */}
             <g fill="#ff583d">
               <circle cx="519" cy="117" r="2.2" />
               <circle cx="388" cy="190" r="2.4" />
@@ -495,7 +515,7 @@ export default function CinematicIntro({
               <path d="M1282 351l3-8" />
             </g>
 
-            {/* Loading interface */}
+            {/* Dynamic loading interface */}
             <g
               fontFamily="Arial, Helvetica, sans-serif"
               textAnchor="middle"
@@ -515,12 +535,24 @@ export default function CinematicIntro({
                 y="723"
                 fontSize="17"
                 fill="#95696a"
-                opacity=".82"
+                opacity=".92"
+                className="batman-status"
               >
-                INITIALIZING SECTOR V-G...
+                {status}
+              </text>
+
+              <text
+                x="768"
+                y="735"
+                fontSize="12"
+                fill="#ff625f"
+                fontFamily="monospace"
+              >
+                {Math.floor(progress)}%
               </text>
             </g>
 
+            {/* Progress-bar track */}
             <rect
               x="570"
               y="738"
@@ -531,15 +563,17 @@ export default function CinematicIntro({
               strokeWidth="1.5"
             />
 
+            {/* Progress fill: 0 to 100% */}
             <rect
               x="576"
               y="743"
-              width="236"
+              width={384 * (progress / 100)}
               height="12"
               fill="url(#barFill)"
-              opacity=".95"
+              opacity=".98"
             />
 
+            {/* Animated-looking progress segments */}
             <g fill="#190b0c" opacity=".85">
               <rect x="587" y="743" width="3" height="12" />
               <rect x="599" y="743" width="3" height="12" />
@@ -562,27 +596,40 @@ export default function CinematicIntro({
               <rect x="803" y="743" width="3" height="12" />
             </g>
 
+            {/* Terminal text progressively reveals */}
             <g
               fontFamily="monospace"
               fontSize="4.7"
               fill="#7b3435"
-              opacity=".7"
+              opacity=".85"
             >
-              <text x="571" y="771">01 SYSTEM ENGAGED</text>
-              <text x="571" y="778">
-                02 ENCRYPTION INITIALIZING // SIGNAL LOCK
-              </text>
-              <text x="571" y="785">
-                03 TRACKING SCANNING NETWORK
-              </text>
-              <text x="571" y="792">04 PROTOCOL NIGHTFALL</text>
-              <text x="571" y="799">05 ACCESS AUTHORIZED</text>
+              {terminalLines.map((line, index) => {
+                const lineStart = index * 18;
+                const lineProgress = Math.max(
+                  0,
+                  Math.min(1, (progress - lineStart) / 18)
+                );
+                const visibleLength = Math.floor(
+                  line.length * lineProgress
+                );
+
+                return (
+                  <text
+                    key={line}
+                    x="571"
+                    y={771 + index * 7}
+                  >
+                    {line.slice(0, visibleLength)}
+                  </text>
+                );
+              })}
+
               <text
                 x="964"
                 y="772"
                 textAnchor="end"
               >
-                SYSTEM READY
+                {progress >= 100 ? "SYSTEM READY" : "SYSTEM LOADING"}
               </text>
             </g>
 
@@ -597,7 +644,7 @@ export default function CinematicIntro({
             />
           </g>
 
-          {/* BATMAN EMBLEM: original paths; only scale and opacity animate. */}
+          {/* BATMAN EMBLEM: original paths preserved. */}
           <g className="batman-emblem">
             {/* Original emblem glow */}
             <path
@@ -696,19 +743,19 @@ export default function CinematicIntro({
         <canvas
           ref={canvasRef}
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full pointer-events-none z-20"
+          className="absolute inset-0 z-20 h-full w-full pointer-events-none"
         />
 
-        {/* Black finish */}
+        {/* Black finish at the end of the 5-second intro */}
         <div
           aria-hidden="true"
-          className="batman-blackout absolute inset-0 bg-black pointer-events-none z-30"
+          className="batman-blackout absolute inset-0 z-30 bg-black pointer-events-none"
         />
       </div>
     );
   }
 
-  // STANDARD MODE: original VG intro, unchanged.
+  // STANDARD MODE: original VG intro retained.
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#0A110D] select-none pointer-events-none">
       <style>{`
