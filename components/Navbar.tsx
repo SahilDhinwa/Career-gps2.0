@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "next-themes";
-import { User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon, Activity, Crosshair } from "lucide-react";
+import { User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon, Activity } from "lucide-react";
 import Logo from "./Logo";
 import CinematicIntro from "./CinematicIntro";
 
@@ -92,18 +92,32 @@ export default function Navbar() {
             <Sparkles className="w-3.5 h-3.5" /> BAMS Hub
           </Link>
 
-          {/* THE NEW BATMAN MODE BUTTON */}
+          {/* EXACT BATMAN SILHOUETTE BUTTON */}
           {mounted && (
             <button 
               onClick={handleBatmanToggle}
-              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
-                theme === 'batman'
-                  ? "bg-red-950/40 text-red-500 border-red-500/50 shadow-[0_0_10px_rgba(220,38,38,0.3)] hover:bg-red-950/60"
-                  : "bg-surface text-foreground/70 border-surfaceBorder hover:text-red-500 hover:border-red-500/30"
-              }`}
+              className="relative group flex items-center justify-center p-1 transition-transform duration-300 hover:scale-105 cursor-pointer focus:outline-none"
+              title={theme === 'batman' ? "Exit Batman Mode" : "Activate Batman Mode"}
+              aria-label="Toggle Batman Mode"
             >
-              <Crosshair className={`w-3.5 h-3.5 ${theme === 'batman' ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`} /> 
-              {theme === 'batman' ? 'Exit Batman Mode' : 'Batman Mode'}
+              <div className="absolute inset-0 bg-red-600/15 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 100 60" 
+                className="w-20 h-10 drop-shadow-[0_0_6px_rgba(255,26,26,0.4)]"
+              >
+                <path 
+                  d="M 50 52 Q 42 38 32 42 Q 20 28 5 32 Q 24 16 44 22 L 46 10 L 48 16 L 50 18 L 52 16 L 54 10 L 56 22 Q 76 16 95 32 Q 80 28 68 42 Q 58 38 50 52 Z" 
+                  fill={theme === 'batman' ? "#1a0202" : "#111827"} 
+                  stroke={theme === 'batman' ? "#ff1a1a" : "#D4AF37"} 
+                  strokeWidth="1.8" 
+                  strokeLinejoin="round"
+                  className="transition-colors duration-300 group-hover:stroke-red-500"
+                />
+              </svg>
+              <span className="absolute -bottom-4 text-[8px] font-mono tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity text-red-500 font-bold whitespace-nowrap">
+                {theme === 'batman' ? 'Exit Mode' : 'Batman Mode'}
+              </span>
             </button>
           )}
         </div>
@@ -112,7 +126,6 @@ export default function Navbar() {
           
           {mounted && isSwitchingToBatman && <CinematicIntro isActive={true} mode="batman" />}
           
-          {/* HIDE LIGHT/DARK TOGGLE IN BATMAN MODE */}
           {mounted && theme !== 'batman' && (
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -128,7 +141,6 @@ export default function Navbar() {
               <Loader2 className="w-4 h-4 animate-spin text-foreground/30" />
             </div>
           ) : user ? (
-            /* ADDED SHRINK-0 TO PREVENT PROFILE PICTURE GLITCHING */
             <Link href="/profile" className="group shrink-0">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-emerald-700 p-0.5 shadow-sm transform group-hover:scale-105 transition-all">
                 <div className="w-full h-full rounded-full bg-surface flex items-center justify-center border border-background overflow-hidden">
@@ -160,7 +172,6 @@ export default function Navbar() {
         </div>
       </div>
       
-      {/* (Mobile Menu remains the same as before...) */}
       <div 
         className={`md:hidden absolute top-full left-0 w-full bg-surface border-b border-surfaceBorder shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${
           isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
@@ -176,17 +187,24 @@ export default function Navbar() {
           </Link>
           
           {mounted && (
-            <button 
-              onClick={handleBatmanToggle}
-              className={`flex items-center justify-center gap-2 py-3 mt-2 rounded-sm font-bold transition-all ${
-                theme === 'batman'
-                  ? "bg-red-950/40 text-red-500 border border-red-500/50 shadow-sm"
-                  : "bg-surface text-foreground/80 border border-surfaceBorder hover:text-red-500 hover:border-red-500/30"
-              }`}
-            >
-              <Crosshair className={`w-4 h-4 ${theme === 'batman' ? 'animate-pulse' : ''}`} /> 
-              {theme === 'batman' ? 'Exit Batman Mode' : 'Batman Mode'}
-            </button>
+            <div className="py-3 flex items-center justify-between px-4 border border-surfaceBorder rounded-sm">
+              <span className="text-sm font-bold">Batman Mode</span>
+              <button 
+                onClick={handleBatmanToggle}
+                className="flex items-center justify-center p-1 cursor-pointer"
+                aria-label="Toggle Batman Mode"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60" className="w-20 h-10">
+                  <path 
+                    d="M 50 52 Q 42 38 32 42 Q 20 28 5 32 Q 24 16 44 22 L 46 10 L 48 16 L 50 18 L 52 16 L 54 10 L 56 22 Q 76 16 95 32 Q 80 28 68 42 Q 58 38 50 52 Z" 
+                    fill={theme === 'batman' ? "#1a0202" : "#111827"} 
+                    stroke={theme === 'batman' ? "#ff1a1a" : "#D4AF37"} 
+                    strokeWidth="1.8" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
           )}
 
           {!isLoading && !user && (
