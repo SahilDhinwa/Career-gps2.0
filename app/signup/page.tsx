@@ -56,7 +56,8 @@ function SignupForm() {
       }
 
       const elapsed = Date.now() - startTime;
-      const remainingTime = Math.max(0, 5000 - elapsed);
+      // FIX: Changed from 5000 to 10000
+      const remainingTime = Math.max(0, 10000 - elapsed);
 
       setTimeout(() => {
         router.push(redirectUrl);
@@ -109,7 +110,8 @@ function SignupForm() {
     }
     
     const elapsed = Date.now() - startTime;
-    const remainingTime = Math.max(0, 5000 - elapsed);
+    // FIX: Changed from 5000 to 10000
+    const remainingTime = Math.max(0, 10000 - elapsed);
     setTimeout(() => {
       router.push(redirectUrl);
     }, remainingTime);
