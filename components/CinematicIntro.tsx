@@ -25,6 +25,39 @@ export default function CinematicIntro({
 }: CinematicIntroProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isActive) {
+      setProgress(0);
+      return;
+    }
+
+    const startTime = performance.now();
+    let frameId = 0;
+    let cancelled = false;
+
+    const updateProgress = (now: number) => {
+      if (cancelled) return;
+
+      const elapsed = now - startTime;
+      const nextProgress = Math.min(100, (elapsed / 5000) * 100);
+
+      setProgress(nextProgress);
+
+      if (elapsed < 5000) {
+        frameId = window.requestAnimationFrame(updateProgress);
+      }
+    };
+
+    frameId = window.requestAnimationFrame(updateProgress);
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [isActive, mode]);
+  
   // AUDIO: Play the correct intro sound.
   useEffect(() => {
     if (!isActive) return;
@@ -359,13 +392,22 @@ export default function CinematicIntro({
           >
             <rect width="1536" height="864" fill="#000" />
 
-            <rect
-              x="143"
-              y="46"
-              width="1250"
-              height="722"
-              fill="url(#bg)"
-            />
+            
+<rect
+  x="576"
+  y="743"
+  width={384 * (progress / 100)}
+  height="12"
+  fill="url(#barFill)"
+  opacity=".95"
+>
+  <animate
+    attributeName="opacity"
+    values="0.8;1;0.8"
+    dur="0.8s"
+    repeatCount="indefinite"
+  />
+</rect>
 
             <ellipse
               cx="768"
