@@ -36,7 +36,6 @@
     --surface: #0D0D0D; /* Dark Matte Charcoal */
     --surfaceBorder: #660000; /* Blood Red Border */
     
-    /* Primary & Accents converted to Vengeance Red and Warning Amber */
     --primary: #CC0000; /* Crimson Red */
     --primaryHover: #990000; 
     --success: #00CC33; 
@@ -52,12 +51,10 @@
   }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
-/* Hide scrollbar for IE, Edge and Firefox */
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
 }
