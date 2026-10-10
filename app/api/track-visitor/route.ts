@@ -10,15 +10,18 @@ if (!admin.apps.length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
-    // Critical: Tell the server exactly which project to look at
     projectId: process.env.FIREBASE_PROJECT_ID,
   });
 }
 
 const db = admin.firestore();
 
-// 2. THE FIX: Force Vercel to bypass its blocked ports and use standard HTTP
-db.settings({ preferRest: true, ignoreUndefinedProperties: true });
+// 2. THE FIX: Explicitly target the "(default)" database shown in your Firebase console
+db.settings({ 
+  preferRest: true, 
+  databaseId: "(default)", 
+  ignoreUndefinedProperties: true 
+});
 
 export async function POST(request: Request) {
   try {
