@@ -47,7 +47,7 @@ export default function LandingReels() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
-              <Instagram className="w-4 h-4" /> Career GPS Reels
+              <Instagram className="w-4 h-4" /> Veblen Goods
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
               High-Yield Strategies in <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">60 Seconds</span>
