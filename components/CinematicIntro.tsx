@@ -1,3 +1,5 @@
+TypeScript
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -25,9 +27,7 @@ export default function CinematicIntro({
 }: CinematicIntroProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // --------------------------------------------------
-  // AUDIO: Play the correct intro sound and clean up.
-  // --------------------------------------------------
+  // AUDIO: Play the correct intro sound.
   useEffect(() => {
     if (!isActive) return;
 
@@ -49,9 +49,7 @@ export default function CinematicIntro({
     };
   }, [isActive, mode]);
 
-  // --------------------------------------------------
-  // BATMAN: Animated ember particles.
-  // --------------------------------------------------
+  // BATMAN: Ember particle effect.
   useEffect(() => {
     if (!isActive || mode !== "batman") return;
 
@@ -62,8 +60,8 @@ export default function CinematicIntro({
 
     let animationFrameId = 0;
     let disposed = false;
-
     const particles: Particle[] = [];
+
     const colors = [
       "rgba(255, 30, 30, 0.95)",
       "rgba(255, 78, 30, 0.9)",
@@ -83,7 +81,6 @@ export default function CinematicIntro({
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
 
-      // Keep particles sharp on high-density screens.
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
@@ -147,7 +144,6 @@ export default function CinematicIntro({
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-
     animate();
 
     return () => {
@@ -162,16 +158,14 @@ export default function CinematicIntro({
 
   if (!isActive) return null;
 
-  // --------------------------------------------------
-  // BATMAN MODE: Your new complete SVG scene.
-  // --------------------------------------------------
+  // BATMAN MODE: Everything is embedded in this one file.
   if (mode === "batman") {
     return (
-      <div className="fixed inset-0 z-[9999] overflow-hidden bg-[#020202] select-none">
+      <div className="fixed inset-0 z-[9999] overflow-hidden bg-black select-none">
         <style>{`
-          @keyframes batman-scene-zoom {
+          @keyframes batman-emblem-zoom {
             0% {
-              transform: scale(1);
+              transform: scale(0.72);
               opacity: 0;
             }
 
@@ -179,63 +173,502 @@ export default function CinematicIntro({
               opacity: 1;
             }
 
+            72% {
+              transform: scale(2.35);
+              opacity: 1;
+            }
+
+            91% {
+              transform: scale(5.2);
+              opacity: 1;
+            }
+
             100% {
-              transform: scale(1.12);
+              transform: scale(6.4);
+              opacity: 0;
+            }
+          }
+
+          @keyframes batman-scene-fade {
+            0%, 70% {
+              opacity: 1;
+            }
+
+            100% {
+              opacity: 0;
+            }
+          }
+
+          @keyframes batman-blackout {
+            0%, 72% {
+              opacity: 0;
+            }
+
+            100% {
               opacity: 1;
             }
           }
 
-          .batman-scene {
-            animation: batman-scene-zoom
+          .batman-background-scene {
+            animation: batman-scene-fade 5s linear forwards;
+          }
+
+          .batman-emblem {
+            transform-box: fill-box;
+            transform-origin: 50% 50%;
+            animation: batman-emblem-zoom
               5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            transform-origin: center center;
             will-change: transform, opacity;
           }
 
+          .batman-blackout {
+            animation: batman-blackout 5s linear forwards;
+          }
+
           @media (prefers-reduced-motion: reduce) {
-            .batman-scene {
+            .batman-background-scene,
+            .batman-emblem,
+            .batman-blackout {
               animation: none;
+              will-change: auto;
+            }
+
+            .batman-background-scene {
+              opacity: 1;
+            }
+
+            .batman-emblem {
               transform: none;
               opacity: 1;
-              will-change: auto;
+            }
+
+            .batman-blackout {
+              opacity: 0;
             }
           }
         `}</style>
 
-        {/* Full-screen SVG: logo, glow, smoke, grid,
-            sparks, title, terminal, and loading bar. */}
-        <img
-          src="/batman_mode.svg"
-          alt="Batman mode activated"
-          draggable={false}
-          className="
-            batman-scene
-            absolute inset-0
-            h-full w-full
-            object-contain
-            pointer-events-none
-            z-10
-          "
-        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1536 864"
+          preserveAspectRatio="xMidYMid meet"
+          className="absolute inset-0 h-full w-full z-10 pointer-events-none"
+          role="img"
+          aria-label="Batman mode activated"
+        >
+          <defs>
+            <radialGradient id="bg" cx="50%" cy="46%" r="68%">
+              <stop offset="0" stopColor="#251011" />
+              <stop offset=".42" stopColor="#0b0809" />
+              <stop offset="1" stopColor="#020202" />
+            </radialGradient>
 
-        {/* Live ember particles drawn over the SVG. */}
+            <radialGradient id="smoke" cx="50%" cy="50%" r="50%">
+              <stop
+                offset="0"
+                stopColor="#8a4545"
+                stopOpacity=".38"
+              />
+              <stop
+                offset=".55"
+                stopColor="#4a292b"
+                stopOpacity=".17"
+              />
+              <stop
+                offset="1"
+                stopColor="#120d0e"
+                stopOpacity="0"
+              />
+            </radialGradient>
+
+            <linearGradient
+              id="batStroke"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="0" stopColor="#ffb1a9" />
+              <stop offset=".38" stopColor="#ff514a" />
+              <stop offset="1" stopColor="#ff1e24" />
+            </linearGradient>
+
+            <linearGradient
+              id="barFill"
+              x1="0"
+              y1="0"
+              x2="1"
+              y2="0"
+            >
+              <stop offset="0" stopColor="#ff5c5c" />
+              <stop offset="1" stopColor="#e93236" />
+            </linearGradient>
+
+            <filter
+              id="glow"
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feGaussianBlur
+                stdDeviation="5"
+                result="blur"
+              />
+              <feColorMatrix
+                in="blur"
+                type="matrix"
+                values="1 0 0 0 0.8 0 0.1 0 0 0.02 0 0 0.1 0 0.02 0 0 0 1 0"
+                result="redblur"
+              />
+              <feMerge>
+                <feMergeNode in="redblur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter
+              id="softGlow"
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feGaussianBlur stdDeviation="15" />
+            </filter>
+
+            <filter id="grain">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency=".72"
+                numOctaves="2"
+                seed="14"
+              />
+              <feColorMatrix
+                values=".3 0 0 0 .1 .3 0 0 0 .08 .3 0 0 0 .08 0 0 0 .13 0"
+              />
+            </filter>
+
+            <clipPath id="frame">
+              <rect width="1536" height="864" />
+            </clipPath>
+          </defs>
+
+          {/* BACKGROUND SCENE: stays still; grid removed. */}
+          <g
+            clipPath="url(#frame)"
+            className="batman-background-scene"
+          >
+            <rect width="1536" height="864" fill="#000" />
+
+            <rect
+              x="143"
+              y="46"
+              width="1250"
+              height="722"
+              fill="url(#bg)"
+            />
+
+            <ellipse
+              cx="768"
+              cy="400"
+              rx="570"
+              ry="310"
+              fill="url(#smoke)"
+            />
+
+            <ellipse
+              cx="550"
+              cy="315"
+              rx="190"
+              ry="130"
+              fill="#733b3d"
+              opacity=".14"
+              filter="url(#softGlow)"
+            />
+
+            <ellipse
+              cx="1005"
+              cy="354"
+              rx="210"
+              ry="125"
+              fill="#6c3033"
+              opacity=".15"
+              filter="url(#softGlow)"
+            />
+
+            <rect
+              x="143"
+              y="46"
+              width="1250"
+              height="722"
+              filter="url(#grain)"
+              opacity=".5"
+            />
+
+            <g fill="#ff583d">
+              <circle cx="519" cy="117" r="2.2" />
+              <circle cx="388" cy="190" r="2.4" />
+              <circle cx="1004" cy="139" r="2.1" />
+              <circle cx="1057" cy="130" r="2.4" />
+              <circle cx="1087" cy="150" r="1.7" />
+              <circle cx="1160" cy="96" r="1.5" />
+              <circle cx="1213" cy="111" r="1.6" />
+              <circle cx="1252" cy="146" r="1.4" />
+              <circle cx="1283" cy="173" r="1.8" />
+              <circle cx="1148" cy="218" r="2.6" />
+              <circle cx="1310" cy="244" r="2.1" />
+              <circle cx="1373" cy="272" r="1.7" />
+              <circle cx="383" cy="278" r="1.8" />
+              <circle cx="284" cy="420" r="1.8" />
+              <circle cx="176" cy="484" r="2.4" />
+              <circle cx="202" cy="576" r="3.2" />
+              <circle cx="308" cy="611" r="2.5" />
+              <circle cx="339" cy="641" r="1.6" />
+              <circle cx="617" cy="561" r="2.4" />
+              <circle cx="901" cy="603" r="2.2" />
+              <circle cx="955" cy="563" r="2.4" />
+              <circle cx="1005" cy="641" r="1.8" />
+              <circle cx="1279" cy="623" r="1.6" />
+              <circle cx="1314" cy="597" r="2" />
+              <circle cx="1325" cy="358" r="2.2" />
+              <circle cx="1269" cy="301" r="1.7" />
+            </g>
+
+            <g
+              stroke="#ff583d"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              opacity=".9"
+            >
+              <path d="M1000 147l7-8" />
+              <path d="M1080 153l8-5" />
+              <path d="M1224 230l3-5" />
+              <path d="M291 431l-6-9" />
+              <path d="M175 479l7 10" />
+              <path d="M311 608l-4-6" />
+              <path d="M897 605l5-10" />
+              <path d="M1268 625l6-7" />
+              <path d="M1371 274l7-3" />
+              <path d="M389 193l-3-7" />
+              <path d="M1032 183l5-5" />
+              <path d="M1282 351l3-8" />
+            </g>
+
+            {/* Loading interface */}
+            <g
+              fontFamily="Arial, Helvetica, sans-serif"
+              textAnchor="middle"
+            >
+              <text
+                x="768"
+                y="694"
+                fontSize="21"
+                fill="#ff625f"
+                opacity=".96"
+              >
+                BATMAN MODE ACTIVATED
+              </text>
+
+              <text
+                x="768"
+                y="723"
+                fontSize="17"
+                fill="#95696a"
+                opacity=".82"
+              >
+                INITIALIZING SECTOR V-G...
+              </text>
+            </g>
+
+            <rect
+              x="570"
+              y="738"
+              width="396"
+              height="22"
+              fill="#080606"
+              stroke="#8b4243"
+              strokeWidth="1.5"
+            />
+
+            <rect
+              x="576"
+              y="743"
+              width="236"
+              height="12"
+              fill="url(#barFill)"
+              opacity=".95"
+            />
+
+            <g fill="#190b0c" opacity=".85">
+              <rect x="587" y="743" width="3" height="12" />
+              <rect x="599" y="743" width="3" height="12" />
+              <rect x="611" y="743" width="3" height="12" />
+              <rect x="623" y="743" width="3" height="12" />
+              <rect x="635" y="743" width="3" height="12" />
+              <rect x="647" y="743" width="3" height="12" />
+              <rect x="659" y="743" width="3" height="12" />
+              <rect x="671" y="743" width="3" height="12" />
+              <rect x="683" y="743" width="3" height="12" />
+              <rect x="695" y="743" width="3" height="12" />
+              <rect x="707" y="743" width="3" height="12" />
+              <rect x="719" y="743" width="3" height="12" />
+              <rect x="731" y="743" width="3" height="12" />
+              <rect x="743" y="743" width="3" height="12" />
+              <rect x="755" y="743" width="3" height="12" />
+              <rect x="767" y="743" width="3" height="12" />
+              <rect x="779" y="743" width="3" height="12" />
+              <rect x="791" y="743" width="3" height="12" />
+              <rect x="803" y="743" width="3" height="12" />
+            </g>
+
+            <g
+              fontFamily="monospace"
+              fontSize="4.7"
+              fill="#7b3435"
+              opacity=".7"
+            >
+              <text x="571" y="771">01 SYSTEM ENGAGED</text>
+              <text x="571" y="778">
+                02 ENCRYPTION INITIALIZING // SIGNAL LOCK
+              </text>
+              <text x="571" y="785">
+                03 TRACKING SCANNING NETWORK
+              </text>
+              <text x="571" y="792">04 PROTOCOL NIGHTFALL</text>
+              <text x="571" y="799">05 ACCESS AUTHORIZED</text>
+              <text
+                x="964"
+                y="772"
+                textAnchor="end"
+              >
+                SYSTEM READY
+              </text>
+            </g>
+
+            <rect
+              x="143"
+              y="46"
+              width="1250"
+              height="722"
+              fill="none"
+              stroke="#171112"
+              strokeWidth="2"
+            />
+          </g>
+
+          {/* BATMAN EMBLEM: original paths; only scale and opacity animate. */}
+          <g className="batman-emblem">
+            {/* Original emblem glow */}
+            <path
+              d="M320 483
+                C350 391 425 293 562 244
+                C552 277 578 312 617 330
+                C652 346 688 348 721 345
+                L736 276 L755 309 L768 307 L782 310 L800 276
+                L815 345
+                C848 348 884 346 919 330
+                C958 312 984 277 974 244
+                C1111 293 1186 391 1216 483
+                C1175 445 1130 411 1086 408
+                C1050 407 1031 433 1027 469
+                C986 449 946 441 908 445
+                C844 452 793 503 768 590
+                C743 503 692 452 628 445
+                C590 441 550 449 509 469
+                C505 433 486 407 450 408
+                C406 411 361 445 320 483 Z"
+              fill="none"
+              stroke="#ff242b"
+              strokeWidth="14"
+              opacity=".26"
+              filter="url(#softGlow)"
+            />
+
+            {/* Original dark body */}
+            <path
+              d="M320 483
+                C350 391 425 293 562 244
+                C552 277 578 312 617 330
+                C652 346 688 348 721 345
+                L736 276 L755 309 L768 307 L782 310 L800 276
+                L815 345
+                C848 348 884 346 919 330
+                C958 312 984 277 974 244
+                C1111 293 1186 391 1216 483
+                C1175 445 1130 411 1086 408
+                C1050 407 1031 433 1027 469
+                C986 449 946 441 908 445
+                C844 452 793 503 768 590
+                C743 503 692 452 628 445
+                C590 441 550 449 509 469
+                C505 433 486 407 450 408
+                C406 411 361 445 320 483 Z"
+              fill="#100607"
+              fillOpacity=".42"
+              stroke="#b9262b"
+              strokeWidth="5"
+              opacity=".9"
+            />
+
+            {/* Original gradient outline */}
+            <path
+              d="M320 483
+                C350 391 425 293 562 244
+                C552 277 578 312 617 330
+                C652 346 688 348 721 345
+                L736 276 L755 309 L768 307 L782 310 L800 276
+                L815 345
+                C848 348 884 346 919 330
+                C958 312 984 277 974 244
+                C1111 293 1186 391 1216 483
+                C1175 445 1130 411 1086 408
+                C1050 407 1031 433 1027 469
+                C986 449 946 441 908 445
+                C844 452 793 503 768 590
+                C743 503 692 452 628 445
+                C590 441 550 449 509 469
+                C505 433 486 407 450 408
+                C406 411 361 445 320 483 Z"
+              fill="none"
+              stroke="url(#batStroke)"
+              strokeWidth="2.8"
+              filter="url(#glow)"
+            />
+
+            {/* Original red highlights */}
+            <path
+              d="M325 476 C367 383 438 302 551 253
+                M985 253 C1098 302 1169 383 1211 476
+                M326 486 C372 451 414 416 451 416
+                C481 416 500 439 504 474
+                M1032 474 C1036 439 1055 416 1085 416
+                C1122 416 1164 451 1210 486"
+              fill="none"
+              stroke="#ff9b91"
+              strokeWidth="1.2"
+              opacity=".8"
+            />
+          </g>
+        </svg>
+
+        {/* Live embers */}
         <canvas
           ref={canvasRef}
           aria-hidden="true"
-          className="
-            absolute inset-0
-            h-full w-full
-            pointer-events-none
-            z-20
-          "
+          className="absolute inset-0 h-full w-full pointer-events-none z-20"
+        />
+
+        {/* Black finish */}
+        <div
+          aria-hidden="true"
+          className="batman-blackout absolute inset-0 bg-black pointer-events-none z-30"
         />
       </div>
     );
   }
 
-  // --------------------------------------------------
-  // STANDARD MODE: Original gold and silver logo.
-  // --------------------------------------------------
+  // STANDARD MODE: original VG intro, unchanged.
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#0A110D] select-none pointer-events-none">
       <style>{`
@@ -293,3 +726,4 @@ export default function CinematicIntro({
     </div>
   );
 }
+```
