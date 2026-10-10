@@ -1,5 +1,5 @@
 "use client";
-
+import { useTheme } from "next-themes";
 import { useState, Suspense } from "react";
 import { auth, db, googleProvider } from "../../lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from "firebase/auth";
