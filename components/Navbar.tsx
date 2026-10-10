@@ -39,7 +39,7 @@ export default function Navbar() {
       : "text-foreground/80 hover:text-primary transition-colors"; 
   };
 
-  const handleBatmanToggle = () => {
+    const handleBatmanToggle = () => {
     if (theme === 'batman') {
       setTheme('dark'); // Exit Batman Mode
     } else {
@@ -48,10 +48,12 @@ export default function Navbar() {
         return;
       }
       setIsSwitchingToBatman(true);
+      
+      // FIX: Changed from 2500 to 10000 to let the full 10-second animation play!
       setTimeout(() => {
         setTheme('batman');
         setIsSwitchingToBatman(false);
-      }, 2500);
+      }, 10000); 
     }
   };
 
