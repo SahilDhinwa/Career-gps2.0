@@ -39,17 +39,14 @@ export default function Navbar() {
       : "text-foreground/80 hover:text-primary transition-colors"; 
   };
 
-  // Dedicated function for the new Tactical Button
-  const handleTacticalToggle = () => {
+  const handleBatmanToggle = () => {
     if (theme === 'batman') {
-      setTheme('dark'); // Turn it off
+      setTheme('dark'); // Exit Batman Mode
     } else {
-      // The Guest Gate
       if (!user) {
         router.push(`/login?mode=batman&redirect=${encodeURIComponent(pathname)}`);
         return;
       }
-      // The VIP Entry
       setIsSwitchingToBatman(true);
       setTimeout(() => {
         setTheme('batman');
@@ -70,7 +67,6 @@ export default function Navbar() {
         
         <Logo />
 
-        {/* DESKTOP CENTRAL LINKS */}
         <div className="hidden md:flex items-center gap-5 lg:gap-7 font-medium text-sm">
           <Link href="/e-books" className={getLinkStyle("/e-books")}>E-Books</Link>
           
@@ -96,33 +92,31 @@ export default function Navbar() {
             <Sparkles className="w-3.5 h-3.5" /> BAMS Hub
           </Link>
 
-          {/* NEW: DEDICATED TACTICAL MODE BUTTON */}
+          {/* THE NEW BATMAN MODE BUTTON */}
           {mounted && (
             <button 
-              onClick={handleTacticalToggle}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
+              onClick={handleBatmanToggle}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
                 theme === 'batman'
-                  ? "bg-red-950/40 text-red-500 border-red-500/50 shadow-[0_0_10px_rgba(220,38,38,0.3)]"
+                  ? "bg-red-950/40 text-red-500 border-red-500/50 shadow-[0_0_10px_rgba(220,38,38,0.3)] hover:bg-red-950/60"
                   : "bg-surface text-foreground/70 border-surfaceBorder hover:text-red-500 hover:border-red-500/30"
               }`}
             >
               <Crosshair className={`w-3.5 h-3.5 ${theme === 'batman' ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`} /> 
-              Tactical Mode
+              {theme === 'batman' ? 'Exit Batman Mode' : 'Batman Mode'}
             </button>
           )}
         </div>
 
-        {/* RIGHT SIDE ACTIONS */}
         <div className="flex items-center gap-3 md:gap-4 z-50">
           
-          {/* Global Cinematic Overlay (Fires when Tactical Mode is triggered) */}
           {mounted && isSwitchingToBatman && <CinematicIntro isActive={true} mode="batman" />}
           
-          {/* STANDARD LIGHT/DARK TOGGLE (Reverted back to normal) */}
-          {mounted && (
+          {/* HIDE LIGHT/DARK TOGGLE IN BATMAN MODE */}
+          {mounted && theme !== 'batman' && (
             <button
-              onClick={() => setTheme(theme === 'dark' || theme === 'batman' ? 'light' : 'dark')}
-              className="w-9 h-9 rounded-full bg-surface border border-surfaceBorder flex items-center justify-center text-foreground/70 hover:text-primary hover:border-primary/30 transition-all shadow-sm"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-9 h-9 rounded-full bg-surface border border-surfaceBorder flex items-center justify-center text-foreground/70 hover:text-primary hover:border-primary/30 transition-all shadow-sm shrink-0"
               aria-label="Toggle Theme"
             >
               {theme === "light" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -130,11 +124,12 @@ export default function Navbar() {
           )}
 
           {isLoading ? (
-            <div className="w-9 h-9 flex items-center justify-center">
+            <div className="w-9 h-9 flex items-center justify-center shrink-0">
               <Loader2 className="w-4 h-4 animate-spin text-foreground/30" />
             </div>
           ) : user ? (
-            <Link href="/profile" className="group">
+            /* ADDED SHRINK-0 TO PREVENT PROFILE PICTURE GLITCHING */
+            <Link href="/profile" className="group shrink-0">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-emerald-700 p-0.5 shadow-sm transform group-hover:scale-105 transition-all">
                 <div className="w-full h-full rounded-full bg-surface flex items-center justify-center border border-background overflow-hidden">
                   {userData?.photoURL || user.photoURL ? (
@@ -146,7 +141,7 @@ export default function Navbar() {
               </div>
             </Link>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <Link href={`/login?redirect=${encodeURIComponent(pathname)}`} className="text-sm font-bold text-foreground hover:text-primary transition-colors">
                 Login
               </Link>
@@ -157,15 +152,15 @@ export default function Navbar() {
           )}
 
           <button 
-            className="md:hidden w-9 h-9 flex items-center justify-center text-foreground/80 hover:text-primary transition-colors focus:outline-none -mr-1"
+            className="md:hidden w-9 h-9 flex items-center justify-center text-foreground/80 hover:text-primary transition-colors focus:outline-none -mr-1 shrink-0"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
-
-      {/* MOBILE DROPDOWN MENU */}
+      
+      {/* (Mobile Menu remains the same as before...) */}
       <div 
         className={`md:hidden absolute top-full left-0 w-full bg-surface border-b border-surfaceBorder shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${
           isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
@@ -180,17 +175,17 @@ export default function Navbar() {
             <Sparkles className="w-4 h-4" /> BAMS Hub
           </Link>
           
-          {/* MOBILE TACTICAL BUTTON */}
           {mounted && (
             <button 
-              onClick={handleTacticalToggle}
+              onClick={handleBatmanToggle}
               className={`flex items-center justify-center gap-2 py-3 mt-2 rounded-sm font-bold transition-all ${
                 theme === 'batman'
                   ? "bg-red-950/40 text-red-500 border border-red-500/50 shadow-sm"
                   : "bg-surface text-foreground/80 border border-surfaceBorder hover:text-red-500 hover:border-red-500/30"
               }`}
             >
-              <Crosshair className={`w-4 h-4 ${theme === 'batman' ? 'animate-pulse' : ''}`} /> Tactical Mode
+              <Crosshair className={`w-4 h-4 ${theme === 'batman' ? 'animate-pulse' : ''}`} /> 
+              {theme === 'batman' ? 'Exit Batman Mode' : 'Batman Mode'}
             </button>
           )}
 
