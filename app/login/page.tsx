@@ -15,7 +15,6 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/profile";
   
-  // LOGIC UPGRADE: Pull active theme to fix the VG Logo bug
   const { theme, setTheme } = useTheme(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +22,6 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
 
-  // LOGIC UPGRADE: Checks both URL AND active theme state
   const isBatmanMode = searchParams.get("mode") === "batman" || theme === "batman";
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -31,17 +29,17 @@ function LoginForm() {
     setIsLoading(true);
     setError("");
 
-    // INSTANT BOOT: Launch standard state animations before awaiting promise
     setShowIntro(true);
     if (isBatmanMode) setTheme("batman");
 
-    const startTime = Date.now(); // Start 5-second tracking sequence
+    const startTime = Date.now(); 
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
       
       const elapsed = Date.now() - startTime;
-      const remainingTime = Math.max(0, 5000 - elapsed);
+      // FIX: Changed from 5000 to 10000 to match the 10-second boot sequence
+      const remainingTime = Math.max(0, 10000 - elapsed);
 
       setTimeout(() => {
         router.push(redirectUrl);
@@ -50,7 +48,6 @@ function LoginForm() {
     } catch (err: any) {
       console.error(err);
       setShowIntro(false);
-      // RESTORED: Your original safety rollback line
       if (isBatmanMode) setTheme("dark");
       setError("Invalid email or password. Please try again.");
       setIsLoading(false);
@@ -95,7 +92,8 @@ function LoginForm() {
     }
     
     const elapsed = Date.now() - startTime;
-    const remainingTime = Math.max(0, 5000 - elapsed);
+    // FIX: Changed from 5000 to 10000
+    const remainingTime = Math.max(0, 10000 - elapsed);
     setTimeout(() => {
       router.push(redirectUrl);
     }, remainingTime);
