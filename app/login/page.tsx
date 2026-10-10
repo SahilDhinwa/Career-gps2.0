@@ -27,16 +27,15 @@ function LoginForm() {
     setIsLoading(true);
     setError("");
 
-    // INSTANT BOOT: Trigger the cinematic black screen immediately!
+    // INSTANT BOOT: Launch standard state animations before awaiting promise
     setShowIntro(true);
     if (searchParams.get("mode") === "batman") setTheme("batman");
 
-    const startTime = Date.now(); // Start the 5-second clock
+    const startTime = Date.now(); // Start 5-second tracking sequence
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
       
-      // Calculate remaining time so the animation always takes exactly 5 seconds
       const elapsed = Date.now() - startTime;
       const remainingTime = Math.max(0, 5000 - elapsed);
 
@@ -46,7 +45,6 @@ function LoginForm() {
 
     } catch (err: any) {
       console.error(err);
-      // Abort the animation if password is wrong
       setShowIntro(false);
       if (searchParams.get("mode") === "batman") setTheme("dark");
       setError("Invalid email or password. Please try again.");
@@ -69,7 +67,6 @@ function LoginForm() {
       return; 
     }
 
-    // Trigger instant boot right after they select their Google account
     setShowIntro(true);
     if (searchParams.get("mode") === "batman") setTheme("batman");
     const startTime = Date.now();
@@ -101,7 +98,7 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10 transition-colors duration-300">
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 select-none">
         <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
         <p className="text-foreground/60 font-medium">Log in to access your roadmap and assets.</p>
       </div>
@@ -150,7 +147,7 @@ function LoginForm() {
         </button>
       </form>
 
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6 select-none">
         <div className="h-px bg-surfaceBorder flex-1"></div>
         <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">Or</span>
         <div className="h-px bg-surfaceBorder flex-1"></div>
@@ -165,14 +162,14 @@ function LoginForm() {
         <Chrome className="w-5 h-5 text-blue-500" /> Continue with Google
       </button>
 
-      <p className="text-center text-sm text-foreground/60 font-medium animate-fadeIn">
+      <p className="text-center text-sm text-foreground/60 font-medium animate-fadeIn select-none">
         Don&apos;t have an account?{" "}
         <Link href={`/signup?mode=${searchParams.get("mode") || ""}&redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
           Sign up
         </Link>
       </p>
 
-      <div className="mt-8 pt-6 border-t border-surfaceBorder flex items-center justify-center gap-2 text-xs text-foreground/40 font-medium">
+      <div className="mt-8 pt-6 border-t border-surfaceBorder flex items-center justify-center gap-2 text-xs text-foreground/40 font-medium select-none">
         <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
       </div>
 
