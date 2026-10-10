@@ -16,10 +16,10 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-// 2. THE FIX: Explicitly target the "(default)" database shown in your Firebase console
+// 2. THE FIX: Target your custom database named "default" (NO parentheses!)
 db.settings({ 
   preferRest: true, 
-  databaseId: "(default)", 
+  databaseId: "default", 
   ignoreUndefinedProperties: true 
 });
 
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     console.log(`🌐 IP:     ${ip}`);
     console.log(`📈 Visits: ${visits}`);
 
-    // 3. Save directly to Cloud Firestore
+    // 3. Save directly to your custom Firestore database
     const docRef = await db.collection("visitors").add({
       name: name || "Anonymous",
       ip: ip || "Unknown",
