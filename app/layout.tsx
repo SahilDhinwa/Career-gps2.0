@@ -29,7 +29,7 @@ const kalam = Kalam({
 })
 
 export const metadata: Metadata = {
-  title: 'Career GPS | Global Scholarships & Roadmaps',
+  title: 'Veblen Goods | Global Scholarships & Roadmaps',
   description: 'Your step-by-step roadmap to a better future. Unlock fully funded global scholarships.',
 }
 
