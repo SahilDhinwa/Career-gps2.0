@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Compass, Phone, Mail, MapPin, ShieldCheck, Sparkles } from "lucide-react";
-import Logo from "../components/Logo";
+import Logo from "../../components/Logo";
 
 export default function AboutPage() {
   return (
