@@ -3,15 +3,19 @@ import Link from "next/link";
 import Image from "next/image";
 import LandingReels from "../components/LandingReels";
 
-// FIXED: Removed the duplicate import and consolidated all icons here
 import { ArrowRight, Globe, ShieldCheck, TrendingUp, Heart, BookOpen, FolderOpen, Leaf, Sparkles, CheckCircle, Instagram, Play, Eye } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col transition-colors duration-300">
       
-      {/* INLINE STYLES FOR 3D PERSPECTIVE NAVIGATOR BACKGROUND */}
+      {/* INLINE STYLES - Updated to hide the green grid in Batman mode! */}
       <style dangerouslySetInnerHTML={{__html: `
+        /* Hide the default green 3D grid when Batman Mode is active */
+        .batman .perspective-container {
+          display: none !important;
+        }
+
         .perspective-container {
           position: absolute;
           inset: 0;
@@ -60,16 +64,14 @@ export default function LandingPage() {
         }
       `}} />
 
-      {/* HERO SECTION - Added z-40 to prevent the stacking context bug */}
+      {/* HERO SECTION */}
       <div className="relative flex-grow flex items-center justify-center px-6 py-12 md:py-20 lg:py-32 overflow-hidden bg-background z-40">
         
-        {/* Layer 1: The Premium 3D Background */}
         <div className="perspective-container">
           <div className="glowing-core"></div>
           <div className="perspective-grid"></div>
         </div>
 
-        {/* Foreground Content */}
         <div className="max-w-5xl mx-auto text-center relative z-10 pt-2 md:pt-4">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder text-xs md:text-sm font-bold text-primary mb-5 md:mb-8 shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
@@ -87,7 +89,6 @@ export default function LandingPage() {
             Stop guessing. Get step-by-step guidance, track your application progress, and unlock fully-funded scholarships like MEXT, DAAD, and Chevening.
           </p>
           
-          {/* BUTTON CONTAINER - Added relative z-20 to fix button spacing and layering */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto relative z-20">
             <Link 
               href="/pathways" 
@@ -103,8 +104,8 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* FEATURE GRID */}
-      <div className="bg-surface border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
+      {/* FEATURE GRID - Added backdrop-blur-md for tactical glass effect */}
+      <div className="bg-surface backdrop-blur-md border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl font-bold text-foreground mb-4">Why Top Students Choose Veblen Goods</h2>
@@ -145,17 +146,17 @@ export default function LandingPage() {
         </div>
       </div>
       
-            {/* --- REELS SECTION --- */}
+      {/* REELS SECTION */}
       <LandingReels />
       
-
-      {/* --- ACTION VAULT & BAMS EXTENSIONS --- */}
+      {/* ACTION VAULT & BAMS EXTENSIONS */}
       <div className="bg-background py-8 md:py-10 px-4 md:px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto flex flex-col gap-6 md:gap-10">
           
           {/* 1. ACTION VAULT BANNER */}
           <div className="relative p-[1px] rounded-sm bg-gradient-to-r from-warning/40 via-warning/10 to-warning/40 shadow-sm hover:shadow-md transition-shadow w-full">
-            <div className="bg-surface p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 rounded-sm relative overflow-hidden">
+            {/* Added backdrop-blur-md here */}
+            <div className="bg-surface backdrop-blur-md p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 rounded-sm relative overflow-hidden">
               
               <div className="absolute top-0 left-0 w-full h-full bg-warning/5 pointer-events-none"></div>
 
@@ -193,7 +194,6 @@ export default function LandingPage() {
           <div className="w-full">
             <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-sm p-6 md:p-12 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden group hover:border-amber-700/50 transition-colors duration-500 w-full">
               
-              {/* Ambient Background Glow */}
               <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
               <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 relative z-10 w-full md:w-auto text-center md:text-left">
@@ -231,7 +231,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* PROMO BANNER FOR E-BOOKS (Explicitly Dark for Contrast) */}
+      {/* PROMO BANNER FOR E-BOOKS */}
       <div className="bg-background pb-8 md:pb-10 pt-2 md:pt-4 px-4 md:px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden">
@@ -263,10 +263,11 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* COMMUNITY SUPPORT / DONATION SECTION */}
+      {/* COMMUNITY SUPPORT SECTION */}
       <div className="bg-background border-t border-surfaceBorder py-12 md:py-20 px-4 md:px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-surface border border-surfaceBorder rounded-sm shadow-sm p-6 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-12 relative overflow-hidden">
+          {/* Added backdrop-blur-md here */}
+          <div className="bg-surface backdrop-blur-md border border-surfaceBorder rounded-sm shadow-sm p-6 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-12 relative overflow-hidden">
             
             <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
@@ -286,7 +287,6 @@ export default function LandingPage() {
             </div>
 
             <div className="shrink-0 flex flex-col items-center z-10">
-              {/* Note: Kept bg-white here deliberately to ensure the QR code is readable by scanners in Dark Mode */}
               <div className="bg-white p-3 md:p-4 rounded-sm shadow-md border border-gray-200 mb-3 md:mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
                 <Image 
                   src="/QR_1780487966.png" 
