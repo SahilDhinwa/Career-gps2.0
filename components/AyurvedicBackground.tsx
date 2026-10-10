@@ -3,17 +3,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTheme } from "next-themes";
 
+// 🦇 TACTICAL OVERRIDE: Change this to "embers", "rain", or "hud" to test them all!
+const BATMAN_EFFECT: "embers" | "rain" | "hud" = "embers";
+
 export default function AyurvedicBackground() {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Generate random properties for standard leaves ONCE so they don't jump on re-renders
+  // Standard Green Leaves (Only generates once to prevent layout shifts)
   const [leaves] = useState(() => 
     Array.from({ length: 15 }).map((_, i) => ({
       id: i,
@@ -26,7 +28,7 @@ export default function AyurvedicBackground() {
   );
 
   // ==========================================
-  // BATMAN MODE: GLOWING EMBERS DRIFTING UP
+  // BATMAN MODE: DYNAMIC CANVAS ENGINE
   // ==========================================
   useEffect(() => {
     if (theme !== "batman") return;
@@ -50,42 +52,85 @@ export default function AyurvedicBackground() {
     window.addEventListener("resize", setSize);
 
     const particlesArray: any[] = [];
-    const numberOfParticles = width < 768 ? 25 : 50; 
-    const colors = ["rgba(255, 30, 20, 0.8)", "rgba(255, 60, 20, 0.6)", "rgba(200, 10, 10, 0.7)"];
+    
+    // Adjust particle count based on the chosen effect
+    let numberOfParticles = 50;
+    if (BATMAN_EFFECT === "embers") numberOfParticles = width < 768 ? 30 : 60;
+    if (BATMAN_EFFECT === "rain") numberOfParticles = width < 768 ? 60 : 150;
+    if (BATMAN_EFFECT === "hud") numberOfParticles = width < 768 ? 20 : 40;
 
     class Particle {
-      x: number; y: number; size: number; speedX: number; speedY: number; color: string; blur: number;
+      x: number; y: number; size: number = 0; speedX: number = 0; speedY: number = 0;
+      color: string = ""; blur: number = 0; length: number = 0; opacity: number = 0;
 
       constructor() {
         this.x = Math.random() * width;
-        this.y = Math.random() * height + height; // Start below the screen
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * -1.5 - 0.5; // Drift UPWARDS
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-        this.blur = Math.random() * 5 + 1;
+        this.y = Math.random() * height; // FIX: Spawns directly on the screen!
+
+        if (BATMAN_EFFECT === "embers") {
+          this.size = Math.random() * 2 + 0.5;
+          this.speedX = Math.random() * 1 - 0.5;
+          this.speedY = Math.random() * -1.5 - 0.5; // Drift UP
+          this.color = ["rgba(255, 30, 20, 0.9)", "rgba(255, 60, 20, 0.7)", "rgba(200, 10, 10, 0.8)"][Math.floor(Math.random() * 3)];
+          this.blur = Math.random() * 5 + 1;
+        } 
+        else if (BATMAN_EFFECT === "rain") {
+          this.length = Math.random() * 15 + 10;
+          this.speedY = Math.random() * 12 + 8; // Fall fast DOWN
+          this.speedX = this.speedY * 0.15; // Slight diagonal angle
+          this.opacity = Math.random() * 0.4 + 0.1;
+        } 
+        else if (BATMAN_EFFECT === "hud") {
+          this.size = Math.random() > 0.5 ? 2 : 4;
+          this.speedY = Math.random() * 1 + 0.5; // Fall slowly DOWN
+          this.opacity = Math.random() * 0.5 + 0.2;
+        }
       }
 
       update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        this.speedX += (Math.random() * 0.02 - 0.01); // Gentle sway
-
-        // Reset if it floats past the top of the screen
-        if (this.y < 0) {
-          this.y = height + 10;
-          this.x = Math.random() * width;
+        if (BATMAN_EFFECT === "embers") {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.speedX += (Math.random() * 0.02 - 0.01); // Sway
+          if (this.y < -10) { this.y = height + 10; this.x = Math.random() * width; }
+        } 
+        else if (BATMAN_EFFECT === "rain") {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          if (this.y > height + 20) { this.y = -20; this.x = Math.random() * width; }
+        } 
+        else if (BATMAN_EFFECT === "hud") {
+          this.y += this.speedY;
+          if (this.y > height + 10) { this.y = -10; this.x = Math.random() * width; }
         }
       }
 
       draw() {
         if (!ctx) return;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.shadowBlur = this.blur;
-        ctx.shadowColor = "#ff1a1a";
-        ctx.fill();
+        
+        if (BATMAN_EFFECT === "embers") {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.shadowBlur = this.blur;
+          ctx.shadowColor = "#ff1a1a";
+          ctx.fill();
+        } 
+        else if (BATMAN_EFFECT === "rain") {
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(this.x + this.speedX, this.y + this.speedY);
+          ctx.strokeStyle = `rgba(220, 20, 20, ${this.opacity})`;
+          ctx.lineWidth = 1.5;
+          ctx.shadowBlur = 0;
+          ctx.stroke();
+        } 
+        else if (BATMAN_EFFECT === "hud") {
+          ctx.fillStyle = `rgba(255, 40, 40, ${this.opacity})`;
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = "#ff0000";
+          ctx.fillRect(this.x, this.y, this.size, this.size);
+        }
       }
     }
 
@@ -112,18 +157,17 @@ export default function AyurvedicBackground() {
   if (!mounted) return null;
 
   // ==========================================
-  // RENDER: BATMAN MODE (Embers)
+  // RENDER: BATMAN MODE (Canvas Layer)
   // ==========================================
   if (theme === "batman") {
     return (
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <canvas 
           ref={canvasRef} 
-          className="absolute inset-0 z-0 w-full h-full opacity-60 mix-blend-screen"
+          className="absolute inset-0 z-0 w-full h-full opacity-80"
           aria-hidden="true"
         />
-        {/* Dark gradient overlay to blend the embers smoothly into the page footer */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050101]/50 to-[#050101] z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050101]/40 to-[#050101] z-10"></div>
       </div>
     );
   }
@@ -152,14 +196,7 @@ export default function AyurvedicBackground() {
 
       {/* Main Anchor Tree */}
       <div className="absolute -bottom-24 -right-24 md:-bottom-12 md:-right-12 opacity-10 dark:opacity-5 animate-sway">
-        <svg
-          width="600"
-          height="600"
-          viewBox="0 0 100 100"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="text-amber-700 dark:text-emerald-400 fill-current"
-        >
+        <svg width="600" height="600" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-amber-700 dark:text-emerald-400 fill-current">
           <path d="M50 100 C 50 80, 45 70, 40 50 C 35 30, 20 20, 10 15 C 20 25, 35 35, 45 60 C 45 40, 35 25, 30 10 C 40 20, 48 35, 52 65 C 55 45, 65 30, 75 20 C 65 35, 58 50, 58 70 C 65 55, 80 45, 90 40 C 75 55, 60 70, 60 100 Z" />
           <path d="M50 100 C 50 80, 55 70, 60 50 C 65 30, 80 20, 90 15 C 80 25, 65 35, 55 60 C 55 40, 65 25, 70 10 C 60 20, 52 35, 48 65" />
         </svg>
@@ -167,32 +204,15 @@ export default function AyurvedicBackground() {
 
       {/* Dynamic Floating Leaves */}
       {leaves.map((leaf) => (
-        <div
-          key={leaf.id}
-          className="absolute top-0 opacity-10 dark:opacity-20 text-emerald-600 dark:text-emerald-400"
-          style={{
-            left: leaf.left,
-            animation: `floatDown ${leaf.animationDuration} linear infinite`,
-            animationDelay: leaf.animationDelay,
-          }}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{
-              transform: `scale(${leaf.scale}) rotate(${leaf.rotation}deg)`,
-            }}
-          >
+        <div key={leaf.id} className="absolute top-0 opacity-10 dark:opacity-20 text-emerald-600 dark:text-emerald-400"
+          style={{ left: leaf.left, animation: `floatDown ${leaf.animationDuration} linear infinite`, animationDelay: leaf.animationDelay }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ transform: `scale(${leaf.scale}) rotate(${leaf.rotation}deg)` }}>
             <path d="M12 2C12 2 4 7 4 14C4 18.418 7.582 22 12 22C16.418 22 20 18.418 20 14C20 7 12 2 12 2Z" />
             <path d="M12 2V22" stroke="currentColor" strokeWidth="1" className="opacity-50 text-white dark:text-black" />
           </svg>
         </div>
       ))}
 
-      {/* Soft gradient overlay to ensure text readability */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background z-0"></div>
     </div>
   );
