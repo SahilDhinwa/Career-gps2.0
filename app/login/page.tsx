@@ -15,12 +15,16 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/profile";
   
-  const { setTheme } = useTheme();
+  // LOGIC UPGRADE: Pull active theme to fix the VG Logo bug
+  const { theme, setTheme } = useTheme(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
+
+  // LOGIC UPGRADE: Checks both URL AND active theme state
+  const isBatmanMode = searchParams.get("mode") === "batman" || theme === "batman";
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +33,7 @@ function LoginForm() {
 
     // INSTANT BOOT: Launch standard state animations before awaiting promise
     setShowIntro(true);
-    if (searchParams.get("mode") === "batman") setTheme("batman");
+    if (isBatmanMode) setTheme("batman");
 
     const startTime = Date.now(); // Start 5-second tracking sequence
 
@@ -46,7 +50,8 @@ function LoginForm() {
     } catch (err: any) {
       console.error(err);
       setShowIntro(false);
-      if (searchParams.get("mode") === "batman") setTheme("dark");
+      // RESTORED: Your original safety rollback line
+      if (isBatmanMode) setTheme("dark");
       setError("Invalid email or password. Please try again.");
       setIsLoading(false);
     }
@@ -68,7 +73,7 @@ function LoginForm() {
     }
 
     setShowIntro(true);
-    if (searchParams.get("mode") === "batman") setTheme("batman");
+    if (isBatmanMode) setTheme("batman");
     const startTime = Date.now();
 
     try {
@@ -164,7 +169,7 @@ function LoginForm() {
 
       <p className="text-center text-sm text-foreground/60 font-medium animate-fadeIn select-none">
         Don&apos;t have an account?{" "}
-        <Link href={`/signup?mode=${searchParams.get("mode") || ""}&redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
+        <Link href={`/signup?mode=${isBatmanMode ? "batman" : ""}&redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
           Sign up
         </Link>
       </p>
@@ -173,7 +178,7 @@ function LoginForm() {
         <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
       </div>
 
-      <CinematicIntro isActive={showIntro} mode={searchParams.get("mode") === "batman" ? "batman" : "standard"} />
+      <CinematicIntro isActive={showIntro} mode={isBatmanMode ? "batman" : "standard"} />
     </div>
   );
 }
