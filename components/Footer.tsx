@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, Mail, MapPin, Heart, ArrowRight, MessageCircle } from "lucide-react";
+import { Mail, MapPin, Heart, ArrowRight, MessageCircle } from "lucide-react";
+import Logo from "./Logo";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   
   // WhatsApp Configuration
   const phoneNumber = "918769892303";
-  const defaultMessage = encodeURIComponent("Hi Sahil, I have a question about Career GPS!");
+  const defaultMessage = encodeURIComponent("Hi Sahil, I have a question about Veblen Good!");
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
@@ -19,12 +20,10 @@ export default function Footer() {
           
           {/* BRAND COLUMN */}
           <div className="md:col-span-5 lg:col-span-4">
-            <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity w-fit mb-4">
-              <Compass className="w-6 h-6" />
-              <span className="font-heading font-bold text-xl tracking-tight text-foreground">
-                Career GPS
-              </span>
-            </Link>
+            <div className="mb-5">
+              <Logo />
+            </div>
+
             <p className="text-foreground/70 font-medium leading-relaxed mb-6 text-sm">
               Democratizing global education. We provide students from tier-2 and tier-3 cities with the exact, fully-funded roadmaps needed to study abroad debt-free.
             </p>
@@ -93,8 +92,8 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-0.5">Email Inquiries</p>
-                  <a href="mailto:support@careergps.in" className="text-foreground font-bold hover:text-primary transition-colors">
-                    sahilkumardhinwa82@gmail.com
+                  <a href="mailto:sahilkumardhinwa82@gmail.com" className="text-foreground font-bold hover:text-primary transition-colors">
+                      sahilkumardhinwa82@gmail.com
                   </a>
                 </div>
               </li>
@@ -117,8 +116,8 @@ export default function Footer() {
 
         {/* BOTTOM LEGAL/COPYRIGHT BAR */}
         <div className="pt-8 border-t border-surfaceBorder flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-foreground/50">
-          <p>© {currentYear} Career GPS. All rights reserved.</p>
-          <div className="flex items-center gap-6">
+                    <p>© {currentYear} Veblen Good. All rights reserved.</p>
+            <div className="flex items-center gap-6">
             <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
             <span className="hover:text-foreground transition-colors cursor-not-allowed opacity-50">Privacy Policy</span>
             <span className="hover:text-foreground transition-colors cursor-not-allowed opacity-50">Terms of Service</span>
