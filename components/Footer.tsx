@@ -3,9 +3,19 @@
 import Link from "next/link";
 import { Mail, MapPin, Heart, ArrowRight, MessageCircle } from "lucide-react";
 import Logo from "./Logo";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isBatman = mounted && theme === 'batman';
   
   // WhatsApp Configuration
   const phoneNumber = "918769892303";
@@ -24,7 +34,7 @@ export default function Footer() {
               <Logo />
             </div>
 
-            <p className="text-foreground/70 font-medium leading-relaxed mb-6 text-sm">
+            <p className={`font-medium leading-relaxed mb-6 text-sm transition-colors ${isBatman ? 'text-gray-300' : 'text-foreground/70'}`}>
               Democratizing global education. We provide students from tier-2 and tier-3 cities with the exact, fully-funded roadmaps needed to study abroad debt-free.
             </p>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-success/10 border border-success/20 text-success text-xs font-bold uppercase tracking-wider">
@@ -34,28 +44,28 @@ export default function Footer() {
 
           {/* QUICK LINKS */}
           <div className="md:col-span-3 lg:col-span-4 flex flex-col md:mx-auto">
-            <h3 className="font-heading font-bold text-foreground mb-5 text-lg">Platform</h3>
+            <h3 className={`font-heading font-bold mb-5 text-lg transition-colors ${isBatman ? 'text-gray-100' : 'text-foreground'}`}>Platform</h3>
             <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/pathways" className="text-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group">
+                <Link href="/pathways" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
                   Pathways
                 </Link>
               </li>
               <li>
-                <Link href="/scholarships" className="text-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group">
+                <Link href="/scholarships" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
                   Scholarship Database
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/vault" className="text-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group">
+                <Link href="/dashboard/vault" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
                   The Action Vault
                 </Link>
               </li>
               <li>
-                <Link href="/e-books" className="text-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group">
+                <Link href="/e-books" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
                   Premium E-Books
                 </Link>
@@ -65,21 +75,21 @@ export default function Footer() {
 
           {/* DEDICATED CONTACT & SUPPORT HUB */}
           <div className="md:col-span-4 lg:col-span-4">
-            <h3 className="font-heading font-bold text-foreground mb-5 text-lg">Support & Contact</h3>
+            <h3 className={`font-heading font-bold mb-5 text-lg transition-colors ${isBatman ? 'text-gray-100' : 'text-foreground'}`}>Support & Contact</h3>
             <ul className="space-y-4 text-sm font-medium">
               
-              {/* UPDATED: Clickable WhatsApp Integration */}
+              {/* Clickable WhatsApp Integration */}
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-[#25D366]/10 flex items-center justify-center shrink-0 border border-[#25D366]/20">
                   <MessageCircle className="w-4 h-4 text-[#25D366]" />
                 </div>
                 <div>
-                  <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-0.5">WhatsApp Support</p>
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>WhatsApp Support</p>
                   <a 
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer" 
-                    className="text-foreground font-bold hover:text-[#25D366] transition-colors flex items-center gap-1 group"
+                    className={`font-bold transition-colors flex items-center gap-1 group ${isBatman ? 'text-gray-100 hover:text-[#25D366]' : 'text-foreground hover:text-[#25D366]'}`}
                   >
                     +91 8769892303 <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </a>
@@ -87,25 +97,25 @@ export default function Footer() {
               </li>
               
               <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                  <Mail className="w-4 h-4 text-primary" />
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-colors ${isBatman ? 'bg-red-950/40 border-red-900/50' : 'bg-primary/10 border-primary/20'}`}>
+                  <Mail className={`w-4 h-4 ${isBatman ? 'text-red-500' : 'text-primary'}`} />
                 </div>
                 <div>
-                  <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-0.5">Email Inquiries</p>
-                  <a href="mailto:sahilkumardhinwa82@gmail.com" className="text-foreground font-bold hover:text-primary transition-colors">
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Email Inquiries</p>
+                  <a href="mailto:sahilkumardhinwa82@gmail.com" className={`font-bold transition-colors ${isBatman ? 'text-gray-100 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
                       sahilkumardhinwa82@gmail.com
                   </a>
                 </div>
               </li>
 
               <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                  <MapPin className="w-4 h-4 text-primary" />
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-colors ${isBatman ? 'bg-red-950/40 border-red-900/50' : 'bg-primary/10 border-primary/20'}`}>
+                  <MapPin className={`w-4 h-4 ${isBatman ? 'text-red-500' : 'text-primary'}`} />
                 </div>
                 <div>
-                  <p className="text-foreground/50 text-xs font-bold uppercase tracking-wider mb-0.5">Founder & Architect</p>
-                  <Link href="/about" className="text-foreground font-bold hover:text-primary transition-colors flex items-center gap-1">
-                    Sahil Dhinwa <ArrowRight className="w-3 h-3" />
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Founder & Architect</p>
+                  <Link href="/about" className={`font-bold transition-colors flex items-center gap-1 group ${isBatman ? 'text-gray-100 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
+                    Sahil Dhinwa <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>
               </li>
@@ -115,12 +125,12 @@ export default function Footer() {
         </div>
 
         {/* BOTTOM LEGAL/COPYRIGHT BAR */}
-        <div className="pt-8 border-t border-surfaceBorder flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-foreground/50">
-                    <p>© {currentYear} Veblen Good. All rights reserved.</p>
-            <div className="flex items-center gap-6">
-            <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
-            <span className="hover:text-foreground transition-colors cursor-not-allowed opacity-50">Privacy Policy</span>
-            <span className="hover:text-foreground transition-colors cursor-not-allowed opacity-50">Terms of Service</span>
+        <div className={`pt-8 border-t border-surfaceBorder flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>
+          <p>© {currentYear} Veblen Good. All rights reserved.</p>
+          <div className="flex items-center gap-6">
+            <Link href="/about" className={`transition-colors ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>About Us</Link>
+            <span className={`transition-colors cursor-not-allowed opacity-50 ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>Privacy Policy</span>
+            <span className={`transition-colors cursor-not-allowed opacity-50 ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>Terms of Service</span>
           </div>
         </div>
         
