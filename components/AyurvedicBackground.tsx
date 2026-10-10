@@ -56,7 +56,7 @@ export default function AyurvedicBackground() {
     // Adjust particle count based on the chosen effect
     let numberOfParticles = 50;
     if (BATMAN_EFFECT === "embers") numberOfParticles = width < 768 ? 30 : 60;
-    if (BATMAN_EFFECT === "rain") numberOfParticles = width < 768 ? 60 : 150;
+    if (BATMAN_EFFECT === "rain") numberOfParticles = width < 768 ? 80 : 200; // Increased for a heavy downpour
     if (BATMAN_EFFECT === "hud") numberOfParticles = width < 768 ? 20 : 40;
 
     class Particle {
@@ -65,7 +65,7 @@ export default function AyurvedicBackground() {
 
       constructor() {
         this.x = Math.random() * width;
-        this.y = Math.random() * height; // FIX: Spawns directly on the screen!
+        this.y = Math.random() * height; // Spawns directly on the screen
 
         if (BATMAN_EFFECT === "embers") {
           this.size = Math.random() * 2 + 0.5;
@@ -75,10 +75,10 @@ export default function AyurvedicBackground() {
           this.blur = Math.random() * 5 + 1;
         } 
         else if (BATMAN_EFFECT === "rain") {
-          this.length = Math.random() * 15 + 10;
-          this.speedY = Math.random() * 12 + 8; // Fall fast DOWN
-          this.speedX = this.speedY * 0.15; // Slight diagonal angle
-          this.opacity = Math.random() * 0.4 + 0.1;
+          this.length = Math.random() * 25 + 15; // Longer raindrops
+          this.speedY = Math.random() * 15 + 10; // Fast fall
+          this.speedX = this.speedY * 0.15; // Diagonal angle
+          this.opacity = Math.random() * 0.5 + 0.3; // Brighter red
         } 
         else if (BATMAN_EFFECT === "hud") {
           this.size = Math.random() > 0.5 ? 2 : 4;
@@ -97,7 +97,9 @@ export default function AyurvedicBackground() {
         else if (BATMAN_EFFECT === "rain") {
           this.x += this.speedX;
           this.y += this.speedY;
+          // Loop seamlessly
           if (this.y > height + 20) { this.y = -20; this.x = Math.random() * width; }
+          if (this.x > width + 20) { this.x = -20; }
         } 
         else if (BATMAN_EFFECT === "hud") {
           this.y += this.speedY;
@@ -120,9 +122,11 @@ export default function AyurvedicBackground() {
           ctx.beginPath();
           ctx.moveTo(this.x, this.y);
           ctx.lineTo(this.x + this.speedX, this.y + this.speedY);
-          ctx.strokeStyle = `rgba(220, 20, 20, ${this.opacity})`;
+          // Crisp, bright red laser rain
+          ctx.strokeStyle = `rgba(255, 30, 30, ${this.opacity})`;
           ctx.lineWidth = 1.5;
-          ctx.shadowBlur = 0;
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = "#ff0000";
           ctx.stroke();
         } 
         else if (BATMAN_EFFECT === "hud") {
@@ -161,13 +165,14 @@ export default function AyurvedicBackground() {
   // ==========================================
   if (theme === "batman") {
     return (
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      // FIX: Changed from 'absolute' to 'fixed' so the rain stays on screen when scrolling!
+      // Removed the masking gradient so the particles pop clearly over the background.
+      <div className="fixed inset-0 z-[-40] overflow-hidden pointer-events-none">
         <canvas 
           ref={canvasRef} 
           className="absolute inset-0 z-0 w-full h-full opacity-80"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050101]/40 to-[#050101] z-10"></div>
       </div>
     );
   }
@@ -176,6 +181,7 @@ export default function AyurvedicBackground() {
   // RENDER: STANDARD MODE (Tree & Leaves)
   // ==========================================
   return (
+    // FIX: Kept standard mode as absolute so it anchors to the container properly
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none transition-colors duration-500">
       <style>{`
         @keyframes floatDown {
