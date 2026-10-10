@@ -29,13 +29,14 @@
 
   /* BATMAN MODE - Fixed to use standard class selector */
   /* BATMAN MODE */
+    /* BATMAN MODE */
   .batman {
-    --background: transparent; /* Lets the z-[-50] Batcave background show through */
-    --foreground: #CCCCCC; 
-    --surface: rgba(13, 13, 13, 0.75); /* Tactical semi-transparent glass */
-    --surfaceBorder: #660000; 
-    --primary: #CC0000; 
-    --primaryHover: #AA0000; 
+    --background: transparent; 
+    --foreground: #E5E7EB; /* Crisp light gray for high legibility */
+    --surface: #141414; /* Deep, solid matte tactical charcoal */
+    --surfaceBorder: #3A0A0A; /* Subtle dark red stroke for the edges */
+    --primary: #E50914; 
+    --primaryHover: #B20710; 
     --success: #00CC33; 
     --warning: #FF9900; 
   }
