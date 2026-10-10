@@ -139,8 +139,13 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
         <style>{`
           @keyframes batman-emblem-zoom { 0% { transform: scale(0.35); opacity: 0; filter: brightness(0.5); } 12% { opacity: 1; filter: brightness(1); } 75% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(3.2); opacity: 0; } }
           @keyframes batman-scene-fade { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
-          @keyframes batman-blackout { 0%, 75% { opacity: 0; } 100% { opacity: 1; } }
-          .batman-background-scene { animation: batman-scene-fade 10s linear forwards; }
+          /* Changed so it fades to black at 90%, then fades away to 0% to reveal the page */
+@keyframes batman-blackout { 
+  0%, 80% { opacity: 0; } 
+  90% { opacity: 1; } 
+  100% { opacity: 0; display: none; } 
+}
+.batman-background-scene { animation: batman-scene-fade 10s linear forwards; }
           .batman-viewport-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; background: #030101; }
           .batman-emblem { transform-box: fill-box; transform-origin: center; animation: batman-emblem-zoom 10s cubic-bezier(0.25, 1, 0.5, 1) forwards; will-change: transform, opacity; }
           .batman-blackout { animation: batman-blackout 10s linear forwards; }
