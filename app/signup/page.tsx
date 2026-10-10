@@ -23,48 +23,49 @@ function SignupForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
 
-  const triggerCinematicSuccess = () => {
-    setShowIntro(true);
-    if (searchParams.get("mode") === "batman") {
-      setTheme("batman");
-    }
-    setTimeout(() => {
-      router.push(redirectUrl);
-    }, 2500);
-  };
-
-  const createFirestoreUser = async (user: any, displayName: string | null) => {
-    try {
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists()) {
-        await setDoc(userRef, {
-          uid: user.uid,
-          email: user.email,
-          displayName: displayName || "Scholarship Applicant",
-          createdAt: new Date().toISOString(),
-          isPremium: false,
-          roadmapProgress: {},
-          checklistProgress: {}
-        });
-      }
-    } catch (dbErr) {
-      console.warn("Silent DB creation delayed.");
-    }
-  };
-
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
+    setShowIntro(true);
+    if (searchParams.get("mode") === "batman") setTheme("batman");
+
+    const startTime = Date.now();
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
-      await createFirestoreUser(userCredential.user, name);
-      triggerCinematicSuccess();
+      
+      try {
+        const userRef = doc(db, "users", userCredential.user.uid);
+        const userSnap = await getDoc(userRef);
+        if (!userSnap.exists()) {
+          await setDoc(userRef, {
+            uid: userCredential.user.uid,
+            email: userCredential.user.email,
+            displayName: name || "Scholarship Applicant",
+            createdAt: new Date().toISOString(),
+            isPremium: false,
+            roadmapProgress: {},
+            checklistProgress: {}
+          });
+        }
+      } catch (dbErr) {
+        console.warn("Silent DB creation delayed.");
+      }
+
+      const elapsed = Date.now() - startTime;
+      const remainingTime = Math.max(0, 5000 - elapsed);
+
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, remainingTime);
+
     } catch (err: any) {
       console.error(err);
+      setShowIntro(false);
+      if (searchParams.get("mode") === "batman") setTheme("dark");
       setError("Failed to create an account. Password must be 6+ chars.");
       setIsLoading(false);
     } 
@@ -85,13 +86,38 @@ function SignupForm() {
       return;
     }
 
-    await createFirestoreUser(user, user.displayName);
-    triggerCinematicSuccess();
+    setShowIntro(true);
+    if (searchParams.get("mode") === "batman") setTheme("batman");
+    const startTime = Date.now();
+
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || "Scholarship Applicant",
+          createdAt: new Date().toISOString(),
+          isPremium: false,
+          roadmapProgress: {},
+          checklistProgress: {}
+        });
+      }
+    } catch (dbErr) {
+      console.warn("Silent DB creation delayed.");
+    }
+    
+    const elapsed = Date.now() - startTime;
+    const remainingTime = Math.max(0, 5000 - elapsed);
+    setTimeout(() => {
+      router.push(redirectUrl);
+    }, remainingTime);
   };
 
   return (
-    <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10 transition-colors duration-300">
-      <div className="text-center mb-8">
+    <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10 transition-colors duration-300 animate-fadeIn">
+      <div className="text-center mb-8 select-none">
         <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Create Account</h1>
         <p className="text-foreground/60 font-medium">Join Veblen Good and build your roadmap.</p>
       </div>
@@ -109,7 +135,7 @@ function SignupForm() {
             type="text" 
             required
             placeholder="Full Name" 
-            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 animate-fadeIn"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -121,7 +147,7 @@ function SignupForm() {
             type="email" 
             required
             placeholder="Email Address" 
-            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 animate-fadeIn"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -133,7 +159,7 @@ function SignupForm() {
             type="password" 
             required
             placeholder="Password (Min. 6 characters)" 
-            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 animate-fadeIn"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -142,7 +168,7 @@ function SignupForm() {
         <button 
           type="submit" 
           disabled={isLoading}
-          className="w-full bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-70 cursor-pointer"
+          className="w-full bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-70 cursor-pointer animate-fadeIn"
         >
           {isLoading ? (
             <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -152,7 +178,7 @@ function SignupForm() {
         </button>
       </form>
 
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6 select-none animate-fadeIn">
         <div className="h-px bg-surfaceBorder flex-1"></div>
         <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">Or</span>
         <div className="h-px bg-surfaceBorder flex-1"></div>
@@ -162,20 +188,20 @@ function SignupForm() {
         onClick={handleGoogleSignup}
         disabled={isLoading}
         type="button"
-        className="w-full bg-surface text-foreground border border-surfaceBorder font-bold py-3 px-4 rounded-sm hover:bg-background transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6 cursor-pointer"
+        className="w-full bg-surface text-foreground border border-surfaceBorder font-bold py-3 px-4 rounded-sm hover:bg-background transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6 cursor-pointer animate-fadeIn"
       >
         <Chrome className="w-5 h-5 text-blue-500" /> Sign up with Google
       </button>
 
-      <p className="text-center text-sm text-foreground/60 font-medium">
+      <p className="text-center text-sm text-foreground/60 font-medium select-none animate-fadeIn">
         Already have an account?{" "}
-        <Link href={`/login?mode=${searchParams.get("mode") || ""}&redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
+        <Link href={`/login?mode=${searchParams.get("mode") || ""}&redirect=${redirectUrl}`} className="text-primary font-bold hover:underline animate-fadeIn">
           Log in
         </Link>
       </p>
 
-      <div className="mt-8 pt-6 border-t border-surfaceBorder flex items-center justify-center gap-2 text-xs text-foreground/40 font-medium">
-        <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
+      <div className="mt-8 pt-6 border-t border-surfaceBorder flex items-center justify-center gap-2 text-xs text-foreground/40 font-medium select-none animate-fadeIn">
+        <ShieldCheck className="w-4 h-4 text-success animate-pulse" /> Secure 256-bit Encryption
       </div>
 
       <CinematicIntro isActive={showIntro} mode={searchParams.get("mode") === "batman" ? "batman" : "standard"} />
