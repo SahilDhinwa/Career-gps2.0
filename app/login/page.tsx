@@ -1,37 +1,45 @@
 "use client";
-import { useTheme } from "next-themes";
+
 import { useState, Suspense } from "react";
 import { auth, db, googleProvider } from "../../lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-// Cleaned up the duplicate imports and ensured Compass is here
-import { Mail, Lock, ArrowRight, ShieldCheck, Chrome, Compass } from "lucide-react";
+import { Mail, Lock, ArrowRight, ShieldCheck, Chrome } from "lucide-react";
+import { useTheme } from "next-themes";
+import CinematicIntro from "../../components/CinematicIntro";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/profile";
-
+  
+  const { setTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
 
+  const triggerCinematicSuccess = () => {
+    setShowIntro(true);
+    // If they came via the Tactical Gate, switch the theme while the screen is black!
+    if (searchParams.get("mode") === "batman") {
+      setTheme("batman");
+    }
+    setTimeout(() => {
+      router.push(redirectUrl);
+    }, 2500); // 2.5 seconds allows the animation and audio to finish
+  };
+
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // START THE CINEMATIC INTRO
-      setShowIntro(true);
-      setTimeout(() => {
-        router.push(redirectUrl);
-      }, 1800);
+      triggerCinematicSuccess();
     } catch (err: any) {
       console.error(err);
       setError("Invalid email or password. Please try again.");
@@ -42,10 +50,7 @@ function LoginForm() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     setError("");
-    
     let user;
-    
-    // STEP 1: Handle Auth Safely
     try {
       const result = await signInWithPopup(auth, googleProvider);
       user = result.user;
@@ -53,14 +58,11 @@ function LoginForm() {
       console.error("Auth Error:", err);
       setError("Google popup closed or blocked. Please try again.");
       setIsLoading(false);
-      return; // Stop if auth fails
+      return; 
     }
-
-    // STEP 2: Handle Database Silently
     try {
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
-
       if (!userSnap.exists()) {
         await setDoc(userRef, {
           uid: user.uid,
@@ -75,47 +77,42 @@ function LoginForm() {
     } catch (dbErr) {
       console.warn("Database sync delayed, but user is authenticated.");
     }
-    
-    // STEP 3: START THE CINEMATIC INTRO
-    setShowIntro(true);
-    setTimeout(() => {
-      router.push(redirectUrl);
-    }, 1800);
+    triggerCinematicSuccess();
   };
 
   return (
-    <div className="w-full max-w-md bg-white p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10">
+    <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10">
       <div className="text-center mb-8">
         <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-        <p className="text-gray-500 font-medium">Log in to access your roadmap and assets.</p>
+        <p className="text-foreground/60 font-medium">Log in to access your roadmap and assets.</p>
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-500 p-3 rounded-sm text-sm font-bold mb-6 border border-red-100 text-center">
+        <div className="bg-red-950/30 text-red-500 p-3 rounded-sm text-sm font-bold mb-6 border border-red-900/50 text-center">
           {error}
         </div>
       )}
 
       <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
           <input 
             type="email" 
             required
             placeholder="Email Address" 
-            className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
           <input 
             type="password" 
             required
             placeholder="Password" 
-            className="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full bg-background border border-surfaceBorder text-foreground rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -135,60 +132,45 @@ function LoginForm() {
       </form>
 
       <div className="flex items-center gap-4 mb-6">
-        <div className="h-px bg-gray-200 flex-1"></div>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Or</span>
-        <div className="h-px bg-gray-200 flex-1"></div>
+        <div className="h-px bg-surfaceBorder flex-1"></div>
+        <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">Or</span>
+        <div className="h-px bg-surfaceBorder flex-1"></div>
       </div>
 
       <button 
         onClick={handleGoogleLogin}
         disabled={isLoading}
         type="button"
-        className="w-full bg-white text-gray-700 border border-gray-200 font-bold py-3 px-4 rounded-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6"
+        className="w-full bg-surface text-foreground border border-surfaceBorder font-bold py-3 px-4 rounded-sm hover:bg-background transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6"
       >
         <Chrome className="w-5 h-5 text-blue-500" /> Continue with Google
       </button>
 
-      <p className="text-center text-sm text-gray-600 font-medium">
+      <p className="text-center text-sm text-foreground/60 font-medium">
         Don&apos;t have an account?{" "}
-        <Link href={`/signup?redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
+        <Link href={`/signup?mode=${searchParams.get("mode") || ""}&redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
           Sign up
         </Link>
       </p>
 
-      <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
+      <div className="mt-8 pt-6 border-t border-surfaceBorder flex items-center justify-center gap-2 text-xs text-foreground/40 font-medium">
         <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
       </div>
 
-      {/* THE CINEMATIC NETFLIX-STYLE INTRO OVERLAY */}
-      {showIntro && (
-        <div className="fixed inset-0 z-[9999] bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
-          <style dangerouslySetInnerHTML={{__html: `
-            @keyframes compass-cinematic {
-              0% { transform: scale(0.3) rotate(-45deg); opacity: 0; filter: blur(10px); }
-              30% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px) drop-shadow(0 0 40px rgba(42,157,143,0.8)); }
-              60% { transform: scale(1.1) rotate(0deg); opacity: 1; filter: blur(0px) drop-shadow(0 0 60px rgba(212,175,55,0.6)); }
-              100% { transform: scale(30) rotate(20deg); opacity: 0; filter: blur(5px); }
-            }
-            .animate-cinematic {
-              animation: compass-cinematic 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            }
-          `}} />
-          <Compass className="w-24 h-24 text-success animate-cinematic" strokeWidth={1.5} />
-        </div>
-      )}
+      {/* THE NEW CINEMATIC OVERLAY COMPONENT */}
+      <CinematicIntro isActive={showIntro} mode={searchParams.get("mode") === "batman" ? "batman" : "standard"} />
     </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#FBFBF9] flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-warning/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
       
       <Suspense fallback={
-        <div className="w-full max-w-md bg-white p-8 rounded-sm shadow-xl border border-surfaceBorder flex justify-center py-20">
+        <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder flex justify-center py-20 relative z-10">
            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
       }>
