@@ -137,9 +137,8 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
           @media (prefers-reduced-motion: reduce) { .batman-background-scene, .batman-emblem, .batman-blackout, .batman-status { animation: none; will-change: auto; } }
         `}</style>
 
-        {/* Fully contained proportional scaling using object-contain and meet */}
         <div className="batman-viewport-container z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid meet" className="w-full h-full object-contain pointer-events-none absolute inset-0" role="img" aria-label="Batman mode activated">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1100" preserveAspectRatio="xMidYMid meet" className="w-full h-full object-cover pointer-events-none absolute inset-0" role="img" aria-label="Batman mode activated">
             <defs>
               <radialGradient id="bg" cx="50%" cy="46%" r="78%"><stop offset="0" stopColor="#251011"/><stop offset=".42" stopColor="#0b0809"/><stop offset="1" stopColor="#020202"/></radialGradient>
               <radialGradient id="smoke" cx="50%" cy="50%" r="50%"><stop offset="0" stopColor="#a64d4d" stopOpacity=".48"/><stop offset=".48" stopColor="#632d30" stopOpacity=".26"/><stop offset="1" stopColor="#120d0e" stopOpacity="0"/></radialGradient>
@@ -148,30 +147,31 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
               <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="blur"/><feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.8 0 0.1 0 0 0.02 0 0 0.1 0 0.02 0 0 0 1 0" result="redblur"/><feMerge><feMergeNode in="redblur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="15"/></filter>
               <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="2" seed="14"/><feColorMatrix values=".3 0 0 0 .1 .3 0 0 0 .08 .3 0 0 0 .08 0 0 0 .13 0"/></filter>
-              <clipPath id="frame"><rect x="0" y="0" width="1536" height="864"/></clipPath>
+              <clipPath id="frame"><rect x="0" y="0" width="1800" height="1100"/></clipPath>
             </defs>
 
             <g clipPath="url(#frame)" className="batman-background-scene">
-              <rect x="0" y="0" width="1536" height="864" fill="url(#bg)"/>
-              <ellipse cx="768" cy="390" rx="920" ry="620" fill="url(#smoke)" opacity=".65"/>
-              <rect x="0" y="0" width="1536" height="864" filter="url(#grain)" opacity=".22" pointerEvents="none"/>
+              <rect x="0" y="0" width="1800" height="1100" fill="url(#bg)"/>
+              <ellipse cx="900" cy="460" rx="1080" ry="740" fill="url(#smoke)" opacity=".65"/>
+              <rect x="0" y="0" width="1800" height="1100" filter="url(#grain)" opacity=".22" pointerEvents="none"/>
 
-              <g fontFamily="Arial, Helvetica, sans-serif" textAnchor="middle">
+              {/* Shifted slightly lower down */}
+              <g fontFamily="Arial, Helvetica, sans-serif" textAnchor="middle" transform="translate(132, 75)">
                 <text x="768" y="694" fontSize="21" fill="#ff625f" opacity=".96">BATMAN MODE ACTIVATED</text>
                 <text x="768" y="723" fontSize="17" fill="#95696a" opacity=".92" className="batman-status">{status}</text>
                 <text x="768" y="735" fontSize="12" fill="#ff625f" fontFamily="monospace">{Math.floor(progress)}%</text>
               </g>
 
-              <rect x="570" y="738" width="396" height="22" fill="#080606" stroke="#8b4243" strokeWidth="1.5"/>
-              <rect x="576" y="743" width={384 * (progress / 100)} height="12" fill="url(#barFill)" opacity=".98"/>
+              <rect x="702" y="813" width="396" height="22" fill="#080606" stroke="#8b4243" strokeWidth="1.5"/>
+              <rect x="708" y="818" width={384 * (progress / 100)} height="12" fill="url(#barFill)" opacity=".98"/>
 
-              <g fill="#190b0c" opacity=".85">
+              <g fill="#190b0c" opacity=".85" transform="translate(132, 75)">
                 {[587, 599, 611, 623, 635, 647, 659, 671, 683, 695, 707, 719, 731, 743, 755, 767, 779, 791, 803].map((xCoord) => (
                   <rect key={xCoord} x={xCoord} y="743" width="3" height="12"/>
                 ))}
               </g>
 
-              <g fontFamily="monospace" fontSize="4.7" fill="#7b3435" opacity=".85">
+              <g fontFamily="monospace" fontSize="4.7" fill="#7b3435" opacity=".85" transform="translate(132, 75)">
                 {terminalLines.map((line, index) => {
                   const lineProgress = Math.max(0, Math.min(1, (progress - index * 18) / 18));
                   return <text key={line} x="571" y={771 + index * 7}>{line.slice(0, Math.floor(line.length * lineProgress))}</text>;
