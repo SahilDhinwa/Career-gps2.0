@@ -4,65 +4,13 @@ import Link from "next/link";
 import { ArrowLeft, BookOpen, FileText, Lock, ChevronRight } from "lucide-react";
 import { HandwrittenCanvas } from "@/components/HandwrittenCanvas";
 
-// ==========================================
-// PREMIUM MINIMALIST DASHBOARD INDEX
-// ==========================================
 const MASTER_INDEX = [
-  {
-    subject: "Agada Tantra (Toxicology)",
-    icon: "🐍",
-    status: "live",
-    topics: [
-      { name: "Theory Chapters & Syllabus", link: "/short-notes/agada-tantra", type: "theory", isReady: true },
-      { name: "Previous Year Papers (PYQ)", link: "/short-notes/agada-tantra/pyq", type: "pyq", isReady: true }
-    ]
-  },
-  {
-    subject: "Charaka Samhita (Purvardha)",
-    icon: "📜",
-    status: "live",
-    topics: [
-      { name: "Theory Chapters & Syllabus", link: "/short-notes/charaka-samhita", type: "theory", isReady: true },
-      { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
-    ]
-  },
-  {
-    subject: "Roga Nidan & Vikriti Vigyan",
-    icon: "🔬",
-    status: "live",
-    topics: [
-      { name: "Theory Chapters & Syllabus", link: "/short-notes/roga-nidan", type: "theory", isReady: true },
-      { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
-    ]
-  },  
-  // NEWLY ADDED: Swasth Vritta
-  {
-    subject: "Swasth Vritta & Yoga",
-    icon: "🧘‍♂️",
-    status: "live",
-    topics: [
-      { name: "Theory Chapters & Syllabus", link: "/short-notes/swasth-vritta", type: "theory", isReady: true },
-      { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
-    ]
-  },
-  {
-    subject: "Dravyaguna Vigyan",
-    icon: "🌿",
-    status: "draft",
-    topics: [
-      { name: "Theory Chapters & Syllabus", link: "#", type: "theory", isReady: false },
-      { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
-    ]
-  },
-  {
-    subject: "Rasa Shastra & Bhaishajya",
-    icon: "⚗️",
-    status: "draft",
-    topics: [
-      { name: "Theory Chapters & Syllabus", link: "#", type: "theory", isReady: false },
-      { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }
-    ]
-  }
+  { subject: "Agada Tantra (Toxicology)", icon: "🐍", status: "live", topics: [{ name: "Theory Chapters & Syllabus", link: "/short-notes/agada-tantra", type: "theory", isReady: true }, { name: "Previous Year Papers (PYQ)", link: "/short-notes/agada-tantra/pyq", type: "pyq", isReady: true }] },
+  { subject: "Charaka Samhita (Purvardha)", icon: "📜", status: "live", topics: [{ name: "Theory Chapters & Syllabus", link: "/short-notes/charaka-samhita", type: "theory", isReady: true }, { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }] },
+  { subject: "Roga Nidan & Vikriti Vigyan", icon: "🔬", status: "live", topics: [{ name: "Theory Chapters & Syllabus", link: "/short-notes/roga-nidan", type: "theory", isReady: true }, { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }] },  
+  { subject: "Swasth Vritta & Yoga", icon: "🧘‍♂️", status: "live", topics: [{ name: "Theory Chapters & Syllabus", link: "/short-notes/swasth-vritta", type: "theory", isReady: true }, { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }] },
+  { subject: "Dravyaguna Vigyan", icon: "🌿", status: "draft", topics: [{ name: "Theory Chapters & Syllabus", link: "#", type: "theory", isReady: false }, { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }] },
+  { subject: "Rasa Shastra & Bhaishajya", icon: "⚗️", status: "draft", topics: [{ name: "Theory Chapters & Syllabus", link: "#", type: "theory", isReady: false }, { name: "Previous Year Papers (PYQ)", link: "#", type: "pyq", isReady: false }] }
 ];
 
 export default function ShortNotesMasterIndex() {
@@ -92,9 +40,7 @@ export default function ShortNotesMasterIndex() {
         </p>
       </div>
 
-      {/* ========================================== */}
-      {/* MODERN BENTO-BOX GRID LAYOUT               */}
-      {/* ========================================== */}
+      {/* GRID LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full max-w-6xl mx-auto pb-20">
         
         {MASTER_INDEX.map((section, idx) => {
@@ -105,13 +51,12 @@ export default function ShortNotesMasterIndex() {
               key={idx} 
               className={`group flex flex-col p-6 md:p-8 rounded-[2rem] border transition-all duration-500
                 ${isLive 
-                  ? "border-[var(--theme-border)]/20 bg-white/60 dark:bg-black/40 backdrop-blur-md hover:-translate-y-1 hover:shadow-2xl hover:border-[var(--theme-accent)]/50" 
-                  : "border-[var(--theme-border)]/10 bg-white/30 dark:bg-black/20 opacity-70 grayscale-[50%] cursor-not-allowed"}
+                  ? "border-[var(--theme-border)]/50 bg-[var(--theme-accent-bg)]/80 backdrop-blur-md hover:-translate-y-1 hover:shadow-2xl hover:border-[var(--theme-accent)]" 
+                  : "border-[var(--theme-border)]/20 bg-[var(--theme-accent-bg)]/40 opacity-70 grayscale-[50%] cursor-not-allowed"}
               `}
             >
               {/* Header: Icon & Title */}
               <div className="flex items-start gap-5 mb-8">
-                {/* Icon Container */}
                 <div className={`w-14 h-14 md:w-16 md:h-16 flex-shrink-0 flex items-center justify-center rounded-2xl shadow-inner
                   ${isLive ? "bg-[var(--theme-accent)]/10" : "bg-gray-500/10"}
                 `}>
@@ -139,7 +84,7 @@ export default function ShortNotesMasterIndex() {
                     <Link 
                       key={topicIdx}
                       href={topic.link} 
-                      className="group/btn flex items-center justify-between w-full p-4 rounded-xl border border-[var(--theme-border)]/10 bg-white/50 dark:bg-black/50 hover:bg-[var(--theme-accent)] hover:border-[var(--theme-accent)] hover:shadow-md transition-all duration-300"
+                      className="group/btn flex items-center justify-between w-full p-4 rounded-xl border border-[var(--theme-border)]/30 bg-[var(--theme-text)]/5 hover:bg-[var(--theme-accent)] hover:border-[var(--theme-accent)] hover:shadow-md transition-all duration-300"
                     >
                       <div className="flex items-center gap-4">
                         <div className="p-2 rounded-lg bg-[var(--theme-text)]/5 group-hover/btn:bg-white/20 transition-colors">
