@@ -17,35 +17,12 @@ export default function BatcaveBackground() {
       {/* 1. Central Ambient Highlight (Makes the center glow red behind the content) */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(180,20,20,0.12)_0%,transparent_65%)] z-0" />
 
-      {/* 2. Tactical Grid with Illuminated Intersections */}
-      <div className="absolute inset-0 z-0">
-        {/* Faint Grid Lines */}
-        <div 
-          className="absolute inset-0 opacity-[0.15]"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #ff1a1a 1px, transparent 1px),
-              linear-gradient(to bottom, #ff1a1a 1px, transparent 1px)
-            `,
-            backgroundSize: "120px 120px",
-            backgroundPosition: "center center"
-          }}
-        />
-        {/* Glowing Intersection Dots */}
-        <div 
-          className="absolute inset-0 opacity-[0.4]"
-          style={{
-            backgroundImage: `radial-gradient(circle at center, #ff1a1a 2px, transparent 2.5px)`,
-            backgroundSize: "120px 120px",
-            backgroundPosition: "center center"
-          }}
-        />
-      </div>
+      {/* GRID HAS BEEN COMPLETELY REMOVED FROM HERE */}
 
-      {/* 3. Outer Shadow Vignette */}
+      {/* 2. Outer Shadow Vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,#030000_100%)] z-0" />
 
-      {/* 4. Solid Crimson Watermark Bat Emblem */}
+      {/* 3. Solid Crimson Watermark Bat Emblem */}
       <div className="relative z-10 w-full h-full max-w-[1400px] opacity-[0.6] animate-[pulse_5s_ease-in-out_infinite] flex items-center justify-center">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
