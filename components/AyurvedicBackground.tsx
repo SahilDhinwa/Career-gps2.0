@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useTheme } from "next-themes";
 
 // 🦇 TACTICAL OVERRIDE: Change this to "embers", "rain", or "hud" to test them all!
-const BATMAN_EFFECT: "embers" | "rain" | "hud" = "embers";
+const BATMAN_EFFECT: "embers" | "rain" | "hud" = "rain";
 
 export default function AyurvedicBackground() {
   const { theme } = useTheme();
