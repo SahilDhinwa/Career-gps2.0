@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { ThemeProvider } from '../components/ThemeProvider'
 import { AuthProvider } from '../context/AuthContext'
+import BatcaveBackground from '../components/BatcaveBackground' // Added Background
 
 // 1. Configure the Heading Font (Syne)
 const syne = Syne({ 
@@ -20,7 +21,7 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
-// 3. Configure the Handwritten Font (Kalam - supports Hindi/Devanagari)
+// 3. Configure the Handwritten Font (Kalam)
 const kalam = Kalam({
   weight: ['300', '400', '700'],
   subsets: ['latin', 'devanagari'],
@@ -41,11 +42,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${syne.variable} ${dmSans.variable} ${kalam.variable} font-body antialiased`}>
+        {/* The Cinematic Background (Only visible in Batman mode) */}
+        <BatcaveBackground />
+        
         <ThemeProvider 
           attribute="class" 
           defaultTheme="system" 
           enableSystem 
           disableTransitionOnChange
+          themes={['light', 'dark', 'batman']} // Explicitly added the 3rd theme
         >
           <AuthProvider>
             <Navbar />
