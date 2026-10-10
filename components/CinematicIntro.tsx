@@ -3,8 +3,20 @@
 import { useEffect } from "react";
 
 export default function CinematicIntro({ isActive, mode }: { isActive: boolean, mode: "standard" | "batman" }) {
+  useEffect(() => {
+    if (isActive) {
+      // THE AUDIO TRIGGER
+      const audioPath = mode === "batman" ? "/sounds/batman-boom.mp3" : "/sounds/vg-chime.mp3";
+      const audio = new Audio(audioPath);
+      // We set volume to 0.7 so it doesn't blast the user's ears
+      audio.volume = 0.7; 
+      audio.play().catch(e => console.warn("Audio playback prevented by browser:", e));
+    }
+  }, [isActive, mode]);
+
   if (!isActive) return null;
 
+  // THE BACKDOOR: Batman Cinematic Reveal
   if (mode === "batman") {
     return (
       <div className="fixed inset-0 z-[9999] bg-[#020202] flex items-center justify-center overflow-hidden">
@@ -26,9 +38,9 @@ export default function CinematicIntro({ isActive, mode }: { isActive: boolean, 
     );
   }
 
-  // The Standard Veblen Good Premium Intro
+  // THE FRONT DOOR: Premium Veblen Good Reveal
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#0B1A14] flex items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 z-[9999] bg-[#0A110D] flex items-center justify-center overflow-hidden">
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes vg-cinematic {
           0% { opacity: 0; transform: scale(0.8); filter: blur(10px); }
