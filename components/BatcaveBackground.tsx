@@ -11,37 +11,37 @@ export default function BatcaveBackground() {
     setMounted(true);
   }, []);
 
-  // Only render if mounted and the theme is explicitly 'batman'
+  // Only render if mounted and on 'batman' theme
   if (!mounted || theme !== "batman") return null;
 
   return (
     <div className="fixed inset-0 w-full h-full z-[-50] bg-[#020202] overflow-hidden pointer-events-none flex items-center justify-center">
       
-      {/* 1. Tactical Grid Overlay */}
+      {/* 1. Tactical Red Grid Overlay */}
       <div 
-        className="absolute inset-0 opacity-20" 
+        className="absolute inset-0 opacity-15" 
         style={{
-          backgroundImage: `linear-gradient(to right, rgba(255, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 0, 0, 0.1) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(to right, rgba(255, 0, 0, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 0, 0, 0.08) 1px, transparent 1px)`,
           backgroundSize: '40px 40px'
         }}
       ></div>
 
-      {/* 2. The Bat Logo (Geometric & Cinematic) with a slow breathing animation */}
-      <div className="relative w-[800px] h-[800px] flex items-center justify-center opacity-10 animate-pulse" style={{ animationDuration: '6s' }}>
-        {/* Deep Red Ambient Glow behind the logo */}
-        <div className="absolute w-[400px] h-[200px] bg-red-600 blur-[120px] rounded-full"></div>
+      {/* 2. Wide, Swooping Bat Logo Back-glow with subtle breathing pulsation */}
+      <div className="relative w-[1100px] h-[550px] flex items-center justify-center opacity-[0.06] animate-pulse" style={{ animationDuration: '7s' }}>
+        {/* Soft immersive back-glow */}
+        <div className="absolute w-[600px] h-[250px] bg-red-700 blur-[140px] rounded-full"></div>
         
-        {/* The Sharp, Stylized Bat SVG */}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-full h-full text-red-600 drop-shadow-[0_0_15px_rgba(255,0,0,0.8)] relative z-10">
+        {/* The Natural Curved Wing Logo */}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50" className="w-full h-full text-red-600 drop-shadow-[0_0_20px_rgba(255,0,0,0.4)]">
           <path 
-            d="M 50,80 L 45,65 L 20,70 L 5,40 L 25,45 L 35,30 L 45,35 L 48,20 L 50,25 L 52,20 L 55,35 L 65,30 L 75,45 L 95,40 L 80,70 L 55,65 Z" 
+            d="M 50,15 C 48,15 46,13 46,10 C 43,11 39,11 35,12 C 22,15 11,23 3,31 C 7,34 13,35 20,34 C 27,33 31,37 35,40 C 38,43 41,44 44,41 L 50,47 L 56,41 C 59,44 62,43 65,40 C 69,37 73,33 80,34 C 87,35 93,34 97,31 C 89,23 78,15 65,12 C 61,11 57,11 54,10 C 54,13 52,15 50,15 Z" 
             fill="currentColor"
           />
         </svg>
       </div>
 
-      {/* 3. Terminal Scanline Effect (Moves top to bottom slowly) */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-900/10 to-transparent h-[10%] w-full animate-[scan_8s_linear_infinite]"></div>
+      {/* 3. Sweeping Scanline Sweep Effect */}
+      <div className="absolute inset-x-0 bg-gradient-to-b from-transparent via-red-950/10 to-transparent h-[12vh] w-full animate-[scan_9s_linear_infinite]"></div>
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scan {
