@@ -42,16 +42,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${syne.variable} ${dmSans.variable} ${kalam.variable} font-body antialiased`}>
-        {/* The Cinematic Background (Only visible in Batman mode) */}
-        <BatcaveBackground />
-        
         <ThemeProvider 
           attribute="class" 
           defaultTheme="system" 
           enableSystem 
           disableTransitionOnChange
-          themes={['light', 'dark', 'batman']} // Explicitly added the 3rd theme
+          themes={['light', 'dark', 'batman']}
         >
+          {/* MOVED INSIDE THE PROVIDER */}
+          <BatcaveBackground /> 
+          
           <AuthProvider>
             <Navbar />
             <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
