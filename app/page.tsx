@@ -107,7 +107,7 @@ export default function LandingPage() {
       <div className="bg-surface border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl font-bold text-foreground mb-4">Why Top Students Choose Career GPS</h2>
+            <h2 className="font-heading text-3xl font-bold text-foreground mb-4">Why Top Students Choose Veblen Goods</h2>
             <p className="text-foreground/60 font-medium">Everything you need to secure your seat at a global university.</p>
           </div>
 
@@ -290,7 +290,7 @@ export default function LandingPage() {
               <div className="bg-white p-3 md:p-4 rounded-sm shadow-md border border-gray-200 mb-3 md:mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
                 <Image 
                   src="/QR_1780487966.png" 
-                  alt="Support Career GPS via UPI" 
+                  alt="Support Veblen Good via UPI" 
                   width={160}
                   height={160}
                   className="object-contain w-40 h-40 md:w-48 md:h-48"
