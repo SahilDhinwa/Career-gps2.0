@@ -125,21 +125,21 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
     return (
       <div className="fixed inset-0 z-[9999] overflow-hidden bg-black flex items-center justify-center select-none">
         <style>{`
-          @keyframes batman-emblem-zoom { 0% { transform: scale(0.65); opacity: 0; } 12% { opacity: 1; } 75% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(3.5); opacity: 0; } }
+          @keyframes batman-emblem-zoom { 0% { transform: scale(0.35); opacity: 0; } 12% { opacity: 1; } 75% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(2.8); opacity: 0; } }
           @keyframes batman-scene-fade { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
           @keyframes batman-blackout { 0%, 75% { opacity: 0; } 100% { opacity: 1; } }
           @keyframes batman-status-pulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
           .batman-background-scene { animation: batman-scene-fade 10s linear forwards; }
-          .batman-viewport-container { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+          .batman-viewport-container { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #000; }
           .batman-emblem { transform-box: fill-box; transform-origin: center; animation: batman-emblem-zoom 10s cubic-bezier(0.25, 1, 0.5, 1) forwards; will-change: transform, opacity; }
           .batman-blackout { animation: batman-blackout 10s linear forwards; }
           .batman-status { animation: batman-status-pulse 1s ease-in-out infinite; }
           @media (prefers-reduced-motion: reduce) { .batman-background-scene, .batman-emblem, .batman-blackout, .batman-status { animation: none; will-change: auto; } }
         `}</style>
 
-        {/* Full-bleed viewport container with object-cover to remove the frame look */}
+        {/* Fully contained proportional scaling using object-contain and meet */}
         <div className="batman-viewport-container z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="w-full h-full object-cover pointer-events-none absolute inset-0" role="img" aria-label="Batman mode activated">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid meet" className="w-full h-full object-contain pointer-events-none absolute inset-0" role="img" aria-label="Batman mode activated">
             <defs>
               <radialGradient id="bg" cx="50%" cy="46%" r="78%"><stop offset="0" stopColor="#251011"/><stop offset=".42" stopColor="#0b0809"/><stop offset="1" stopColor="#020202"/></radialGradient>
               <radialGradient id="smoke" cx="50%" cy="50%" r="50%"><stop offset="0" stopColor="#a64d4d" stopOpacity=".48"/><stop offset=".48" stopColor="#632d30" stopOpacity=".26"/><stop offset="1" stopColor="#120d0e" stopOpacity="0"/></radialGradient>
