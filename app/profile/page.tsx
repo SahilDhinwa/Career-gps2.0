@@ -39,6 +39,10 @@ export default function UserProfile() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      
+      // 🦇 INSTANT RESET: Turn off Batman mode on logout
+      setTheme('dark'); 
+      
       router.push("/");
     } catch (error) {
       console.error("Failed to log out", error);
