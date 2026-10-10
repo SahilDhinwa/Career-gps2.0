@@ -1,22 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "next-themes";
-import { User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon, Activity } from "lucide-react";
+import { User as UserIcon, Menu, X, Loader2, Sparkles, Sun, Moon, Activity, Crosshair } from "lucide-react";
 import Logo from "./Logo";
+import CinematicIntro from "./CinematicIntro";
 
 export default function Navbar() {
   const { user, userData, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
-  // Theme state
+  // Theme state & Cinematic Intro state
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isSwitchingToBatman, setIsSwitchingToBatman] = useState(false);
 
   // Check if we are on the home page for the transparent effect
   const isLandingPage = pathname === "/";
@@ -59,16 +62,10 @@ export default function Navbar() {
         {/* NEW VEBLEN GOOD LOGO */}
         <Logo />
 
-        {/* DESKTOP CENTRAL LINKS */}
+        {/* DESKTOP CENTRAL LINKS (Pathways & Vault Removed) */}
         <div className="hidden md:flex items-center gap-5 lg:gap-7 font-medium text-sm">
-          <Link href="/pathways" className={getLinkStyle("/pathways")}>
-            Pathways
-          </Link>
           <Link href="/e-books" className={getLinkStyle("/e-books")}>
             E-Books
-          </Link>
-          <Link href="/dashboard/vault" className={getLinkStyle("/dashboard/vault")}>
-            Vault
           </Link>
           
           <Link 
@@ -97,15 +94,49 @@ export default function Navbar() {
         {/* RIGHT SIDE ACTIONS */}
         <div className="flex items-center gap-3 md:gap-4 z-50">
           
-          {/* Theme Toggle (Visible on Desktop AND Mobile) */}
+          {/* THE CINEMATIC THEME TOGGLE */}
           {mounted && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="w-9 h-9 rounded-full bg-surface border border-surfaceBorder flex items-center justify-center text-foreground/70 hover:text-primary hover:border-primary/30 transition-all shadow-sm"
-              aria-label="Toggle Theme"
-            >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
+            <div className="relative flex items-center">
+              {isSwitchingToBatman && <CinematicIntro isActive={true} mode="batman" />}
+              
+              <button
+                onClick={() => {
+                  if (theme === 'light') setTheme('dark');
+                  else if (theme === 'dark') {
+                    // THE GUEST GATE: Kick them to login if they try to access Tactical Mode
+                    if (!user) {
+                      router.push(`/login?mode=batman&redirect=${encodeURIComponent(pathname)}`);
+                      return;
+                    }
+                    // THE VIP ENTRY: Freeze the screen, play animation, then switch theme
+                    setIsSwitchingToBatman(true);
+                    setTimeout(() => {
+                      setTheme('batman');
+                      setIsSwitchingToBatman(false);
+                    }, 2500);
+                  } 
+                  else setTheme('light');
+                }}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm relative group overflow-hidden ${
+                  theme === 'batman' 
+                    ? 'bg-red-950/40 border border-red-900/60 text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.4)]' 
+                    : 'bg-surface border border-surfaceBorder text-foreground/70 hover:text-foreground hover:border-foreground/30'
+                }`}
+                title={theme === 'light' ? 'Switch to Dark Mode' : theme === 'dark' ? 'Activate Tactical Mode' : 'Switch to Light Mode'}
+              >
+                {theme === "light" ? (
+                  <Sun className="w-4 h-4" />
+                ) : theme === "dark" ? (
+                  <>
+                    {/* Hover effect hints at the Tactical Mode */}
+                    <Moon className="w-4 h-4 transition-opacity duration-300 group-hover:opacity-0 absolute" />
+                    <Crosshair className="w-4 h-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100 text-red-500 absolute" />
+                  </>
+                ) : (
+                  <Crosshair className="w-4 h-4 animate-[pulse_2s_ease-in-out_infinite]" />
+                )}
+              </button>
+            </div>
           )}
 
           {isLoading ? (
