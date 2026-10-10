@@ -27,7 +27,7 @@ export default function CinematicIntro({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [progress, setProgress] = useState(0);
 
-  // DYNAMIC BATMAN LOADING: runs for exactly 5 seconds.
+  // BATMAN INTRO: dynamic progress over exactly 5 seconds.
   useEffect(() => {
     if (!isActive || mode !== "batman") {
       setProgress(0);
@@ -61,7 +61,7 @@ export default function CinematicIntro({
     };
   }, [isActive, mode]);
 
-  // AUDIO: play the correct intro sound.
+  // AUDIO: use the existing intro audio files.
   useEffect(() => {
     if (!isActive) return;
 
@@ -83,7 +83,7 @@ export default function CinematicIntro({
     };
   }, [isActive, mode]);
 
-  // BATMAN: animated ember particle effect.
+  // DYNAMIC FULL-SCREEN SPARKS AND EMBERS.
   useEffect(() => {
     if (!isActive || mode !== "batman") return;
 
@@ -101,6 +101,7 @@ export default function CinematicIntro({
       "rgba(255, 78, 30, 0.9)",
       "rgba(255, 120, 30, 0.8)",
       "rgba(235, 30, 30, 0.7)",
+      "rgba(255, 185, 105, 0.8)",
     ];
 
     let width = 0;
@@ -115,20 +116,27 @@ export default function CinematicIntro({
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
 
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const createParticle = () => {
+    const createParticle = (fromBottom = true) => {
+      const size = Math.random() * 2.5 + 0.5;
+
       particles.push({
         x: Math.random() * width,
-        y: height + 20,
-        vx: (Math.random() - 0.5) * 1.8,
-        vy: -(Math.random() * 2.5 + 1.2),
-        size: Math.random() * 2.8 + 0.6,
-        life: 1,
-        decay: Math.random() * 0.015 + 0.004,
+        y: fromBottom
+          ? height + Math.random() * 35
+          : Math.random() * height,
+        vx: (Math.random() - 0.5) * 1.7,
+        vy: -(Math.random() * 2.6 + 0.65),
+        size,
+        life: Math.random() * 0.45 + 0.55,
+        decay: Math.random() * 0.009 + 0.003,
         color: colors[Math.floor(Math.random() * colors.length)],
-        blur: Math.random() * 4 + 1,
+        blur: Math.random() * 7 + 1,
       });
     };
 
@@ -137,9 +145,14 @@ export default function CinematicIntro({
 
       ctx.clearRect(0, 0, width, height);
 
-      if (particles.length < 150) {
-        for (let i = 0; i < 3; i++) {
-          createParticle();
+      // Continuously create new particles.
+      const targetParticles = width < 600 ? 75 : 150;
+
+      if (particles.length < targetParticles) {
+        const spawnCount = width < 600 ? 2 : 3;
+
+        for (let i = 0; i < spawnCount; i++) {
+          createParticle(true);
         }
       }
 
@@ -149,20 +162,23 @@ export default function CinematicIntro({
         p.x += p.vx;
         p.y += p.vy;
         p.life -= p.decay;
-        p.vx += Math.sin(p.y * 0.01) * 0.03;
+
+        // Natural drifting motion.
+        p.vx += Math.sin(p.y * 0.012 + p.x * 0.004) * 0.025;
+        p.vx = Math.max(-1.8, Math.min(1.8, p.vx));
 
         if (
           p.life <= 0 ||
-          p.x < 0 ||
-          p.x > width ||
-          p.y < -20
+          p.x < -30 ||
+          p.x > width + 30 ||
+          p.y < -35
         ) {
           particles.splice(i, 1);
           continue;
         }
 
         ctx.save();
-        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
         ctx.shadowBlur = p.blur;
         ctx.shadowColor = p.color;
         ctx.fillStyle = p.color;
@@ -170,6 +186,18 @@ export default function CinematicIntro({
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
+
+        // A small streak gives some sparks a flying appearance.
+        if (p.size > 1.8) {
+          ctx.globalAlpha *= 0.55;
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = Math.max(0.5, p.size * 0.45);
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x - p.vx * 3, p.y - p.vy * 2);
+          ctx.stroke();
+        }
+
         ctx.restore();
       }
 
@@ -178,6 +206,12 @@ export default function CinematicIntro({
     };
 
     resizeCanvas();
+
+    // A few embers are already visible at the start.
+    for (let i = 0; i < 35; i++) {
+      createParticle(false);
+    }
+
     window.addEventListener("resize", resizeCanvas);
     animate();
 
@@ -185,7 +219,6 @@ export default function CinematicIntro({
       disposed = true;
       window.removeEventListener("resize", resizeCanvas);
       window.cancelAnimationFrame(animationFrameId);
-
       particles.length = 0;
       ctx.clearRect(0, 0, width, height);
     };
@@ -193,7 +226,9 @@ export default function CinematicIntro({
 
   if (!isActive) return null;
 
+  // =========================================================
   // BATMAN MODE
+  // =========================================================
   if (mode === "batman") {
     const status =
       progress < 25
@@ -222,17 +257,21 @@ export default function CinematicIntro({
               transform: scale(0.72);
               opacity: 0;
             }
+
             10% {
               opacity: 1;
             }
+
             72% {
               transform: scale(2.35);
               opacity: 1;
             }
+
             91% {
               transform: scale(5.2);
               opacity: 1;
             }
+
             100% {
               transform: scale(6.4);
               opacity: 0;
@@ -243,6 +282,7 @@ export default function CinematicIntro({
             0%, 70% {
               opacity: 1;
             }
+
             100% {
               opacity: 0;
             }
@@ -252,6 +292,7 @@ export default function CinematicIntro({
             0%, 72% {
               opacity: 0;
             }
+
             100% {
               opacity: 1;
             }
@@ -261,6 +302,83 @@ export default function CinematicIntro({
             0%, 100% {
               opacity: 0.65;
             }
+
+            50% {
+              opacity: 1;
+            }
+          }
+
+          /* Full-screen atmospheric smoke movement. */
+          @keyframes smoke-drift-one {
+            0% {
+              transform: translate(-35px, 20px) scale(0.88);
+              opacity: 0.28;
+            }
+
+            50% {
+              transform: translate(45px, -35px) scale(1.18);
+              opacity: 0.68;
+            }
+
+            100% {
+              transform: translate(-35px, 20px) scale(0.88);
+              opacity: 0.28;
+            }
+          }
+
+          @keyframes smoke-drift-two {
+            0% {
+              transform: translate(45px, 30px) scale(1.12);
+              opacity: 0.18;
+            }
+
+            50% {
+              transform: translate(-50px, -25px) scale(0.86);
+              opacity: 0.52;
+            }
+
+            100% {
+              transform: translate(45px, 30px) scale(1.12);
+              opacity: 0.18;
+            }
+          }
+
+          @keyframes smoke-drift-three {
+            0% {
+              transform: translate(0, 35px) scale(0.92);
+              opacity: 0.12;
+            }
+
+            50% {
+              transform: translate(20px, -30px) scale(1.16);
+              opacity: 0.4;
+            }
+
+            100% {
+              transform: translate(0, 35px) scale(0.92);
+              opacity: 0.12;
+            }
+          }
+
+          @keyframes ember-flicker {
+            0%, 100% {
+              opacity: 0.35;
+            }
+
+            35% {
+              opacity: 1;
+            }
+
+            65% {
+              opacity: 0.55;
+            }
+          }
+
+          @keyframes loading-glow {
+            0%, 100% {
+              opacity: 0.65;
+            }
+
             50% {
               opacity: 1;
             }
@@ -272,8 +390,9 @@ export default function CinematicIntro({
 
           .batman-emblem {
             transform-box: fill-box;
-            transform-origin: 50% 50%;
-            animation: batman-emblem-zoom
+            transform-origin: center;
+            animation:
+              batman-emblem-zoom
               5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
             will-change: transform, opacity;
           }
@@ -286,11 +405,42 @@ export default function CinematicIntro({
             animation: batman-status-pulse 1s ease-in-out infinite;
           }
 
+          .batman-smoke-one {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: smoke-drift-one 8s ease-in-out infinite;
+          }
+
+          .batman-smoke-two {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: smoke-drift-two 11s ease-in-out infinite;
+          }
+
+          .batman-smoke-three {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: smoke-drift-three 9s ease-in-out infinite;
+          }
+
+          .batman-static-embers {
+            animation: ember-flicker 2.4s ease-in-out infinite;
+          }
+
+          .batman-loading-glow {
+            animation: loading-glow 1.5s ease-in-out infinite;
+          }
+
           @media (prefers-reduced-motion: reduce) {
             .batman-background-scene,
             .batman-emblem,
             .batman-blackout,
-            .batman-status {
+            .batman-status,
+            .batman-smoke-one,
+            .batman-smoke-two,
+            .batman-smoke-three,
+            .batman-static-embers,
+            .batman-loading-glow {
               animation: none;
               will-change: auto;
             }
@@ -310,16 +460,17 @@ export default function CinematicIntro({
           }
         `}</style>
 
+        {/* FULL-BLEED SVG: fills the screen with no inset frame. */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1536 864"
-          preserveAspectRatio="xMidYMid meet"
+          preserveAspectRatio="xMidYMid slice"
           className="absolute inset-0 z-10 h-full w-full pointer-events-none"
           role="img"
           aria-label="Batman mode activated"
         >
           <defs>
-            <radialGradient id="bg" cx="50%" cy="46%" r="68%">
+            <radialGradient id="bg" cx="50%" cy="46%" r="78%">
               <stop offset="0" stopColor="#251011" />
               <stop offset=".42" stopColor="#0b0809" />
               <stop offset="1" stopColor="#020202" />
@@ -328,17 +479,35 @@ export default function CinematicIntro({
             <radialGradient id="smoke" cx="50%" cy="50%" r="50%">
               <stop
                 offset="0"
-                stopColor="#8a4545"
-                stopOpacity=".38"
+                stopColor="#a64d4d"
+                stopOpacity=".48"
               />
               <stop
-                offset=".55"
-                stopColor="#4a292b"
-                stopOpacity=".17"
+                offset=".48"
+                stopColor="#632d30"
+                stopOpacity=".26"
               />
               <stop
                 offset="1"
                 stopColor="#120d0e"
+                stopOpacity="0"
+              />
+            </radialGradient>
+
+            <radialGradient id="smokeDark" cx="50%" cy="50%" r="50%">
+              <stop
+                offset="0"
+                stopColor="#752e33"
+                stopOpacity=".36"
+              />
+              <stop
+                offset=".58"
+                stopColor="#381c20"
+                stopOpacity=".2"
+              />
+              <stop
+                offset="1"
+                stopColor="#100809"
                 stopOpacity="0"
               />
             </radialGradient>
@@ -409,64 +578,127 @@ export default function CinematicIntro({
             </filter>
 
             <clipPath id="frame">
-              <rect width="1536" height="864" />
+              <rect x="0" y="0" width="1536" height="864" />
             </clipPath>
           </defs>
 
-          {/* BACKGROUND SCENE: original appearance, without grids. */}
           <g
             clipPath="url(#frame)"
             className="batman-background-scene"
           >
-            <rect width="1536" height="864" fill="#000" />
-
+            {/* Full-screen background; no picture-frame rectangle. */}
             <rect
-              x="143"
-              y="46"
-              width="1250"
-              height="722"
+              x="0"
+              y="0"
+              width="1536"
+              height="864"
               fill="url(#bg)"
             />
 
+            {/* Deep red atmospheric light across the entire viewport. */}
             <ellipse
               cx="768"
-              cy="400"
-              rx="570"
-              ry="310"
+              cy="390"
+              rx="920"
+              ry="620"
               fill="url(#smoke)"
+              opacity=".65"
             />
 
-            <ellipse
-              cx="550"
-              cy="315"
-              rx="190"
-              ry="130"
-              fill="#733b3d"
-              opacity=".14"
-              filter="url(#softGlow)"
-            />
+            {/* Animated smoke layer 1. */}
+            <g className="batman-smoke-one">
+              <ellipse
+                cx="420"
+                cy="365"
+                rx="510"
+                ry="350"
+                fill="url(#smoke)"
+              />
 
-            <ellipse
-              cx="1005"
-              cy="354"
-              rx="210"
-              ry="125"
-              fill="#6c3033"
-              opacity=".15"
-              filter="url(#softGlow)"
-            />
+              <ellipse
+                cx="300"
+                cy="590"
+                rx="380"
+                ry="270"
+                fill="url(#smokeDark)"
+              />
 
+              <ellipse
+                cx="600"
+                cy="260"
+                rx="330"
+                ry="210"
+                fill="#733b3d"
+                opacity=".1"
+                filter="url(#softGlow)"
+              />
+            </g>
+
+            {/* Animated smoke layer 2. */}
+            <g className="batman-smoke-two">
+              <ellipse
+                cx="1110"
+                cy="375"
+                rx="520"
+                ry="350"
+                fill="url(#smoke)"
+              />
+
+              <ellipse
+                cx="1240"
+                cy="600"
+                rx="430"
+                ry="290"
+                fill="url(#smokeDark)"
+              />
+
+              <ellipse
+                cx="1005"
+                cy="354"
+                rx="320"
+                ry="220"
+                fill="#6c3033"
+                opacity=".16"
+                filter="url(#softGlow)"
+              />
+            </g>
+
+            {/* Low drifting smoke gives the scene depth. */}
+            <g className="batman-smoke-three">
+              <ellipse
+                cx="770"
+                cy="700"
+                rx="900"
+                ry="270"
+                fill="url(#smokeDark)"
+              />
+
+              <ellipse
+                cx="768"
+                cy="455"
+                rx="650"
+                ry="340"
+                fill="url(#smoke)"
+                opacity=".45"
+              />
+            </g>
+
+            {/* Full-screen subtle cinematic grain. */}
             <rect
-              x="143"
-              y="46"
-              width="1250"
-              height="722"
+              x="0"
+              y="0"
+              width="1536"
+              height="864"
               filter="url(#grain)"
-              opacity=".5"
+              opacity=".22"
+              pointerEvents="none"
             />
 
-            {/* Background sparks */}
-            <g fill="#ff583d">
+            {/* Ambient sparks across the entire background. */}
+            <g
+              className="batman-static-embers"
+              fill="#ff583d"
+            >
               <circle cx="519" cy="117" r="2.2" />
               <circle cx="388" cy="190" r="2.4" />
               <circle cx="1004" cy="139" r="2.1" />
@@ -493,6 +725,12 @@ export default function CinematicIntro({
               <circle cx="1314" cy="597" r="2" />
               <circle cx="1325" cy="358" r="2.2" />
               <circle cx="1269" cy="301" r="1.7" />
+              <circle cx="95" cy="210" r="1.9" />
+              <circle cx="1450" cy="390" r="2.1" />
+              <circle cx="86" cy="690" r="2.3" />
+              <circle cx="1440" cy="725" r="1.8" />
+              <circle cx="760" cy="110" r="1.5" />
+              <circle cx="685" cy="650" r="1.8" />
             </g>
 
             <g
@@ -515,7 +753,7 @@ export default function CinematicIntro({
               <path d="M1282 351l3-8" />
             </g>
 
-            {/* Dynamic loading interface */}
+            {/* DYNAMIC LOADING INTERFACE */}
             <g
               fontFamily="Arial, Helvetica, sans-serif"
               textAnchor="middle"
@@ -552,7 +790,7 @@ export default function CinematicIntro({
               </text>
             </g>
 
-            {/* Progress-bar track */}
+            {/* Progress track. */}
             <rect
               x="570"
               y="738"
@@ -563,8 +801,9 @@ export default function CinematicIntro({
               strokeWidth="1.5"
             />
 
-            {/* Progress fill: 0 to 100% */}
+            {/* Progress fill follows the live percentage. */}
             <rect
+              className="batman-loading-glow"
               x="576"
               y="743"
               width={384 * (progress / 100)}
@@ -573,7 +812,7 @@ export default function CinematicIntro({
               opacity=".98"
             />
 
-            {/* Animated-looking progress segments */}
+            {/* Loading divisions. */}
             <g fill="#190b0c" opacity=".85">
               <rect x="587" y="743" width="3" height="12" />
               <rect x="599" y="743" width="3" height="12" />
@@ -596,7 +835,7 @@ export default function CinematicIntro({
               <rect x="803" y="743" width="3" height="12" />
             </g>
 
-            {/* Terminal text progressively reveals */}
+            {/* Terminal text progressively reveals. */}
             <g
               fontFamily="monospace"
               fontSize="4.7"
@@ -632,21 +871,11 @@ export default function CinematicIntro({
                 {progress >= 100 ? "SYSTEM READY" : "SYSTEM LOADING"}
               </text>
             </g>
-
-            <rect
-              x="143"
-              y="46"
-              width="1250"
-              height="722"
-              fill="none"
-              stroke="#171112"
-              strokeWidth="2"
-            />
           </g>
 
-          {/* BATMAN EMBLEM: original paths preserved. */}
+          {/* BATMAN EMBLEM: original path geometry preserved. */}
           <g className="batman-emblem">
-            {/* Original emblem glow */}
+            {/* Original emblem glow. */}
             <path
               d="M320 483
                 C350 391 425 293 562 244
@@ -672,7 +901,7 @@ export default function CinematicIntro({
               filter="url(#softGlow)"
             />
 
-            {/* Original dark body */}
+            {/* Original dark body. */}
             <path
               d="M320 483
                 C350 391 425 293 562 244
@@ -698,7 +927,7 @@ export default function CinematicIntro({
               opacity=".9"
             />
 
-            {/* Original gradient outline */}
+            {/* Original gradient outline. */}
             <path
               d="M320 483
                 C350 391 425 293 562 244
@@ -723,7 +952,7 @@ export default function CinematicIntro({
               filter="url(#glow)"
             />
 
-            {/* Original red highlights */}
+            {/* Original red highlights. */}
             <path
               d="M325 476 C367 383 438 302 551 253
                 M985 253 C1098 302 1169 383 1211 476
@@ -739,14 +968,14 @@ export default function CinematicIntro({
           </g>
         </svg>
 
-        {/* Live embers */}
+        {/* Live canvas particles span the complete viewport. */}
         <canvas
           ref={canvasRef}
           aria-hidden="true"
           className="absolute inset-0 z-20 h-full w-full pointer-events-none"
         />
 
-        {/* Black finish at the end of the 5-second intro */}
+        {/* Cinematic fade at the end of the five-second intro. */}
         <div
           aria-hidden="true"
           className="batman-blackout absolute inset-0 z-30 bg-black pointer-events-none"
@@ -755,7 +984,9 @@ export default function CinematicIntro({
     );
   }
 
-  // STANDARD MODE: original VG intro retained.
+  // =========================================================
+  // STANDARD VG MODE: retained.
+  // =========================================================
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#0A110D] select-none pointer-events-none">
       <style>{`
@@ -776,8 +1007,8 @@ export default function CinematicIntro({
         }
 
         .vg-intro-zoom {
-          animation: vg-zoom
-            4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+          animation:
+            vg-zoom 4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
           will-change: transform, opacity;
         }
 
