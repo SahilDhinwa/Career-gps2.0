@@ -1,93 +1,199 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, Suspense } from "react";
+import { auth, db, googleProvider } from "../../lib/firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { Mail, Lock, ArrowRight, ShieldCheck, Chrome } from "lucide-react";
+import CinematicIntro from "../../components/CinematicIntro";
 
-interface CinematicIntroProps {
-  isActive: boolean;
-  mode: "standard" | "batman";
-}
+function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/profile";
+  
+  const { setTheme } = useTheme();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
 
-export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) {
-  useEffect(() => {
-    if (isActive) {
-      const audioPath = mode === "batman" ? "/sounds/batman-boom.mp3" : "/sounds/vg-chime.mp3";
-      const audio = new Audio(audioPath);
-      audio.volume = 0.7;
-      audio.play().catch((e) => console.warn("Audio playback blocked:", e));
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    // INSTANT BOOT: Trigger the cinematic black screen immediately!
+    setShowIntro(true);
+    if (searchParams.get("mode") === "batman") setTheme("batman");
+
+    const startTime = Date.now(); // Start the 5-second clock
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      // Calculate remaining time so the animation always takes exactly 5 seconds
+      const elapsed = Date.now() - startTime;
+      const remainingTime = Math.max(0, 5000 - elapsed);
+
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, remainingTime);
+
+    } catch (err: any) {
+      console.error(err);
+      // Abort the animation if password is wrong
+      setShowIntro(false);
+      if (searchParams.get("mode") === "batman") setTheme("dark");
+      setError("Invalid email or password. Please try again.");
+      setIsLoading(false);
     }
-  }, [isActive, mode]);
+  };
 
-  if (!isActive) return null;
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError("");
+    let user;
 
-  if (mode === "batman") {
-    return (
-      <div className="fixed inset-0 z-[9999] bg-[#020202] flex flex-col items-center justify-center overflow-hidden">
-        <style dangerouslySetInnerHTML={{__html: `
-          @keyframes bat-cinematic {
-            0% { transform: scale(0.45); opacity: 0; filter: blur(25px); }
-            40% { transform: scale(0.45); opacity: 0; filter: blur(25px); } /* Wait for terminal text */
-            60% { transform: scale(1); opacity: 1; filter: blur(0px) drop-shadow(0 0 50px rgba(220,38,38,0.85)); }
-            85% { transform: scale(1.05); opacity: 1; filter: blur(0px) drop-shadow(0 0 60px rgba(220,38,38,0.65)); }
-            100% { transform: scale(45); opacity: 0; filter: blur(15px); }
-          }
-          @keyframes typing {
-            0% { opacity: 1; content: "INITIALIZING SYSTEM..."; }
-            25% { content: "BYPASSING MAINFRAME..."; }
-            50% { content: "DECRYPTING VAULT..."; }
-            75% { opacity: 1; content: "ACCESS GRANTED."; }
-            100% { opacity: 0; content: "ACCESS GRANTED."; }
-          }
-          .animate-bat {
-            animation: bat-cinematic 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-          }
-          .animate-terminal::after {
-            content: "";
-            animation: typing 2.5s steps(1) forwards;
-          }
-        `}} />
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      user = result.user;
+    } catch (err: any) {
+      console.error("Auth Error:", err);
+      setError("Google popup closed or blocked. Please try again.");
+      setIsLoading(false);
+      return; 
+    }
 
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
-          backgroundImage: `linear-gradient(to right, rgba(220, 38, 38, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(220, 38, 38, 0.15) 1px, transparent 1px)`,
-          backgroundSize: '30px 30px'
-        }}></div>
-        
-        {/* TRUE WIDE BAT LOGO */}
-        <div className="w-[600px] h-[300px] relative flex items-center justify-center animate-bat z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50" className="w-full h-full text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]">
-            <path 
-              d="M 50,15 C 48,15 46,13 46,10 C 43,11 39,11 35,12 C 22,15 11,23 3,31 C 7,34 13,35 20,34 C 27,33 31,37 35,40 C 38,43 41,44 44,41 L 50,47 L 56,41 C 59,44 62,43 65,40 C 69,37 73,33 80,34 C 87,35 93,34 97,31 C 89,23 78,15 65,12 C 61,11 57,11 54,10 C 54,13 52,15 50,15 Z" 
-              fill="currentColor"
-            />
-          </svg>
-        </div>
+    // Trigger instant boot right after they select their Google account
+    setShowIntro(true);
+    if (searchParams.get("mode") === "batman") setTheme("batman");
+    const startTime = Date.now();
 
-        {/* Boot Sequence Terminal Text */}
-        <div className="absolute bottom-20 text-center z-20">
-          <p className="text-[12px] font-mono tracking-[0.2em] text-red-500 animate-terminal uppercase"></p>
-        </div>
-      </div>
-    );
-  }
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || "Scholarship Applicant",
+          createdAt: new Date().toISOString(),
+          isPremium: false,
+          roadmapProgress: {},
+          checklistProgress: {}
+        });
+      }
+    } catch (dbErr) {
+      console.warn("Database sync delayed, but user is authenticated.");
+    }
+    
+    const elapsed = Date.now() - startTime;
+    const remainingTime = Math.max(0, 5000 - elapsed);
+    setTimeout(() => {
+      router.push(redirectUrl);
+    }, remainingTime);
+  };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#0A110D] flex items-center justify-center overflow-hidden">
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes vg-cinematic {
-          0% { opacity: 0; transform: scale(0.8); filter: blur(10px); }
-          20% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 45px rgba(212,175,55,0.45)); }
-          80% { opacity: 1; transform: scale(1); }
-          100% { opacity: 0; transform: scale(1.15); filter: blur(10px); }
-        }
-        .animate-vg {
-          animation: vg-cinematic 4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-      `}} />
-      <div className="w-32 h-32 animate-vg flex flex-col items-center justify-center gap-4">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
-          <path d="M 75 55 A 25 25 0 1 1 50 25 L 50 33 A 17 17 0 1 0 58 55 L 45 55 L 45 47 L 75 47 Z" fill="#D4AF37"/>
-          <path d="M 22 20 L 50 82 L 78 20 L 64 20 L 50 56 L 36 20 Z" fill="#F3F4F6"/>
-        </svg>
+    <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder relative z-10 transition-colors duration-300">
+      <div className="text-center mb-8">
+        <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
+        <p className="text-foreground/60 font-medium">Log in to access your roadmap and assets.</p>
       </div>
+
+      {error && (
+        <div className="bg-red-950/30 text-red-500 p-3 rounded-sm text-sm font-bold mb-6 border border-red-900/50 text-center">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
+          <input 
+            type="email" 
+            required
+            placeholder="Email Address" 
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
+          <input 
+            type="password" 
+            required
+            placeholder="Password" 
+            className="w-full bg-background border border-surfaceBorder text-foreground placeholder-foreground/40 rounded-sm py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-primary text-white font-bold py-3 px-4 rounded-sm hover:bg-primaryHover transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-70 cursor-pointer"
+        >
+          {isLoading ? (
+            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          ) : (
+            <>Log In <ArrowRight className="w-4 h-4" /></>
+          )}
+        </button>
+      </form>
+
+      <div className="flex items-center gap-4 mb-6">
+        <div className="h-px bg-surfaceBorder flex-1"></div>
+        <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">Or</span>
+        <div className="h-px bg-surfaceBorder flex-1"></div>
+      </div>
+
+      <button 
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+        type="button"
+        className="w-full bg-surface text-foreground border border-surfaceBorder font-bold py-3 px-4 rounded-sm hover:bg-background transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 mb-6 cursor-pointer"
+      >
+        <Chrome className="w-5 h-5 text-blue-500" /> Continue with Google
+      </button>
+
+      <p className="text-center text-sm text-foreground/60 font-medium animate-fadeIn">
+        Don&apos;t have an account?{" "}
+        <Link href={`/signup?mode=${searchParams.get("mode") || ""}&redirect=${redirectUrl}`} className="text-primary font-bold hover:underline">
+          Sign up
+        </Link>
+      </p>
+
+      <div className="mt-8 pt-6 border-t border-surfaceBorder flex items-center justify-center gap-2 text-xs text-foreground/40 font-medium">
+        <ShieldCheck className="w-4 h-4 text-success" /> Secure 256-bit Encryption
+      </div>
+
+      <CinematicIntro isActive={showIntro} mode={searchParams.get("mode") === "batman" ? "batman" : "standard"} />
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden transition-colors duration-300">
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-warning/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+      
+      <Suspense fallback={
+        <div className="w-full max-w-md bg-surface p-8 rounded-sm shadow-xl border border-surfaceBorder flex justify-center py-20 relative z-10">
+           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }
