@@ -28,11 +28,12 @@
   }
 
   /* BATMAN MODE - Fixed to use standard class selector */
+  /* BATMAN MODE */
   .batman {
-    --background: #020202; 
+    --background: transparent; /* Lets the z-[-50] Batcave background show through */
     --foreground: #CCCCCC; 
-    --surface: #0A0A0A; 
-    --surfaceBorder: #550000; 
+    --surface: rgba(13, 13, 13, 0.75); /* Tactical semi-transparent glass */
+    --surfaceBorder: #660000; 
     --primary: #CC0000; 
     --primaryHover: #AA0000; 
     --success: #00CC33; 
