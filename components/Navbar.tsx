@@ -33,13 +33,20 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
+  // HIGH-CONTRAST TEXT LOGIC: Forces crisp gray text in Batman mode
   const getLinkStyle = (path: string) => {
-    return pathname === path
+    const isActive = pathname === path;
+    if (mounted && theme === 'batman') {
+      return isActive 
+        ? "text-red-500 font-bold transition-colors" 
+        : "text-gray-300 hover:text-red-500 transition-colors";
+    }
+    return isActive
       ? "text-primary font-bold transition-colors" 
       : "text-foreground/80 hover:text-primary transition-colors"; 
   };
 
-    const handleBatmanToggle = () => {
+  const handleBatmanToggle = () => {
     if (theme === 'batman') {
       setTheme('dark'); // Exit Batman Mode
     } else {
@@ -48,12 +55,10 @@ export default function Navbar() {
         return;
       }
       setIsSwitchingToBatman(true);
-      
-      // FIX: Changed from 2500 to 10000 to let the full 10-second animation play!
       setTimeout(() => {
         setTheme('batman');
         setIsSwitchingToBatman(false);
-      }, 10000); 
+      }, 10000);
     }
   };
 
@@ -75,9 +80,13 @@ export default function Navbar() {
           <Link 
             href="/interactive-topics" 
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
-              pathname.includes("/interactive-topics")
-                ? "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
-                : "bg-surface text-foreground/70 border-surfaceBorder hover:text-indigo-500 hover:border-indigo-500/30"
+              mounted && theme === 'batman'
+                ? pathname.includes("/interactive-topics")
+                  ? "bg-red-950/40 text-red-500 border-red-500/50 shadow-[0_0_10px_rgba(220,38,38,0.2)]"
+                  : "bg-[#141414] text-gray-300 border-red-950/60 hover:text-red-500 hover:border-red-500/50 hover:bg-red-950/20"
+                : pathname.includes("/interactive-topics")
+                  ? "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
+                  : "bg-surface text-foreground/70 border-surfaceBorder hover:text-indigo-500 hover:border-indigo-500/30"
             }`}
           >
             <Activity className="w-3.5 h-3.5" /> Clinical Modules
@@ -86,9 +95,13 @@ export default function Navbar() {
           <Link 
             href="/bams-hub" 
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
-              pathname.includes("/bams-hub") || pathname.includes("/mcq-practice")
-                ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                : "bg-surface text-foreground/70 border-surfaceBorder hover:text-amber-500 hover:border-amber-500/30"
+              mounted && theme === 'batman'
+                ? (pathname.includes("/bams-hub") || pathname.includes("/mcq-practice"))
+                  ? "bg-red-950/40 text-red-500 border-red-500/50 shadow-[0_0_10px_rgba(220,38,38,0.2)]"
+                  : "bg-[#141414] text-gray-300 border-red-950/60 hover:text-red-500 hover:border-red-500/50 hover:bg-red-950/20"
+                : (pathname.includes("/bams-hub") || pathname.includes("/mcq-practice"))
+                  ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                  : "bg-surface text-foreground/70 border-surfaceBorder hover:text-amber-500 hover:border-amber-500/30"
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" /> BAMS Hub
@@ -156,7 +169,7 @@ export default function Navbar() {
             </Link>
           ) : (
             <div className="flex items-center gap-3 shrink-0">
-              <Link href={`/login?redirect=${encodeURIComponent(pathname)}`} className="text-sm font-bold text-foreground hover:text-primary transition-colors">
+              <Link href={`/login?redirect=${encodeURIComponent(pathname)}`} className={`text-sm font-bold transition-colors ${mounted && theme === 'batman' ? 'text-gray-300 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
                 Login
               </Link>
               <Link href={`/signup?redirect=${encodeURIComponent(pathname)}`} className="hidden md:block bg-primary text-white text-sm font-bold px-5 py-2 rounded-sm hover:bg-primaryHover transition-colors shadow-sm">
@@ -181,16 +194,20 @@ export default function Navbar() {
       >
         <div className="flex flex-col px-6 py-6 space-y-2 font-medium text-base">
           <Link href="/e-books" className={`block py-3 ${getLinkStyle("/e-books")}`}>E-Books</Link>
-          <Link href="/interactive-topics" className="flex items-center gap-2 py-3 mt-2 rounded-sm font-bold transition-all text-foreground/80 hover:text-indigo-500 px-4 border border-transparent">
+          <Link href="/interactive-topics" className={`flex items-center gap-2 py-3 mt-2 rounded-sm font-bold transition-all px-4 border border-transparent ${
+            mounted && theme === 'batman' ? "text-gray-300 hover:text-red-500 hover:bg-red-950/20" : "text-foreground/80 hover:text-indigo-500"
+          }`}>
             <Activity className="w-4 h-4" /> Clinical Modules
           </Link>
-          <Link href="/bams-hub" className="flex items-center gap-2 py-3 rounded-sm font-bold transition-all text-foreground/80 hover:text-amber-500 px-4 border border-transparent">
+          <Link href="/bams-hub" className={`flex items-center gap-2 py-3 rounded-sm font-bold transition-all px-4 border border-transparent ${
+            mounted && theme === 'batman' ? "text-gray-300 hover:text-red-500 hover:bg-red-950/20" : "text-foreground/80 hover:text-amber-500"
+          }`}>
             <Sparkles className="w-4 h-4" /> BAMS Hub
           </Link>
           
           {mounted && (
             <div className="py-3 flex items-center justify-between px-4 border border-surfaceBorder rounded-sm">
-              <span className="text-sm font-bold">Batman Mode</span>
+              <span className={`text-sm font-bold ${theme === 'batman' ? 'text-gray-300' : ''}`}>Batman Mode</span>
               <button 
                 onClick={handleBatmanToggle}
                 className="flex items-center justify-center p-1 cursor-pointer"
