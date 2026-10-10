@@ -31,26 +31,28 @@
 
   /* THE BATMAN COMMAND CENTER THEME */
   [data-theme='batman'] {
-    --background: #050505; /* Pitch Black */
-    --foreground: #CCCCCC; /* Kevlar Gray */
-    --surface: #0D0D0D; /* Dark Matte Charcoal */
-    --surfaceBorder: #660000; /* Blood Red Border */
+    --background: #020202; /* Seamless Pitch Black */
+    --foreground: #CCCCCC; /* Tactile Kevlar Gray */
+    --surface: #0A0A0A; /* Dark Command Cards */
+    --surfaceBorder: #550000; /* Subtle Deep Blood Red Borders */
     
-    --primary: #CC0000; /* Crimson Red */
-    --primaryHover: #990000; 
+    /* System Accents and Vengeance Red Alert styling */
+    --primary: #CC0000; /* High Contrast Signal Red */
+    --primaryHover: #AA0000; 
     --success: #00CC33; 
-    --warning: #FFAA00; 
+    --warning: #FF9900; 
   }
 
-  /* Make Veblen Good Logo adapt to Batman Theme */
+  /* Adjust branding to handle active interface states */
   [data-theme='batman'] svg path[fill="#D4AF37"] {
-    fill: #dc2626 !important; 
+    fill: #cc0000 !important; 
   }
   [data-theme='batman'] svg path[fill="#F3F4F6"] {
-    fill: #52525b !important; 
+    fill: #666666 !important; 
   }
 }
 
+/* Hide scrollbars completely while preserving functional scrolling */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
