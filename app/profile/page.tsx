@@ -145,7 +145,7 @@ export default function UserProfile() {
 
   const roadmapProgress = userData?.roadmapProgress || {};
 
-  return (
+       return (
     <div className="min-h-screen relative overflow-hidden transition-colors duration-300">
       
       {/* REALISTIC HONEYCOMB BACKGROUND (Adapts to Light/Dark Mode) */}
@@ -182,13 +182,17 @@ export default function UserProfile() {
         }
       `}} />
       
-      <div className="honeycomb-bg">
-        <div className="honeycomb-pattern"></div>
-        <div className="honey-glow-1"></div>
-        <div className="honey-glow-2"></div>
-      </div>
-            <div className="max-w-5xl mx-auto relative z-10 py-12 md:py-16 px-6">
-        
+      {/* 🦇 HIDE HONEYCOMB COMPLETELY IN BATMAN MODE */}
+      {theme !== "batman" && (
+        <div className="honeycomb-bg">
+          <div className="honeycomb-pattern"></div>
+          <div className="honey-glow-1"></div>
+          <div className="honey-glow-2"></div>
+        </div>
+      )}
+
+      <div className="max-w-5xl mx-auto relative z-10 py-12 md:py-16 px-6">
+
         {/* HEADER CARD */}
         <div className="bg-surface/80 backdrop-blur-md border border-amber-900/10 dark:border-amber-500/10 rounded-sm shadow-xl p-6 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transition-colors duration-300">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
