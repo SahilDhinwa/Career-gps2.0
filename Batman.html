@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Batman - Cinematic Canvas Art</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #050608;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        canvas {
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            background: #07090e;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="batmanCanvas" width="800" height="1200"></canvas>
+
+<script>
+    const canvas = document.getElementById('batmanCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 1. Background & Atmospheric Lighting
+    const bgGradient = ctx.createRadialGradient(400, 300, 50, 400, 600, 700);
+    bgGradient.addColorStop(0, '#1f2633');
+    bgGradient.addColorStop(0.4, '#0d1117');
+    bgGradient.addColorStop(1, '#030406');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, 800, 1200);
+
+    // Atmospheric Smoke/Fog Effect
+    for (let i = 0; i < 40; i++) {
+        let x = Math.random() * 800;
+        let y = 600 + Math.random() * 600;
+        let radius = 100 + Math.random() * 200;
+        let smokeGrad = ctx.createRadialGradient(x, y, 10, x, y, radius);
+        smokeGrad.addColorStop(0, 'rgba(30, 40, 55, 0.08)');
+        smokeGrad.addColorStop(1, 'rgba(5, 7, 10, 0)');
+        ctx.fillStyle = smokeGrad;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // 2. Capes & Shoulders Base
+    ctx.fillStyle = '#080a0e';
+    ctx.beginPath();
+    ctx.moveTo(50, 1200);
+    ctx.lineTo(50, 850);
+    ctx.quadraticCurveTo(200, 750, 400, 780);
+    ctx.quadraticCurveTo(600, 750, 750, 850);
+    ctx.lineTo(750, 1200);
+    ctx.closePath();
+    ctx.fill();
+
+    // 3. Tactical Chest Armor Plates
+    function drawArmorPlate(points, fillColor, strokeColor) {
+        ctx.fillStyle = fillColor;
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], points[0][1]);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i][0], points[i][1]);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    // Left & Right Chest Plates
+    let armorGrad = ctx.createLinearGradient(400, 720, 400, 1000);
+    armorGrad.addColorStop(0, '#242b38');
+    armorGrad.addColorStop(1, '#0c0f14');
+
+    drawArmorPlate([[80, 820], [280, 720], [400, 760], [400, 820]], armorGrad, '#151922');
+    drawArmorPlate([[720, 820], [520, 720], [400, 760], [400, 820]], armorGrad, '#151922');
+
+    // Center Zipper / Seam Line
+    ctx.strokeStyle = '#040507';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(400, 760);
+    ctx.lineTo(400, 1050);
+    ctx.stroke();
+
+    // 4. Chest Emblem (Gun-metal split tactical bat)
+    ctx.save();
+    ctx.translate(400, 835);
+    ctx.scale(1.15, 1.15);
+
+    let metalGrad = ctx.createLinearGradient(-120, -50, 120, 50);
+    metalGrad.addColorStop(0, '#90a4ae');
+    metalGrad.addColorStop(0.3, '#546e7a');
+    metalGrad.addColorStop(0.6, '#37474f');
+    metalGrad.addColorStop(1, '#102027');
+
+    // Left Wing Component
+    ctx.fillStyle = metalGrad;
+    ctx.strokeStyle = '#0b0f15';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-5, -30);
+    ctx.lineTo(-120, -80);
+    ctx.lineTo(-180, -20);
+    ctx.lineTo(-130, 50);
+    ctx.lineTo(-70, 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Right Wing Component
+    ctx.beginPath();
+    ctx.moveTo(5, -30);
+    ctx.lineTo(120, -80);
+    ctx.lineTo(180, -20);
+    ctx.lineTo(130, 50);
+    ctx.lineTo(70, 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Mechanical Detailing on Wings (Gun slide ridges)
+    ctx.fillStyle = '#1c252c';
+    ctx.fillRect(-115, -38, 70, 20);
+    ctx.fillRect(45, -38, 70, 20);
+
+    // Screws / Rivets
+    ctx.fillStyle = '#05070a';
+    [-100, -80, -60, 60, 80, 100].forEach(rx => {
+        ctx.beginPath();
+        ctx.arc(rx > 0 ? rx - 10 : rx + 10, -28, 2, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    ctx.restore();
+
+    // 5. Cowl & Head Silhouette (Dramatic lighting from top)
+    ctx.fillStyle = '#12161f';
+    ctx.beginPath();
+    ctx.moveTo(240, 380);
+    ctx.quadraticCurveTo(230, 230, 310, 160);
+    ctx.quadraticCurveTo(400, 130, 490, 160);
+    ctx.quadraticCurveTo(570, 230, 560, 380);
+    ctx.quadraticCurveTo(570, 500, 520, 620);
+    ctx.quadraticCurveTo(400, 670, 280, 620);
+    ctx.quadraticCurveTo(230, 500, 240, 380);
+    ctx.closePath();
+    ctx.fill();
+
+    // Top Cowl Highlight (Simulating overhead rim light)
+    let cowlTopGrad = ctx.createLinearGradient(400, 130, 400, 280);
+    cowlTopGrad.addColorStop(0, 'rgba(144, 164, 174, 0.85)');
+    cowlTopGrad.addColorStop(0.5, 'rgba(55, 71, 79, 0.5)');
+    cowlTopGrad.addColorStop(1, 'rgba(18, 22, 31, 0)');
+    ctx.fillStyle = cowlTopGrad;
+    ctx.beginPath();
+    ctx.moveTo(310, 160);
+    ctx.quadraticCurveTo(400, 130, 490, 160);
+    ctx.quadraticCurveTo(520, 230, 480, 270);
+    ctx.quadraticCurveTo(400, 230, 320, 270);
+    ctx.quadraticCurveTo(280, 230, 310, 160);
+    ctx.closePath();
+    ctx.fill();
+
+    // Cowl Seams & Stitching lines
+    ctx.strokeStyle = '#07090e';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(400, 135);
+    ctx.lineTo(400, 310);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#1b222d';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(280, 310);
+    ctx.quadraticCurveTo(400, 350, 520, 310);
+    ctx.stroke();
+
+    // 6. Iconic Pointed Ears
+    function drawEar(xBase1, xTip, xBase2, yTip) {
+        ctx.fillStyle = '#12161f';
+        ctx.beginPath();
+        ctx.moveTo(xBase1, 180);
+        ctx.quadraticCurveTo(xTip + (xBase1 > 400 ? 5 : -5), 80, xTip, 35);
+        ctx.quadraticCurveTo(xTip + (xBase1 > 400 ? -15 : 15), 100, xBase2, 170);
+        ctx.closePath();
+        ctx.fill();
+    }
+    drawEar(280, 255, 320, 35);
+    drawEar(520, 545, 480, 35);
+
+    // 7. Obscured Face & Deep Shadowed Eyes
+    // Eye Sockets (Pitch black with subtle brow shadow)
+    ctx.fillStyle = '#030406';
+    // Left eye socket
+    ctx.beginPath();
+    ctx.moveTo(300, 380);
+    ctx.quadraticCurveTo(360, 370, 400, 395);
+    ctx.quadraticCurveTo(350, 415, 300, 380);
+    ctx.fill();
+    
+    // Right eye socket
+    ctx.beginPath();
+    ctx.moveTo(500, 380);
+    ctx.quadraticCurveTo(440, 370, 400, 395);
+    ctx.quadraticCurveTo(450, 415, 500, 380);
+    ctx.fill();
+
+    // Subtle White Glint under brow ridge (giving the intense glare)
+    ctx.strokeStyle = 'rgba(176, 190, 197, 0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(310, 383);
+    ctx.lineTo(385, 387);
+    ctx.moveTo(490, 383);
+    ctx.lineTo(415, 387);
+    ctx.stroke();
+
+    // Nose Bridge Shadow
+    ctx.fillStyle = '#07090e';
+    ctx.beginPath();
+    ctx.moveTo(385, 395);
+    ctx.lineTo(400, 455);
+    ctx.lineTo(415, 395);
+    ctx.fill();
+
+    // Lower Jaw / Mask Contour
+    ctx.fillStyle = '#05070a';
+    ctx.beginPath();
+    ctx.moveTo(330, 470);
+    ctx.quadraticCurveTo(400, 510, 470, 470);
+    ctx.quadraticCurveTo(490, 560, 400, 575);
+    ctx.quadraticCurveTo(310, 560, 330, 470);
+    ctx.fill();
+
+</script>
+</body>
+</html>
