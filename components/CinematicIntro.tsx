@@ -135,41 +135,31 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
     ];
 
     return (
-      <div className="fixed inset-0 z-[9999] overflow-hidden bg-[#020101] flex items-center justify-center select-none">
+      <div className="fixed inset-0 z-[9999] overflow-hidden bg-black flex items-center justify-center select-none">
         <style>{`
           @keyframes batman-emblem-zoom { 0% { transform: scale(0.35); opacity: 0; filter: brightness(0.5); } 12% { opacity: 1; filter: brightness(1); } 75% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(3.2); opacity: 0; } }
           @keyframes batman-scene-fade { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
-          /* Changed so it fades to black at 90%, then fades away to 0% to reveal the page */
-@keyframes batman-blackout { 
-  0%, 80% { opacity: 0; } 
-  90% { opacity: 1; } 
-  100% { opacity: 0; display: none; } 
-}
-.batman-background-scene { animation: batman-scene-fade 10s linear forwards; }
-          .batman-viewport-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; background: #030101; }
+          @keyframes batman-blackout { 0%, 80% { opacity: 0; } 90% { opacity: 1; } 100% { opacity: 0; display: none; } }
+          .batman-background-scene { animation: batman-scene-fade 10s linear forwards; }
+          .batman-viewport-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; background: #000000; }
           .batman-emblem { transform-box: fill-box; transform-origin: center; animation: batman-emblem-zoom 10s cubic-bezier(0.25, 1, 0.5, 1) forwards; will-change: transform, opacity; }
           .batman-blackout { animation: batman-blackout 10s linear forwards; }
         `}</style>
 
         <div className="batman-viewport-container z-10">
           
-          {/* LAYER 1: HEAVY TEXTURED SMOKE BACKGROUND */}
+          {/* LAYER 1: PURE BLACK VOID WITH CENTER GLOW */}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full z-0 pointer-events-none" aria-hidden="true">
             <defs>
-              <radialGradient id="deepGlow" cx="50%" cy="50%" r="60%">
-                <stop offset="0" stopColor="#4a0808" stopOpacity="0.4"/>
-                <stop offset="0.5" stopColor="#1a0202" stopOpacity="0.2"/>
-                <stop offset="1" stopColor="#020101" stopOpacity="1"/>
+              <radialGradient id="centerGlow" cx="50%" cy="50%" r="40%">
+                <stop offset="0%" stopColor="#8b0000" stopOpacity="0.25" />
+                <stop offset="50%" stopColor="#330000" stopOpacity="0.1" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
               </radialGradient>
-              <filter id="heavySmoke" x="0" y="0" width="100%" height="100%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="4" seed="5" result="noise" />
-                <feColorMatrix type="matrix" values="1 0 0 0 0.4   0 0.1 0 0 0.05   0 0 0.1 0 0.05   0 0 0 1 0" in="noise" result="coloredNoise" />
-                <feBlend mode="screen" in="coloredNoise" in2="SourceGraphic" />
-              </filter>
             </defs>
             <g className="batman-background-scene">
-              <rect x="0" y="0" width="1536" height="864" fill="url(#deepGlow)" />
-              <rect x="0" y="0" width="1536" height="864" fill="#020101" filter="url(#heavySmoke)" opacity="0.6" />
+              <rect x="0" y="0" width="1536" height="864" fill="#000000" />
+              <rect x="0" y="0" width="1536" height="864" fill="url(#centerGlow)" />
             </g>
           </svg>
 
@@ -244,7 +234,7 @@ export default function CinematicIntro({ isActive, mode }: CinematicIntroProps) 
               <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="8" opacity="0.6" filter="url(#glow-medium)"/>
               
               {/* Solid Pitch-Black Core */}
-              <path d={batPath} fill="#050101" stroke="none" />
+              <path d={batPath} fill="#000000" stroke="none" />
               
               {/* Sharp Neon Edge with Core Glow */}
               <path d={batPath} fill="none" stroke="#ff3333" strokeWidth="3" filter="url(#glow-core)"/>
