@@ -4,8 +4,8 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
-// 🦇 TACTICAL OVERRIDE: Change to "rain", "embers", or "hud" to set the background particles!
-const BATMAN_EFFECT: "rain" | "embers" | "hud" = "rain";
+// 🦇 TACTICAL OVERRIDE: Set to "embers" to match the floating sparks in the reference
+const BATMAN_EFFECT: "rain" | "embers" | "hud" = "embers";
 
 export default function BatcaveBackground() {
   const { theme } = useTheme();
@@ -13,7 +13,6 @@ export default function BatcaveBackground() {
   const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   
-  // Refs for instant 60fps DOM syncing
   const batmobileRef = useRef<HTMLDivElement | null>(null);
   const cloudsRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,13 +44,8 @@ export default function BatcaveBackground() {
     setSize();
     window.addEventListener("resize", setSize);
 
-    // 1. PARTICLES SETUP
     const particlesArray: any[] = [];
-    let numberOfParticles = 50;
-    
-    if (BATMAN_EFFECT === "embers") numberOfParticles = width < 768 ? 30 : 60;
-    if (BATMAN_EFFECT === "rain") numberOfParticles = width < 768 ? 80 : 200; 
-    if (BATMAN_EFFECT === "hud") numberOfParticles = width < 768 ? 20 : 40;
+    let numberOfParticles = width < 768 ? 40 : 80;
 
     class Particle {
       x: number; y: number; size: number = 0; speedX: number = 0; speedY: number = 0;
@@ -65,66 +59,27 @@ export default function BatcaveBackground() {
           this.size = Math.random() * 2 + 0.5;
           this.speedX = Math.random() * 1 - 0.5;
           this.speedY = Math.random() * -1.5 - 0.5; 
-          this.color = ["rgba(255, 30, 20, 0.9)", "rgba(255, 60, 20, 0.7)", "rgba(200, 10, 10, 0.8)"][Math.floor(Math.random() * 3)];
-          this.blur = Math.random() * 5 + 1;
+          // Hotter colors for embers (Yellow, Orange, Red)
+          this.color = ["rgba(255, 200, 0, 0.9)", "rgba(255, 85, 0, 0.8)", "rgba(255, 20, 20, 0.8)"][Math.floor(Math.random() * 3)];
+          this.blur = Math.random() * 4 + 1;
         } 
-        else if (BATMAN_EFFECT === "rain") {
-          this.speedY = Math.random() * 15 + 10; 
-          this.speedX = this.speedY * 0.15; 
-          this.opacity = Math.random() * 0.5 + 0.3; 
-        } 
-        else if (BATMAN_EFFECT === "hud") {
-          this.size = Math.random() > 0.5 ? 2 : 4;
-          this.speedY = Math.random() * 1 + 0.5; 
-          this.opacity = Math.random() * 0.5 + 0.2;
-        }
       }
 
       update() {
-        if (BATMAN_EFFECT === "embers") {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          this.speedX += (Math.random() * 0.02 - 0.01); 
-          if (this.y < -10) { this.y = height + 10; this.x = Math.random() * width; }
-        } 
-        else if (BATMAN_EFFECT === "rain") {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          if (this.y > height + 20) { this.y = -20; this.x = Math.random() * width; }
-          if (this.x > width + 20) { this.x = -20; }
-        } 
-        else if (BATMAN_EFFECT === "hud") {
-          this.y += this.speedY;
-          if (this.y > height + 10) { this.y = -10; this.x = Math.random() * width; }
-        }
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.speedX += (Math.random() * 0.02 - 0.01); 
+        if (this.y < -10) { this.y = height + 10; this.x = Math.random() * width; }
       }
 
       draw() {
         if (!ctx) return;
-        if (BATMAN_EFFECT === "embers") {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = this.color;
-          ctx.shadowBlur = this.blur;
-          ctx.shadowColor = "#ff1a1a";
-          ctx.fill();
-        } 
-        else if (BATMAN_EFFECT === "rain") {
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x + this.speedX, this.y + this.speedY);
-          ctx.strokeStyle = `rgba(255, 30, 30, ${this.opacity})`;
-          ctx.lineWidth = 1.5;
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = "#ff0000";
-          ctx.stroke();
-        } 
-        else if (BATMAN_EFFECT === "hud") {
-          ctx.fillStyle = `rgba(255, 40, 40, ${this.opacity})`;
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = "#ff0000";
-          ctx.fillRect(this.x, this.y, this.size, this.size);
-        }
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = this.blur;
+        ctx.shadowColor = this.color;
+        ctx.fill();
       }
     }
 
@@ -132,7 +87,7 @@ export default function BatcaveBackground() {
       particlesArray.push(new Particle());
     }
 
-    // 2. LIGHTNING ENGINE
+    // LIGHTNING ENGINE
     let lightningBolts: any[] = [];
     let globalFlashIntensity = 0;
     
@@ -165,8 +120,7 @@ export default function BatcaveBackground() {
         particlesArray[i].draw();
       }
 
-      // Random Lightning Strike
-      if (Math.random() < 0.004) {
+      if (Math.random() < 0.003) {
         const startX = Math.random() * width;
         lightningBolts.push(createLightningBolt(startX, 0));
         globalFlashIntensity = 1.0; 
@@ -211,9 +165,17 @@ export default function BatcaveBackground() {
   const batPath = "M320 483 C350 391 425 293 562 244 C552 277 578 312 617 330 C652 346 688 348 721 345 L736 276 L755 309 L768 307 L782 310 L800 276 L815 345 C848 348 884 346 919 330 C958 312 984 277 974 244 C1111 293 1186 391 1216 483 C1175 445 1130 411 1086 408 C1050 407 1031 433 1027 469 C986 449 946 441 908 445 C844 452 793 503 768 590 C743 503 692 452 628 445 C590 441 550 449 509 469 C505 433 486 407 450 408 C406 411 361 445 320 483 Z";
 
   return (
-    <div className="fixed inset-0 z-[-50] bg-[#020101] overflow-hidden pointer-events-none flex items-center justify-center select-none">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(150,10,10,0.15)_0%,transparent_60%)] z-0" />
+    <div className="fixed inset-0 z-[-50] bg-[#000000] overflow-hidden pointer-events-none flex items-center justify-center select-none">
+      
+      {/* EXTREMELY FAINT WHITE CLOUDS FOR DEPTH (No red muddiness) */}
+      <div 
+        className="absolute inset-0 z-0 opacity-20"
+        style={{
+          backgroundImage: `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 60%)`
+        }}
+      />
 
+      {/* LIGHTNING CLOUDS */}
       <div 
         ref={cloudsRef}
         className="absolute inset-0 z-0 transition-opacity duration-75"
@@ -229,22 +191,34 @@ export default function BatcaveBackground() {
 
       <canvas ref={canvasRef} className="absolute inset-0 z-0 w-full h-full opacity-90" aria-hidden="true" />
 
-      <div className="relative z-10 w-full h-full max-w-[1400px] opacity-[0.9] flex items-center justify-center">
+      <div className="relative z-10 w-full h-full max-w-[1400px] opacity-[0.95] flex items-center justify-center">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
           viewBox="0 0 1536 864" 
           preserveAspectRatio="xMidYMid meet"
-          className="w-full h-full object-contain drop-shadow-2xl"
+          className="w-full h-full object-contain"
           aria-hidden="true"
         >
           <defs>
-            <linearGradient id="flameGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ffaa00" />
-              <stop offset="40%" stopColor="#ff1a1a" />
-              <stop offset="100%" stopColor="#660000" />
+            {/* NEW: YELLOW TO RED PLASMA GRADIENT */}
+            <linearGradient id="plasmaGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffee00" />
+              <stop offset="30%" stopColor="#ff5500" />
+              <stop offset="100%" stopColor="#aa0000" />
             </linearGradient>
 
-            {/* SMOOTH NEON FIRE (Used on normal pages) */}
+            {/* NEW: CRACKLING FIRE FILTER (Only distorts the edge, not the whole shape) */}
+            <filter id="truePlasma" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.05 0.1" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+              <feGaussianBlur in="displaced" stdDeviation="1.5" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="displaced" />
+              </feMerge>
+            </filter>
+
+            {/* Standard Smooth Neon Filter */}
             <filter id="fireGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="4" result="blur1" />
               <feGaussianBlur stdDeviation="12" result="blur2" />
@@ -256,38 +230,30 @@ export default function BatcaveBackground() {
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-
-            {/* CRACKLING PLASMA FIRE (Used on Home and Profile) */}
-            <filter id="plasmaGlow" x="-50%" y="-50%" width="200%" height="200%">
-              {/* Creates erratic fractal noise distortion */}
-              <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" result="noise" />
-              {/* Warps the solid stroke into a jagged, lightning-like shape */}
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-              {/* Adds intense multi-layer glowing core to the warped shape */}
-              <feGaussianBlur in="displaced" stdDeviation="3" result="glow1" />
-              <feGaussianBlur in="displaced" stdDeviation="10" result="glow2" />
-              <feMerge>
-                <feMergeNode in="glow2" />
-                <feMergeNode in="glow1" />
-                <feMergeNode in="displaced" />
-              </feMerge>
-            </filter>
           </defs>
 
-          <g className="batman-emblem animate-[pulse_4s_ease-in-out_infinite]">
-            {/* Massive diffused heat wave behind the bat */}
-            <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="20" opacity="0.35" filter="blur(25px)"/>
+          <g className="batman-emblem animate-[pulse_5s_ease-in-out_infinite]">
             
-            {/* CONDITIONAL FLAME RENDER */}
+            {/* AMBIENT GLOW (Behind the bat) */}
+            <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="25" opacity="0.4" filter="blur(30px)"/>
+            
+            {/* SOLID PITCH BLACK CORE (Ensures the middle remains dark) */}
+            <path d={batPath} fill="#000000" stroke="none" />
+
+            {/* CONDITIONAL EDGE RENDERING */}
             {isPlasmaPage ? (
               <>
-                <path d={batPath} fill="#000000" stroke="url(#flameGradient)" strokeWidth="4" filter="url(#plasmaGlow)"/>
-                <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.6" filter="url(#plasmaGlow)"/>
+                {/* 1. The Frayed Yellow/Orange/Red Plasma Edge */}
+                <path d={batPath} fill="none" stroke="url(#plasmaGradient)" strokeWidth="4" filter="url(#truePlasma)"/>
+                
+                {/* 2. The Ultra-Crisp Superhot Inner Core */}
+                <path d={batPath} fill="none" stroke="#fff5e6" strokeWidth="1" opacity="0.9" filter="blur(0.5px)" />
               </>
             ) : (
               <>
-                <path d={batPath} fill="#000000" stroke="url(#flameGradient)" strokeWidth="4.5" filter="url(#fireGlow)"/>
-                <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.5"/>
+                {/* Standard Neon Render */}
+                <path d={batPath} fill="none" stroke="url(#plasmaGradient)" strokeWidth="4.5" filter="url(#fireGlow)"/>
+                <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.6"/>
               </>
             )}
           </g>
