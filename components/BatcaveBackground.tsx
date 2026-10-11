@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
-// 🦇 TACTICAL OVERRIDE: Set to "embers" to match the floating sparks in the reference
+// 🦇 TACTICAL OVERRIDE: Set to "embers" to match the sparks in your target image
 const BATMAN_EFFECT: "rain" | "embers" | "hud" = "embers";
 
 export default function BatcaveBackground() {
@@ -59,8 +59,8 @@ export default function BatcaveBackground() {
           this.size = Math.random() * 2 + 0.5;
           this.speedX = Math.random() * 1 - 0.5;
           this.speedY = Math.random() * -1.5 - 0.5; 
-          // Hotter colors for embers (Yellow, Orange, Red)
-          this.color = ["rgba(255, 200, 0, 0.9)", "rgba(255, 85, 0, 0.8)", "rgba(255, 20, 20, 0.8)"][Math.floor(Math.random() * 3)];
+          // Strictly deep reds and pure oranges—NO YELLOW
+          this.color = ["rgba(255, 30, 30, 0.9)", "rgba(255, 60, 20, 0.8)", "rgba(200, 10, 10, 0.8)"][Math.floor(Math.random() * 3)];
           this.blur = Math.random() * 4 + 1;
         } 
       }
@@ -87,7 +87,7 @@ export default function BatcaveBackground() {
       particlesArray.push(new Particle());
     }
 
-    // LIGHTNING ENGINE
+    // LIGHTNING ENGINE (White flashes for cinematic contrast)
     let lightningBolts: any[] = [];
     let globalFlashIntensity = 0;
     
@@ -167,15 +167,24 @@ export default function BatcaveBackground() {
   return (
     <div className="fixed inset-0 z-[-50] bg-[#000000] overflow-hidden pointer-events-none flex items-center justify-center select-none">
       
-      {/* EXTREMELY FAINT WHITE CLOUDS FOR DEPTH (No red muddiness) */}
-      <div 
-        className="absolute inset-0 z-0 opacity-20"
-        style={{
-          backgroundImage: `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 60%)`
-        }}
-      />
+      {/* 1. CINEMATIC BACKGROUND SMOKE (Dark, localized, barely visible) */}
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full z-0 opacity-30">
+        <defs>
+          <filter id="bgSmoke" x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="4" seed="8" result="noise" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0.4  0 0.1 0 0 0.05  0 0 0.1 0 0.05  0 0 0 1 0" in="noise" result="coloredNoise" />
+            <feBlend mode="screen" in="coloredNoise" in2="SourceGraphic" />
+          </filter>
+          <radialGradient id="smokeMask" cx="50%" cy="50%" r="40%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
+            <stop offset="70%" stopColor="#ffffff" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="1536" height="864" fill="#000000" filter="url(#bgSmoke)" mask="url(#smokeMask)" />
+      </svg>
 
-      {/* LIGHTNING CLOUDS */}
+      {/* 2. LIGHTNING CLOUDS OVERLAY */}
       <div 
         ref={cloudsRef}
         className="absolute inset-0 z-0 transition-opacity duration-75"
@@ -189,8 +198,10 @@ export default function BatcaveBackground() {
         }}
       />
 
-      <canvas ref={canvasRef} className="absolute inset-0 z-0 w-full h-full opacity-90" aria-hidden="true" />
+      {/* 3. LIVE EMBERS CANVAS */}
+      <canvas ref={canvasRef} className="absolute inset-0 z-0 w-full h-full opacity-100" aria-hidden="true" />
 
+      {/* 4. PERFECTED BAT EMBLEM */}
       <div className="relative z-10 w-full h-full max-w-[1400px] opacity-[0.95] flex items-center justify-center">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -200,17 +211,10 @@ export default function BatcaveBackground() {
           aria-hidden="true"
         >
           <defs>
-            {/* NEW: YELLOW TO RED PLASMA GRADIENT */}
-            <linearGradient id="plasmaGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ffee00" />
-              <stop offset="30%" stopColor="#ff5500" />
-              <stop offset="100%" stopColor="#aa0000" />
-            </linearGradient>
-
-            {/* NEW: CRACKLING FIRE FILTER (Only distorts the edge, not the whole shape) */}
-            <filter id="truePlasma" x="-20%" y="-20%" width="140%" height="140%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.05 0.1" numOctaves="3" result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+            {/* RAW CRACKLING PLASMA FILTER (Sharp, jagged electrical fire) */}
+            <filter id="cracklingPlasma" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" result="displaced" />
               <feGaussianBlur in="displaced" stdDeviation="1.5" result="glow" />
               <feMerge>
                 <feMergeNode in="glow" />
@@ -218,8 +222,8 @@ export default function BatcaveBackground() {
               </feMerge>
             </filter>
 
-            {/* Standard Smooth Neon Filter */}
-            <filter id="fireGlow" x="-50%" y="-50%" width="200%" height="200%">
+            {/* Standard Smooth Neon Filter (For non-plasma pages) */}
+            <filter id="smoothNeon" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="4" result="blur1" />
               <feGaussianBlur stdDeviation="12" result="blur2" />
               <feGaussianBlur stdDeviation="25" result="blur3" />
@@ -234,32 +238,33 @@ export default function BatcaveBackground() {
 
           <g className="batman-emblem animate-[pulse_5s_ease-in-out_infinite]">
             
-            {/* AMBIENT GLOW (Behind the bat) */}
-            <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="25" opacity="0.4" filter="blur(30px)"/>
+            {/* AMBIENT RED GLOW (Soft heat behind the bat) */}
+            <path d={batPath} fill="none" stroke="#990000" strokeWidth="20" opacity="0.3" filter="blur(25px)"/>
             
-            {/* SOLID PITCH BLACK CORE (Ensures the middle remains dark) */}
+            {/* SOLID PITCH BLACK CORE */}
             <path d={batPath} fill="#000000" stroke="none" />
 
-            {/* CONDITIONAL EDGE RENDERING */}
+            {/* CONDITIONAL FLAME RENDERING */}
             {isPlasmaPage ? (
               <>
-                {/* 1. The Frayed Yellow/Orange/Red Plasma Edge */}
-                <path d={batPath} fill="none" stroke="url(#plasmaGradient)" strokeWidth="4" filter="url(#truePlasma)"/>
+                {/* 1. Pure Red Crackling Plasma Edge */}
+                <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="4" filter="url(#cracklingPlasma)"/>
                 
-                {/* 2. The Ultra-Crisp Superhot Inner Core */}
-                <path d={batPath} fill="none" stroke="#fff5e6" strokeWidth="1" opacity="0.9" filter="blur(0.5px)" />
+                {/* 2. Thin Hot-White Core (Also displaced for jagged look) */}
+                <path d={batPath} fill="none" stroke="#ffcccc" strokeWidth="1" opacity="0.9" filter="url(#cracklingPlasma)" />
               </>
             ) : (
               <>
-                {/* Standard Neon Render */}
-                <path d={batPath} fill="none" stroke="url(#plasmaGradient)" strokeWidth="4.5" filter="url(#fireGlow)"/>
-                <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.6"/>
+                {/* Standard Smooth Neon Render */}
+                <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="4.5" filter="url(#smoothNeon)"/>
+                <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.5"/>
               </>
             )}
           </g>
         </svg>
       </div>
 
+      {/* 5. THE BATMOBILE */}
       <div 
         ref={batmobileRef}
         className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 z-20 transition-opacity duration-75"
