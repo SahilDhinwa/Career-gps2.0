@@ -6,7 +6,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { signOut, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes"; 
-import { useAuth } from "../../context/AuthContext"; // NEW: Connect to Global Brain
+import { useAuth } from "../../context/AuthContext";
 import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
@@ -15,7 +15,6 @@ export default function UserProfile() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
-  // NEW: Pull all user state from the Global Brain instead of fetching manually
   const { user, userData, isPremium, isLoading, refreshUserData } = useAuth();
   
   const [checklistData, setChecklistData] = useState<Record<string, string[]>>({});
@@ -26,11 +25,9 @@ export default function UserProfile() {
   useEffect(() => {
     setMounted(true); 
     
-    // If the brain finishes loading and there is no user, kick them to login
     if (!isLoading && !user) {
       router.push("/login");
     } else if (user) {
-      // Sync local state with the brain's live data
       setProfilePic(userData?.photoURL || user.photoURL || null);
       setChecklistData(userData?.checklistProgress || {});
     }
@@ -39,16 +36,13 @@ export default function UserProfile() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      
-      // 🦇 INSTANT RESET: Turn off Batman mode on logout
       setTheme('dark'); 
-      
       router.push("/");
     } catch (error) {
       console.error("Failed to log out", error);
     }
   };
-    // Your Canvas Compression Logic (Upgraded with Global Brain Sync)
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
@@ -101,7 +95,6 @@ export default function UserProfile() {
           } catch (authError) {
             console.warn("Auth profile limit reached, but safely stored in Firestore.");
           }
-          // INSTANT SYNC: Tell the Global Brain the image changed so Navbar updates instantly
           await refreshUserData(); 
         } catch (error) {
           console.error("Failed to save image to database:", error);
@@ -129,7 +122,7 @@ export default function UserProfile() {
     try {
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList }, { merge: true });
-      await refreshUserData(); // INSTANT SYNC: Update the global brain
+      await refreshUserData(); 
     } catch (error) {
       console.error("Failed to update checklist in database", error);
     }
@@ -145,10 +138,10 @@ export default function UserProfile() {
 
   const roadmapProgress = userData?.roadmapProgress || {};
 
-       return (
-    <div className="min-h-screen relative overflow-hidden transition-colors duration-300">
+  return (
+    // 🦇 FIX: Added dynamic background logic here!
+    <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'batman' ? 'bg-transparent' : 'bg-background'}`}>
       
-      {/* REALISTIC HONEYCOMB BACKGROUND (Adapts to Light/Dark Mode) */}
       <style dangerouslySetInnerHTML={{__html: `
         .honeycomb-bg {
           position: fixed;
@@ -197,7 +190,7 @@ export default function UserProfile() {
         <div className="bg-surface/80 backdrop-blur-md border border-amber-900/10 dark:border-amber-500/10 rounded-sm shadow-xl p-6 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transition-colors duration-300">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
             
-            {/* AVATAR UPLOADER - MOBILE OPTIMIZED */}
+            {/* AVATAR UPLOADER */}
             <div className="relative">
               <div 
                 className="relative w-28 h-28 md:w-24 md:h-24 rounded-full border-4 border-surface shadow-xl shrink-0 group cursor-pointer overflow-hidden bg-background flex items-center justify-center"
@@ -243,7 +236,6 @@ export default function UserProfile() {
             </div>
           </div>
 
-          {/* ACTION BUTTONS (Sign out + Dark Mode) */}
           <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
             {mounted && (
               <button 
