@@ -6,18 +6,31 @@ import BamsReels from "@/components/BamsReels";
 import { VisitorTracker } from "@/components/VisitorTracker";
 import { ArrowLeft, Leaf, BookOpen, FileText, BrainCircuit, Sparkles, Download, ChevronRight, PenTool } from "lucide-react";
 import AyurvedicBackground from "@/components/AyurvedicBackground"; 
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 
 export default function BAMSDashboard() {
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  // 🦇 TACTICAL OVERRIDE: Check if Batman mode is active
+  const isBatman = mounted && (theme === "batman" || resolvedTheme === "batman");
+
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden transition-colors duration-300 pt-12 pb-24 px-6">
+    <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 pt-12 pb-24 px-6 ${isBatman ? 'bg-transparent' : 'bg-background'}`}>
       
-      <AyurvedicBackground />
+      {/* 🦇 HIDE AYURVEDIC BACKGROUND IN BATMAN MODE TO KEEP THE VOID PURE */}
+      {!isBatman && <AyurvedicBackground />}
       
-      {/* Ambient Background Glow */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[100px]"></div>
-      </div>
+      {/* 🦇 HIDE AMBIENT GLOWS IN BATMAN MODE */}
+      {!isBatman && (
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[100px]"></div>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto relative z-10">
         
@@ -34,7 +47,11 @@ export default function BAMSDashboard() {
 
         {/* Dashboard Header */}
         <div className="bg-surface/80 backdrop-blur-md border border-surfaceBorder p-8 md:p-12 mb-10 rounded-sm shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+          
+          {/* Hide header glow in Batman mode as well */}
+          {!isBatman && (
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+          )}
           
           <div className="flex flex-wrap gap-3 mb-6 relative z-10">
             <span className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 px-4 py-1.5 rounded-sm text-xs font-bold tracking-wider shadow-sm uppercase">
@@ -99,23 +116,28 @@ export default function BAMSDashboard() {
             </div>
           </Link>
 
-          {/* 4. NEW Handwritten Notes */}
-          <Link href="/short-notes" className="group bg-[#fdfbf7] dark:bg-surface/90 backdrop-blur-md border border-slate-300 dark:border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/notebook-dark.png')] opacity-20 pointer-events-none"></div>
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 bg-red-100/50 border border-red-200 dark:bg-amber-500/10 dark:border-amber-500/20 rounded-sm text-[9px] font-bold text-red-600 dark:text-amber-500 uppercase tracking-widest shadow-sm z-10">
+          {/* 4. NEW Handwritten Notes (FIXED TO MATCH THEME) */}
+          <Link href="/short-notes" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+            
+            {/* Subtle Texture Overlay */}
+            <div className={`absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/notebook-dark.png')] opacity-20 pointer-events-none ${isBatman ? 'grayscale opacity-10' : ''}`}></div>
+            
+            <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-sm text-[9px] font-bold text-amber-500 uppercase tracking-widest shadow-sm z-10">
               <Sparkles className="w-3 h-3" /> New
             </div>
             
-            <div className="w-12 h-12 bg-slate-100 dark:bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-slate-200 dark:border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500 relative z-10">
-              <PenTool className="w-5 h-5 text-slate-700 dark:text-amber-500" />
+            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500 relative z-10">
+              <PenTool className="w-5 h-5 text-amber-500" />
             </div>
             
-            <h2 className="font-heading text-xl font-bold text-slate-800 dark:text-foreground mb-3 relative z-10" style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}>Handwritten</h2>
-            <p className="text-slate-600 dark:text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed relative z-10">
+            {/* Handwritten Font Title */}
+            <h2 className="font-heading text-xl font-bold text-foreground mb-3 relative z-10" style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}>Handwritten</h2>
+            
+            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed relative z-10">
               Highly readable short notes for quick revision. Starting with Dravyaguna Pharmacology.
             </p>
             
-            <div className="w-full bg-slate-800 dark:bg-amber-500/10 border border-slate-700 dark:border-amber-500/20 text-white dark:text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm hover:bg-slate-700 dark:group-hover:bg-amber-500 dark:group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
               Open Notebook <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
