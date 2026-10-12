@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
-// 🦇 TACTICAL OVERRIDE: Set to "embers" to match the sparks in your target image
+// 🦇 TACTICAL OVERRIDE: Embers to match the cinematic sparks
 const BATMAN_EFFECT: "rain" | "embers" | "hud" = "embers";
 
 export default function BatcaveBackground() {
@@ -59,7 +59,6 @@ export default function BatcaveBackground() {
           this.size = Math.random() * 2 + 0.5;
           this.speedX = Math.random() * 1 - 0.5;
           this.speedY = Math.random() * -1.5 - 0.5; 
-          // Strictly deep reds and pure oranges—NO YELLOW
           this.color = ["rgba(255, 30, 30, 0.9)", "rgba(255, 60, 20, 0.8)", "rgba(200, 10, 10, 0.8)"][Math.floor(Math.random() * 3)];
           this.blur = Math.random() * 4 + 1;
         } 
@@ -87,7 +86,6 @@ export default function BatcaveBackground() {
       particlesArray.push(new Particle());
     }
 
-    // LIGHTNING ENGINE (White flashes for cinematic contrast)
     let lightningBolts: any[] = [];
     let globalFlashIntensity = 0;
     
@@ -167,17 +165,17 @@ export default function BatcaveBackground() {
   return (
     <div className="fixed inset-0 z-[-50] bg-[#000000] overflow-hidden pointer-events-none flex items-center justify-center select-none">
       
-      {/* 1. CINEMATIC BACKGROUND SMOKE (Dark, localized, barely visible) */}
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full z-0 opacity-30">
+      {/* 1. CINEMATIC BACKGROUND SMOKE (Tightly bound to center, highly transparent) */}
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full z-0 opacity-20">
         <defs>
           <filter id="bgSmoke" x="0" y="0" width="100%" height="100%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="4" seed="8" result="noise" />
-            <feColorMatrix type="matrix" values="1 0 0 0 0.4  0 0.1 0 0 0.05  0 0 0.1 0 0.05  0 0 0 1 0" in="noise" result="coloredNoise" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="4" seed="12" result="noise" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0.5  0 0.1 0 0 0.1  0 0 0.1 0 0.1  0 0 0 1 0" in="noise" result="coloredNoise" />
             <feBlend mode="screen" in="coloredNoise" in2="SourceGraphic" />
           </filter>
-          <radialGradient id="smokeMask" cx="50%" cy="50%" r="40%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
-            <stop offset="70%" stopColor="#ffffff" stopOpacity="0.1" />
+          {/* Drastically reduced the radius so the smoke doesn't flood the screen */}
+          <radialGradient id="smokeMask" cx="50%" cy="50%" r="25%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </radialGradient>
         </defs>
@@ -211,10 +209,10 @@ export default function BatcaveBackground() {
           aria-hidden="true"
         >
           <defs>
-            {/* RAW CRACKLING PLASMA FILTER (Sharp, jagged electrical fire) */}
+            {/* RAW CRACKLING PLASMA FILTER (Only applied to the outer red edge) */}
             <filter id="cracklingPlasma" x="-20%" y="-20%" width="140%" height="140%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3" result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+              <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" result="displaced" />
               <feGaussianBlur in="displaced" stdDeviation="1.5" result="glow" />
               <feMerge>
                 <feMergeNode in="glow" />
@@ -222,7 +220,7 @@ export default function BatcaveBackground() {
               </feMerge>
             </filter>
 
-            {/* Standard Smooth Neon Filter (For non-plasma pages) */}
+            {/* Standard Smooth Neon Filter */}
             <filter id="smoothNeon" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="4" result="blur1" />
               <feGaussianBlur stdDeviation="12" result="blur2" />
@@ -239,7 +237,7 @@ export default function BatcaveBackground() {
           <g className="batman-emblem animate-[pulse_5s_ease-in-out_infinite]">
             
             {/* AMBIENT RED GLOW (Soft heat behind the bat) */}
-            <path d={batPath} fill="none" stroke="#990000" strokeWidth="20" opacity="0.3" filter="blur(25px)"/>
+            <path d={batPath} fill="none" stroke="#7a0000" strokeWidth="25" opacity="0.4" filter="blur(25px)"/>
             
             {/* SOLID PITCH BLACK CORE */}
             <path d={batPath} fill="#000000" stroke="none" />
@@ -248,10 +246,11 @@ export default function BatcaveBackground() {
             {isPlasmaPage ? (
               <>
                 {/* 1. Pure Red Crackling Plasma Edge */}
-                <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="4" filter="url(#cracklingPlasma)"/>
+                <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="5" filter="url(#cracklingPlasma)"/>
                 
-                {/* 2. Thin Hot-White Core (Also displaced for jagged look) */}
-                <path d={batPath} fill="none" stroke="#ffcccc" strokeWidth="1" opacity="0.9" filter="url(#cracklingPlasma)" />
+                {/* 2. Smooth Hot-White Core (PULLED OUT of the displacement filter so it stays sharp!) */}
+                <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" filter="blur(0.5px)" />
+                <path d={batPath} fill="none" stroke="#ffb3b3" strokeWidth="0.5" opacity="1" />
               </>
             ) : (
               <>
