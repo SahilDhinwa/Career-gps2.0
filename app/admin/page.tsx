@@ -3,15 +3,21 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
-import { ShieldAlert, Users, Database, Activity, LogOut, ChevronRight, Terminal } from "lucide-react";
+import { db } from "../../lib/firebase";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { ShieldAlert, Users, Database, Activity, LogOut, ChevronRight, Terminal, Crown, Shield, User as UserIcon } from "lucide-react";
 
 type AdminTab = "analytics" | "users" | "cms";
 
 export default function AdminCommandCenter() {
   const { user, userData, isLoading } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<AdminTab>("analytics");
+  const [activeTab, setActiveTab] = useState<AdminTab>("users"); // Default to users tab for now
   const [mounted, setMounted] = useState(false);
+  
+  // User Management State
+  const [dbUsers, setDbUsers] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -25,6 +31,41 @@ export default function AdminCommandCenter() {
       }
     }
   }, [user, userData, isLoading, mounted, router]);
+
+  // Fetch Users from Firestore
+  useEffect(() => {
+    if (activeTab === "users" && userData?.role === "admin") {
+      const fetchUsers = async () => {
+        setLoadingUsers(true);
+        try {
+          const querySnapshot = await getDocs(collection(db, "users"));
+          const usersData = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          setDbUsers(usersData);
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        } finally {
+          setLoadingUsers(false);
+        }
+      };
+      fetchUsers();
+    }
+  }, [activeTab, userData]);
+
+  // Grant or Revoke Premium
+  const togglePremium = async (userId: string, currentStatus: boolean) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { isPremium: !currentStatus });
+      // Instantly update the UI table
+      setDbUsers(prev => prev.map(u => u.id === userId ? { ...u, isPremium: !currentStatus } : u));
+    } catch (error) {
+      console.error("Error updating premium status:", error);
+      alert("System Error: Could not update user status.");
+    }
+  };
 
   // Loading State while verifying credentials
   if (isLoading || !mounted || userData?.role !== "admin") {
@@ -57,19 +98,19 @@ export default function AdminCommandCenter() {
 
         <nav className="flex-1 p-4 space-y-2">
           <button 
-            onClick={() => setActiveTab("analytics")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm font-medium transition-all duration-300 ${activeTab === "analytics" ? 'bg-red-950/40 text-red-500 border border-red-900/50 shadow-[inset_0_0_12px_rgba(255,0,0,0.1)]' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}
-          >
-            <Activity className="w-5 h-5" /> Analytics Node
-            {activeTab === "analytics" && <ChevronRight className="w-4 h-4 ml-auto" />}
-          </button>
-          
-          <button 
             onClick={() => setActiveTab("users")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm font-medium transition-all duration-300 ${activeTab === "users" ? 'bg-red-950/40 text-red-500 border border-red-900/50 shadow-[inset_0_0_12px_rgba(255,0,0,0.1)]' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}
           >
             <Users className="w-5 h-5" /> User Protocols
             {activeTab === "users" && <ChevronRight className="w-4 h-4 ml-auto" />}
+          </button>
+
+          <button 
+            onClick={() => setActiveTab("analytics")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm font-medium transition-all duration-300 ${activeTab === "analytics" ? 'bg-red-950/40 text-red-500 border border-red-900/50 shadow-[inset_0_0_12px_rgba(255,0,0,0.1)]' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}
+          >
+            <Activity className="w-5 h-5" /> Analytics Node
+            {activeTab === "analytics" && <ChevronRight className="w-4 h-4 ml-auto" />}
           </button>
 
           <button 
@@ -98,39 +139,122 @@ export default function AdminCommandCenter() {
           {/* Header */}
           <header className="mb-10 pb-6 border-b border-red-900/20">
             <h2 className="text-3xl font-bold text-white capitalize tracking-wide flex items-center gap-3">
-              {activeTab === "analytics" && <><Activity className="text-red-500 w-8 h-8" /> System Analytics</>}
               {activeTab === "users" && <><Users className="text-red-500 w-8 h-8" /> User Protocols</>}
+              {activeTab === "analytics" && <><Activity className="text-red-500 w-8 h-8" /> System Analytics</>}
               {activeTab === "cms" && <><Database className="text-red-500 w-8 h-8" /> Content Mainframe</>}
             </h2>
           </header>
 
           {/* DYNAMIC TAB CONTENT */}
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            
+            {/* 🦇 USER MANAGEMENT TABLE */}
+            {activeTab === "users" && (
+              <div className="space-y-6">
+                <div className="flex justify-between items-end">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Registered Operatives</h3>
+                    <p className="text-sm text-gray-500 font-mono mt-1">Total count: {dbUsers.length}</p>
+                  </div>
+                  <button onClick={() => window.location.reload()} className="text-xs font-mono text-red-500 hover:text-white transition-colors border border-red-900/50 bg-red-950/30 px-3 py-1.5 rounded-sm">
+                    [ REFRESH DATABASE ]
+                  </button>
+                </div>
+
+                {loadingUsers ? (
+                  <div className="border border-red-900/30 bg-[#050101] p-12 flex justify-center items-center rounded-sm">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto border border-red-900/30 rounded-sm bg-[#050101] shadow-xl">
+                    <table className="w-full text-left text-sm text-gray-400">
+                      <thead className="text-xs uppercase bg-red-950/20 text-red-500 border-b border-red-900/30">
+                        <tr>
+                          <th className="px-6 py-4 font-mono tracking-wider">Operative ID</th>
+                          <th className="px-6 py-4 font-mono tracking-wider">Identity</th>
+                          <th className="px-6 py-4 font-mono tracking-wider">Clearance</th>
+                          <th className="px-6 py-4 font-mono tracking-wider">Status</th>
+                          <th className="px-6 py-4 font-mono tracking-wider text-right">Overrides</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-red-900/20">
+                        {dbUsers.map((u) => (
+                          <tr key={u.id} className="hover:bg-white/[0.02] transition-colors">
+                            <td className="px-6 py-4 font-mono text-xs text-gray-500">
+                              {u.id.substring(0, 8)}...
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="font-bold text-white flex items-center gap-2">
+                                {u.photoURL ? (
+                                  /* eslint-disable-next-line @next/next/no-img-element */
+                                  <img src={u.photoURL} alt="Avatar" className="w-6 h-6 rounded-full border border-red-900/50" />
+                                ) : (
+                                  <UserIcon className="w-5 h-5 text-gray-600" />
+                                )}
+                                {u.displayName || "Unknown Identity"}
+                              </div>
+                              <div className="text-xs text-gray-500 mt-1">{u.email || "No email on record"}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              {u.role === "admin" ? (
+                                <span className="inline-flex items-center gap-1 text-red-500 text-xs font-bold font-mono bg-red-500/10 px-2 py-1 rounded-sm border border-red-500/20">
+                                  <Shield className="w-3 h-3" /> ROOT
+                                </span>
+                              ) : (
+                                <span className="text-gray-500 text-xs font-mono">STANDARD</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              {u.isPremium ? (
+                                <span className="inline-flex items-center gap-1 text-amber-500 text-xs font-bold uppercase tracking-wider">
+                                  <Crown className="w-3.5 h-3.5" /> Premium
+                                </span>
+                              ) : (
+                                <span className="text-gray-600 text-xs font-bold uppercase tracking-wider">Free Tier</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              {/* Only allow upgrading non-admins */}
+                              {u.role !== "admin" && (
+                                <button 
+                                  onClick={() => togglePremium(u.id, !!u.isPremium)}
+                                  className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-sm transition-all border ${
+                                    u.isPremium 
+                                      ? 'bg-black text-gray-500 border-gray-800 hover:text-red-400 hover:border-red-900' 
+                                      : 'bg-amber-500/10 text-amber-500 border-amber-500/30 hover:bg-amber-500 hover:text-black'
+                                  }`}
+                                >
+                                  {u.isPremium ? 'Revoke Premium' : 'Grant Premium'}
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* PLACEHOLDERS FOR NEXT PHASES */}
             {activeTab === "analytics" && (
               <div className="text-gray-500 border border-red-900/20 bg-black/50 p-10 rounded-sm text-center font-mono">
                 [ INIT: ANALYTICS DASHBOARD MODULE ]
-                {/* We will build the real-time visitor charts here */}
-              </div>
-            )}
-            
-            {activeTab === "users" && (
-              <div className="text-gray-500 border border-red-900/20 bg-black/50 p-10 rounded-sm text-center font-mono">
-                [ INIT: USER MANAGEMENT PROTOCOL ]
-                {/* We will build the Firestore User Table here */}
+                <br/><br/>(Next phase: Real-time Visitor Charts)
               </div>
             )}
 
             {activeTab === "cms" && (
               <div className="text-gray-500 border border-red-900/20 bg-black/50 p-10 rounded-sm text-center font-mono">
                 [ INIT: CONTENT INJECTION SYSTEM ]
-                {/* We will build the forms for MCQs, PDFs, and Reels here */}
+                <br/><br/>(Next phase: MCQ & PDF Upload Forms)
               </div>
             )}
           </div>
 
         </div>
       </main>
-
     </div>
   );
 }
