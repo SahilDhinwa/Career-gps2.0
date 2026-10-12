@@ -1,21 +1,16 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
-// 🦇 TACTICAL OVERRIDE: Change this to "embers", "rain", or "hud" to test them all!
-const BATMAN_EFFECT: "embers" | "rain" | "hud" = "rain";
-
 export default function AyurvedicBackground() {
-  const { theme } = useTheme();
+  const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Standard Green Leaves (Only generates once to prevent layout shifts)
   const [leaves] = useState(() => 
     Array.from({ length: 15 }).map((_, i) => ({
       id: i,
@@ -27,161 +22,19 @@ export default function AyurvedicBackground() {
     }))
   );
 
-  // ==========================================
-  // BATMAN MODE: DYNAMIC CANVAS ENGINE
-  // ==========================================
-  useEffect(() => {
-    if (theme !== "batman") return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-    const setSize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
-    setSize();
-    window.addEventListener("resize", setSize);
-
-    const particlesArray: any[] = [];
-    
-    // Adjust particle count based on the chosen effect
-    let numberOfParticles = 50;
-    if (BATMAN_EFFECT === "embers") numberOfParticles = width < 768 ? 30 : 60;
-    if (BATMAN_EFFECT === "rain") numberOfParticles = width < 768 ? 80 : 200; // Increased for a heavy downpour
-    if (BATMAN_EFFECT === "hud") numberOfParticles = width < 768 ? 20 : 40;
-
-    class Particle {
-      x: number; y: number; size: number = 0; speedX: number = 0; speedY: number = 0;
-      color: string = ""; blur: number = 0; length: number = 0; opacity: number = 0;
-
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height; // Spawns directly on the screen
-
-        if (BATMAN_EFFECT === "embers") {
-          this.size = Math.random() * 2 + 0.5;
-          this.speedX = Math.random() * 1 - 0.5;
-          this.speedY = Math.random() * -1.5 - 0.5; // Drift UP
-          this.color = ["rgba(255, 30, 20, 0.9)", "rgba(255, 60, 20, 0.7)", "rgba(200, 10, 10, 0.8)"][Math.floor(Math.random() * 3)];
-          this.blur = Math.random() * 5 + 1;
-        } 
-        else if (BATMAN_EFFECT === "rain") {
-          this.length = Math.random() * 25 + 15; // Longer raindrops
-          this.speedY = Math.random() * 15 + 10; // Fast fall
-          this.speedX = this.speedY * 0.15; // Diagonal angle
-          this.opacity = Math.random() * 0.5 + 0.3; // Brighter red
-        } 
-        else if (BATMAN_EFFECT === "hud") {
-          this.size = Math.random() > 0.5 ? 2 : 4;
-          this.speedY = Math.random() * 1 + 0.5; // Fall slowly DOWN
-          this.opacity = Math.random() * 0.5 + 0.2;
-        }
-      }
-
-      update() {
-        if (BATMAN_EFFECT === "embers") {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          this.speedX += (Math.random() * 0.02 - 0.01); // Sway
-          if (this.y < -10) { this.y = height + 10; this.x = Math.random() * width; }
-        } 
-        else if (BATMAN_EFFECT === "rain") {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          // Loop seamlessly
-          if (this.y > height + 20) { this.y = -20; this.x = Math.random() * width; }
-          if (this.x > width + 20) { this.x = -20; }
-        } 
-        else if (BATMAN_EFFECT === "hud") {
-          this.y += this.speedY;
-          if (this.y > height + 10) { this.y = -10; this.x = Math.random() * width; }
-        }
-      }
-
-      draw() {
-        if (!ctx) return;
-        
-        if (BATMAN_EFFECT === "embers") {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = this.color;
-          ctx.shadowBlur = this.blur;
-          ctx.shadowColor = "#ff1a1a";
-          ctx.fill();
-        } 
-        else if (BATMAN_EFFECT === "rain") {
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x + this.speedX, this.y + this.speedY);
-          // Crisp, bright red laser rain
-          ctx.strokeStyle = `rgba(255, 30, 30, ${this.opacity})`;
-          ctx.lineWidth = 1.5;
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = "#ff0000";
-          ctx.stroke();
-        } 
-        else if (BATMAN_EFFECT === "hud") {
-          ctx.fillStyle = `rgba(255, 40, 40, ${this.opacity})`;
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = "#ff0000";
-          ctx.fillRect(this.x, this.y, this.size, this.size);
-        }
-      }
-    }
-
-    for (let i = 0; i < numberOfParticles; i++) {
-      particlesArray.push(new Particle());
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, width, height);
-      for (let i = 0; i < particlesArray.length; i++) {
-        particlesArray[i].update();
-        particlesArray[i].draw();
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    return () => {
-      window.removeEventListener("resize", setSize);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [theme]);
-
   if (!mounted) return null;
 
-  // ==========================================
-  // RENDER: BATMAN MODE (Canvas Layer)
-  // ==========================================
-  if (theme === "batman") {
-    return (
-      // FIX: Changed from 'absolute' to 'fixed' so the rain stays on screen when scrolling!
-      // Removed the masking gradient so the particles pop clearly over the background.
-      <div className="fixed inset-0 z-[-40] overflow-hidden pointer-events-none">
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 z-0 w-full h-full opacity-80"
-          aria-hidden="true"
-        />
-      </div>
-    );
+  // 🦇 TACTICAL OVERRIDE: Shut this component down completely in Batman mode!
+  // The BatcaveBackground.tsx is already handling the void and particles globally.
+  const isBatman = theme === "batman" || resolvedTheme === "batman";
+  if (isBatman) {
+    return null;
   }
 
   // ==========================================
   // RENDER: STANDARD MODE (Tree & Leaves)
   // ==========================================
   return (
-    // FIX: Kept standard mode as absolute so it anchors to the container properly
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none transition-colors duration-500">
       <style>{`
         @keyframes floatDown {
