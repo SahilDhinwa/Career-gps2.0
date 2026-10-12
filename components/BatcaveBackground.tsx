@@ -18,7 +18,7 @@ export default function BatcaveBackground() {
 
   useEffect(() => setMounted(true), []);
 
-  // 🦇 ROUTING CHECK: Use crackling plasma flame ONLY on Home and Profile
+  // 🦇 ROUTING CHECK: Crackling plasma bat ONLY on Home and Profile
   const isPlasmaPage = pathname === "/" || pathname === "/profile";
 
   // ==========================================
@@ -165,7 +165,20 @@ export default function BatcaveBackground() {
   return (
     <div className="fixed inset-0 z-[-50] bg-[#000000] overflow-hidden pointer-events-none flex items-center justify-center select-none">
       
-      {/* 1. CINEMATIC BACKGROUND SMOKE (Tightly bound to center, highly transparent) */}
+      {/* 1. TACTICAL HUD GRID OVERLAY (Universally Active) */}
+      <div 
+        className="absolute inset-0 z-0 opacity-[0.15]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255, 0, 0, 0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 0, 0, 0.2) 1px, transparent 1px)
+          `,
+          backgroundSize: '120px 120px',
+          backgroundPosition: 'center center'
+        }}
+      />
+
+      {/* 2. CINEMATIC BACKGROUND SMOKE (Universally Active, tightly bound) */}
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full z-0 opacity-20">
         <defs>
           <filter id="bgSmoke" x="0" y="0" width="100%" height="100%">
@@ -173,7 +186,6 @@ export default function BatcaveBackground() {
             <feColorMatrix type="matrix" values="1 0 0 0 0.5  0 0.1 0 0 0.1  0 0 0.1 0 0.1  0 0 0 1 0" in="noise" result="coloredNoise" />
             <feBlend mode="screen" in="coloredNoise" in2="SourceGraphic" />
           </filter>
-          {/* Drastically reduced the radius so the smoke doesn't flood the screen */}
           <radialGradient id="smokeMask" cx="50%" cy="50%" r="25%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
@@ -182,7 +194,7 @@ export default function BatcaveBackground() {
         <rect x="0" y="0" width="1536" height="864" fill="#000000" filter="url(#bgSmoke)" mask="url(#smokeMask)" />
       </svg>
 
-      {/* 2. LIGHTNING CLOUDS OVERLAY */}
+      {/* 3. LIGHTNING CLOUDS OVERLAY */}
       <div 
         ref={cloudsRef}
         className="absolute inset-0 z-0 transition-opacity duration-75"
@@ -196,10 +208,10 @@ export default function BatcaveBackground() {
         }}
       />
 
-      {/* 3. LIVE EMBERS CANVAS */}
+      {/* 4. LIVE EMBERS CANVAS */}
       <canvas ref={canvasRef} className="absolute inset-0 z-0 w-full h-full opacity-100" aria-hidden="true" />
 
-      {/* 4. PERFECTED BAT EMBLEM */}
+      {/* 5. PERFECTED BAT EMBLEM */}
       <div className="relative z-10 w-full h-full max-w-[1400px] opacity-[0.95] flex items-center justify-center">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -209,7 +221,7 @@ export default function BatcaveBackground() {
           aria-hidden="true"
         >
           <defs>
-            {/* RAW CRACKLING PLASMA FILTER (Only applied to the outer red edge) */}
+            {/* RAW CRACKLING PLASMA FILTER */}
             <filter id="cracklingPlasma" x="-20%" y="-20%" width="140%" height="140%">
               <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" result="noise" />
               <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" result="displaced" />
@@ -235,8 +247,7 @@ export default function BatcaveBackground() {
           </defs>
 
           <g className="batman-emblem animate-[pulse_5s_ease-in-out_infinite]">
-            
-            {/* AMBIENT RED GLOW (Soft heat behind the bat) */}
+            {/* AMBIENT RED GLOW */}
             <path d={batPath} fill="none" stroke="#7a0000" strokeWidth="25" opacity="0.4" filter="blur(25px)"/>
             
             {/* SOLID PITCH BLACK CORE */}
@@ -245,10 +256,10 @@ export default function BatcaveBackground() {
             {/* CONDITIONAL FLAME RENDERING */}
             {isPlasmaPage ? (
               <>
-                {/* 1. Pure Red Crackling Plasma Edge */}
+                {/* Pure Red Crackling Plasma Edge */}
                 <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="5" filter="url(#cracklingPlasma)"/>
                 
-                {/* 2. Smooth Hot-White Core (PULLED OUT of the displacement filter so it stays sharp!) */}
+                {/* Smooth Hot-White Core */}
                 <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" filter="blur(0.5px)" />
                 <path d={batPath} fill="none" stroke="#ffb3b3" strokeWidth="0.5" opacity="1" />
               </>
@@ -263,7 +274,7 @@ export default function BatcaveBackground() {
         </svg>
       </div>
 
-      {/* 5. THE BATMOBILE */}
+      {/* 6. THE BATMOBILE */}
       <div 
         ref={batmobileRef}
         className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 z-20 transition-opacity duration-75"
