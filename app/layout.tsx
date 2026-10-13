@@ -1,3 +1,4 @@
+import AnalyticsTracker from '../components/AnalyticsTracker'
 import type { Metadata } from 'next'
 import { Syne, DM_Sans, Kalam } from 'next/font/google'
 import './globals.css'
@@ -52,7 +53,15 @@ export default function RootLayout({
           {/* MOVED INSIDE THE PROVIDER */}
           <BatcaveBackground /> 
           
-          <AuthProvider>
+                    <AuthProvider>
+            <AnalyticsTracker />  {/* 🦇 TRACKER INJECTED HERE */}
+            <Navbar />
+            <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
+              {children}
+            </main>
+            <Footer />
+          </AuthProvider>
+
             <Navbar />
             <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
               {children}
