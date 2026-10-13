@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { db } from "../../lib/firebase";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
-import { ShieldAlert, Users, Database, Activity, LogOut, ChevronRight, Terminal, Crown, Shield, User as UserIcon, Eye, Globe2, Clock } from "lucide-react";
+import { collection, getDocs, doc, updateDoc, addDoc, serverTimestamp } from "firebase/firestore";
+import { ShieldAlert, Users, Database, Activity, LogOut, ChevronRight, Terminal, Crown, Shield, User as UserIcon, Eye, Globe2, Clock, Youtube, FileText, Upload, CheckCircle2 } from "lucide-react";
 
 type AdminTab = "analytics" | "users" | "cms";
 
@@ -23,6 +23,18 @@ export default function AdminCommandCenter() {
   const [analyticsStats, setAnalyticsStats] = useState({ totalViews: 0, uniqueIPs: 0, recent: [] as any[] });
   const [loadingAnalytics, setLoadingAnalytics] = useState(false);
 
+  // CMS State
+  const [videoTitle, setVideoTitle] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [isSubmittingVideo, setIsSubmittingVideo] = useState(false);
+  const [videoSuccess, setVideoSuccess] = useState(false);
+
+  const [docTitle, setDocTitle] = useState("");
+  const [docUrl, setDocUrl] = useState("");
+  const [docType, setDocType] = useState("past_paper");
+  const [isSubmittingDoc, setIsSubmittingDoc] = useState(false);
+  const [docSuccess, setDocSuccess] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -31,7 +43,7 @@ export default function AdminCommandCenter() {
   const isMasterAdmin = user?.email === "sahilkumardhinwa82@gmail.com";
   const hasAdminClearance = userData?.role === "admin" || isMasterAdmin;
 
-  // 🔒 VAULT DOOR: Kick out anyone who isn't an admin or the founder
+  // 🔒 VAULT DOOR
   useEffect(() => {
     if (!isLoading && mounted) {
       if (!user || !hasAdminClearance) {
@@ -40,7 +52,7 @@ export default function AdminCommandCenter() {
     }
   }, [user, hasAdminClearance, isLoading, mounted, router]);
 
-  // Fetch Users (Tab 1)
+  // Fetch Users
   useEffect(() => {
     if (activeTab === "users" && hasAdminClearance) {
       const fetchUsers = async () => {
@@ -62,7 +74,7 @@ export default function AdminCommandCenter() {
     }
   }, [activeTab, hasAdminClearance]);
 
-  // Fetch Analytics (Tab 2)
+  // Fetch Analytics
   useEffect(() => {
     if (activeTab === "analytics" && hasAdminClearance) {
       const fetchAnalytics = async () => {
@@ -77,7 +89,6 @@ export default function AdminCommandCenter() {
             const data = doc.data();
             const visits = data.visits || 1;
             total += visits;
-            
             if (data.ip) ipSet.add(data.ip);
             
             logs.push({
@@ -106,7 +117,6 @@ export default function AdminCommandCenter() {
     }
   }, [activeTab, hasAdminClearance]);
 
-  // Grant or Revoke Premium
   const togglePremium = async (userId: string, currentStatus: boolean) => {
     try {
       const userRef = doc(db, "users", userId);
@@ -115,6 +125,52 @@ export default function AdminCommandCenter() {
     } catch (error) {
       console.error("Error updating premium status:", error);
       alert("System Error: Could not update user status.");
+    }
+  };
+
+  // CMS HANDLERS
+  const handleVideoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!videoTitle || !videoUrl) return;
+    setIsSubmittingVideo(true);
+    try {
+      await addDoc(collection(db, "bams_reels"), {
+        title: videoTitle,
+        url: videoUrl,
+        createdAt: serverTimestamp(),
+      });
+      setVideoTitle("");
+      setVideoUrl("");
+      setVideoSuccess(true);
+      setTimeout(() => setVideoSuccess(false), 3000);
+    } catch (error) {
+      console.error("Failed to add video", error);
+      alert("Failed to inject video.");
+    } finally {
+      setIsSubmittingVideo(false);
+    }
+  };
+
+  const handleDocSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!docTitle || !docUrl) return;
+    setIsSubmittingDoc(true);
+    try {
+      await addDoc(collection(db, "bams_assets"), {
+        title: docTitle,
+        url: docUrl,
+        type: docType,
+        createdAt: serverTimestamp(),
+      });
+      setDocTitle("");
+      setDocUrl("");
+      setDocSuccess(true);
+      setTimeout(() => setDocSuccess(false), 3000);
+    } catch (error) {
+      console.error("Failed to add document", error);
+      alert("Failed to inject document.");
+    } finally {
+      setIsSubmittingDoc(false);
     }
   };
 
@@ -196,9 +252,7 @@ export default function AdminCommandCenter() {
 
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             
-            {/* ========================================== */}
-            {/* 1. USER PROTOCOLS TAB                      */}
-            {/* ========================================== */}
+            {/* 1. USER PROTOCOLS TAB */}
             {activeTab === "users" && (
               <div className="space-y-6">
                 <div className="flex justify-between items-end">
@@ -284,12 +338,9 @@ export default function AdminCommandCenter() {
               </div>
             )}
 
-            {/* ========================================== */}
-            {/* 2. ANALYTICS NODE TAB                      */}
-            {/* ========================================== */}
+            {/* 2. ANALYTICS NODE TAB */}
             {activeTab === "analytics" && (
               <div className="space-y-8">
-                
                 {loadingAnalytics ? (
                   <div className="border border-red-900/30 bg-[#050101] p-12 flex justify-center items-center rounded-sm">
                     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500"></div>
@@ -301,18 +352,12 @@ export default function AdminCommandCenter() {
                         <div className="absolute top-0 right-0 p-4 opacity-10 text-red-500 group-hover:scale-110 transition-transform"><Eye className="w-24 h-24" /></div>
                         <h4 className="text-gray-500 font-mono text-sm tracking-widest uppercase mb-2 relative z-10">Total Page Views</h4>
                         <div className="text-5xl font-bold text-white relative z-10">{analyticsStats.totalViews}</div>
-                        <div className="mt-4 text-xs text-red-500 font-mono relative z-10 flex items-center gap-2">
-                          <Activity className="w-3 h-3" /> Live Telemetry Active
-                        </div>
                       </div>
 
                       <div className="bg-[#050101] border border-red-900/30 p-6 rounded-sm shadow-xl relative overflow-hidden group hover:border-red-500/50 transition-colors">
                         <div className="absolute top-0 right-0 p-4 opacity-10 text-red-500 group-hover:scale-110 transition-transform"><Globe2 className="w-24 h-24" /></div>
                         <h4 className="text-gray-500 font-mono text-sm tracking-widest uppercase mb-2 relative z-10">Unique Visitors (IPs)</h4>
                         <div className="text-5xl font-bold text-white relative z-10">{analyticsStats.uniqueIPs}</div>
-                        <div className="mt-4 text-xs text-gray-500 font-mono relative z-10 flex items-center gap-2">
-                          <Shield className="w-3 h-3" /> Encrypted Fingerprints
-                        </div>
                       </div>
                     </div>
 
@@ -333,21 +378,12 @@ export default function AdminCommandCenter() {
                           <tbody className="divide-y divide-red-900/20">
                             {analyticsStats.recent.map((log, i) => (
                               <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                                <td className="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">
-                                  {log.time.toLocaleString()}
-                                </td>
+                                <td className="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">{log.time.toLocaleString()}</td>
                                 <td className="px-6 py-4 font-bold text-white">{log.name}</td>
                                 <td className="px-6 py-4 font-mono text-xs text-red-400">{log.ip}</td>
                                 <td className="px-6 py-4 font-mono text-right text-gray-300">{log.visits}</td>
                               </tr>
                             ))}
-                            {analyticsStats.recent.length === 0 && (
-                              <tr>
-                                <td colSpan={4} className="px-6 py-12 text-center text-gray-600 font-mono text-xs">
-                                  [ NO TRAFFIC DETECTED ]
-                                </td>
-                              </tr>
-                            )}
                           </tbody>
                         </table>
                       </div>
@@ -357,13 +393,106 @@ export default function AdminCommandCenter() {
               </div>
             )}
 
-            {/* ========================================== */}
-            {/* 3. CMS TAB (Placeholder for Phase 3)       */}
-            {/* ========================================== */}
+            {/* 3. MAINFRAME CMS TAB */}
             {activeTab === "cms" && (
-              <div className="text-gray-500 border border-red-900/20 bg-black/50 p-10 rounded-sm text-center font-mono">
-                [ INIT: CONTENT INJECTION SYSTEM ]
-                <br/><br/>(Next phase: MCQ & PDF Upload Forms)
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                {/* INJECT YOUTUBE REEL */}
+                <div className="bg-[#050101] border border-red-900/30 rounded-sm shadow-xl p-8 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-red-500/10 transition-colors"></div>
+                  <div className="flex items-center gap-3 mb-6 relative z-10">
+                    <Youtube className="w-6 h-6 text-red-500" />
+                    <h3 className="text-xl font-bold text-white uppercase tracking-wide">Inject Video Reel</h3>
+                  </div>
+                  
+                  <form onSubmit={handleVideoSubmit} className="space-y-5 relative z-10">
+                    <div>
+                      <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest mb-2">Reel Title</label>
+                      <input 
+                        type="text" 
+                        value={videoTitle}
+                        onChange={(e) => setVideoTitle(e.target.value)}
+                        placeholder="e.g. Sutra Sthana Chapter 1 Hack" 
+                        className="w-full bg-black border border-red-900/30 text-white rounded-sm p-3 focus:outline-none focus:border-red-500 transition-colors"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest mb-2">YouTube Embed URL</label>
+                      <input 
+                        type="url" 
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        placeholder="https://www.youtube.com/embed/..." 
+                        className="w-full bg-black border border-red-900/30 text-white rounded-sm p-3 focus:outline-none focus:border-red-500 transition-colors"
+                        required
+                      />
+                    </div>
+                    <button 
+                      type="submit" 
+                      disabled={isSubmittingVideo}
+                      className="w-full flex items-center justify-center gap-2 bg-red-950/40 text-red-500 border border-red-900/50 hover:bg-red-900/40 hover:text-white transition-colors font-bold py-3 rounded-sm shadow-[0_0_15px_rgba(255,0,0,0.1)] disabled:opacity-50"
+                    >
+                      {isSubmittingVideo ? <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div> : videoSuccess ? <><CheckCircle2 className="w-5 h-5" /> Injected</> : <><Upload className="w-4 h-4" /> Deploy Video</>}
+                    </button>
+                  </form>
+                </div>
+
+                {/* UPLOAD PDF ASSET */}
+                <div className="bg-[#050101] border border-amber-900/30 rounded-sm shadow-xl p-8 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/10 transition-colors"></div>
+                  <div className="flex items-center gap-3 mb-6 relative z-10">
+                    <FileText className="w-6 h-6 text-amber-500" />
+                    <h3 className="text-xl font-bold text-white uppercase tracking-wide">Upload Study Asset</h3>
+                  </div>
+                  
+                  <form onSubmit={handleDocSubmit} className="space-y-5 relative z-10">
+                    <div>
+                      <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest mb-2">Document Title</label>
+                      <input 
+                        type="text" 
+                        value={docTitle}
+                        onChange={(e) => setDocTitle(e.target.value)}
+                        placeholder="e.g. 2023 Batch Past Paper" 
+                        className="w-full bg-black border border-amber-900/30 text-white rounded-sm p-3 focus:outline-none focus:border-amber-500 transition-colors"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="col-span-2">
+                        <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest mb-2">Category</label>
+                        <select 
+                          value={docType}
+                          onChange={(e) => setDocType(e.target.value)}
+                          className="w-full bg-black border border-amber-900/30 text-white rounded-sm p-3 focus:outline-none focus:border-amber-500 transition-colors appearance-none"
+                        >
+                          <option value="past_paper">Past Paper (PDF)</option>
+                          <option value="notes">Revision Notes</option>
+                          <option value="template">Action Vault Template</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest mb-2">Cloud Drive Link (Google Drive / Firebase)</label>
+                      <input 
+                        type="url" 
+                        value={docUrl}
+                        onChange={(e) => setDocUrl(e.target.value)}
+                        placeholder="https://drive.google.com/..." 
+                        className="w-full bg-black border border-amber-900/30 text-white rounded-sm p-3 focus:outline-none focus:border-amber-500 transition-colors"
+                        required
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      disabled={isSubmittingDoc}
+                      className="w-full flex items-center justify-center gap-2 bg-amber-950/20 text-amber-500 border border-amber-900/40 hover:bg-amber-900/40 hover:text-white transition-colors font-bold py-3 rounded-sm shadow-[0_0_15px_rgba(245,158,11,0.1)] disabled:opacity-50"
+                    >
+                      {isSubmittingDoc ? <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div> : docSuccess ? <><CheckCircle2 className="w-5 h-5" /> Uploaded</> : <><Upload className="w-4 h-4" /> Deploy Asset</>}
+                    </button>
+                  </form>
+                </div>
+
               </div>
             )}
           </div>
