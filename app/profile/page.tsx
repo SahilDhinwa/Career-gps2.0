@@ -7,7 +7,7 @@ import { signOut, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes"; 
 import { useAuth } from "../../context/AuthContext";
-// Removed duplicate imports and added Terminal for the Batcomputer
+// Cleaned up imports
 import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon, Terminal } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
@@ -44,7 +44,6 @@ export default function UserProfile() {
     }
   };
 
-  // 🦇 FIXED IMAGE UPLOADER
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
@@ -60,7 +59,6 @@ export default function UserProfile() {
       const img = new Image();
       img.src = localImageUrl;
 
-      // Fail-safe if image rendering crashes
       img.onerror = () => {
         console.error("Failed to read image data.");
         setIsUploading(false);
@@ -71,7 +69,6 @@ export default function UserProfile() {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        // Aggressive compression to ensure Base64 string fits in Firebase Auth limits
         const MAX_WIDTH = 250;
         const MAX_HEIGHT = 250;
         let width = img.width;
@@ -93,22 +90,18 @@ export default function UserProfile() {
         canvas.height = height;
         ctx?.drawImage(img, 0, 0, width, height);
 
-        // Compress to 60% quality JPEG for a tiny data footprint
         const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
 
         try {
-          // 1. Save to Firestore
           const userRef = doc(db, "users", user.uid);
           await setDoc(userRef, { photoURL: compressedBase64 }, { merge: true });
           
-          // 2. Save to Auth Profile (Fallback if string is too long)
           try {
             await updateProfile(user, { photoURL: compressedBase64 });
           } catch (authError) {
             console.warn("Auth profile limit reached, but successfully stored in Firestore.");
           }
           
-          // 3. Force Instant UI Update
           setProfilePic(compressedBase64);
           if (refreshUserData) await refreshUserData(); 
           
@@ -145,10 +138,27 @@ export default function UserProfile() {
     }
   };
 
+  // 🚀 HIGH-PERFORMANCE SKELETON UI
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'batman' ? 'bg-transparent' : 'bg-background'}`}>
+        <div className="max-w-5xl mx-auto py-12 md:py-16 px-6">
+          <div className="bg-surface/40 border border-surfaceBorder rounded-sm p-6 md:p-12 mb-8 flex flex-col md:flex-row items-center gap-6 animate-pulse">
+            <div className="w-28 h-28 md:w-24 md:h-24 rounded-full bg-surfaceBorder/50 shrink-0"></div>
+            <div className="flex-1 space-y-4 w-full text-center md:text-left">
+              <div className="h-8 bg-surfaceBorder/50 rounded-sm w-3/4 md:w-1/3 mx-auto md:mx-0"></div>
+              <div className="h-4 bg-surfaceBorder/50 rounded-sm w-1/2 md:w-1/4 mx-auto md:mx-0"></div>
+            </div>
+            <div className="w-full md:w-32 h-12 bg-surfaceBorder/50 rounded-sm mt-4 md:mt-0"></div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <div className="h-64 bg-surface/40 border border-surfaceBorder rounded-sm animate-pulse"></div>
+              <div className="h-64 bg-surface/40 border border-surfaceBorder rounded-sm animate-pulse"></div>
+            </div>
+            <div className="h-96 bg-surface/40 border border-surfaceBorder rounded-sm animate-pulse"></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -205,7 +215,6 @@ export default function UserProfile() {
         <div className="bg-surface/80 backdrop-blur-md border border-amber-900/10 dark:border-amber-500/10 rounded-sm shadow-xl p-6 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transition-colors duration-300">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
             
-            {/* AVATAR UPLOADER */}
             <div className="relative">
               <div 
                 className="relative w-28 h-28 md:w-24 md:h-24 rounded-full border-4 border-surface shadow-xl shrink-0 group cursor-pointer overflow-hidden bg-background flex items-center justify-center"
@@ -253,8 +262,8 @@ export default function UserProfile() {
 
           <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
             
-            {/* 🦇 SECRET ADMIN TRAPDOOR */}
-            {userData?.role === "admin" && (
+            {/* 🦇 MASTER OVERRIDE ADMIN TRAPDOOR */}
+            {(userData?.role === "admin" || user?.email === "sahilkumardhinwa82@gmail.com") && (
               <button 
                 onClick={() => router.push("/admin")}
                 className="w-full md:w-auto px-6 py-3.5 md:py-3 bg-red-950/20 border border-red-900/40 text-red-500 font-bold rounded-sm hover:bg-red-900/40 hover:text-white transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,0,0,0.1)]"
