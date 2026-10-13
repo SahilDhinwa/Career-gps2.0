@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   userData: null,
   isPremium: false,
-  isLoading: true,
+  isLoading: true, // Starts true, but we will kill it instantly
   refreshUserData: async () => {},
 });
 
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isPremium, setIsPremium] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // BACKGROUND FETCH: Pulls fresh data and silently updates the local cache
+  // TRUE BACKGROUND FETCH: Never blocks the UI
   const fetchUserData = async (currentUser: User) => {
     try {
       const userRef = doc(db, "users", currentUser.uid);
@@ -56,11 +56,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         
-        // ⚡ INSTANT LOAD: Check local browser memory first
+        // ⚡ INSTANT UI UNBLOCK: Check cache and inject immediately
         if (typeof window !== "undefined") {
           const cachedData = localStorage.getItem(`veblen_cache_${currentUser.uid}`);
           if (cachedData) {
@@ -68,18 +68,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               const parsed = JSON.parse(cachedData);
               setUserData(parsed);
               setIsPremium(parsed.isPremium || false);
-              setIsLoading(false); // Unblock the UI instantly!
             } catch (e) {
               console.error("Cache parse error", e);
             }
           }
         }
 
-        // Silently fetch fresh data in the background
-        await fetchUserData(currentUser);
-        
-        // Failsafe: Turn off loading if there was no cache
+        // 🚀 FORCE SPINNER OFF IMMEDIATELY (Do not wait for network)
         setIsLoading(false); 
+
+        // 🤫 Fetch fresh data silently in the background
+        fetchUserData(currentUser);
 
       } else {
         // User is logged out
