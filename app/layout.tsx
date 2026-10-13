@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { ThemeProvider } from '../components/ThemeProvider'
 import { AuthProvider } from '../context/AuthContext'
-import BatcaveBackground from '../components/BatcaveBackground' // Added Background
+import BatcaveBackground from '../components/BatcaveBackground' 
 
 // 1. Configure the Heading Font (Syne)
 const syne = Syne({ 
@@ -50,11 +50,10 @@ export default function RootLayout({
           disableTransitionOnChange
           themes={['light', 'dark', 'batman']}
         >
-          {/* MOVED INSIDE THE PROVIDER */}
           <BatcaveBackground /> 
           
-                    <AuthProvider>
-            <AnalyticsTracker />  {/* 🦇 TRACKER INJECTED HERE */}
+          <AuthProvider>
+            <AnalyticsTracker />
             <Navbar />
             <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
               {children}
@@ -62,12 +61,6 @@ export default function RootLayout({
             <Footer />
           </AuthProvider>
 
-            <Navbar />
-            <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
-              {children}
-            </main>
-            <Footer />
-          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
