@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isPremium, setIsPremium] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // BACKGROUND FETCH: Pulls fresh data and silently updates the local cache
   const fetchUserData = async (currentUser: User) => {
     try {
       const userRef = doc(db, "users", currentUser.uid);
@@ -37,6 +38,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const data = userSnap.data();
         setUserData(data);
         setIsPremium(data.isPremium || false);
+        
+        // Save fresh data to browser memory for next time
+        if (typeof window !== "undefined") {
+          localStorage.setItem(`veblen_cache_${currentUser.uid}`, JSON.stringify(data));
+        }
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -53,13 +59,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+        
+        // ⚡ INSTANT LOAD: Check local browser memory first
+        if (typeof window !== "undefined") {
+          const cachedData = localStorage.getItem(`veblen_cache_${currentUser.uid}`);
+          if (cachedData) {
+            try {
+              const parsed = JSON.parse(cachedData);
+              setUserData(parsed);
+              setIsPremium(parsed.isPremium || false);
+              setIsLoading(false); // Unblock the UI instantly!
+            } catch (e) {
+              console.error("Cache parse error", e);
+            }
+          }
+        }
+
+        // Silently fetch fresh data in the background
         await fetchUserData(currentUser);
+        
+        // Failsafe: Turn off loading if there was no cache
+        setIsLoading(false); 
+
       } else {
+        // User is logged out
         setUser(null);
         setUserData(null);
         setIsPremium(false);
+        setIsLoading(false);
       }
-      setIsLoading(false); // Only stop loading AFTER we confirm identity
     });
 
     return () => unsubscribe();
