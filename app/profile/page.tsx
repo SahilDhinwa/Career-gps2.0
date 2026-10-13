@@ -44,6 +44,7 @@ export default function UserProfile() {
     }
   };
 
+    // 🦇 BULLETPROOF IMAGE UPLOADER
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
@@ -66,49 +67,59 @@ export default function UserProfile() {
       };
 
       img.onload = async () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        const MAX_WIDTH = 250;
-        const MAX_HEIGHT = 250;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        ctx?.drawImage(img, 0, 0, width, height);
-
-        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
-
         try {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          const MAX_WIDTH = 250;
+          const MAX_HEIGHT = 250;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Compress to 60% quality JPEG
+          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+
+          // ONLY save to Firestore (bypassing the buggy Firebase Auth updateProfile)
           const userRef = doc(db, "users", user.uid);
           await setDoc(userRef, { photoURL: compressedBase64 }, { merge: true });
           
-          try {
-            await updateProfile(user, { photoURL: compressedBase64 });
-          } catch (authError) {
-            console.warn("Auth profile limit reached, but successfully stored in Firestore.");
-          }
-          
+          // Force UI Update instantly
           setProfilePic(compressedBase64);
-          if (refreshUserData) await refreshUserData(); 
+          
+          // Update local storage cache immediately so it persists across reloads
+          if (typeof window !== "undefined") {
+            const cached = localStorage.getItem(`veblen_cache_${user.uid}`);
+            if (cached) {
+              const parsed = JSON.parse(cached);
+              parsed.photoURL = compressedBase64;
+              localStorage.setItem(`veblen_cache_${user.uid}`, JSON.stringify(parsed));
+            }
+          }
+
+          // Fetch quietly in the background
+          if (refreshUserData) refreshUserData(); 
           
         } catch (error) {
           console.error("Failed to save image to database:", error);
-          alert("Network error: Could not save profile picture.");
+          alert("Database error: Ensure Firebase Firestore rules are updated.");
         } finally {
+          // THIS GUARANTEES THE SPINNER STOPS NO MATTER WHAT
           setIsUploading(false);
         }
       };
