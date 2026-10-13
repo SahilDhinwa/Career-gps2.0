@@ -27,18 +27,22 @@ export default function AdminCommandCenter() {
     setMounted(true);
   }, []);
 
-  // 🔒 VAULT DOOR: Kick out anyone who isn't an admin
+  // MASTER ADMIN CHECK
+  const isMasterAdmin = user?.email === "sahilkumardhinwa82@gmail.com";
+  const hasAdminClearance = userData?.role === "admin" || isMasterAdmin;
+
+  // 🔒 VAULT DOOR: Kick out anyone who isn't an admin or the founder
   useEffect(() => {
     if (!isLoading && mounted) {
-      if (!user || userData?.role !== "admin") {
+      if (!user || !hasAdminClearance) {
         router.push("/"); 
       }
     }
-  }, [user, userData, isLoading, mounted, router]);
+  }, [user, hasAdminClearance, isLoading, mounted, router]);
 
   // Fetch Users (Tab 1)
   useEffect(() => {
-    if (activeTab === "users" && userData?.role === "admin") {
+    if (activeTab === "users" && hasAdminClearance) {
       const fetchUsers = async () => {
         setLoadingUsers(true);
         try {
@@ -56,11 +60,11 @@ export default function AdminCommandCenter() {
       };
       fetchUsers();
     }
-  }, [activeTab, userData]);
+  }, [activeTab, hasAdminClearance]);
 
   // Fetch Analytics (Tab 2)
   useEffect(() => {
-    if (activeTab === "analytics" && userData?.role === "admin") {
+    if (activeTab === "analytics" && hasAdminClearance) {
       const fetchAnalytics = async () => {
         setLoadingAnalytics(true);
         try {
@@ -85,7 +89,6 @@ export default function AdminCommandCenter() {
             });
           });
 
-          // Sort logs by most recent
           logs.sort((a, b) => b.time.getTime() - a.time.getTime());
 
           setAnalyticsStats({
@@ -101,7 +104,7 @@ export default function AdminCommandCenter() {
       };
       fetchAnalytics();
     }
-  }, [activeTab, userData]);
+  }, [activeTab, hasAdminClearance]);
 
   // Grant or Revoke Premium
   const togglePremium = async (userId: string, currentStatus: boolean) => {
@@ -115,7 +118,7 @@ export default function AdminCommandCenter() {
     }
   };
 
-  if (isLoading || !mounted || userData?.role !== "admin") {
+  if (isLoading || !mounted || !hasAdminClearance) {
     return (
       <div className="min-h-screen bg-[#020101] flex flex-col justify-center items-center">
         <ShieldAlert className="w-12 h-12 text-red-600 animate-pulse mb-4" />
@@ -241,7 +244,7 @@ export default function AdminCommandCenter() {
                               <div className="text-xs text-gray-500 mt-1">{u.email || "No email on record"}</div>
                             </td>
                             <td className="px-6 py-4">
-                              {u.role === "admin" ? (
+                              {u.role === "admin" || u.email === "sahilkumardhinwa82@gmail.com" ? (
                                 <span className="inline-flex items-center gap-1 text-red-500 text-xs font-bold font-mono bg-red-500/10 px-2 py-1 rounded-sm border border-red-500/20">
                                   <Shield className="w-3 h-3" /> ROOT
                                 </span>
@@ -259,7 +262,7 @@ export default function AdminCommandCenter() {
                               )}
                             </td>
                             <td className="px-6 py-4 text-right">
-                              {u.role !== "admin" && (
+                              {u.email !== "sahilkumardhinwa82@gmail.com" && (
                                 <button 
                                   onClick={() => togglePremium(u.id, !!u.isPremium)}
                                   className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-sm transition-all border ${
@@ -293,7 +296,6 @@ export default function AdminCommandCenter() {
                   </div>
                 ) : (
                   <>
-                    {/* Top Level Metric Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="bg-[#050101] border border-red-900/30 p-6 rounded-sm shadow-xl relative overflow-hidden group hover:border-red-500/50 transition-colors">
                         <div className="absolute top-0 right-0 p-4 opacity-10 text-red-500 group-hover:scale-110 transition-transform"><Eye className="w-24 h-24" /></div>
@@ -314,7 +316,6 @@ export default function AdminCommandCenter() {
                       </div>
                     </div>
 
-                    {/* Terminal Feed (Recent Traffic) */}
                     <div>
                       <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                         <Clock className="w-5 h-5 text-red-500" /> Incoming Traffic Logs
