@@ -1,478 +1,248 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
-// ============================================
-// BATCAVE — BLACK VOID + DYNAMIC FIRE EMBERS
-// ============================================
+// 🦇 TACTICAL OVERRIDE: Embers to match the cinematic sparks
+const BATMAN_EFFECT: "rain" | "embers" | "hud" = "embers";
 
 export default function BatcaveBackground() {
   const { theme } = useTheme();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const batmobileRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
+
+  // 🦇 ROUTING CHECK: Crackling plasma bat ONLY on Home and Profile
+  const isPlasmaPage = pathname === "/" || pathname === "/profile";
 
   // ==========================================
-  // DYNAMIC RED-ORANGE FIRE SPARKS
+  // BATMAN MODE: DYNAMIC CANVAS ENGINE 
   // ==========================================
-
   useEffect(() => {
     if (theme !== "batman") return;
-
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    if (!canvas || !ctx) return;
+    let animationFrameId: number;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
 
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
-    let animationFrame = 0;
-    let particles: Particle[] = [];
+    const setSize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    };
+    setSize();
+    window.addEventListener("resize", setSize);
+
+    const particlesArray: any[] = [];
+    let numberOfParticles = width < 768 ? 40 : 80;
 
     class Particle {
-      x = 0;
-      y = 0;
-      size = 0;
-      speedX = 0;
-      speedY = 0;
-      opacity = 0;
-      flickerSpeed = 0;
-      phase = 0;
-      color = "#ff4528";
-      blur = 0;
-      length = 0;
+      x: number; y: number; size: number = 0; speedX: number = 0; speedY: number = 0;
+      color: string = ""; blur: number = 0;
 
-      constructor(randomY = true) {
-        this.reset(randomY);
-      }
-
-      reset(randomY = true) {
+      constructor() {
         this.x = Math.random() * width;
-        this.y = randomY
-          ? Math.random() * height
-          : height + Math.random() * 40;
+        this.y = Math.random() * height; 
 
-        this.size = Math.random() * 1.8 + 0.45;
-        this.speedX = (Math.random() - 0.5) * 0.65;
-        this.speedY = -(Math.random() * 1.15 + 0.2);
-
-        this.opacity = Math.random() * 0.7 + 0.2;
-        this.flickerSpeed = Math.random() * 0.09 + 0.025;
-        this.phase = Math.random() * Math.PI * 2;
-
-        this.color = [
-          "#ff321d",
-          "#ff542b",
-          "#ff7950",
-          "#d92316",
-          "#ffb078",
-        ][Math.floor(Math.random() * 5)];
-
-        this.blur = Math.random() * 7 + 2;
-        this.length = Math.random() * 8 + 2;
+        if (BATMAN_EFFECT === "embers") {
+          this.size = Math.random() * 2 + 0.5;
+          this.speedX = Math.random() * 1 - 0.5;
+          this.speedY = Math.random() * -1.5 - 0.5; 
+          this.color = ["rgba(255, 30, 30, 0.9)", "rgba(255, 60, 20, 0.8)", "rgba(200, 10, 10, 0.8)"][Math.floor(Math.random() * 3)];
+          this.blur = Math.random() * 4 + 1;
+        } 
       }
 
       update() {
-        this.phase += this.flickerSpeed;
-
-        this.x += this.speedX + Math.sin(this.phase) * 0.22;
+        this.x += this.speedX;
         this.y += this.speedY;
-
-        if (this.y < -20 || this.x < -20 || this.x > width + 20) {
-          this.reset(false);
-
-          if (this.x > width) this.x = Math.random() * width;
-        }
+        this.speedX += (Math.random() * 0.02 - 0.01); 
+        if (this.y < -10) { this.y = height + 10; this.x = Math.random() * width; }
       }
 
       draw() {
-        const flicker =
-          0.55 + Math.sin(this.phase) * 0.3;
-
-        ctx!.save();
-
-        ctx!.globalAlpha = this.opacity * flicker;
-        ctx!.fillStyle = this.color;
-        ctx!.shadowColor = this.color;
-        ctx!.shadowBlur = this.blur;
-
-        ctx!.beginPath();
-        ctx!.ellipse(
-          this.x,
-          this.y,
-          this.size * 0.7,
-          this.size * 1.7,
-          -0.35,
-          0,
-          Math.PI * 2
-        );
-        ctx!.fill();
-
-        // Occasional elongated glowing sparks.
-        if (this.size > 1.5) {
-          ctx!.globalAlpha *= 0.55;
-          ctx!.strokeStyle = this.color;
-          ctx!.lineWidth = 0.8;
-
-          ctx!.beginPath();
-          ctx!.moveTo(this.x, this.y);
-          ctx!.lineTo(
-            this.x - this.speedX * this.length,
-            this.y - this.speedY * this.length * 0.6
-          );
-          ctx!.stroke();
-        }
-
-        ctx!.restore();
+        if (!ctx) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = this.blur;
+        ctx.shadowColor = this.color;
+        ctx.fill();
       }
     }
 
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
+    for (let i = 0; i < numberOfParticles; i++) {
+      particlesArray.push(new Particle());
+    }
 
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-      canvas!.width = Math.round(width * dpr);
-      canvas!.height = Math.round(height * dpr);
-
-      canvas!.style.width = `${width}px`;
-      canvas!.style.height = `${height}px`;
-
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const count = width < 768 ? 42 : 85;
-
-      particles = Array.from(
-        { length: count },
-        () => new Particle()
-      );
+    let lightningBolts: any[] = [];
+    let globalFlashIntensity = 0;
+    
+    const createLightningBolt = (startX: number, startY: number) => {
+      const segments: any[] = [];
+      let curX = startX;
+      let curY = startY;
+      const cloudDensity = Math.random(); 
+      const thickness = cloudDensity > 0.6 ? Math.random() * 4 + 2 : Math.random() * 2 + 1;
+      
+      while (curY < height) {
+        const nextX = curX + (Math.random() - 0.5) * 150;
+        const nextY = curY + Math.random() * 80 + 30;
+        segments.push({ x1: curX, y1: curY, x2: nextX, y2: nextY });
+        
+        if (Math.random() < (cloudDensity * 0.3)) {
+          segments.push({ x1: curX, y1: curY, x2: curX + (Math.random() - 0.5) * 200, y2: curY + Math.random() * 100 });
+        }
+        curX = nextX;
+        curY = nextY;
+      }
+      return { segments, alpha: 1.0, thickness };
     };
 
     const animate = () => {
-      // Completely transparent canvas:
-      // no fog, smoke, or colored background.
-      ctx!.clearRect(0, 0, width, height);
-
-      for (const particle of particles) {
-        particle.update();
-        particle.draw();
+      ctx.clearRect(0, 0, width, height);
+      
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
       }
 
-      animationFrame = requestAnimationFrame(animate);
+      if (Math.random() < 0.003) {
+        const startX = Math.random() * width;
+        lightningBolts.push(createLightningBolt(startX, 0));
+        globalFlashIntensity = 1.0; 
+      }
+
+      globalFlashIntensity *= 0.92;
+      
+      if (batmobileRef.current) batmobileRef.current.style.opacity = (globalFlashIntensity * 0.8).toString();
+
+      for (let i = lightningBolts.length - 1; i >= 0; i--) {
+        const bolt = lightningBolts[i];
+        bolt.alpha *= 0.85; 
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255, 255, 255, ${bolt.alpha})`;
+        ctx.lineWidth = bolt.thickness;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "white";
+        
+        bolt.segments.forEach((seg: any) => {
+          ctx.moveTo(seg.x1, seg.y1);
+          ctx.lineTo(seg.x2, seg.y2);
+        });
+        ctx.stroke();
+
+        if (bolt.alpha < 0.05) lightningBolts.splice(i, 1);
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
     };
-
-    resize();
-
-    window.addEventListener("resize", resize);
     animate();
 
     return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", setSize);
+      cancelAnimationFrame(animationFrameId);
     };
   }, [theme]);
 
   if (!mounted || theme !== "batman") return null;
 
-  // ==========================================
-  // BATMAN EMBLEM
-  // Reference-inspired symmetrical silhouette
-  // ==========================================
-
-  const batPath = `
-    M 320 483
-
-    C 347 400, 420 298, 562 244
-
-    C 551 276, 574 307, 615 328
-    C 650 345, 687 350, 720 345
-
-    L 736 276
-    L 754 311
-    L 768 306
-    L 782 311
-    L 800 276
-    L 816 345
-
-    C 849 350, 886 345, 921 328
-    C 962 307, 985 276, 974 244
-
-    C 1116 298, 1189 400, 1216 483
-
-    C 1180 447, 1135 411, 1091 408
-    C 1059 406, 1035 429, 1027 469
-
-    C 985 448, 945 440, 908 445
-
-    C 843 452, 792 502, 768 590
-
-    C 744 502, 693 452, 628 445
-
-    C 591 440, 551 448, 509 469
-
-    C 501 429, 477 406, 445 408
-
-    C 401 411, 356 447, 320 483
-
-    Z
-  `;
+  const batPath = "M320 483 C350 391 425 293 562 244 C552 277 578 312 617 330 C652 346 688 348 721 345 L736 276 L755 309 L768 307 L782 310 L800 276 L815 345 C848 348 884 346 919 330 C958 312 984 277 974 244 C1111 293 1186 391 1216 483 C1175 445 1130 411 1086 408 C1050 407 1031 433 1027 469 C986 449 946 441 908 445 C844 452 793 503 768 590 C743 503 692 452 628 445 C590 441 550 449 509 469 C505 433 486 407 450 408 C406 411 361 445 320 483 Z";
 
   return (
-    <div
-      className="
-        fixed inset-0 z-[-50]
-        overflow-hidden
-        pointer-events-none
-        select-none
-        bg-[#030303]
-      "
-      aria-hidden="true"
-    >
-      {/* =====================================
-          1. SUBTLE TACTICAL GRID
-          Barely visible against black.
-          ===================================== */}
-
-      <div
-        className="absolute inset-0"
+    <div className="fixed inset-0 z-[-50] bg-[#000000] overflow-hidden pointer-events-none flex items-center justify-center select-none">
+      
+      {/* 1. TACTICAL HUD GRID OVERLAY (Universally Active) */}
+      <div 
+        className="absolute inset-0 z-0 opacity-[0.15]"
         style={{
-          opacity: 0.09,
           backgroundImage: `
-            linear-gradient(
-              rgba(255, 55, 45, 0.28) 1px,
-              transparent 1px
-            ),
-            linear-gradient(
-              90deg,
-              rgba(255, 55, 45, 0.28) 1px,
-              transparent 1px
-            )
+            linear-gradient(rgba(255, 0, 0, 0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 0, 0, 0.2) 1px, transparent 1px)
           `,
-          backgroundSize: "108px 108px",
-          backgroundPosition: "center center",
-          maskImage:
-            "radial-gradient(ellipse at center, black 10%, transparent 85%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse at center, black 10%, transparent 85%)",
+          backgroundSize: '120px 120px',
+          backgroundPosition: 'center center'
         }}
       />
 
-      {/* =====================================
-          2. PURE BLACK BACKGROUND
-          No cloudy red SVG or smoke layers.
-          ===================================== */}
+      {/* 2. LIVE EMBERS CANVAS (No CSS clouds, no SVG smoke filters) */}
+      <canvas ref={canvasRef} className="absolute inset-0 z-0 w-full h-full opacity-100" aria-hidden="true" />
 
-      <div className="absolute inset-0 bg-[#030303]" />
-
-      {/* =====================================
-          3. LIVE FIRE EMBERS
-          ===================================== */}
-
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 h-full w-full"
-      />
-
-      {/* =====================================
-          4. CINEMATIC BATMAN EMBLEM
-          ===================================== */}
-
-      <div className="absolute inset-0 flex items-center justify-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1536 864"
+      {/* 3. PERFECTED BAT EMBLEM */}
+      <div className="relative z-10 w-full h-full max-w-[1400px] opacity-[0.95] flex items-center justify-center">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 1536 864" 
           preserveAspectRatio="xMidYMid meet"
-          className="
-            h-full w-full
-            max-w-[1600px]
-            overflow-visible
-          "
+          className="w-full h-full object-contain"
+          aria-hidden="true"
         >
           <defs>
-            {/* Broad, soft red halo. */}
-            <filter
-              id="batOuterGlow"
-              x="-30%"
-              y="-30%"
-              width="160%"
-              height="160%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feGaussianBlur
-                stdDeviation="17"
-                result="blur"
-              />
-              <feColorMatrix
-                in="blur"
-                type="matrix"
-                values="
-                  1 0 0 0 0
-                  0 0.025 0 0 0
-                  0 0 0.015 0 0
-                  0 0 0 0.8 0
-                "
-                result="redGlow"
-              />
+            {/* RAW CRACKLING PLASMA FILTER (For Home/Profile) */}
+            <filter id="cracklingPlasma" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+              <feGaussianBlur in="displaced" stdDeviation="1.5" result="glow" />
               <feMerge>
-                <feMergeNode in="redGlow" />
-                <feMergeNode in="SourceGraphic" />
+                <feMergeNode in="glow" />
+                <feMergeNode in="displaced" />
               </feMerge>
             </filter>
-
-            {/* Tight neon edge. */}
-            <filter
-              id="batHotGlow"
-              x="-15%"
-              y="-20%"
-              width="130%"
-              height="140%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feGaussianBlur
-                stdDeviation="4"
-                result="soft"
-              />
-              <feGaussianBlur
-                stdDeviation="11"
-                in="SourceGraphic"
-                result="wide"
-              />
-              <feMerge>
-                <feMergeNode in="wide" />
-                <feMergeNode in="soft" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-
-            {/* Restrained electrical irregularity. */}
-            <filter
-              id="batPlasma"
-              x="-10%"
-              y="-15%"
-              width="120%"
-              height="130%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.035 0.09"
-                numOctaves="2"
-                seed="12"
-                result="noise"
-              />
-              <feDisplacementMap
-                in="SourceGraphic"
-                in2="noise"
-                scale="1.7"
-                xChannelSelector="R"
-                yChannelSelector="G"
-                result="electricEdge"
-              />
-              <feMerge>
-                <feMergeNode in="electricEdge" />
-              </feMerge>
-            </filter>
-
-            {/* Solid dark emblem interior. */}
-            <linearGradient
-              id="batInterior"
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="1"
-            >
-              <stop offset="0%" stopColor="#080606" />
-              <stop offset="55%" stopColor="#030303" />
-              <stop offset="100%" stopColor="#010101" />
-            </linearGradient>
           </defs>
 
-          <g
-            className="animate-[pulse_5s_ease-in-out_infinite]"
-          >
-            {/* Low-intensity atmospheric edge glow. */}
-            <path
-              d={batPath}
-              fill="none"
-              stroke="#a10b0b"
-              strokeWidth="13"
-              strokeLinejoin="round"
-              opacity="0.28"
-              filter="url(#batOuterGlow)"
-            />
+          <g className="batman-emblem animate-[pulse_5s_ease-in-out_infinite]">
+            {/* AMBIENT RED GLOW (Universally Active) */}
+            <path d={batPath} fill="none" stroke="#7a0000" strokeWidth="25" opacity="0.4" filter="blur(25px)"/>
+            
+            {/* SOLID PITCH BLACK CORE (Universally Active) */}
+            <path d={batPath} fill="#000000" stroke="none" />
 
-            {/* Dark body: no red fill and no smoke. */}
-            <path
-              d={batPath}
-              fill="url(#batInterior)"
-              stroke="none"
-            />
-
-            {/* Main red plasma outline. */}
-            <path
-              d={batPath}
-              fill="none"
-              stroke="#ff241d"
-              strokeWidth="3.2"
-              strokeLinejoin="round"
-              filter="url(#batHotGlow)"
-              opacity="0.94"
-            />
-
-            {/* Fine irregular electric edge. */}
-            <path
-              d={batPath}
-              fill="none"
-              stroke="#ff4b3e"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-              filter="url(#batPlasma)"
-              opacity="0.95"
-            />
-
-            {/* Thin hot core for a sharp, defined silhouette. */}
-            <path
-              d={batPath}
-              fill="none"
-              stroke="#ffb0a5"
-              strokeWidth="0.75"
-              strokeLinejoin="round"
-              opacity="0.9"
-            />
-
-            {/* Small secondary trace for an electrical effect. */}
-            <path
-              d={batPath}
-              fill="none"
-              stroke="#ff3b30"
-              strokeWidth="0.7"
-              strokeLinejoin="round"
-              strokeDasharray="95 3 42 2 70 5"
-              opacity="0.65"
-            />
+            {/* CONDITIONAL FLAME RENDERING */}
+            {isPlasmaPage ? (
+              <>
+                {/* Pure Red Crackling Plasma Edge */}
+                <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="5" filter="url(#cracklingPlasma)"/>
+                {/* Smooth Hot-White Core */}
+                <path d={batPath} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" filter="blur(0.5px)" />
+                <path d={batPath} fill="none" stroke="#ffb3b3" strokeWidth="0.5" opacity="1" />
+              </>
+            ) : (
+              <>
+                {/* Standard Smooth Neon Render */}
+                <path d={batPath} fill="none" stroke="#ff0000" strokeWidth="12" opacity="0.8" filter="blur(12px)"/>
+                <path d={batPath} fill="none" stroke="#ff1a1a" strokeWidth="3" />
+                <path d={batPath} fill="none" stroke="#ffb3b3" strokeWidth="1" opacity="0.9" />
+              </>
+            )}
           </g>
         </svg>
       </div>
 
-      {/* =====================================
-          5. DARK EDGE VIGNETTE
-          Keeps attention on the emblem.
-          Does not introduce red fog.
-          ===================================== */}
+      {/* 4. THE BATMOBILE (Universally Active) */}
+      <div 
+        ref={batmobileRef}
+        className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 z-20 transition-opacity duration-75"
+        style={{ opacity: 0 }}
+      >
+        <svg viewBox="0 0 500 150" className="w-[280px] md:w-[450px] lg:w-[600px] drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" aria-hidden="true">
+          <path d="M 20 140 A 30 30 0 0 1 100 140 Z" fill="#020202" />
+          <path d="M 400 140 A 30 30 0 0 1 480 140 Z" fill="#020202" />
+          <path d="M 50 110 L 60 85 L 120 70 L 150 65 L 180 40 L 220 35 L 250 25 L 300 25 L 330 35 L 360 40 L 390 65 L 420 70 L 460 85 L 470 110 Z" fill="#050101" />
+          <path d="M 180 40 L 220 35 L 250 25 L 300 25 L 330 35" fill="none" stroke="#ffffff" strokeWidth="2" opacity="0.6" />
+          <path d="M 120 70 L 150 65 L 180 40" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.4" />
+        </svg>
+      </div>
 
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 48%, transparent 28%, rgba(0,0,0,0.28) 72%, #000 110%)",
-        }}
-      />
     </div>
   );
 }
