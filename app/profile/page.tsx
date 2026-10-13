@@ -7,7 +7,8 @@ import { signOut, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes"; 
 import { useAuth } from "../../context/AuthContext";
-import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon } from "lucide-react";
+// Removed duplicate imports and added Terminal for the Batcomputer
+import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon, Terminal } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
 export default function UserProfile() {
@@ -43,6 +44,7 @@ export default function UserProfile() {
     }
   };
 
+  // 🦇 FIXED IMAGE UPLOADER
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
@@ -55,17 +57,23 @@ export default function UserProfile() {
     setIsUploading(true);
     try {
       const localImageUrl = URL.createObjectURL(file);
-      setProfilePic(localImageUrl);
-
       const img = new Image();
       img.src = localImageUrl;
+
+      // Fail-safe if image rendering crashes
+      img.onerror = () => {
+        console.error("Failed to read image data.");
+        setIsUploading(false);
+        alert("Invalid or corrupt image file.");
+      };
 
       img.onload = async () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        const MAX_WIDTH = 400;
-        const MAX_HEIGHT = 400;
+        // Aggressive compression to ensure Base64 string fits in Firebase Auth limits
+        const MAX_WIDTH = 250;
+        const MAX_HEIGHT = 250;
         let width = img.width;
         let height = img.height;
 
@@ -85,19 +93,28 @@ export default function UserProfile() {
         canvas.height = height;
         ctx?.drawImage(img, 0, 0, width, height);
 
-        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+        // Compress to 60% quality JPEG for a tiny data footprint
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
 
         try {
+          // 1. Save to Firestore
           const userRef = doc(db, "users", user.uid);
           await setDoc(userRef, { photoURL: compressedBase64 }, { merge: true });
+          
+          // 2. Save to Auth Profile (Fallback if string is too long)
           try {
             await updateProfile(user, { photoURL: compressedBase64 });
           } catch (authError) {
-            console.warn("Auth profile limit reached, but safely stored in Firestore.");
+            console.warn("Auth profile limit reached, but successfully stored in Firestore.");
           }
-          await refreshUserData(); 
+          
+          // 3. Force Instant UI Update
+          setProfilePic(compressedBase64);
+          if (refreshUserData) await refreshUserData(); 
+          
         } catch (error) {
           console.error("Failed to save image to database:", error);
+          alert("Network error: Could not save profile picture.");
         } finally {
           setIsUploading(false);
         }
@@ -122,7 +139,7 @@ export default function UserProfile() {
     try {
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { [`checklistProgress.${roadmapId}`]: updatedList }, { merge: true });
-      await refreshUserData(); 
+      if (refreshUserData) await refreshUserData(); 
     } catch (error) {
       console.error("Failed to update checklist in database", error);
     }
@@ -139,7 +156,6 @@ export default function UserProfile() {
   const roadmapProgress = userData?.roadmapProgress || {};
 
   return (
-    // 🦇 FIX: Added dynamic background logic here!
     <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'batman' ? 'bg-transparent' : 'bg-background'}`}>
       
       <style dangerouslySetInnerHTML={{__html: `
@@ -175,7 +191,6 @@ export default function UserProfile() {
         }
       `}} />
       
-      {/* 🦇 HIDE HONEYCOMB COMPLETELY IN BATMAN MODE */}
       {theme !== "batman" && (
         <div className="honeycomb-bg">
           <div className="honeycomb-pattern"></div>
@@ -237,6 +252,17 @@ export default function UserProfile() {
           </div>
 
           <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
+            
+            {/* 🦇 SECRET ADMIN TRAPDOOR */}
+            {userData?.role === "admin" && (
+              <button 
+                onClick={() => router.push("/admin")}
+                className="w-full md:w-auto px-6 py-3.5 md:py-3 bg-red-950/20 border border-red-900/40 text-red-500 font-bold rounded-sm hover:bg-red-900/40 hover:text-white transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,0,0,0.1)]"
+              >
+                <Terminal className="w-5 h-5 md:w-4 md:h-4" /> Batcomputer
+              </button>
+            )}
+
             {mounted && (
               <button 
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
