@@ -1,7 +1,6 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
 type ParticleKind = "rain" | "ember";
@@ -11,14 +10,12 @@ interface LightningBolt { segs: BoltSeg[]; originX: number; alpha: number; age: 
 
 export default function BatcaveBackground() {
   const { theme } = useTheme();
-  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const batmobileRef = useRef<HTMLDivElement | null>(null);
   const flashRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => setMounted(true), []);
-  const isPlasmaPage = pathname === "/" || pathname === "/profile";
 
   useEffect(() => {
     if (theme !== "batman") return;
@@ -126,18 +123,15 @@ export default function BatcaveBackground() {
         const b = bolts[i];
         b.age += delta;
 
-        // Secondary restrike strobe effect
         if (b.restrike && b.age > 3.2 && b.age < 4.8) {
           b.alpha = 1; b.restrike = false; flashIntensity = Math.max(flashIntensity, 0.9);
         }
 
-        // Sky origin crown glow
         const skyGrad = ctx.createRadialGradient(b.originX, 0, 5, b.originX, 0, 320);
         skyGrad.addColorStop(0, `rgba(165, 195, 255, ${b.alpha * 0.35})`);
         skyGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
         ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, width, 320);
 
-        // Render outer plasma corona & white-hot core per segment
         for (const s of b.segs) {
           const segAlpha = b.alpha * s.a;
           if (segAlpha <= 0.02) continue;
@@ -177,63 +171,129 @@ export default function BatcaveBackground() {
 
   if (!mounted || theme !== "batman") return null;
 
-  const batPath = "M 320 483 C 347 400, 420 298, 562 244 C 551 276, 574 307, 615 328 C 650 345, 687 350, 720 345 L 736 276 L 754 311 L 768 306 L 782 311 L 800 276 L 816 345 C 849 350, 886 345, 921 328 C 962 307, 985 276, 974 244 C 1116 298, 1189 400, 1216 483 C 1180 447, 1135 411, 1091 408 C 1059 406, 1035 429, 1027 469 C 985 448, 945 440, 908 445 C 843 452, 792 502, 768 590 C 744 502, 693 452, 628 445 C 591 440, 551 448, 509 469 C 501 429, 477 406, 445 408 C 401 411, 356 447, 320 483 Z";
+  const batPath = "M 320 483 C 350 390, 428 292, 562 244 C 550 278, 576 312, 616 330 C 651 346, 688 349, 721 345 L 736 276 L 754 310 L 768 307 L 782 310 L 800 276 L 815 345 C 848 349, 885 346, 920 330 C 960 312, 986 278, 974 244 C 1108 292, 1186 390, 1216 483 C 1176 445, 1131 411, 1087 408 C 1051 407, 1032 432, 1027 469 C 986 448, 946 440, 908 445 C 844 452, 793 503, 768 592 C 743 503, 692 452, 628 445 C 590 440, 550 448, 509 469 C 504 432, 485 407, 449 408 C 405 411, 360 445, 320 483 Z";
 
   return (
-    <div className="fixed inset-0 z-[-50] overflow-hidden pointer-events-none select-none bg-[#020202]" aria-hidden="true">
-      {/* 1. SUBTLE TACTICAL GRID */}
-      <div
-        className="absolute inset-0 z-[1]"
-        style={{
-          opacity: 0.08,
-          backgroundImage: "linear-gradient(rgba(255, 30, 30, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 30, 30, 0.3) 1px, transparent 1px)",
-          backgroundSize: "120px 120px", backgroundPosition: "center center",
-          maskImage: "radial-gradient(ellipse at center, black, transparent 85%)", WebkitMaskImage: "radial-gradient(ellipse at center, black, transparent 85%)",
-        }}
-      />
-
-      {/* 2. DYNAMIC RAIN, EMBERS & LIGHTNING */}
-      <canvas ref={canvasRef} className="absolute inset-0 z-[2] h-full w-full" />
-      <div ref={flashRef} className="absolute inset-0 z-[3] bg-[#c8d7ff]" style={{ opacity: 0 }} />
-
-      {/* 3. BATMAN EMBLEM */}
-      <div className="absolute inset-0 z-[4] flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid meet" className="h-full w-full max-w-[1600px]">
+    <div className="fixed inset-0 z-[-50] overflow-hidden pointer-events-none select-none bg-[#000000]" aria-hidden="true">
+      {/* 1. MASTER SVG BACKGROUND (Grid, Masked Smoke, Plasma Bat & Static Embers — No Loading Bar) */}
+      <div className="absolute inset-0 z-[1] flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice" className="h-full w-full">
           <defs>
-            <filter id="batOuterGlow" x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
-              <feGaussianBlur stdDeviation="15" result="blur" />
-              <feFlood floodColor="#e20b16" floodOpacity="0.7" result="red" />
-              <feComposite in="red" in2="blur" operator="in" result="glow" />
+            <radialGradient id="smokeMaskGrad" cx="50%" cy="46%" r="36%" fx="50%" fy="46%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="55%" stopColor="#ffffff" stopOpacity="0.45" />
+              <stop offset="85%" stopColor="#000000" stopOpacity="0" />
+              <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+            </radialGradient>
+            <mask id="tightCenterMask"><rect width="1536" height="864" fill="url(#smokeMaskGrad)" /></mask>
+
+            <filter id="localizedSmoke" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.0065" numOctaves="4" seed="8" result="smokeNoise" />
+              <feColorMatrix type="matrix" values="0.22 0 0 0 0.02 0.04 0 0 0 0.01 0.04 0 0 0 0.01 0 0 0 0.55 0" in="smokeNoise" />
+            </filter>
+
+            <filter id="deepRedBloom" x="-35%" y="-35%" width="170%" height="170%" colorInterpolationFilters="sRGB">
+              <feGaussianBlur stdDeviation="24" result="blur24" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur10" />
+              <feMerge><feMergeNode in="blur24" /><feMergeNode in="blur10" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+
+            <filter id="plasmaFlame" x="-25%" y="-25%" width="150%" height="150%" colorInterpolationFilters="sRGB">
+              <feTurbulence type="fractalNoise" baseFrequency="0.045 0.08" numOctaves="3" seed="14" result="flameNoise" />
+              <feDisplacementMap in="SourceGraphic" in2="flameNoise" scale="11" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+              <feGaussianBlur in="displaced" stdDeviation="2.2" result="softFlame" />
+              <feMerge><feMergeNode in="softFlame" /><feMergeNode in="displaced" /></feMerge>
+            </filter>
+
+            <filter id="electricWisp" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="turbulence" baseFrequency="0.07" numOctaves="2" seed="3" result="wispNoise" />
+              <feDisplacementMap in="SourceGraphic" in2="wispNoise" scale="5.5" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+
+            <filter id="hudGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="4" result="glow" />
               <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
-            <filter id="batHotGlow" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
-              <feGaussianBlur stdDeviation="3.5" result="soft" />
-              <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="wide" />
-              <feMerge><feMergeNode in="wide" /><feMergeNode in="soft" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-            <filter id="batPlasma" x="-10%" y="-15%" width="120%" height="130%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="2" seed="12" result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.7" xChannelSelector="R" yChannelSelector="G" />
-            </filter>
-            <linearGradient id="batInterior" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#070606" /><stop offset="60%" stopColor="#030303" /><stop offset="100%" stopColor="#000000" />
-            </linearGradient>
+
+            <radialGradient id="batCoreFill" cx="50%" cy="45%" r="50%">
+              <stop offset="0%" stopColor="#110707" /><stop offset="65%" stopColor="#060303" /><stop offset="100%" stopColor="#020101" />
+            </radialGradient>
+
+            <path id="batOutline" d={batPath} />
           </defs>
+
+          {/* TACTICAL HUD GRID */}
+          <g stroke="#3d0a0a" strokeWidth="1" opacity="0.55">
+            <line x1="80" y1="310" x2="1456" y2="310" strokeOpacity="0.35" />
+            <line x1="80" y1="472" x2="1456" y2="472" strokeOpacity="0.5" />
+            <line x1="80" y1="634" x2="1456" y2="634" strokeOpacity="0.25" />
+            <line x1="142" y1="120" x2="142" y2="740" strokeOpacity="0.45" />
+            <line x1="285" y1="180" x2="285" y2="680" strokeOpacity="0.3" />
+            <line x1="1251" y1="180" x2="1251" y2="680" strokeOpacity="0.3" />
+            <line x1="1394" y1="120" x2="1394" y2="740" strokeOpacity="0.45" />
+            <circle cx="142" cy="310" r="2" fill="#801515" />
+            <circle cx="142" cy="472" r="2.5" fill="#a31919" />
+            <circle cx="285" cy="472" r="2" fill="#801515" />
+            <circle cx="1251" cy="472" r="2" fill="#801515" />
+            <circle cx="1394" cy="310" r="2" fill="#801515" />
+            <circle cx="1394" cy="472" r="2.5" fill="#a31919" />
+          </g>
+
+          {/* LOCALIZED SMOKE & CORE GLOW (Strictly Masked Behind Bat) */}
+          <g mask="url(#tightCenterMask)">
+            <ellipse cx="768" cy="410" rx="490" ry="230" fill="#2b0404" filter="url(#deepRedBloom)" opacity="0.65" />
+            <rect x="200" y="120" width="1136" height="580" filter="url(#localizedSmoke)" opacity="0.85" />
+          </g>
+
+          {/* THE BATMAN PLASMA EMBLEM */}
           <g className="animate-[pulse_5s_ease-in-out_infinite]">
-            <path d={batPath} fill="none" stroke="#a00008" strokeWidth="12" opacity="0.35" filter="url(#batOuterGlow)" />
-            <path d={batPath} fill="url(#batInterior)" />
-            <path d={batPath} fill="none" stroke="#ff1717" strokeWidth="3.2" strokeLinejoin="round" filter="url(#batHotGlow)" opacity="0.95" />
-            <path d={batPath} fill="none" stroke="#ff5145" strokeWidth="1.4" strokeLinejoin="round" filter="url(#batPlasma)" opacity="0.95" />
-            <path d={batPath} fill="none" stroke="#ffd0c7" strokeWidth="0.65" strokeLinejoin="round" opacity="0.85" />
-            {isPlasmaPage && <path d={batPath} fill="none" stroke="#ff3027" strokeWidth="0.7" strokeDasharray="95 3 42 2 70 5" opacity="0.75" />}
+            <use href="#batOutline" fill="none" stroke="#990005" strokeWidth="26" opacity="0.45" filter="url(#deepRedBloom)" />
+            <use href="#batOutline" fill="none" stroke="#ff0a12" strokeWidth="12" opacity="0.65" filter="url(#deepRedBloom)" />
+            <use href="#batOutline" fill="url(#batCoreFill)" />
+            <use href="#batOutline" fill="none" stroke="#cc1414" strokeWidth="1.2" opacity="0.7" transform="translate(0, 3) scale(0.992)" style={{ transformOrigin: "768px 415px" }} />
+            <use href="#batOutline" fill="none" stroke="#ff2200" strokeWidth="6.5" opacity="0.9" filter="url(#plasmaFlame)" />
+            <use href="#batOutline" fill="none" stroke="#ff6a3d" strokeWidth="2.6" opacity="0.95" filter="url(#electricWisp)" />
+            <use href="#batOutline" fill="none" stroke="#ff1e1e" strokeWidth="3.2" strokeLinejoin="round" filter="url(#hudGlow)" />
+            <use href="#batOutline" fill="none" stroke="#ffdede" strokeWidth="1.35" strokeLinejoin="round" opacity="0.95" />
+          </g>
+
+          {/* FLOATING FIRE EMBERS & SPARKS */}
+          <g filter="url(#hudGlow)">
+            <ellipse cx="182" cy="542" rx="4.5" ry="2" transform="rotate(-28 182 542)" fill="#ff451a" opacity="0.9" />
+            <ellipse cx="212" cy="605" rx="5.5" ry="2.2" transform="rotate(35 212 605)" fill="#ff5c26" opacity="0.85" />
+            <circle cx="242" cy="488" r="2.2" fill="#ff7b47" opacity="0.8" />
+            <circle cx="275" cy="638" r="2.8" fill="#ff3311" opacity="0.75" />
+            <ellipse cx="322" cy="665" rx="4" ry="1.6" transform="rotate(20 322 665)" fill="#ff6633" opacity="0.85" />
+            <circle cx="435" cy="492" r="2" fill="#ff884d" opacity="0.7" />
+            <circle cx="445" cy="592" r="3.5" fill="#ff2a00" opacity="0.6" />
+            <circle cx="496" cy="240" r="2.2" fill="#ff5522" opacity="0.8" />
+            <circle cx="545" cy="540" r="1.8" fill="#ff9966" opacity="0.8" />
+            <ellipse cx="645" cy="532" rx="3" ry="1.4" transform="rotate(-40 645 532)" fill="#ff5522" opacity="0.75" />
+            <ellipse cx="898" cy="645" rx="5" ry="1.8" transform="rotate(-55 898 645)" fill="#ff6b35" opacity="0.95" />
+            <circle cx="942" cy="562" r="2.2" fill="#ff8552" opacity="0.85" />
+            <circle cx="955" cy="612" r="2.6" fill="#ff3b14" opacity="0.75" />
+            <circle cx="1062" cy="252" r="2" fill="#ff7744" opacity="0.75" />
+            <circle cx="1152" cy="392" r="2.6" fill="#ff4411" opacity="0.8" />
+            <circle cx="1175" cy="388" r="1.8" fill="#ffaa77" opacity="0.9" />
+            <circle cx="1142" cy="542" r="2.5" fill="#ff5522" opacity="0.85" />
+            <ellipse cx="1220" cy="618" rx="4.2" ry="1.8" transform="rotate(-25 1220 618)" fill="#ff4818" opacity="0.9" />
+            <circle cx="1256" cy="336" r="2.4" fill="#ff5522" opacity="0.8" />
+            <circle cx="1282" cy="222" r="1.8" fill="#ff7744" opacity="0.7" />
+            <circle cx="1312" cy="442" r="2" fill="#ff6633" opacity="0.75" />
+            <circle cx="1352" cy="396" r="2.2" fill="#ff4411" opacity="0.8" />
+            <ellipse cx="1368" cy="648" rx="4.5" ry="1.6" transform="rotate(30 1368 648)" fill="#ff5522" opacity="0.8" />
           </g>
         </svg>
       </div>
 
-      {/* 4. BATMOBILE */}
+      {/* 2. DYNAMIC RAIN, EMBERS & FRACTAL LIGHTNING CANVAS */}
+      <canvas ref={canvasRef} className="absolute inset-0 z-[2] h-full w-full" />
+      <div ref={flashRef} className="absolute inset-0 z-[3] bg-[#c8d7ff]" style={{ opacity: 0 }} />
+
+      {/* 3. BATMOBILE */}
       <div
         ref={batmobileRef}
-        className="absolute bottom-[-12px] left-1/2 z-[5] -translate-x-1/2 transition-[filter] duration-100"
+        className="absolute bottom-[-12px] left-1/2 z-[4] -translate-x-1/2 transition-[filter] duration-100"
         style={{ opacity: 0.12, filter: "brightness(0.65) drop-shadow(0 0 5px rgba(190,205,255,0.12))" }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150" className="w-[280px] md:w-[450px] lg:w-[600px]">
@@ -259,8 +319,8 @@ export default function BatcaveBackground() {
         </svg>
       </div>
 
-      {/* 5. DARK VIGNETTE */}
-      <div className="absolute inset-0 z-[6]" style={{ background: "radial-gradient(ellipse at 50% 45%, transparent 28%, rgba(0,0,0,0.3) 72%, #000 110%)" }} />
+      {/* 4. DARK VIGNETTE */}
+      <div className="absolute inset-0 z-[5]" style={{ background: "radial-gradient(ellipse at 50% 45%, transparent 28%, rgba(0,0,0,0.3) 72%, #000 110%)" }} />
     </div>
   );
 }
