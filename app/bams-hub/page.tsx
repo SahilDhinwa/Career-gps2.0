@@ -140,24 +140,7 @@ export default function BAMSDashboard() {
               Open Notebook <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
-          {/* Pillar 5: Practical Manuals & PDFs (NEW) */}
-          <Link href="/bams-hub/practical" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6 sm:col-span-2 lg:col-span-1">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-sm text-[9px] font-bold text-emerald-500 uppercase tracking-widest shadow-sm z-10">
-              <Sparkles className="w-3 h-3" /> Essential
-            </div>
-            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <FlaskConical className="w-5 h-5 text-amber-500" />
-            </div>
-            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Practical Manuals</h2>
-            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
-              Download certified practical record guidelines, Dravyaguna specimen lists, and Rasa Shastra manuals.
-            </p>
-            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
-              Practical Vault <ChevronRight className="w-4 h-4" />
-            </div>
-          </Link>
-          
+        
         </div>
 
         <BamsReels/>
