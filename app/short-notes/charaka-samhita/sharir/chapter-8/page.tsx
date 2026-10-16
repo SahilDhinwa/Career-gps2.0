@@ -7,69 +7,60 @@ import { HandwrittenCanvas, HandwrittenTitle } from "@/components/HandwrittenCan
 import { NText, NAccent } from "@/components/NoteElements";
 
 // =========================================================
-// SHARED STRUCTURED DATA (Used across both themes)
+// SHARED STRUCTURED DATA (Single Notation Per Level)
 // =========================================================
 const antenatalRegimen = [
   {
     num: "1",
-    roman: "I",
-    month: "Month 1 (I) — प्रथम मास",
+    month: "Month 1 — प्रथम मास",
     term: "अनुपस्कृत शीत क्षीर (Unmedicated Cold Milk)",
     desc: "बिना किसी औषधि से सिद्ध किया हुआ ठंडा दूध और सात्म्य भोजन का सेवन।",
   },
   {
     num: "2",
-    roman: "II",
-    month: "Month 2 (II) — द्वितीय मास",
+    month: "Month 2 — द्वितीय मास",
     term: "मधुरौषध सिद्ध क्षीर",
     desc: "मधुर वर्ग (जीवनीय गण) की औषधियों से पकाया हुआ दूध।",
   },
   {
     num: "3",
-    roman: "III",
-    month: "Month 3 (III) — तृतीय मास",
+    month: "Month 3 — तृतीय मास",
     term: "मधु-सर्पिः संयुक्त क्षीर",
     desc: "दूध में शहद और घी (असमान मात्रा में) मिलाकर सेवन कराना।",
   },
   {
     num: "4",
-    roman: "IV",
-    month: "Month 4 (IV) — चतुर्थ मास",
+    month: "Month 4 — चतुर्थ मास",
     term: "अक्षमात्र नवनीत (1 Aksha Butter)",
     desc: "दूध से निकाले गए 1 अक्ष (लगभग 12 ग्राम) मक्खन का सेवन।",
   },
   {
     num: "5",
-    roman: "V",
-    month: "Month 5 (V) — पञ्चम मास",
+    month: "Month 5 — पञ्चम मास",
     term: "क्षीर-सर्पिः (Ghee from Milk)",
     desc: "दूध से सीधे निकाले गए घी (क्षीरघृत) का सेवन।",
   },
   {
     num: "6",
-    roman: "VI",
-    month: "Month 6 (VI) — षष्ठ मास",
+    month: "Month 6 — षष्ठ मास",
     term: "मधुरौषध सिद्ध क्षीर-सर्पिः",
     desc: "मधुर औषधियों से सिद्ध किया हुआ क्षीरघृत।",
   },
   {
     num: "7",
-    roman: "VII",
-    month: "Month 7 (VII) — सप्तम मास",
+    month: "Month 7 — सप्तम मास",
     term: "मधुरौषध सिद्ध घृत + किक्किस चिकित्सा",
     desc: "Month 6 के समान मधुर सिद्ध घृत। (पेट पर खुजली/किक्किस होने पर करवीर/बेर के काढ़े से परिषेक और चन्दन-मृणाल का लेप)।",
   },
   {
     num: "8",
-    roman: "VIII",
-    month: "Month 8 (VIII) — अष्टम मास",
+    month: "Month 8 — अष्टम मास",
     term: "क्षीर-यवागू सर्पिष्मती (Milk Gruel with Ghee)",
     desc: "ओज की अस्थिरता को रोकने के लिए दूध और घी से बनी यवागू (दलिया/खीर) का सेवन।",
   },
   {
     num: "9",
-    roman: "IX",
-    month: "Month 9 (IX) — नवम मास",
+    month: "Month 9 — नवम मास",
     term: "अनुवासन बस्ति एवं योनि पिचु",
     desc: "मधुर औषधियों से सिद्ध तेल की अनुवासन बस्ति और उसी तेल में भिगोया हुआ पिचु योनि में धारण करना (गर्भमार्ग के स्नेहन हेतु)।",
   },
@@ -78,7 +69,6 @@ const antenatalRegimen = [
 const fetalDisorders = [
   {
     num: "1",
-    roman: "I",
     name: "उपविष्टक (Upavishtaka)",
     cause: "उष्ण-तीक्ष्ण पदार्थ सेवन या योनि से रक्तस्राव (पुष्पदर्शन)",
     features:
@@ -86,7 +76,6 @@ const fetalDisorders = [
   },
   {
     num: "2",
-    roman: "II",
     name: "नागोदर (Nagodara / उपशुष्कक)",
     cause: "उपवास, रूक्ष आहार या वात प्रकोपक कारण",
     features:
@@ -94,7 +83,6 @@ const fetalDisorders = [
   },
   {
     num: "3",
-    roman: "III",
     name: "लीनगर्भ (Linagarbha)",
     cause: "वात दोष का प्रकोप",
     features:
@@ -102,7 +90,6 @@ const fetalDisorders = [
   },
   {
     num: "4",
-    roman: "IV",
     name: "मृतगर्भ (Mritagarbha / IUFD)",
     cause: "गर्भ में शिशु की मृत्यु",
     features:
@@ -110,7 +97,6 @@ const fetalDisorders = [
   },
   {
     num: "5",
-    roman: "V",
     name: "मूढगर्भ (Mudhagarbha / Obstructed Labor)",
     cause: "प्रसव काल में वायु का विगुण होना",
     features: "प्रसव के समय गर्भ का मार्ग में टेढ़ा होकर फंस जाना।",
@@ -119,37 +105,37 @@ const fetalDisorders = [
 
 const newbornCareSteps = [
   {
-    step: "Step 1 (I)",
+    step: "Step 1",
     title: "प्राणप्रत्यागमन (Resuscitation)",
     detail:
       "चेतना न होने पर कान के पास दो पत्थरों का संघट्टन (अश्मनोः सङ्घट्टनम्), चेहरे पर ठंडा/गर्म जल छिड़कना और सूप (Winnowing basket) से हवा करना।",
   },
   {
-    step: "Step 2 (II)",
+    step: "Step 2",
     title: "मुख-कण्ठ विशोधन (Clearing Airways)",
     detail:
       "उंगली में रुई लपेटकर शिशु के मुख और कण्ठ में भरे कफ (उल्ब) को साफ करना।",
   },
   {
-    step: "Step 3 (III)",
+    step: "Step 3",
     title: "गर्भोदक वमन (Emesis of Amniotic Fluid)",
     detail:
       "पेट में गए गर्भोदक को निकालने के लिए सैन्धव लवण और घी चटाकर वमन कराना।",
   },
   {
-    step: "Step 4 (IV)",
+    step: "Step 4",
     title: "नालछेदन (Cutting Umbilical Cord)",
     detail:
       "नाभि मूल से 8 Angula छोड़कर धागे से बांधना और उसके ऊपर अर्धधार तीक्ष्ण शस्त्र से नाल काटना।",
   },
   {
-    step: "Step 5 (V)",
+    step: "Step 5",
     title: "जातकर्म (Jatakarma)",
     detail:
       "सोने की शलाका से मधु और घृत चटाना, तत्पश्चात माता के दक्षिण स्तन (Right Breast) से स्तनपान कराना।",
   },
   {
-    step: "Step 6 (VI)",
+    step: "Step 6",
     title: "रक्षाकर्म (Protective Fumigation)",
     detail:
       "सूतिकागार में सरसों, अलसी, हींग, गुग्गुलु और वचा से धूपन (संक्रमण से बचाव हेतु)।",
@@ -157,15 +143,14 @@ const newbornCareSteps = [
 ];
 
 const harmfulFactors = [
-  { id: "1 (I)", term: "उत्कटासन (Utkatasana)", desc: "उकड़ू बैठना या कठोर व विषम आसन पर बैठना।" },
-  { id: "2 (II)", term: "वेगविधारण (Vegavidharana)", desc: "वात, मूत्र और पुरीष (मल) के वेगों को रोकना।" },
-  { id: "3 (III)", term: "दारुण-आयास (Daruna Ayasa)", desc: "अत्यधिक कठोर व्यायाम या शारीरिक परिश्रम करना।" },
-  { id: "4 (IV)", term: "तीक्ष्ण-उष्ण-गुरु भोजन", desc: "अत्यधिक तीखा, गर्म और पचने में भारी भोजन करना।" },
-  { id: "5 (V)", term: "रक्तवस्त्र एवं मद्यपान", desc: "लाल वस्त्र धारण करना तथा मद्य/नशीले पदार्थों का सेवन।" },
+  { id: "1", term: "उत्कटासन (Utkatasana)", desc: "उकड़ू बैठना या कठोर व विषम आसन पर बैठना।" },
+  { id: "2", term: "वेगविधारण (Vegavidharana)", desc: "वात, मूत्र और पुरीष (मल) के वेगों को रोकना।" },
+  { id: "3", term: "दारुण-आयास (Daruna Ayasa)", desc: "अत्यधिक कठोर व्यायाम या शारीरिक परिश्रम करना।" },
+  { id: "4", term: "तीक्ष्ण-उष्ण-गुरु भोजन", desc: "अत्यधिक तीखा, गर्म और पचने में भारी भोजन करना।" },
+  { id: "5", term: "रक्तवस्त्र एवं मद्यपान", desc: "लाल वस्त्र धारण करना तथा मद्य/नशीले पदार्थों का सेवन।" },
 ];
 
 export default function CharakaSharirChapter8() {
-  // "notebook" = Chapter 6 Handwritten Style | "tactical" = Extra Modern Cards & Flowchart Theme
   const [noteTheme, setNoteTheme] = useState<"notebook" | "tactical">("notebook");
 
   // =========================================================
@@ -199,7 +184,7 @@ export default function CharakaSharirChapter8() {
               <Sparkles className="w-3.5 h-3.5" /> Charaka Samhita // Sharira Sthana
             </div>
             <h1 className="font-heading text-3xl md:text-5xl font-bold text-foreground mb-3">
-              Chapter 8 (VIII): जातिसूत्रीय शारीर
+              Chapter 8: जातिसूत्रीय शारीर
             </h1>
             <p className="text-foreground/70 text-sm md:text-base max-w-3xl leading-relaxed">
               गर्भस्थापन से लेकर प्रसव (Delivery), गर्भव्यापद् (5 Fetal Disorders), मासानुमासिक गर्भिणी परिचर्या (Month 1–9), नवजात शिशु परिचर्या (कौमारभृत्य), धात्री और स्तन्य परीक्षा का संपूर्ण शास्त्रीय विश्लेषण।
@@ -213,7 +198,7 @@ export default function CharakaSharirChapter8() {
                 Section I
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-bold">
-                1. गर्भस्थापन की विधि (Method of Conception & Pre-conception Care)
+                गर्भस्थापन की विधि (Method of Conception & Pre-conception Care)
               </h2>
             </div>
 
@@ -225,7 +210,7 @@ export default function CharakaSharirChapter8() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 bg-surface border border-surfaceBorder rounded-sm">
                     <div className="text-xs font-mono text-primary font-bold mb-1">
-                      Type 1 (I) // पुत्रकामा
+                      1. पुत्रकामा
                     </div>
                     <div className="font-bold text-sm mb-2">Desiring a Male Child</div>
                     <p className="text-xs text-foreground/70 leading-relaxed">
@@ -234,7 +219,7 @@ export default function CharakaSharirChapter8() {
                   </div>
                   <div className="p-4 bg-surface border border-surfaceBorder rounded-sm">
                     <div className="text-xs font-mono text-amber-500 font-bold mb-1">
-                      Type 2 (II) // दुहितृकामा
+                      2. दुहितृकामा
                     </div>
                     <div className="font-bold text-sm mb-2">Desiring a Female Child</div>
                     <p className="text-xs text-foreground/70 leading-relaxed">
@@ -271,7 +256,7 @@ export default function CharakaSharirChapter8() {
                 Section II
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-bold">
-                2. गर्भोपघातकर भाव (5 Major Factors Harmful to Fetus)
+                गर्भोपघातकर भाव (5 Major Factors Harmful to Fetus)
               </h2>
             </div>
 
@@ -297,7 +282,7 @@ export default function CharakaSharirChapter8() {
                 Section III
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-bold">
-                3. गर्भव्यापद् / गर्भ की विकृतियाँ (5 Major Fetal Disorders)
+                गर्भव्यापद् / गर्भ की विकृतियाँ (5 Major Fetal Disorders)
               </h2>
             </div>
 
@@ -309,7 +294,7 @@ export default function CharakaSharirChapter8() {
                 {fetalDisorders.map((d) => (
                   <div key={d.num} className="bg-surface border border-surfaceBorder p-3 rounded-sm text-center">
                     <div className="text-xs font-mono font-bold text-primary">
-                      Type {d.num} ({d.roman})
+                      Type {d.num}
                     </div>
                     <div className="font-bold text-sm mt-1">{d.name.split(" (")[0]}</div>
                   </div>
@@ -323,7 +308,7 @@ export default function CharakaSharirChapter8() {
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-base text-foreground">{d.name}</h3>
                     <span className="text-xs font-mono px-2 py-0.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-sm">
-                      #{d.num} / {d.roman}
+                      #{d.num}
                     </span>
                   </div>
                   <p className="text-xs text-amber-500/90 font-medium">
@@ -344,7 +329,7 @@ export default function CharakaSharirChapter8() {
                 Section IV
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-bold">
-                4. मासानुमासिक गर्भिणी परिचर्या (Month 1 to 9 Antenatal Regimen)
+                मासानुमासिक गर्भिणी परिचर्या (Month 1 to 9 Antenatal Regimen)
               </h2>
             </div>
 
@@ -358,8 +343,8 @@ export default function CharakaSharirChapter8() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-surfaceBorder bg-background/30">
-                  {antenatalRegimen.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-foreground/[0.02] transition-colors">
+                  {antenatalRegimen.map((row) => (
+                    <tr key={row.num} className="hover:bg-foreground/[0.02] transition-colors">
                       <td className="py-3.5 px-4 font-mono font-bold text-primary whitespace-nowrap">
                         {row.month}
                       </td>
@@ -383,14 +368,14 @@ export default function CharakaSharirChapter8() {
                 Section V
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-bold">
-                5. सूतिकागार और प्रसव काल (Maternity Ward & Labor Protocol)
+                सूतिकागार और प्रसव काल (Maternity Ward & Labor Protocol)
               </h2>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="bg-background/60 border border-surfaceBorder p-5 rounded-sm space-y-2">
                 <div className="text-xs font-mono text-amber-500 font-bold uppercase">
-                  Part I // सूतिकागार (Month 9)
+                  A. सूतिकागार (Month 9)
                 </div>
                 <h3 className="font-bold text-base">प्रसूति गृह की तैयारी</h3>
                 <p className="text-xs md:text-sm text-foreground/75 leading-relaxed">
@@ -400,7 +385,7 @@ export default function CharakaSharirChapter8() {
 
               <div className="bg-background/60 border border-surfaceBorder p-5 rounded-sm space-y-2">
                 <div className="text-xs font-mono text-primary font-bold uppercase">
-                  Part II // आसन्न प्रसव के 5 लक्षण
+                  B. आसन्न प्रसव के 5 लक्षण
                 </div>
                 <ul className="space-y-1.5 text-xs md:text-sm text-foreground/80">
                   <li><strong>1. क्लम (Klama):</strong> बिना परिश्रम के थकावट।</li>
@@ -413,7 +398,7 @@ export default function CharakaSharirChapter8() {
 
               <div className="bg-background/60 border border-surfaceBorder p-5 rounded-sm space-y-2">
                 <div className="text-xs font-mono text-red-400 font-bold uppercase">
-                  Part III // अपरा पातन (Placenta Expulsion)
+                  C. अपरा पातन (Placenta Expulsion)
                 </div>
                 <h3 className="font-bold text-base">आँवल गिराने के उपाय</h3>
                 <p className="text-xs md:text-sm text-foreground/75 leading-relaxed">
@@ -430,20 +415,17 @@ export default function CharakaSharirChapter8() {
                 Section VI
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-bold">
-                6. नवजात शिशु परिचर्या (Step-by-Step Newborn Resuscitation & Jatakarma Flowchart)
+                नवजात शिशु परिचर्या (Step-by-Step Newborn Resuscitation & Jatakarma Flowchart)
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {newbornCareSteps.map((s, index) => (
+              {newbornCareSteps.map((s) => (
                 <div key={s.step} className="bg-background/60 border border-surfaceBorder p-5 rounded-sm relative flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-mono font-bold px-2 py-0.5 bg-primary/15 text-primary rounded-sm">
                         {s.step}
-                      </span>
-                      <span className="text-xs font-mono text-foreground/40">
-                        0{index + 1}
                       </span>
                     </div>
                     <h4 className="font-bold text-base mb-2">{s.title}</h4>
@@ -459,19 +441,19 @@ export default function CharakaSharirChapter8() {
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 <div className="p-3 bg-background/70 border border-surfaceBorder rounded-sm">
-                  <strong className="text-red-400 block">1 (I). आयाम (Ayama)</strong>
+                  <strong className="text-red-400 block">1. आयाम (Ayama)</strong>
                   लंबाई में सूजन होना
                 </div>
                 <div className="p-3 bg-background/70 border border-surfaceBorder rounded-sm">
-                  <strong className="text-red-400 block">2 (II). उत्तुण्डित (Uttundita)</strong>
+                  <strong className="text-red-400 block">2. उत्तुण्डित (Uttundita)</strong>
                   गोल उभार होना
                 </div>
                 <div className="p-3 bg-background/70 border border-surfaceBorder rounded-sm">
-                  <strong className="text-red-400 block">3 (III). पिण्डालिका (Pindalika)</strong>
+                  <strong className="text-red-400 block">3. पिण्डालिका (Pindalika)</strong>
                   गोलाकार गांठ पड़ना
                 </div>
                 <div className="p-3 bg-background/70 border border-surfaceBorder rounded-sm">
-                  <strong className="text-red-400 block">4 (IV). विजृम्भिक (Vijrimbhika)</strong>
+                  <strong className="text-red-400 block">4. विजृम्भिक (Vijrimbhika)</strong>
                   चारों ओर फैलने वाला घाव
                 </div>
               </div>
@@ -485,7 +467,7 @@ export default function CharakaSharirChapter8() {
                 Section VII
               </span>
               <h2 className="font-heading text-xl md:text-2xl font-bold">
-                7. धात्री परीक्षा और स्तन्य विज्ञान (Wet Nurse & Breast Milk Analysis)
+                धात्री परीक्षा और स्तन्य विज्ञान (Wet Nurse & Breast Milk Analysis)
               </h2>
             </div>
 
@@ -521,19 +503,19 @@ export default function CharakaSharirChapter8() {
                 </thead>
                 <tbody className="divide-y divide-surfaceBorder bg-background/30">
                   <tr>
-                    <td className="py-3 px-4 font-bold text-primary">1 (I). वातदुष्ट स्तन्य</td>
+                    <td className="py-3 px-4 font-bold text-primary">1. वातदुष्ट स्तन्य</td>
                     <td className="py-3 px-4">कषाय (Astringent), रूक्ष</td>
                     <td className="py-3 px-4 font-semibold text-amber-500">पानी पर तैरता है (उदके प्लवते)</td>
                     <td className="py-3 px-4">वात रोग एवं विबन्ध (कब्ज)</td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 font-bold text-primary">2 (II). पित्तदुष्ट स्तन्य</td>
+                    <td className="py-3 px-4 font-bold text-primary">2. पित्तदुष्ट स्तन्य</td>
                     <td className="py-3 px-4">कटु, अम्ल या लवण</td>
                     <td className="py-3 px-4 font-semibold text-amber-500">पीली या नीली धारियाँ (राजि) बनाता है</td>
                     <td className="py-3 px-4">पित्तज विकार, तृष्णा व ज्वर</td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 font-bold text-primary">3 (III). कफदुष्ट स्तन्य</td>
+                    <td className="py-3 px-4 font-bold text-primary">3. कफदुष्ट स्तन्य</td>
                     <td className="py-3 px-4">अत्यधिक मधुर, पिच्छिल, घना</td>
                     <td className="py-3 px-4 font-semibold text-amber-500">पानी में डूब जाता है (उदके अवसीदति)</td>
                     <td className="py-3 px-4">छर्दि (उल्टी), निद्राधिक्य, श्वास रोग</td>
@@ -548,9 +530,9 @@ export default function CharakaSharirChapter8() {
                   C. क्षीरदोष के 3 विशिष्ट प्रकार (3 Specific Milk Defects)
                 </h4>
                 <ul className="space-y-1.5 text-xs md:text-sm text-foreground/80">
-                  <li><strong>1 (I). वैरस्य (Bad Taste):</strong> वात के कारण दूध का बेस्वाद या कसैला होना।</li>
-                  <li><strong>2 (II). फेनसङ्घात (Frothy Milk):</strong> वात-पित्त के कारण दूध का झागदार होना।</li>
-                  <li><strong>3 (III). स्नेहहानि / रौक्ष्य (Loss of Fat):</strong> वात के कारण चिकनाई कम होना (शिशु कृश हो जाता है)।</li>
+                  <li><strong>1. वैरस्य (Bad Taste):</strong> वात के कारण दूध का बेस्वाद या कसैला होना।</li>
+                  <li><strong>2. फेनसङ्घात (Frothy Milk):</strong> वात-पित्त के कारण दूध का झागदार होना।</li>
+                  <li><strong>3. स्नेहहानि / रौक्ष्य (Loss of Fat):</strong> वात के कारण चिकनाई कम होना (शिशु कृश हो जाता है)।</li>
                 </ul>
               </div>
 
@@ -576,7 +558,7 @@ export default function CharakaSharirChapter8() {
                   Section VIII
                 </span>
                 <h2 className="font-heading text-lg md:text-xl font-bold">
-                  8. कुमारगार एवं नामकरण संस्कार
+                  कुमारगार एवं नामकरण संस्कार
                 </h2>
               </div>
               <p className="text-xs md:text-sm text-foreground/80 leading-relaxed">
@@ -586,8 +568,8 @@ export default function CharakaSharirChapter8() {
                 <div className="font-bold text-amber-500">
                   नामकरण संस्कार (On Day 10 — दशमेऽहनि, 2 Names):
                 </div>
-                <p><strong>1 (I). नक्षत्रिक नाम:</strong> जन्म नक्षत्र पर आधारित नाम।</p>
-                <p><strong>2 (II). अभिप्रायिक नाम:</strong> व्यावहारिक नाम (घोषवत् वर्णों से प्रारंभ होने वाला तथा <strong>2 या 4 अक्षरों</strong> वाला)।</p>
+                <p><strong>1. नक्षत्रिक नाम:</strong> जन्म नक्षत्र पर आधारित नाम।</p>
+                <p><strong>2. अभिप्रायिक नाम:</strong> व्यावहारिक नाम (घोषवत् वर्णों से प्रारंभ होने वाला तथा <strong>2 या 4 अक्षरों</strong> वाला)।</p>
               </div>
             </section>
 
@@ -597,7 +579,7 @@ export default function CharakaSharirChapter8() {
                   Section IX
                 </span>
                 <h2 className="font-heading text-lg md:text-xl font-bold">
-                  9. दीर्घायु बालक के लक्षण (Longevity Signs)
+                  दीर्घायु बालक के लक्षण (Longevity Signs)
                 </h2>
               </div>
               <ul className="space-y-2 text-xs md:text-sm text-foreground/80 leading-relaxed">
@@ -697,10 +679,10 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 1: METHOD OF CONCEPTION & PUMSAVANA */}
+          {/* SECTION I: METHOD OF CONCEPTION & PUMSAVANA */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              1 (I). गर्भस्थापन की विधि एवं पुंसवन संस्कार
+              I. गर्भस्थापन की विधि एवं पुंसवन संस्कार
             </h3>
 
             <div className="text-sm md:text-lg space-y-[32px]">
@@ -710,8 +692,8 @@ export default function CharakaSharirChapter8() {
                   <NAccent bold className="text-base md:text-xl leading-[32px]">सन्तान की इच्छा के अनुसार आहार (2 Types)</NAccent>
                 </div>
                 <div className="pl-6 opacity-90 font-medium">
-                  <p className="leading-[32px] m-0">1 (I). <NText bold>पुत्रकामा (Desiring a Male Child):</NText> मधुर, अम्ल और लवण रस प्रधान एवं स्निग्ध आहार तथा <NAccent bold>गोदुग्ध (गाय का दूध)</NAccent> देना चाहिए।</p>
-                  <p className="leading-[32px] m-0">2 (II). <NText bold>दुहितृकामा (Desiring a Female Child):</NText> दक्षिणाभिमुख होकर तैल और <NAccent bold>माष (उड़द)</NAccent> से बने पदार्थों का सेवन।</p>
+                  <p className="leading-[32px] m-0">1. <NText bold>पुत्रकामा (Desiring a Male Child):</NText> मधुर, अम्ल और लवण रस प्रधान एवं स्निग्ध आहार तथा <NAccent bold>गोदुग्ध (गाय का दूध)</NAccent> देना चाहिए।</p>
+                  <p className="leading-[32px] m-0">2. <NText bold>दुहितृकामा (Desiring a Female Child):</NText> दक्षिणाभिमुख होकर तैल और <NAccent bold>माष (उड़द)</NAccent> से बने पदार्थों का सेवन।</p>
                 </div>
               </div>
 
@@ -732,10 +714,10 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 2: HARMFUL FACTORS */}
+          {/* SECTION II: HARMFUL FACTORS */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              2 (II). गर्भोपघातकर भाव (5 Factors Harmful to Fetus)
+              II. गर्भोपघातकर भाव (5 Factors Harmful to Fetus)
             </h3>
 
             <div className="text-sm md:text-lg opacity-90 font-medium">
@@ -751,10 +733,10 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 3: 5 FETAL DISORDERS */}
+          {/* SECTION III: 5 FETAL DISORDERS */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              3 (III). गर्भव्यापद् / गर्भ की विकृतियाँ (5 Major Fetal Disorders)
+              III. गर्भव्यापद् / गर्भ की विकृतियाँ (5 Major Fetal Disorders)
             </h3>
 
             {/* Handwritten-Style Flowchart Box */}
@@ -763,7 +745,7 @@ export default function CharakaSharirChapter8() {
                 Flowchart — 5 Clinical States of Garbhavyapad:
               </p>
               <p className="leading-[32px] m-0 text-xs md:text-base font-bold">
-                1 (I). उपविष्टक ➔ 2 (II). नागोदर ➔ 3 (III). लीनगर्भ ➔ 4 (IV). मृतगर्भ ➔ 5 (V). मूढगर्भ
+                1. उपविष्टक ➔ 2. नागोदर ➔ 3. लीनगर्भ ➔ 4. मृतगर्भ ➔ 5. मूढगर्भ
               </p>
             </div>
 
@@ -772,7 +754,7 @@ export default function CharakaSharirChapter8() {
                 <div key={d.num}>
                   <div className="flex gap-2 items-start">
                     <span className="font-bold text-[var(--theme-accent)] shrink-0 leading-[32px]">
-                      {d.num} ({d.roman}).
+                      {d.num}.
                     </span>
                     <NAccent bold className="text-base md:text-xl leading-[32px]">
                       {d.name}
@@ -791,10 +773,10 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 4: MONTH-WISE ANTENATAL REGIMEN */}
+          {/* SECTION IV: MONTH-WISE ANTENATAL REGIMEN */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              4 (IV). मासानुमासिक गर्भिणी परिचर्या (Month 1 to 9 Regimen)
+              IV. मासानुमासिक गर्भिणी परिचर्या (Month 1 to 9 Regimen)
             </h3>
 
             <div className="text-sm md:text-lg space-y-[32px]">
@@ -802,7 +784,7 @@ export default function CharakaSharirChapter8() {
                 <div key={row.num}>
                   <div className="flex gap-2 items-start">
                     <span className="font-bold text-[var(--theme-accent)] shrink-0 leading-[32px]">
-                      {row.num} ({row.roman}).
+                      {row.num}.
                     </span>
                     <NAccent bold className="text-base md:text-xl leading-[32px]">
                       {row.month}: {row.term}
@@ -820,20 +802,20 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 5: MATERNITY WARD & LABOR */}
+          {/* SECTION V: MATERNITY WARD & LABOR */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              5 (V). सूतिकागार और प्रसव काल (Maternity Ward & Labor)
+              V. सूतिकागार और प्रसव काल (Maternity Ward & Labor)
             </h3>
 
             <div className="text-sm md:text-lg opacity-90 font-medium space-y-[32px]">
               <p className="leading-[32px] m-0">
-                <NText bold>1 (I). सूतिकागार (Delivery Room):</NText> 9th Month में प्रवेश करने पर प्रसूति गृह तैयार करना चाहिए, जिसमें उलूखल, मूसल, तीक्ष्ण शस्त्र, घी, तेल और अनुभवी स्त्रियाँ (<NAccent bold>बहुशः प्रसूताः नार्यः</NAccent>) उपस्थित हों।
+                <NText bold>A. सूतिकागार (Delivery Room):</NText> 9th Month में प्रवेश करने पर प्रसूति गृह तैयार करना चाहिए, जिसमें उलूखल, मूसल, तीक्ष्ण शस्त्र, घी, तेल और अनुभवी स्त्रियाँ (<NAccent bold>बहुशः प्रसूताः नार्यः</NAccent>) उपस्थित हों।
               </p>
 
               <div>
                 <p className="leading-[32px] m-0">
-                  <NText bold>2 (II). आसन्न प्रसव के 5 लक्षण (Signs of Impending Labor):</NText>
+                  <NText bold>B. आसन्न प्रसव के 5 लक्षण (Signs of Impending Labor):</NText>
                 </p>
                 <div className="pl-6">
                   <p className="leading-[32px] m-0">• <NAccent bold>1. क्लम (Klama):</NAccent> बिना परिश्रम के थकावट महसूस होना।</p>
@@ -845,7 +827,7 @@ export default function CharakaSharirChapter8() {
               </div>
 
               <p className="leading-[32px] m-0">
-                <NText bold>3 (III). अपरा पातन (Expulsion of Placenta):</NText> शिशु के जन्म के बाद यदि अपरा तुरंत न निकले, तो स्त्री के सिर पर <NAccent bold>भूर्जपत्र, काचमणि या सांप की केंचुली (अहिनिर्मोक)</NAccent> का धूपन करना चाहिए, तथा गले में बालों की चोटी से गुदगुदी करनी चाहिए ताकि उल्टी के आवेग से अपरा बाहर आ जाए।
+                <NText bold>C. अपरा पातन (Expulsion of Placenta):</NText> शिशु के जन्म के बाद यदि अपरा तुरंत न निकले, तो स्त्री के सिर पर <NAccent bold>भूर्जपत्र, काचमणि या सांप की केंचुली (अहिनिर्मोक)</NAccent> का धूपन करना चाहिए, तथा गले में बालों की चोटी से गुदगुदी करनी चाहिए ताकि उल्टी के आवेग से अपरा बाहर आ जाए।
               </p>
             </div>
           </div>
@@ -854,10 +836,10 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 6: NEWBORN CARE (JATAKARMA) */}
+          {/* SECTION VI: NEWBORN CARE (JATAKARMA) */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              6 (VI). नवजात शिशु परिचर्या (Care of the Newborn — Jatakarma)
+              VI. नवजात शिशु परिचर्या (Care of the Newborn — Jatakarma)
             </h3>
 
             <div className="text-sm md:text-lg opacity-90 font-medium space-y-[32px]">
@@ -874,7 +856,7 @@ export default function CharakaSharirChapter8() {
                   नाभिपाक के 4 उपद्रव (यदि नाल 8 Angula छोड़कर ठीक से न काटी जाए):
                 </p>
                 <p className="leading-[32px] m-0 text-sm md:text-base">
-                  1 (I). <NText bold>आयाम</NText> (लंबाई में सूजन) | 2 (II). <NText bold>उत्तुण्डित</NText> (गोल उभार) | 3 (III). <NText bold>पिण्डालिका</NText> (गांठ पड़ना) | 4 (IV). <NText bold>विजृम्भिक</NText> (फैलने वाला घाव)।
+                  1. <NText bold>आयाम</NText> (लंबाई में सूजन) | 2. <NText bold>उत्तुण्डित</NText> (गोल उभार) | 3. <NText bold>पिण्डालिका</NText> (गांठ पड़ना) | 4. <NText bold>विजृम्भिक</NText> (फैलने वाला घाव)।
                 </p>
               </div>
             </div>
@@ -884,36 +866,36 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 7: WET NURSE & BREAST MILK */}
+          {/* SECTION VII: WET NURSE & BREAST MILK */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              7 (VII). धात्री परीक्षा और स्तन्य (Wet Nurse & Breast Milk)
+              VII. धात्री परीक्षा और स्तन्य (Wet Nurse & Breast Milk)
             </h3>
 
             <div className="text-sm md:text-lg opacity-90 font-medium space-y-[32px]">
               <p className="leading-[32px] m-0">
-                <NText bold>1 (I). प्रशस्त धात्री के 6 गुण:</NText> समानवर्णा (Same complexion), यौवनस्था (Young), अव्यङ्गा (No deformity), अव्यसना (No bad habits), अनीर्ष्या (Not jealous), और जीवद्वत्सा (जिसका अपना बच्चा जीवित हो)।
+                <NText bold>A. प्रशस्त धात्री के 6 गुण:</NText> 1. समानवर्णा (Same complexion), 2. यौवनस्था (Young), 3. अव्यङ्गा (No deformity), 4. अव्यसना (No bad habits), 5. अनीर्ष्या (Not jealous), और 6. जीवद्वत्सा (जिसका अपना बच्चा जीवित हो)।
               </p>
 
               <p className="leading-[32px] m-0">
-                <NText bold>2 (II). शुद्ध / प्रशस्त स्तन्य:</NText> जो पानी में डालने पर तुरंत एकरस होकर घुल जाए (<NAccent bold>&quot;उदकपात्रे प्रदुह्यमानं उदकमेवानुविशति&quot;</NAccent>), रंग पाण्डुर (सफेद) हो और स्वाद मधुर हो।
+                <NText bold>B. शुद्ध / प्रशस्त स्तन्य:</NText> जो पानी में डालने पर तुरंत एकरस होकर घुल जाए (<NAccent bold>&quot;उदकपात्रे प्रदुह्यमानं उदकमेवानुविशति&quot;</NAccent>), रंग पाण्डुर (सफेद) हो और स्वाद मधुर हो।
               </p>
 
               <div>
-                <p className="leading-[32px] m-0"><NText bold>3 (III). दुष्ट स्तन्य के 3 प्रकार (Water Drop Test):</NText></p>
+                <p className="leading-[32px] m-0"><NText bold>C. दुष्ट स्तन्य के 3 प्रकार (Water Drop Test):</NText></p>
                 <div className="pl-6">
-                  <p className="leading-[32px] m-0">• <NAccent bold>1 (I). वातदुष्ट स्तन्य:</NAccent> स्वाद में कषाय, रूखा, और पानी में ऊपर तैरता है (<NAccent bold>उदके प्लवते</NAccent>)। शिशु को कब्ज व वात रोग होता है।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>2 (II). पित्तदुष्ट स्तन्य:</NAccent> कटु, अम्ल या लवण, रंग पीला/नीला, और पानी में पीली धारियाँ बनाता है।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>3 (III). कफदुष्ट स्तन्य:</NAccent> अत्यधिक मधुर, पिच्छिल, घना; पानी में डालने पर नीचे डूब जाता है (<NAccent bold>उदके अवसीदति</NAccent>)। शिशु को छर्दि, निद्राधिक्य और श्वास रोग होते हैं।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>1. वातदुष्ट स्तन्य:</NAccent> स्वाद में कषाय, रूखा, और पानी में ऊपर तैरता है (<NAccent bold>उदके प्लवते</NAccent>)। शिशु को कब्ज व वात रोग होता है।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>2. पित्तदुष्ट स्तन्य:</NAccent> कटु, अम्ल या लवण, रंग पीला/नीला, और पानी में पीली धारियाँ बनाता है।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>3. कफदुष्ट स्तन्य:</NAccent> अत्यधिक मधुर, पिच्छिल, घना; पानी में डालने पर नीचे डूब जाता है (<NAccent bold>उदके अवसीदति</NAccent>)। शिशु को छर्दि, निद्राधिक्य और श्वास रोग होते हैं।</p>
                 </div>
               </div>
 
               <p className="leading-[32px] m-0">
-                <NText bold>4 (IV). क्षीरदोष के 3 विशिष्ट प्रकार:</NText> 1. वैरस्य (बेस्वाद/कसैलापन), 2. फेनसङ्घात (झागदार दूध), और 3. स्नेहहानि / रौक्ष्य (चिकनाई कम होना)।
+                <NText bold>D. क्षीरदोष के 3 विशिष्ट प्रकार:</NText> 1. वैरस्य (बेस्वाद/कसैलापन), 2. फेनसङ्घात (झागदार दूध), और 3. स्नेहहानि / रौक्ष्य (चिकनाई कम होना)।
               </p>
 
               <p className="leading-[32px] m-0">
-                <NText bold>5 (V). स्तन्यशोधन एवं स्तन्यजनन:</NText> शोधन हेतु पाठा, महौषध (सोंठ), देवदारु, मुस्तक, मूर्वा, गुडूची, किराततिक्त का काढ़ा। स्तन्यजनन हेतु वीरण, शालि, षष्टिक, इक्षुवालिका, दर्भ, कुश, काश तथा यव, गोधूम, लशुन और मांस रस का सेवन।
+                <NText bold>E. स्तन्यशोधन एवं स्तन्यजनन:</NText> शोधन हेतु पाठा, महौषध (सोंठ), देवदारु, मुस्तक, मूर्वा, गुडूची, किराततिक्त का काढ़ा। स्तन्यजनन हेतु वीरण, शालि, षष्टिक, इक्षुवालिका, दर्भ, कुश, काश तथा यव, गोधूम, लशुन और मांस रस का सेवन।
               </p>
             </div>
           </div>
@@ -922,23 +904,23 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* SECTION 8 & 9: KUMARAGARA, NAMAKARANA & LONGEVITY */}
+          {/* SECTION VIII & IX: KUMARAGARA, NAMAKARANA & LONGEVITY */}
           <div className="mb-[64px]">
             <h3 className="font-bold text-lg md:text-2xl text-[var(--theme-accent)] mb-[32px] leading-[32px] underline decoration-[var(--theme-border)]/30 underline-offset-8">
-              8 (VIII) & 9 (IX). कुमारगार, नामकरण एवं दीर्घायु बालक परीक्षा
+              VIII & IX. कुमारगार, नामकरण एवं दीर्घायु बालक परीक्षा
             </h3>
 
             <div className="text-sm md:text-lg opacity-90 font-medium space-y-[32px]">
               <p className="leading-[32px] m-0">
-                <NText bold>1 (I). कुमारगार (Pediatric Room):</NText> हवा के सीधे झोंकों से रहित (निवात), प्रकाशयुक्त, कीट-पतंगों से सुरक्षित और सुगंधित धूप से धूपित।
+                <NText bold>A. कुमारगार (Pediatric Room):</NText> हवा के सीधे झोंकों से रहित (निवात), प्रकाशयुक्त, कीट-पतंगों से सुरक्षित और सुगंधित धूप से धूपित।
               </p>
 
               <p className="leading-[32px] m-0">
-                <NText bold>2 (II). नामकरण संस्कार (On Day 10 — दशमेऽहनि):</NText> 2 नाम रखे जाते हैं — 1 (I). <NAccent bold>नक्षत्रिक नाम</NAccent> (जन्म नक्षत्र पर आधारित) और 2 (II). <NAccent bold>अभिप्रायिक नाम</NAccent> (घोषवत् वर्णों से शुरू होने वाला 2 या 4 अक्षरों का नाम)।
+                <NText bold>B. नामकरण संस्कार (On Day 10 — दशमेऽहनि):</NText> 2 नाम रखे जाते हैं — 1. <NAccent bold>नक्षत्रिक नाम</NAccent> (जन्म नक्षत्र पर आधारित) और 2. <NAccent bold>अभिप्रायिक नाम</NAccent> (घोषवत् वर्णों से शुरू होने वाला 2 या 4 अक्षरों का नाम)।
               </p>
 
               <div>
-                <p className="leading-[32px] m-0"><NText bold>3 (III). दीर्घायु बालक के 6 प्रमुख लक्षण (Longevity Signs):</NText></p>
+                <p className="leading-[32px] m-0"><NText bold>C. दीर्घायु बालक के 6 प्रमुख लक्षण (Longevity Signs):</NText></p>
                 <div className="pl-6">
                   <p className="leading-[32px] m-0">• 1. केश: एक-एक रोमकूप में अलग, मुलायम और स्निग्ध बाल।</p>
                   <p className="leading-[32px] m-0">• 2. शिर: छत्राकार (Umbrella-shaped) सिर।</p>
