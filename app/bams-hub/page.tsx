@@ -3,7 +3,7 @@
 import Link from "next/link";
 import BamsReels from "@/components/BamsReels";
 import { VisitorTracker } from "@/components/VisitorTracker";
-import { ArrowLeft, Leaf, BrainCircuit, Sparkles, Download, ChevronRight, PenTool, FileText } from "lucide-react";
+import { ArrowLeft, Leaf, BrainCircuit, Sparkles, Download, ChevronRight, PenTool, FileText, FlaskConical, Printer, CheckCircle2 } from "lucide-react";
 import AyurvedicBackground from "@/components/AyurvedicBackground"; 
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
@@ -55,6 +55,9 @@ export default function BAMSDashboard() {
             <span className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 px-4 py-1.5 rounded-sm text-xs font-bold tracking-wider shadow-sm uppercase">
               <Leaf className="w-3.5 h-3.5" /> NCISM Curriculum
             </span>
+            <span className="inline-flex items-center gap-1.5 bg-surface border border-surfaceBorder text-foreground/70 px-3 py-1.5 rounded-sm text-xs font-mono font-bold uppercase">
+              5 Core Pillars Active
+            </span>
           </div>
           
           <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4 text-foreground drop-shadow-sm relative z-10">
@@ -62,60 +65,73 @@ export default function BAMSDashboard() {
           </h1>
           
           <p className="text-lg text-foreground/70 font-medium max-w-2xl relative z-10">
-            Your centralized vault for crushing university examinations. Access interactive Charaka Samhita tests, download previous year papers, and review high-yield notes.
+            Your centralized vault for crushing university examinations. Access interactive Charaka Samhita tests, download previous year papers, review high-yield notes, and print practical records.
           </p>
         </div>
 
-        {/* The 5-Pillar Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Link href="/bams-hub/practical" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <BrainCircuit className="w-6 h-6 text-amber-500" />
-            </div>
-            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Practical Files</h2>
-            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
-              Take file pdfs and content ready pdfs
-            </p>
-            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
-              Raw and Complete Files <ChevronRight className="w-4 h-4" />
-            </div>
-          </Link>
+        {/* =========================================================
+            THE 5-PILLAR SYMMETRICAL BENTO GRID
+            - Mobile: 1 column stack
+            - Tablet (sm): 2x2 top + 1 full-width bottom banner
+            - Desktop (lg): 6-col grid -> Top 3 cards (span 2 each) + Bottom 2 wide cards (span 3 each)
+           ========================================================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6">
           
-          <Link href="/mcq-practice" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+          {/* Pillar 1: Take MCQs (Top Left - Span 2 on Desktop) */}
+          <Link 
+            href="/mcq-practice" 
+            className="lg:col-span-2 group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <BrainCircuit className="w-6 h-6 text-amber-500" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                <BrainCircuit className="w-6 h-6 text-amber-500" />
+              </div>
+              <span className="text-[10px] font-mono font-bold text-foreground/40 uppercase tracking-widest">Pillar 01</span>
             </div>
-            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Take MCQs</h2>
+            <h2 className="font-heading text-xl font-bold text-foreground mb-2.5">Take MCQs</h2>
             <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
-              Test your knowledge with interactive, real-time quizzes covering Sutra Sthana, Nidana Sthana, and more.
+              Test your knowledge with interactive, real-time quizzes covering Sutra Sthana, Nidana Sthana, and Sharira Sthana.
             </p>
             <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
               Test Engine <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
 
-          <Link href="/bams-hub/papers" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+          {/* Pillar 2: Past Papers (Top Center - Span 2 on Desktop) */}
+          <Link 
+            href="/bams-hub/papers" 
+            className="lg:col-span-2 group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <Download className="w-6 h-6 text-amber-500" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                <Download className="w-6 h-6 text-amber-500" />
+              </div>
+              <span className="text-[10px] font-mono font-bold text-foreground/40 uppercase tracking-widest">Pillar 02</span>
             </div>
-            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Past Papers</h2>
+            <h2 className="font-heading text-xl font-bold text-foreground mb-2.5">Past Papers</h2>
             <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
-              A comprehensive PDF archive of previous year university question papers to analyze exam patterns.
+              A comprehensive PDF archive of previous year university question papers to analyze high-frequency exam patterns.
             </p>
             <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
               PDF Vault <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
 
-          <Link href="/bams-hub/notes" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+          {/* Pillar 3: Read Notes (Top Right - Span 2 on Desktop) */}
+          <Link 
+            href="/bams-hub/notes" 
+            className="lg:col-span-2 group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
-              <FileText className="w-6 h-6 text-amber-500" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                <FileText className="w-6 h-6 text-amber-500" />
+              </div>
+              <span className="text-[10px] font-mono font-bold text-foreground/40 uppercase tracking-widest">Pillar 03</span>
             </div>
-            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Read Notes</h2>
+            <h2 className="font-heading text-xl font-bold text-foreground mb-2.5">Read Notes</h2>
             <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
               Streamlined, highly organized revision notes covering Dravyaguna, Rasa Shastra, and Roga Nidana.
             </p>
@@ -124,26 +140,97 @@ export default function BAMSDashboard() {
             </div>
           </Link>
 
-          <Link href="/short-notes" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+          {/* Pillar 4: Handwritten Notes (Bottom Left Wide Feature - Span 3 on Desktop) */}
+          <Link 
+            href="/short-notes" 
+            className="lg:col-span-3 group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6 md:p-7"
+          >
             <div className={`absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/notebook-dark.png')] opacity-20 pointer-events-none ${isBatman ? 'grayscale opacity-10' : ''}`}></div>
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-sm text-[9px] font-bold text-amber-500 uppercase tracking-widest shadow-sm z-10">
-              <Sparkles className="w-3 h-3" /> New
+            
+            <div className="flex items-center justify-between mb-5 relative z-10">
+              <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                <PenTool className="w-5 h-5 text-amber-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-sm text-[10px] font-bold text-amber-500 uppercase tracking-widest shadow-sm">
+                  <Sparkles className="w-3 h-3" /> Dual-Theme
+                </span>
+                <span className="text-[10px] font-mono font-bold text-foreground/40 uppercase tracking-widest">Pillar 04</span>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500 relative z-10">
-              <PenTool className="w-5 h-5 text-amber-500" />
-            </div>
-            <h2 className="font-heading text-xl font-bold text-foreground mb-3 relative z-10" style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}>Handwritten</h2>
-            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed relative z-10">
-              Highly readable short notes for quick revision. Starting with Dravyaguna Pharmacology.
+
+            <h2 
+              className="font-heading text-2xl font-bold text-foreground mb-2.5 relative z-10" 
+              style={{ fontFamily: "'Patrick Hand', 'Kalam', cursive, sans-serif" }}
+            >
+              Handwritten Notebook
+            </h2>
+            <p className="text-foreground/70 text-xs md:text-sm font-medium mb-5 flex-grow leading-relaxed relative z-10">
+              Point-by-point classical notes on ruled notebook canvas with instant switching to Tactical Flowchart view.
             </p>
-            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
+
+            {/* Quick Subject Pills */}
+            <div className="flex flex-wrap gap-2 mb-6 relative z-10">
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded-sm bg-background/70 border border-surfaceBorder text-foreground/70">
+                Charaka Sharira
+              </span>
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded-sm bg-background/70 border border-surfaceBorder text-foreground/70">
+                Dravyaguna
+              </span>
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded-sm bg-background/70 border border-surfaceBorder text-foreground/70">
+                32px Grid
+              </span>
+            </div>
+
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-3 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
               Open Notebook <ChevronRight className="w-4 h-4" />
             </div>
           </Link>
-        
+
+          {/* Pillar 5: Practical Manuals & PDFs (Bottom Right Wide Feature - Span 3 on Desktop, Span 2 on Tablet) */}
+          <Link 
+            href="/bams-hub/practical" 
+            className="sm:col-span-2 lg:col-span-3 group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6 md:p-7"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            
+            <div className="flex items-center justify-between mb-5 relative z-10">
+              <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                <FlaskConical className="w-5 h-5 text-amber-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-sm text-[10px] font-bold text-emerald-500 uppercase tracking-widest shadow-sm">
+                  <Sparkles className="w-3 h-3" /> Blank + Solved
+                </span>
+                <span className="text-[10px] font-mono font-bold text-foreground/40 uppercase tracking-widest">Pillar 05</span>
+              </div>
+            </div>
+
+            <h2 className="font-heading text-2xl font-bold text-foreground mb-2.5 relative z-10">
+              Practical Manuals & Records
+            </h2>
+            <p className="text-foreground/70 text-xs md:text-sm font-medium mb-5 flex-grow leading-relaxed relative z-10">
+              Subject-wise NCISM non-lecture activity sheets. Print blank templates for your record file or read solved logs for viva prep.
+            </p>
+
+            {/* Dual Track Highlights */}
+            <div className="flex flex-wrap gap-2 mb-6 relative z-10">
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2.5 py-1 rounded-sm bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                <Printer className="w-3 h-3" /> Printable Empty PDFs
+              </span>
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2.5 py-1 rounded-sm bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
+                <CheckCircle2 className="w-3 h-3" /> Solved Viva Records
+              </span>
+            </div>
+
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-3 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto relative z-10">
+              Open Practical Vault <ChevronRight className="w-4 h-4" />
+            </div>
+          </Link>
+          
         </div>
 
-        <BamsReels/>
+        <BamsReels />
 
       </div>
     </div>
