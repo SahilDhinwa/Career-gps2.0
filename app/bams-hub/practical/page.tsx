@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, FlaskConical, Download, Printer, FileText, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowLeft, FlaskConical, Download, Printer, FileText, ChevronRight, Sparkles, BookOpen } from "lucide-react";
 import AyurvedicBackground from "@/components/AyurvedicBackground";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 
-// Subject-wise Practical Data Structure
+// Subject-wise Practical Data Structure (Linked to public/pdfs repository)
 const PRACTICAL_SUBJECTS = [
   {
     id: "rasa-shastra",
@@ -14,12 +14,28 @@ const PRACTICAL_SUBJECTS = [
     code: "AY-RS",
     description: "Pharmacy, Mineral processing, Gandhaka Jirna, Shodhana, and Marana records.",
     emptyFiles: [
-      { title: "Non-Lecture Activity Record (Blank Template)", size: "1.2 MB", url: "/bams-hub/practical/rasa-shastra" },
-      { title: "Mineral & Metal Shodhana Practical Manual", size: "3.4 MB", url: "#" },
+      { 
+        title: "Non-Lecture Activity Record (Blank Template)", 
+        size: "1.2 MB", 
+        url: "/pdfs/RASASHASTRA non lac record.pdf" // Exact file name referenced
+      },
+      { 
+        title: "Mineral & Metal Shodhana Practical Manual", 
+        size: "3.4 MB", 
+        url: "/pdfs/mineral-shodhana-blank.pdf" 
+      },
     ],
     filledFiles: [
-      { title: "Solved Example: Gandhaka Shodhana & Marana Record", size: "2.8 MB", url: "#" },
-      { title: "Complete Bhaishajya Kalpana Practical Guidelines", size: "4.1 MB", url: "#" },
+      { 
+        title: "Solved Example: Gandhaka Shodhana & Marana Record", 
+        size: "2.8 MB", 
+        url: "/pdfs/solved-gandhaka-record.pdf" 
+      },
+      { 
+        title: "Complete Bhaishajya Kalpana Practical Guidelines", 
+        size: "4.1 MB", 
+        url: "/pdfs/bhaishajya-kalpana-solved.pdf" 
+      },
     ]
   },
   {
@@ -28,11 +44,11 @@ const PRACTICAL_SUBJECTS = [
     code: "AY-DG",
     description: "Herbarium sheets, pharmacological property descriptions, and botanical identification.",
     emptyFiles: [
-      { title: "Herbarium Record Template & Index", size: "2.1 MB", url: "#" },
-      { title: "Pharmacognosy Practical Observation Sheet", size: "1.5 MB", url: "#" },
+      { title: "Herbarium Record Template & Index", size: "2.1 MB", url: "/pdfs/dg-herbarium-blank.pdf" },
+      { title: "Pharmacognosy Practical Observation Sheet", size: "1.5 MB", url: "/pdfs/dg-pharmacognosy-blank.pdf" },
     ],
     filledFiles: [
-      { title: "Reference Solved Herbarium Specimen Records", size: "5.6 MB", url: "#" },
+      { title: "Reference Solved Herbarium Specimen Records", size: "5.6 MB", url: "/pdfs/dg-herbarium-solved.pdf" },
     ]
   },
   {
@@ -41,10 +57,10 @@ const PRACTICAL_SUBJECTS = [
     code: "AY-RN",
     description: "Clinical case-taking formats, pathological examination notes, and rogayi pariksha charts.",
     emptyFiles: [
-      { title: "Clinical Case Taking Proforma (Blank)", size: "900 KB", url: "#" },
+      { title: "Clinical Case Taking Proforma (Blank)", size: "900 KB", url: "/pdfs/rn-case-taking-blank.pdf" },
     ],
     filledFiles: [
-      { title: "Exemplar Clinical Case Records (Panchakarma & Kaya)", size: "3.2 MB", url: "#" },
+      { title: "Exemplar Clinical Case Records (Panchakarma & Kaya)", size: "3.2 MB", url: "/pdfs/rn-case-taking-solved.pdf" },
     ]
   }
 ];
@@ -122,20 +138,32 @@ export default function PracticalVaultPage() {
               </div>
               <div className="space-y-3">
                 {currentSubjectData.emptyFiles.map((file, idx) => (
-                  <div key={idx} className="bg-background/60 border border-surfaceBorder p-4 rounded-sm flex items-center justify-between gap-4 hover:border-amber-500/40 transition-colors">
+                  <div key={idx} className="bg-background/60 border border-surfaceBorder p-4 rounded-sm flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-amber-500/40 transition-colors">
                     <div>
-                      <h4 className="font-bold text-sm text-foreground">{file.title}</h4>
-                      <span className="text-[10px] font-mono text-foreground/50">PDF • {file.size} • Unfilled Record Sheet</span>
+                      <h4 className="font-bold text-sm text-foreground mb-1">{file.title}</h4>
+                      <span className="text-[10px] font-mono text-foreground/50">PDF • {file.size} • Blank Record</span>
                     </div>
-                    <a
-                      href={file.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-white border border-amber-500/30 p-2.5 rounded-sm transition-colors flex items-center gap-1.5 text-xs font-bold"
-                      title="Download Blank PDF"
-                    >
-                      <Download className="w-4 h-4" /> Print
-                    </a>
+                    
+                    {/* Read & Save Buttons */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 px-3 py-2 rounded-sm transition-colors flex items-center gap-1.5 text-xs font-bold"
+                        title="Read PDF"
+                      >
+                        <BookOpen className="w-3.5 h-3.5" /> Read
+                      </a>
+                      <a
+                        href={file.url}
+                        download
+                        className="bg-amber-500 hover:bg-amber-600 text-white border border-amber-500 px-3 py-2 rounded-sm transition-colors flex items-center gap-1.5 text-xs font-bold shadow-sm"
+                        title="Download Blank PDF"
+                      >
+                        <Download className="w-3.5 h-3.5" /> Save
+                      </a>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -144,24 +172,36 @@ export default function PracticalVaultPage() {
             {/* Column 2: Filled Reference Records */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-emerald-500 font-bold text-sm uppercase tracking-wider">
-                <Sparkles className="w-4 h-4" /> Solved References (For Viva Prep)
+                <Sparkles className="w-4 h-4" /> Solved References (For Viva)
               </div>
               <div className="space-y-3">
                 {currentSubjectData.filledFiles.map((file, idx) => (
-                  <div key={idx} className="bg-background/60 border border-surfaceBorder p-4 rounded-sm flex items-center justify-between gap-4 hover:border-emerald-500/40 transition-colors">
+                  <div key={idx} className="bg-background/60 border border-surfaceBorder p-4 rounded-sm flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-emerald-500/40 transition-colors">
                     <div>
-                      <h4 className="font-bold text-sm text-foreground">{file.title}</h4>
-                      <span className="text-[10px] font-mono text-emerald-500/80">PDF • {file.size} • Fully Documented</span>
+                      <h4 className="font-bold text-sm text-foreground mb-1">{file.title}</h4>
+                      <span className="text-[10px] font-mono text-emerald-500/80">PDF • {file.size} • Solved Reference</span>
                     </div>
-                    <a
-                      href={file.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/30 p-2.5 rounded-sm transition-colors flex items-center gap-1.5 text-xs font-bold"
-                      title="Download Solved Reference"
-                    >
-                      <Download className="w-4 h-4" /> View
-                    </a>
+                    
+                    {/* Read & Save Buttons */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 px-3 py-2 rounded-sm transition-colors flex items-center gap-1.5 text-xs font-bold"
+                        title="Read PDF"
+                      >
+                        <BookOpen className="w-3.5 h-3.5" /> Read
+                      </a>
+                      <a
+                        href={file.url}
+                        download
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-600 px-3 py-2 rounded-sm transition-colors flex items-center gap-1.5 text-xs font-bold shadow-sm"
+                        title="Download Solved PDF"
+                      >
+                        <Download className="w-3.5 h-3.5" /> Save
+                      </a>
+                    </div>
                   </div>
                 ))}
               </div>
