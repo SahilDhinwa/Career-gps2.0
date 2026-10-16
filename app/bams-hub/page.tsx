@@ -66,8 +66,21 @@ export default function BAMSDashboard() {
           </p>
         </div>
 
-        {/* The 4-Pillar Grid */}
+        {/* The 5-Pillar Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link href="/mcq-practice" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mb-6 border border-amber-500/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+              <BrainCircuit className="w-6 h-6 text-amber-500" />
+            </div>
+            <h2 className="font-heading text-xl font-bold text-foreground mb-3">Practical Files</h2>
+            <p className="text-foreground/70 text-xs font-medium mb-6 flex-grow leading-relaxed">
+              Take file pdfs and content ready pdfs
+            </p>
+            <div className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold py-2.5 px-4 rounded-sm text-sm group-hover:bg-amber-500 group-hover:text-white transition-colors flex items-center justify-center gap-2 mt-auto">
+              Raw and Complete Files <ChevronRight className="w-4 h-4" />
+            </div>
+          </Link>
           
           <Link href="/mcq-practice" className="group bg-surface/90 backdrop-blur-md border border-amber-500/30 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col p-6">
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
