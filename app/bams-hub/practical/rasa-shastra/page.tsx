@@ -15,7 +15,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Covers Aim/Objectives, Method of Activity, Group Role & Discussion (NCISM Compliant)",
       size: "1.2 MB",
       pages: "2 Pages",
-      url: "/pdfs/RASASHASTRA non lac record.pdf"
+      url: "/practical_pdfs/RASASHASTRA non lac record.pdf"
     },
     {
       id: "rs-empty-2",
