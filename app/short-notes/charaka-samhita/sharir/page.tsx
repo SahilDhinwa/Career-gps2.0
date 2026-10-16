@@ -13,7 +13,7 @@ const SHARIRA_CHAPTERS = [
   { name: "Chapter 5: Purusha Vichaya Sharira", link: "#", status: "Draft" },
   { name: "Chapter 6: Sharira Vichaya Sharira", link: "/short-notes/charaka-samhita/sharir/chapter-6", status: "Active" },
   { name: "Chapter 7: Sharira Sankhya Sharira", link: "#", status: "Draft" },
-  { name: "Chapter 8: Jatisutriya Sharira", link: "#", status: "Draft" }
+  { name: "Chapter 8: Jatisutriya Sharira", link: "/short-notes/charaka-samhita/sharir/chapter-8", status: "Active" }
 ];
 
 export default function ShariraSthanaHub() {
