@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, FlaskConical, Download, Printer, FileText, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, FlaskConical, Download, Printer, FileText, Sparkles, CheckCircle2, BookOpen } from "lucide-react";
 import AyurvedicBackground from "@/components/AyurvedicBackground";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 
-// Rasa Shastra Practical Files Database
+// Rasa Shastra Practical Files Database (Stored in public/pdfs/)
 const RASA_SHASTRA_PRACTICALS = {
   emptyFiles: [
     {
@@ -15,7 +15,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Covers Aim/Objectives, Method of Activity, Group Role & Discussion (NCISM Compliant)",
       size: "1.2 MB",
       pages: "2 Pages",
-      url: "/pdfs/rasa-shastra-empty-record.pdf" // Update with your actual public file path or cloud URL
+      url: "/pdfs/RASASHASTRA non lac record.pdf"
     },
     {
       id: "rs-empty-2",
@@ -23,7 +23,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Parada, Maharasa, Uparasa Shodhana Protocols",
       size: "1.8 MB",
       pages: "4 Pages",
-      url: "#"
+      url: "/pdfs/mineral-shodhana-blank.pdf"
     },
     {
       id: "rs-empty-3",
@@ -31,7 +31,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Svarasa, Kalka, Kwatha, Hima, Phanta & Sneha Kalpana",
       size: "2.4 MB",
       pages: "6 Pages",
-      url: "#"
+      url: "/pdfs/bhaishajya-kalpana-blank.pdf"
     }
   ],
   filledFiles: [
@@ -41,7 +41,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Complete with Analytical Parameters & Supervisor Signatures",
       size: "2.8 MB",
       pages: "5 Pages",
-      url: "#"
+      url: "/pdfs/solved-gandhaka-record.pdf"
     },
     {
       id: "rs-filled-2",
@@ -49,7 +49,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Exemplar Datasets for Taila, Ghrita & Asava-Arishta Preparations",
       size: "4.1 MB",
       pages: "12 Pages",
-      url: "#"
+      url: "/pdfs/bhaishajya-kalpana-solved.pdf"
     }
   ]
 };
@@ -88,15 +88,15 @@ export default function RasaShastraPracticalPage() {
             Rasa Shastra & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-400">Bhaishajya Kalpana</span>
           </h1>
           <p className="text-foreground/70 text-sm md:text-base max-w-2xl font-medium">
-            Access official NCISM-compliant practical sheets. Download blank templates for printing your physical records or browse solved examples for exam preparation.
+            Access official NCISM-compliant practical sheets. Read online or download blank templates for printing your physical records, and browse solved examples for exam preparation.
           </p>
         </div>
 
         {/* Toggle Tabs (Empty vs Filled) */}
-        <div className="flex items-center gap-4 mb-8 border-b border-surfaceBorder pb-4">
+        <div className="flex flex-wrap items-center gap-4 mb-8 border-b border-surfaceBorder pb-4">
           <button
             onClick={() => setActiveTab("empty")}
-            className={`px-6 py-3 rounded-sm font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer border ${
+            className={`px-6 py-3 rounded-sm font-bold text-xs md:text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer border ${
               activeTab === "empty"
                 ? "bg-amber-500 text-white border-amber-600 shadow-md"
                 : "bg-surface/80 text-foreground/70 border-surfaceBorder hover:border-amber-500/40"
@@ -107,7 +107,7 @@ export default function RasaShastraPracticalPage() {
 
           <button
             onClick={() => setActiveTab("filled")}
-            className={`px-6 py-3 rounded-sm font-bold text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer border ${
+            className={`px-6 py-3 rounded-sm font-bold text-xs md:text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer border ${
               activeTab === "filled"
                 ? "bg-emerald-600 text-white border-emerald-700 shadow-md"
                 : "bg-surface/80 text-foreground/70 border-surfaceBorder hover:border-emerald-500/40"
@@ -122,7 +122,7 @@ export default function RasaShastraPracticalPage() {
           
           {activeTab === "empty" ? (
             <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-surfaceBorder pb-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-surfaceBorder pb-4">
                 <div>
                   <h2 className="font-heading text-xl font-bold text-foreground">Blank Record Templates</h2>
                   <p className="text-xs text-foreground/60">Optimized for physical record book binding and university submissions.</p>
@@ -137,11 +137,11 @@ export default function RasaShastraPracticalPage() {
                   <div key={file.id} className="bg-background/60 border border-surfaceBorder p-5 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-amber-500/40 transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-amber-500" />
+                        <FileText className="w-4 h-4 text-amber-500 shrink-0" />
                         <h3 className="font-bold text-base text-foreground">{file.title}</h3>
                       </div>
                       <p className="text-xs text-foreground/60 font-mono">{file.ncismFormat}</p>
-                      <div className="flex items-center gap-3 text-[11px] font-mono text-foreground/50 pt-1">
+                      <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-foreground/50 pt-1">
                         <span>Format: PDF (Print-Ready)</span>
                         <span>•</span>
                         <span>Size: {file.size}</span>
@@ -150,21 +150,31 @@ export default function RasaShastraPracticalPage() {
                       </div>
                     </div>
 
-                    <a
-                      href={file.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 px-5 rounded-sm text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
-                    >
-                      <Download className="w-4 h-4" /> Download Blank PDF
-                    </a>
+                    {/* Read & Save Buttons */}
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <BookOpen className="w-4 h-4" /> Read
+                      </a>
+                      <a
+                        href={file.url}
+                        download
+                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                      >
+                        <Download className="w-4 h-4" /> Save
+                      </a>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-surfaceBorder pb-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-surfaceBorder pb-4">
                 <div>
                   <h2 className="font-heading text-xl font-bold text-foreground">Solved Reference Records</h2>
                   <p className="text-xs text-foreground/60">Fully documented logs with observations, discussions, and conclusion criteria for exams.</p>
@@ -179,11 +189,11 @@ export default function RasaShastraPracticalPage() {
                   <div key={file.id} className="bg-background/60 border border-surfaceBorder p-5 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-emerald-500/40 transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                         <h3 className="font-bold text-base text-foreground">{file.title}</h3>
                       </div>
                       <p className="text-xs text-foreground/60 font-mono">{file.ncismFormat}</p>
-                      <div className="flex items-center gap-3 text-[11px] font-mono text-foreground/50 pt-1">
+                      <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-foreground/50 pt-1">
                         <span>Format: PDF (High Quality)</span>
                         <span>•</span>
                         <span>Size: {file.size}</span>
@@ -192,14 +202,24 @@ export default function RasaShastraPracticalPage() {
                       </div>
                     </div>
 
-                    <a
-                      href={file.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-sm text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
-                    >
-                      <Download className="w-4 h-4" /> View Solved PDF
-                    </a>
+                    {/* Read & Save Buttons */}
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <BookOpen className="w-4 h-4" /> Read
+                      </a>
+                      <a
+                        href={file.url}
+                        download
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                      >
+                        <Download className="w-4 h-4" /> Save
+                      </a>
+                    </div>
                   </div>
                 ))}
               </div>
