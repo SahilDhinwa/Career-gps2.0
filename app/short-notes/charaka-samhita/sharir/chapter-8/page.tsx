@@ -8,11 +8,6 @@ import { NText, NAccent } from "@/components/NoteElements";
 export default function CharakaSharirChapter8() {
   return (
     <HandwrittenCanvas>
-      {/* 
-        =========================================================
-        NOTEBOOK PAPER WRAPPER (Exact match to Chapter 6 styling)
-        =========================================================
-      */}
       <div
         className="w-full min-h-screen relative overflow-hidden"
         style={{
@@ -58,9 +53,7 @@ export default function CharakaSharirChapter8() {
             </span>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION I: CONCEPTION & PUMSAVANA          */}
-          {/* ========================================== */}
+          {/* SECTION I */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">I.</span>
@@ -99,9 +92,7 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION II: GARBHOPAGHATAKARA BHAVA        */}
-          {/* ========================================== */}
+          {/* SECTION II */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">II.</span>
@@ -128,9 +119,7 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION III: 5 FETAL DISORDERS (GARBHAVYAPAD) */}
-          {/* ========================================== */}
+          {/* SECTION III */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">III.</span>
@@ -200,9 +189,7 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION IV: MONTH-WISE ANTENATAL REGIMEN   */}
-          {/* ========================================== */}
+          {/* SECTION IV */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">IV.</span>
@@ -234,9 +221,7 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION V: SUTIKAGARA & LABOR              */}
-          {/* ========================================== */}
+          {/* SECTION V */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">V.</span>
@@ -255,11 +240,11 @@ export default function CharakaSharirChapter8() {
               <div>
                 <p className="leading-[32px] m-0"><NText bold>2. आसन्न प्रसव के 5 लक्षण (Signs of Impending Labor):</NText></p>
                 <div className="pl-4 mt-2 space-y-1">
-                  <p className="leading-[32px] m-0">• <NAccent bold>क्लम्:</NANText> बिना परिश्रम के थकावट।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>ग्लानि:</NANText> मन और शरीर में शिथिलता।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>कुक्षि-अवस्रंसन:</NANText> गर्भ का नीचे की ओर खिसकना।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>कटी-पृष्ठ-वंक्षण शूल:</NANText> कमर, पीठ और जांघों के जोड़ में दर्द।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>आवी प्रादुर्भाव:</NANText> गर्भाशय संकुचन व चिपचिपा स्राव (Show)।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>क्लम्:</NAccent> बिना परिश्रम के थकावट।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>ग्लानि:</NAccent> मन और शरीर में शिथिलता।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>कुक्षि-अवस्रंसन:</NAccent> गर्भ का नीचे की ओर खिसकना।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>कटी-पृष्ठ-वंक्षण शूल:</NAccent> कमर, पीठ और जांघों के जोड़ में दर्द।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>आवी प्रादुर्भाव:</NAccent> गर्भाशय संकुचन व चिपचिपा स्राव (Show).</p>
                 </div>
               </div>
 
@@ -275,9 +260,7 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION VI: NEWBORN CARE (JATAKARMA)        */}
-          {/* ========================================== */}
+          {/* SECTION VI */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">VI.</span>
@@ -313,9 +296,7 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION VII: WET NURSE & BREAST MILK       */}
-          {/* ========================================== */}
+          {/* SECTION VII */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">VII.</span>
@@ -340,9 +321,9 @@ export default function CharakaSharirChapter8() {
               <div>
                 <p className="leading-[32px] m-0"><NText bold>3. दुष्ट स्तन्य के 3 प्रकार (3 Types of Vitiated Milk):</NText></p>
                 <div className="pl-4 mt-2 space-y-2">
-                  <p className="leading-[32px] m-0">• <NAccent bold>वातदुष्ट स्तन्य:</NANText> स्वाद में कषाय, रूखा, और पानी में डालने पर ऊपर तैरता है (<NAccent bold>उदके प्लवते</NANett>)। शिशु को कब्ज व वात रोग होता है।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>पित्तदुष्ट स्तन्य:</NANText> कटु, अम्ल या लवण, रंग पीला/नीला, और पानी में पीली धारियाँ बनाता है।</p>
-                  <p className="leading-[32px] m-0">• <NAccent bold>कफदुष्ट स्तन्य:</NANText> अत्यधिक मधुर, पिच्छिल, और घना; पानी में डालने पर नीचे डूब जाता है (<NAccent bold>उदके अवसीदति</NAccent>)।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>वातदुष्ट स्तन्य:</NAccent> स्वाद में कषाय, रूखा, और पानी में डालने पर ऊपर तैरता है (<NAccent bold>उदके प्लवते</NAccent>)। शिशु को कब्ज व वात रोग होता है।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>पित्तदुष्ट स्तन्य:</NAccent> कटु, अम्ल या लवण, रंग पीला/नीला, और पानी में पीली धारियाँ बनाता है।</p>
+                  <p className="leading-[32px] m-0">• <NAccent bold>कफदुष्ट स्तन्य:</NAccent> अत्यधिक मधुर, पिच्छिल, और घना; पानी में डालने पर नीचे डूब जाता है (<NAccent bold>उदके अवसीदति</NAccent>).</p>
                 </div>
               </div>
 
@@ -362,9 +343,7 @@ export default function CharakaSharirChapter8() {
             <div className="w-1/2 h-[2px] bg-[var(--theme-border)]/30 mx-auto"></div>
           </div>
 
-          {/* ========================================== */}
-          {/* SECTION VIII & IX: KUMARAGARA & LONGEVITY  */}
-          {/* ========================================== */}
+          {/* SECTION VIII & IX */}
           <div className="mb-[64px]">
             <div className="flex gap-2 md:gap-3 mb-[16px]">
               <span className="font-bold text-[var(--theme-accent)] shrink-0 w-6 md:w-8 leading-[32px]">VIII.</span>
@@ -400,9 +379,7 @@ export default function CharakaSharirChapter8() {
             </div>
           </div>
 
-          {/* ========================================== */}
-          {/* SUMMARY SECTION                              */}
-          {/* ========================================== */}
+          {/* SUMMARY */}
           <div className="mb-[64px]">
             <NText bold className="text-base md:text-xl text-[var(--theme-accent)] block uppercase tracking-widest opacity-80 leading-[32px] mb-[32px]">
               संक्षेप में सारांश (Summary)
