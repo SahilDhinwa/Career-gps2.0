@@ -3,14 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../../lib/firebase"; 
 import { doc, setDoc } from "firebase/firestore";
-import { signOut } from "firebase/auth";
+import { signOut, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes"; 
 import { useAuth } from "../../context/AuthContext";
+// Cleaned up imports
 import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon, Terminal, Check } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
-// 🦇 4 OPERATIVE SILHOUETTE PRESETS (Matches Reference HUD)
+// 🦇 4 OPERATIVE SILHOUETTE PRESETS
 const OPERATIVE_SILHOUETTES = [
   {
     id: "apex-bat",
@@ -97,6 +98,7 @@ export default function UserProfile() {
           localStorage.setItem(`veblen_cache_${user.uid}`, JSON.stringify(parsed));
         }
       }
+
       if (refreshUserData) refreshUserData();
     } catch (error) {
       console.error("Failed to equip operative silhouette:", error);
@@ -120,6 +122,7 @@ export default function UserProfile() {
       img.src = localImageUrl;
 
       img.onerror = () => {
+        console.error("Failed to read image data.");
         setIsUploading(false);
         alert("Invalid or corrupt image file.");
       };
@@ -135,22 +138,32 @@ export default function UserProfile() {
           let height = img.height;
 
           if (width > height) {
-            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
           } else {
-            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
           }
 
           canvas.width = width;
           canvas.height = height;
           ctx?.drawImage(img, 0, 0, width, height);
 
+          // Compress to 60% quality JPEG
           const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
 
+          // ONLY save to Firestore (bypassing the buggy Firebase Auth updateProfile)
           const userRef = doc(db, "users", user.uid);
           await setDoc(userRef, { photoURL: compressedBase64 }, { merge: true });
           
+          // Force UI Update instantly
           setProfilePic(compressedBase64);
           
+          // Update local storage cache immediately so it persists across reloads
           if (typeof window !== "undefined") {
             const cached = localStorage.getItem(`veblen_cache_${user.uid}`);
             if (cached) {
@@ -160,11 +173,14 @@ export default function UserProfile() {
             }
           }
 
+          // Fetch quietly in the background
           if (refreshUserData) refreshUserData(); 
+          
         } catch (error) {
           console.error("Failed to save image to database:", error);
           alert("Database error: Ensure Firebase Firestore rules are updated.");
         } finally {
+          // THIS GUARANTEES THE SPINNER STOPS NO MATTER WHAT
           setIsUploading(false);
         }
       };
@@ -180,7 +196,10 @@ export default function UserProfile() {
     const currentList = checklistData[roadmapId] || [];
     const updatedList = currentList.filter((item: string) => item !== itemToRemove);
 
-    setChecklistData(prev => ({ ...prev, [roadmapId]: updatedList }));
+    setChecklistData(prev => ({
+      ...prev,
+      [roadmapId]: updatedList
+    }));
 
     try {
       const userRef = doc(db, "users", user.uid);
@@ -191,6 +210,7 @@ export default function UserProfile() {
     }
   };
 
+  // 🚀 HIGH-PERFORMANCE SKELETON UI
   if (isLoading) {
     return (
       <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'batman' ? 'bg-transparent' : 'bg-background'}`}>
@@ -203,6 +223,13 @@ export default function UserProfile() {
             </div>
             <div className="w-full md:w-32 h-12 bg-surfaceBorder/50 rounded-sm mt-4 md:mt-0"></div>
           </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <div className="h-64 bg-surface/40 border border-surfaceBorder rounded-sm animate-pulse"></div>
+              <div className="h-64 bg-surface/40 border border-surfaceBorder rounded-sm animate-pulse"></div>
+            </div>
+            <div className="h-96 bg-surface/40 border border-surfaceBorder rounded-sm animate-pulse"></div>
+          </div>
         </div>
       </div>
     );
@@ -212,7 +239,6 @@ export default function UserProfile() {
   const totalCheckedTasks = Object.values(checklistData).reduce((acc, curr) => acc + curr.length, 0);
   const isAdmin = userData?.role === "admin" || user?.email === "sahilkumardhinwa82@gmail.com";
 
-  // Dynamic progress calculation for the 4 bars (falls back to the exact reference look)
   const getOperativeBarWidth = (index: number, fallback: number) => {
     if (index === 0) return isAdmin || isPremium ? 100 : fallback;
     if (index === 1) return 100;
@@ -225,27 +251,50 @@ export default function UserProfile() {
     <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'batman' ? 'bg-transparent' : 'bg-background'}`}>
       
       <style dangerouslySetInnerHTML={{__html: `
-        .honeycomb-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-color: var(--background); }
+        .honeycomb-bg {
+          position: fixed;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          background-color: var(--background);
+        }
         .honeycomb-pattern {
-          position: absolute; inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3C/svg%3E");
+          position: absolute;
+          inset: 0;
+          background-image: 
+            url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3C/svg%3E");
           background-size: 80px;
         }
         .dark .honeycomb-pattern {
-          background-image: url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3C/svg%3E");
+          background-image: 
+            url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3C/svg%3E");
+        }
+        .honey-glow-1 {
+          position: absolute;
+          top: -10%; left: -10%;
+          width: 50vw; height: 50vw;
+          background: radial-gradient(circle, rgba(180, 83, 9, 0.08) 0%, transparent 70%);
+        }
+        .honey-glow-2 {
+          position: absolute;
+          bottom: -10%; right: -10%;
+          width: 60vw; height: 60vw;
+          background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
         }
       `}} />
       
       {theme !== "batman" && (
         <div className="honeycomb-bg">
           <div className="honeycomb-pattern"></div>
+          <div className="honey-glow-1"></div>
+          <div className="honey-glow-2"></div>
         </div>
       )}
 
       <div className="max-w-5xl mx-auto relative z-10 py-12 md:py-16 px-6">
 
         {/* HEADER CARD */}
-        <div className="bg-surface/80 backdrop-blur-md border border-amber-900/10 dark:border-amber-500/10 rounded-sm shadow-xl p-6 md:p-12 mb-6 flex flex-col md:flex-row items-center justify-between gap-8 transition-colors duration-300">
+        <div className="bg-surface/80 backdrop-blur-md border border-amber-900/10 dark:border-amber-500/10 rounded-sm shadow-xl p-6 md:p-12 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transition-colors duration-300">
           <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row w-full md:w-auto">
             
             <div className="relative">
@@ -294,7 +343,9 @@ export default function UserProfile() {
           </div>
 
           <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
-            {isAdmin && (
+            
+            {/* 🦇 MASTER OVERRIDE ADMIN TRAPDOOR */}
+            {(userData?.role === "admin" || user?.email === "sahilkumardhinwa82@gmail.com") && (
               <button 
                 onClick={() => router.push("/admin")}
                 className="w-full md:w-auto px-6 py-3.5 md:py-3 bg-red-950/20 border border-red-900/40 text-red-500 font-bold rounded-sm hover:bg-red-900/40 hover:text-white transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,0,0,0.1)]"
@@ -360,7 +411,6 @@ export default function UserProfile() {
                   }`}
                   title={`Equip ${op.name} (${op.role})`}
                 >
-                  {/* Silhouette Graphic */}
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-end justify-center mb-3 transition-transform duration-300 group-hover:scale-105">
                     <div
                       className="w-full h-full rounded-sm overflow-hidden"
@@ -373,7 +423,6 @@ export default function UserProfile() {
                     )}
                   </div>
 
-                  {/* Red Progress Bar Underneath */}
                   <div className="w-full max-w-[96px] h-2 sm:h-2.5 bg-[#070709] rounded-full overflow-hidden border border-white/5 p-[1px]">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-[#d93838] to-[#ff5252] shadow-[0_0_8px_rgba(239,68,68,0.65)] transition-all duration-700"
@@ -381,7 +430,6 @@ export default function UserProfile() {
                     />
                   </div>
 
-                  {/* Label */}
                   <span className={`mt-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-colors ${
                     isSelected ? "text-red-400 font-bold" : "text-gray-500 group-hover:text-gray-300"
                   }`}>
@@ -487,6 +535,7 @@ export default function UserProfile() {
           </div>
 
           <div className="space-y-8">
+            
             <div className="bg-gradient-to-br from-amber-900 to-black dark:from-black dark:to-amber-950 rounded-sm shadow-2xl p-8 border border-amber-800/30 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-warning/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
               <div className="flex items-center gap-3 mb-4 relative z-10">
