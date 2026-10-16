@@ -14,7 +14,7 @@ const PRACTICAL_SUBJECTS = [
     code: "AY-RS",
     description: "Pharmacy, Mineral processing, Gandhaka Jirna, Shodhana, and Marana records.",
     emptyFiles: [
-      { title: "Non-Lecture Activity Record (Blank Template)", size: "1.2 MB", url: "#" },
+      { title: "Non-Lecture Activity Record (Blank Template)", size: "1.2 MB", url: "/bams-hub/practical/rasa-shastra" },
       { title: "Mineral & Metal Shodhana Practical Manual", size: "3.4 MB", url: "#" },
     ],
     filledFiles: [
