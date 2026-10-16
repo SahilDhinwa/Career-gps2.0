@@ -11,35 +11,73 @@ import { useAuth } from "../../context/AuthContext";
 import { User as UserIcon, LogOut, Crown, ShieldCheck, Activity, ChevronRight, BookOpen, MapPin, Camera, ListChecks, Trash2, Sun, Moon, Terminal, Check } from "lucide-react";
 import PremiumPaymentButton from "../../components/PremiumPaymentButton"; 
 
-// 🦇 4 OPERATIVE SILHOUETTE PRESETS
+// 🦇 4 SCULPTED OPERATIVE SILHOUETTES (Transparent backgrounds + reference-accurate anatomy)
 const OPERATIVE_SILHOUETTES = [
   {
     id: "apex-bat",
     name: "Apex Knight",
     role: "Root / Tier IV",
     defaultProgress: 100,
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g1" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#2a0505"/><stop offset="100%" stop-color="#050507"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="100" height="100" fill="url(#g1)"/><path d="M12 92 C14 73 25 66 38 62 L40 53 C36 47 35 36 37 25 L38 11 L43 22 C47 21 53 21 57 22 L62 11 L63 25 C65 36 64 47 60 53 L62 62 C75 66 86 73 88 92 Z" fill="#090404" stroke="#ff3b3b" stroke-width="2.2" filter="url(#glow)"/><path d="M48 74 L55 71 L62 74 L68 71 L74 76 M45 81 L58 78 L72 82 M22 72 L34 66" stroke="#ff2a2a" stroke-width="1.3" opacity="0.65" fill="none"/></svg>`,
+    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
+      <defs>
+        <filter id="rimGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <clipPath id="apexClip">
+          <path d="M 14 106 C 16 83, 27 73, 45 66 L 47 56 C 42 49, 41 37, 43 24 L 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9 L 77 24 C 79 37, 78 49, 73 56 L 75 66 C 93 73, 104 83, 106 106 Z"/>
+        </clipPath>
+        <linearGradient id="shoulderLit" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ff6b6b" stop-opacity="0.55"/>
+          <stop offset="45%" stop-color="#991b1b" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="#050506" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- Pitch Black Core Body -->
+      <path d="M 14 106 C 16 83, 27 73, 45 66 L 47 56 C 42 49, 41 37, 43 24 L 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9 L 77 24 C 79 37, 78 49, 73 56 L 75 66 C 93 73, 104 83, 106 106 Z" fill="#070405"/>
+      <!-- Internal Armor Shading & Crimson Circuit Texture -->
+      <g clip-path="url(#apexClip)">
+        <path d="M 14 106 C 16 83, 27 73, 45 66 L 55 85 L 14 106 Z" fill="url(#shoulderLit)"/>
+        <path d="M 20 88 L 36 74 M 18 96 L 40 80 M 26 102 L 44 88" stroke="#f87171" stroke-width="1.4" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 54 84 L 66 80 L 74 84 L 84 79 L 94 85 M 48 91 L 61 87 L 71 91 L 85 86 L 99 93 M 42 98 L 57 94 L 69 99 L 82 94 L 98 101 M 62 74 L 75 72 L 88 76" stroke="#dc2626" stroke-width="1.5" opacity="0.55" fill="none" stroke-linejoin="round"/>
+      </g>
+      <!-- Open-Bottom Red Rim Light (Only highlights cowl, ears & shoulders) -->
+      <path d="M 14.5 105 C 16.5 83, 27 73, 45 66 L 47 56 C 42 49, 41 37, 43 24 L 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9 L 77 24 C 79 37, 78 49, 73 56 L 75 66 C 93 73, 103.5 83, 105.5 105" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" filter="url(#rimGlow)"/>
+      <path d="M 16 98 C 20 82, 29 74, 45 66 M 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9" fill="none" stroke="#fecaca" stroke-width="0.9" opacity="0.8"/>
+    </svg>`,
   },
   {
     id: "shadow-robin",
     name: "Night Operative",
     role: "Tactical / Tier III",
     defaultProgress: 100,
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#08080a"/><path d="M24 92 C27 74 35 64 44 60 L30 64 L39 55 L44 52 C43 44 45 31 48 22 L69 23 L71 31 L69 38 L71 43 L68 48 L69 52 L64 56 L58 55 L56 61 C66 67 74 77 77 92 Z" fill="#020203"/><path d="M49 21 L67 22" stroke="#d4d4d8" stroke-width="2" stroke-linecap="round" opacity="0.8"/></svg>`,
+    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
+      <!-- Side-Profile Bust Facing Right with Cape Collar Peak -->
+      <path d="M 24 106 C 27 87, 34 75, 44 68 L 28 73 L 39 59 L 46 56 C 44 46, 46 31, 50 18 L 78 20 L 80 29 L 77 36 L 82 43 L 78 46 L 80 50 L 77 54 L 79 59 L 70 63 L 66 70 C 78 76, 86 88, 89 106 Z" fill="#030304"/>
+      <!-- Subtle Metallic Top Crown Highlight -->
+      <path d="M 52 18.5 L 76 20" stroke="#e4e4e7" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+      <path d="M 50 20.5 L 77 22" stroke="#71717a" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+    </svg>`,
   },
   {
     id: "dark-knight",
     name: "Gotham Vigilante",
     role: "Field / Tier II",
     defaultProgress: 65,
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#08080a"/><path d="M15 92 C18 75 28 67 40 62 L37 59 L42 54 C39 48 39 36 40 24 L41 12 L45 23 C48 22 52 22 55 23 L59 12 L60 24 C61 36 61 48 58 54 L62 62 C74 67 82 75 85 92 Z" fill="#020203" stroke="#27272a" stroke-width="1"/></svg>`,
+    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
+      <!-- Solid Pitch-Black Cowl & Cape Notch Silhouette -->
+      <path d="M 16 106 C 19 85, 30 75, 45 68 L 40 63 L 47 58 C 43 51, 42 38, 44 25 L 45 10 L 51 24 C 56 23, 64 23, 69 24 L 75 10 L 76 25 C 78 38, 77 51, 73 58 L 75 68 C 90 74, 99 84, 102 106 Z" fill="#030304"/>
+    </svg>`,
   },
   {
     id: "recruit-wayne",
     name: "Initiate",
     role: "Recon / Tier I",
     defaultProgress: 12,
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#08080a"/><path d="M16 92 C20 75 30 68 42 63 L43 54 C38 48 37 37 39 27 C41 19 46 16 50 16 C54 16 59 19 61 27 C63 37 62 48 57 54 L58 63 C70 68 80 75 84 92 Z" fill="#020203" stroke="#27272a" stroke-width="1"/></svg>`,
+    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
+      <!-- Realistic Unmasked Human Head, Ears & Shoulders Silhouette -->
+      <path d="M 16 106 C 20 84, 31 75, 47 68 L 48 57 C 45 55, 43 52, 44 47 C 41 46, 41 39, 44 38 C 44 24, 51 17, 60 17 C 69 17, 76 24, 76 38 C 79 39, 79 46, 76 47 C 77 52, 75 55, 72 57 L 73 68 C 89 75, 100 84, 104 106 Z" fill="#030304"/>
+    </svg>`,
   },
 ];
 
@@ -379,15 +417,15 @@ export default function UserProfile() {
           </div>
         </div>
 
-        {/* 🦇 INTERACTIVE OPERATIVE SILHOUETTES & STATUS BARS HUD */}
-        <div className="bg-[#121215]/95 border-l-4 border-l-red-500 border border-red-900/30 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.85)] p-5 md:p-6 mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-red-950/50 pb-3">
+                {/* 🦇 INTERACTIVE OPERATIVE SILHOUETTES & STATUS BARS HUD */}
+        <div className="bg-[#1c1d22]/95 border-l-4 border-l-[#e04848] border border-white/5 rounded-sm shadow-[0_12px_35px_rgba(0,0,0,0.9)] p-5 md:p-7 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-white/5 pb-3">
             <div>
-              <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-red-500 font-bold">
+              <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-[#e04848] font-bold">
                 Tactical Operative Protocols
               </h2>
               <p className="text-xs text-gray-400 mt-0.5">
-                Select a silhouette below to equip as your active Operative Avatar.
+                Operative clearance tiers and progression telemetry.
               </p>
             </div>
             <span className="text-[11px] font-mono text-gray-500 uppercase tracking-widest">
@@ -406,32 +444,30 @@ export default function UserProfile() {
                   onClick={() => handleSelectOperative(op)}
                   className={`group flex flex-col items-center p-2 sm:p-3 rounded-sm transition-all duration-300 cursor-pointer border ${
                     isSelected
-                      ? "bg-red-950/25 border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.15)]"
-                      : "bg-transparent border-transparent hover:bg-white/[0.03] hover:border-red-900/40"
+                      ? "bg-white/[0.03] border-[#e04848]/40 shadow-[0_0_20px_rgba(224,72,72,0.1)]"
+                      : "bg-transparent border-transparent hover:bg-white/[0.02]"
                   }`}
-                  title={`Equip ${op.name} (${op.role})`}
+                  title={`${op.name} (${op.role})`}
                 >
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-end justify-center mb-3 transition-transform duration-300 group-hover:scale-105">
+                  {/* Transparent-Background Silhouette Bust */}
+                  <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-24 flex items-end justify-center mb-2.5 transition-transform duration-300 group-hover:scale-105">
                     <div
-                      className="w-full h-full rounded-sm overflow-hidden"
+                      className="w-full h-full"
                       dangerouslySetInnerHTML={{ __html: op.svgString }}
                     />
-                    {isSelected && (
-                      <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md">
-                        <Check className="w-2.5 h-2.5" />
-                      </span>
-                    )}
                   </div>
 
-                  <div className="w-full max-w-[96px] h-2 sm:h-2.5 bg-[#070709] rounded-full overflow-hidden border border-white/5 p-[1px]">
+                  {/* Matte Recessed Progress Bar Underneath */}
+                  <div className="w-full max-w-[92px] h-2.5 bg-[#0a0a0c] rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#d93838] to-[#ff5252] shadow-[0_0_8px_rgba(239,68,68,0.65)] transition-all duration-700"
+                      className="h-full rounded-full bg-[#d94646] shadow-[0_0_8px_rgba(217,70,70,0.5)] transition-all duration-700"
                       style={{ width: `${barWidth}%` }}
                     />
                   </div>
 
-                  <span className={`mt-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-colors ${
-                    isSelected ? "text-red-400 font-bold" : "text-gray-500 group-hover:text-gray-300"
+                  {/* Label */}
+                  <span className={`mt-2.5 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-colors ${
+                    isSelected ? "text-[#e04848] font-bold" : "text-gray-400 group-hover:text-gray-200"
                   }`}>
                     {op.name}
                   </span>
