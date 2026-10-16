@@ -23,7 +23,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Parada, Maharasa, Uparasa Shodhana Protocols",
       size: "1.8 MB",
       pages: "4 Pages",
-      url: "/pdfs/mineral-shodhana-blank.pdf"
+      url: "/practical_pdfs/mineral-shodhana-blank.pdf"
     },
     {
       id: "rs-empty-3",
@@ -31,7 +31,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Svarasa, Kalka, Kwatha, Hima, Phanta & Sneha Kalpana",
       size: "2.4 MB",
       pages: "6 Pages",
-      url: "/pdfs/bhaishajya-kalpana-blank.pdf"
+      url: "/practical_pdfs/bhaishajya-kalpana-blank.pdf"
     }
   ],
   filledFiles: [
@@ -41,7 +41,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Complete with Analytical Parameters & Supervisor Signatures",
       size: "2.8 MB",
       pages: "5 Pages",
-      url: "/pdfs/solved-gandhaka-record.pdf"
+      url: "/practical_pdfs/solved-gandhaka-record.pdf"
     },
     {
       id: "rs-filled-2",
@@ -49,7 +49,7 @@ const RASA_SHASTRA_PRACTICALS = {
       ncismFormat: "Exemplar Datasets for Taila, Ghrita & Asava-Arishta Preparations",
       size: "4.1 MB",
       pages: "12 Pages",
-      url: "/pdfs/bhaishajya-kalpana-solved.pdf"
+      url: "/practical_pdfs/bhaishajya-kalpana-solved.pdf"
     }
   ]
 };
