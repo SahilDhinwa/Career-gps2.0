@@ -6,7 +6,7 @@ import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/component
 import { NAccent, NText } from "@/components/NoteElements";
 
 const SHARIRA_CHAPTERS = [
-  { name: "Chapter 1: Katidha Purushiya Sharira", link: "short-notes/charaka-samhita/sharir/chapter-1", status: "Active" },
+  { name: "Chapter 1: Katidha Purushiya Sharira", link: "/short-notes/charaka-samhita/sharir/chapter-1", status: "Active" },
   { name: "Chapter 2: Atulya Gotriya Sharira", link: "#", status: "Draft" },
   { name: "Chapter 3: Khuddika Garbhavakranti Sharira", link: "#", status: "Draft" },
   { name: "Chapter 4: Mahati Garbhavakranti Sharira", link: "#", status: "Draft" },
