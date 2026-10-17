@@ -6,50 +6,58 @@ import AyurvedicBackground from "@/components/AyurvedicBackground";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 
-// Rasa Shastra Practical Files Database (Stored in public/pdfs/)
+// Rasa Shastra Practical Files Database (Linked to public/practical_pdfs/)
 const RASA_SHASTRA_PRACTICALS = {
   emptyFiles: [
     {
       id: "rs-empty-1",
-      title: "Non-Lecture Activity Record (Blank Standard Template)",
-      ncismFormat: "Covers Aim/Objectives, Method of Activity, Group Role & Discussion (NCISM Compliant)",
-      size: "1.2 MB",
-      pages: "2 Pages",
-      url: "/practical_pdfs/RASASHASTRA non lac record.pdf"
+      title: "Analytical Practical Record Book",
+      ncismFormat: "Comprehensive Logbook for RS & BK Practicals",
+      size: "Standard PDF",
+      pages: "Full Book",
+      url: "/practical_pdfs/rs bk analytical prctical record book - Copy.pdf"
     },
     {
       id: "rs-empty-2",
-      title: "Mineral & Metal Shodhana Practical Observation Sheet",
-      ncismFormat: "Parada, Maharasa, Uparasa Shodhana Protocols",
-      size: "1.8 MB",
-      pages: "4 Pages",
-      url: "/practical_pdfs/mineral-shodhana-blank.pdf"
+      title: "Non-Lecture Activity Record",
+      ncismFormat: "Covers Aim, Method, Group Role & Discussion",
+      size: "Standard PDF",
+      pages: "Template",
+      url: "/practical_pdfs/RASASHASTRA non lac record.pdf"
     },
     {
       id: "rs-empty-3",
-      title: "Bhaishajya Kalpana Pharmaceutical Formulations Logbook",
-      ncismFormat: "Svarasa, Kalka, Kwatha, Hima, Phanta & Sneha Kalpana",
-      size: "2.4 MB",
-      pages: "6 Pages",
-      url: "/practical_pdfs/bhaishajya-kalpana-blank.pdf"
+      title: "Pharmacy Visit Report",
+      ncismFormat: "Ayurvedic Pharmacy/Manufacturing Unit Visit Log",
+      size: "Standard PDF",
+      pages: "Template",
+      url: "/practical_pdfs/pharmacy visit report.pdf"
+    },
+    {
+      id: "rs-empty-4",
+      title: "Hospital IPD Visit Practical Format",
+      ncismFormat: "Clinical IPD Patient Observation Sheet",
+      size: "Standard PDF",
+      pages: "Template",
+      url: "/practical_pdfs/Hospital IPD Visit Practical Format.pdf"
+    },
+    {
+      id: "rs-empty-5",
+      title: "Market Survey Form",
+      ncismFormat: "Raw Drugs & Market Medicine Survey Format",
+      size: "Standard PDF",
+      pages: "Template",
+      url: "/practical_pdfs/MARKET SURVEY FORM.pdf"
     }
   ],
   filledFiles: [
     {
       id: "rs-filled-1",
-      title: "Solved Example: Gandhaka Shodhana & Marana Record",
-      ncismFormat: "Complete with Analytical Parameters & Supervisor Signatures",
-      size: "2.8 MB",
-      pages: "5 Pages",
-      url: "/practical_pdfs/solved-gandhaka-record.pdf"
-    },
-    {
-      id: "rs-filled-2",
-      title: "Complete Bhaishajya Kalpana Practical Reference Compendium",
-      ncismFormat: "Exemplar Datasets for Taila, Ghrita & Asava-Arishta Preparations",
-      size: "4.1 MB",
-      pages: "12 Pages",
-      url: "/practical_pdfs/bhaishajya-kalpana-solved.pdf"
+      title: "Solved Reference Vault (Coming Soon)",
+      ncismFormat: "Fully documented logs with observations for Viva Prep",
+      size: "-",
+      pages: "-",
+      url: "#"
     }
   ]
 };
@@ -134,7 +142,7 @@ export default function RasaShastraPracticalPage() {
 
               <div className="grid grid-cols-1 gap-4">
                 {RASA_SHASTRA_PRACTICALS.emptyFiles.map((file) => (
-                  <div key={file.id} className="bg-background/60 border border-surfaceBorder p-5 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-amber-500/40 transition-colors">
+                  <div key={file.id} className="bg-background/60 border border-surfaceBorder p-5 rounded-sm flex flex-col xl:flex-row xl:items-center justify-between gap-4 hover:border-amber-500/40 transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4 text-amber-500 shrink-0" />
@@ -202,24 +210,29 @@ export default function RasaShastraPracticalPage() {
                       </div>
                     </div>
 
-                    {/* Read & Save Buttons */}
-                    <div className="flex items-center gap-2.5 shrink-0">
-                      <a
-                        href={file.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5"
-                      >
-                        <BookOpen className="w-4 h-4" /> Read
-                      </a>
-                      <a
-                        href={file.url}
-                        download
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
-                      >
-                        <Download className="w-4 h-4" /> Save
-                      </a>
-                    </div>
+                    {file.url !== "#" ? (
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <BookOpen className="w-4 h-4" /> Read
+                        </a>
+                        <a
+                          href={file.url}
+                          download
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-sm text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                        >
+                          <Download className="w-4 h-4" /> Save
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="shrink-0 bg-surface/50 border border-surfaceBorder text-foreground/50 font-bold py-2.5 px-4 rounded-sm text-xs flex items-center justify-center cursor-not-allowed">
+                        Awaiting Upload
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
