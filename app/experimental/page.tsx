@@ -51,7 +51,7 @@ export default function ExperimentalDirectoryPage() {
       name: "Maximalism",
       desc: "Explosive color clashes, layered stickers, bold patterns, and unapologetic visual sensory overload.",
       icon: Flame,
-      path: "/experimental/minimalism",
+      path: "/experimental/maximalism",
       status: "Active",
       cardClass: "bg-gradient-to-br from-fuchsia-600 via-rose-500 to-amber-400 text-white border-4 border-yellow-300 rounded-3xl p-6 shadow-[0_15px_35px_rgba(225,29,72,0.4)] hover:rotate-1 hover:scale-[1.02] transition-all overflow-hidden",
       iconWrapClass: "w-12 h-12 bg-yellow-300 text-fuchsia-900 rounded-full border-2 border-black flex items-center justify-center shadow-md -rotate-12",
