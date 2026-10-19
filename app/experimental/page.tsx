@@ -37,7 +37,9 @@ export default function ExperimentalUIPage() {
     const handleMouseMove = (e: MouseEvent) => {
       if (!cardsRef.current) return;
       const cards = cardsRef.current.getElementsByClassName("magic-card");
-      for (const card of cards) {
+      
+      // FIX: Used Array.from() to satisfy strict TypeScript iteration rules
+      for (const card of Array.from(cards)) {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -188,7 +190,6 @@ export default function ExperimentalUIPage() {
               </div>
             </div>
             
-            {/* The block that caused the error is now fixed because Sparkles is imported */}
             <div className="max-w-4xl mx-auto px-6 py-32 mt-12">
               <div className="reveal-on-scroll bg-gradient-to-br from-primary via-purple-500 to-success p-1 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
                 <div className="bg-background rounded-[22px] p-10 md:p-20 text-center">
