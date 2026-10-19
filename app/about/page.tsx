@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Compass, Phone, Mail, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeft, Compass, Phone, Mail, MapPin, ShieldCheck, Sparkles, Beaker, ChevronRight } from "lucide-react";
 import Logo from "../../components/Logo";
 
 export default function AboutPage() {
@@ -135,6 +135,30 @@ export default function AboutPage() {
               </div>
             </div>
 
+          </div>
+        </div>
+
+        {/* 🧪 EXPERIMENTAL UI LAB BANNER (TESTING PHASE ONLY) */}
+        <div className="mt-12 relative overflow-hidden bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-emerald-500/10 border border-purple-500/20 p-8 rounded-sm shadow-lg group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-150 transition-transform duration-700"></div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+            <div className="text-center md:text-left">
+              <div className="inline-flex items-center gap-1.5 text-purple-500 font-mono text-xs font-bold uppercase tracking-widest mb-2">
+                <Beaker className="w-3.5 h-3.5" /> Beta Testing Phase
+              </div>
+              <h2 className="font-heading text-xl md:text-2xl font-bold text-foreground mb-2">Help Us Shape the Future UI</h2>
+              <p className="text-foreground/70 text-sm max-w-md">
+                We are actively testing new design languages (Apple VisionOS, Neo-Brutalism, Cyberpunk). Jump into the sandbox and let us know what aesthetic you prefer!
+              </p>
+            </div>
+
+            <Link 
+              href="/experimental"
+              className="shrink-0 bg-purple-500 hover:bg-purple-600 text-white font-bold py-3.5 px-6 rounded-sm transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.5)] flex items-center gap-2"
+            >
+              Open UI Lab <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
 
