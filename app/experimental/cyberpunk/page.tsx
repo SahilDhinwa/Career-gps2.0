@@ -53,8 +53,9 @@ export default function CyberpunkPage() {
           <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#fcee0a]" />
           <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#fcee0a]" />
 
+          {/* FIXED LINE: Wrapped the pseudo-comment in string literal braces */}
           <p className="text-xs text-[#fcee0a] uppercase tracking-[0.25em] mb-2">
-            // NEURAL_INTERFACE_ACTIVE
+            {"// NEURAL_INTERFACE_ACTIVE"}
           </p>
           <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-wider text-white drop-shadow-[0_0_15px_rgba(6,182,212,0.7)] mb-4">
             TACTICAL <span className="text-[#fcee0a]">COMMAND</span> HUD
