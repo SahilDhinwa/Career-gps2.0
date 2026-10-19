@@ -26,6 +26,14 @@ export default function ExperimentalDirectoryPage() {
     { id: "retro-design", name: "13. Retro Design", desc: "8-bit pixel art, CRT scanlines, old-school terminal looks.", icon: Gamepad2, path: "/experimental/retro-design", status: "Coming Soon" },
     { id: "cyberpunk", name: "14. Cyberpunk", desc: "Neon glows, dark backgrounds, hacker aesthetics.", icon: Terminal, path: "/experimental/cyberpunk", status: "Active" },
     { id: "editorial-design", name: "15. Editorial Design", desc: "Fashion magazine style, huge serif fonts, strict grids.", icon: BookOpen, path: "/experimental/editorial-design", status: "Coming Soon" },
+    { 
+  id: "magnetic-buttons", 
+  name: "Magnetic Buttons", 
+  desc: "Elastic cursor-pull buttons, 3D parallax labels, and interactive docks.", 
+  icon: Wand2, 
+  path: "/experimental/magnetic-buttons", 
+  status: "Active" 
+},
     
     // Custom Interactions
     { id: "scrolling", name: "Cinematic Scrolling", desc: "Scroll-reveals, infinite marquees, and parallax text.", icon: MousePointer2, path: "/experimental/scrolling-text", status: "Active" },
