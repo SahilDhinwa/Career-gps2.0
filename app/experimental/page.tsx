@@ -15,7 +15,7 @@ export default function ExperimentalDirectoryPage() {
     { id: "maximalism", name: "2. Maximalism", desc: "Loud, chaotic, overlapping elements and bright colors.", icon: Flame, path: "/experimental/maximalism", status: "Coming Soon" },
     { id: "glassmorphism", name: "3. Glassmorphism", desc: "Frosted glass, blurs, and translucent backgrounds.", icon: Droplet, path: "/experimental/glassmorphism", status: "Active" },
     { id: "neumorphism", name: "4. Neumorphism", desc: "Soft extruded plastic look using inner and outer shadows.", icon: Target, path: "/experimental/neumorphism", status: "Coming Soon" },
-    { id: "claymorphism", name: "5. Claymorphism", desc: "Fluffy, 3D, inflated 'clay' look using pastel colors.", icon: Cloud, path: "/experimental/claymorphism", status: "Coming Soon" },
+    { id: "claymorphism", name: "5. Claymorphism", desc: "Fluffy, 3D, inflated 'clay' look using pastel colors.", icon: Cloud, path: "/experimental/claymorphism", status: "Active" },
     { id: "brutalism", name: "6. Brutalism", desc: "Raw HTML look, no CSS styling, default blue links.", icon: Box, path: "/experimental/brutalism", status: "Coming Soon" },
     { id: "neo-brutalism", name: "7. Neo-Brutalism", desc: "Thick black borders, hard shadows, loud contrasting colors.", icon: Zap, path: "/experimental/neo-brutalism", status: "Active" },
     { id: "skeuomorphism", name: "8. Skeuomorphism", desc: "Making digital UI look like real-world physical objects.", icon: Briefcase, path: "/experimental/skeuomorphism", status: "Coming Soon" },
