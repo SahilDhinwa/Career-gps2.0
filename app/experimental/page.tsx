@@ -1,250 +1,117 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Beaker, LayoutGrid, Zap, Terminal, Star, ArrowRight, Cpu, MousePointer2, ChevronDown, Wand2, Sparkles } from "lucide-react";
-import { useTheme } from "next-themes";
+import { 
+  ArrowLeft, Beaker, LayoutGrid, Zap, Terminal, Box, Cloud, 
+  Square, Layers, Disc3, Gamepad2, BookOpen, Droplet, Target,
+  Minus, Flame, Briefcase, MousePointer2, Wand2, ArrowRight
+} from "lucide-react";
 
-export default function ExperimentalUIPage() {
-  const { theme } = useTheme();
-  const [activeUI, setActiveUI] = useState<"glass" | "brutal" | "cyberpunk" | "scroll" | "hover">("glass");
-
-  // Custom Intersection Observer Engine for Scroll Animations
-  useEffect(() => {
-    if (activeUI !== "scroll") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          } else {
-            entry.target.classList.remove("is-visible");
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-    const elements = document.querySelectorAll(".reveal-on-scroll");
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [activeUI]);
-
-  // Mouse tracking for "Cursor Magic" effect
-  const cardsRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (activeUI !== "hover") return;
+export default function ExperimentalDirectoryPage() {
+  // The complete master list of UI styles
+  const uiStyles = [
+    { id: "minimalism", name: "1. Minimalism", desc: "Clean, white space, and typography-focused.", icon: Minus, path: "/experimental/minimalism", status: "Coming Soon" },
+    { id: "maximalism", name: "2. Maximalism", desc: "Loud, chaotic, overlapping elements and bright colors.", icon: Flame, path: "/experimental/maximalism", status: "Coming Soon" },
+    { id: "glassmorphism", name: "3. Glassmorphism", desc: "Frosted glass, blurs, and translucent backgrounds.", icon: Droplet, path: "/experimental/glassmorphism", status: "Active" },
+    { id: "neumorphism", name: "4. Neumorphism", desc: "Soft extruded plastic look using inner and outer shadows.", icon: Target, path: "/experimental/neumorphism", status: "Coming Soon" },
+    { id: "claymorphism", name: "5. Claymorphism", desc: "Fluffy, 3D, inflated 'clay' look using pastel colors.", icon: Cloud, path: "/experimental/claymorphism", status: "Coming Soon" },
+    { id: "brutalism", name: "6. Brutalism", desc: "Raw HTML look, no CSS styling, default blue links.", icon: Box, path: "/experimental/brutalism", status: "Coming Soon" },
+    { id: "neo-brutalism", name: "7. Neo-Brutalism", desc: "Thick black borders, hard shadows, loud contrasting colors.", icon: Zap, path: "/experimental/neo-brutalism", status: "Active" },
+    { id: "skeuomorphism", name: "8. Skeuomorphism", desc: "Making digital UI look like real-world physical objects.", icon: Briefcase, path: "/experimental/skeuomorphism", status: "Coming Soon" },
+    { id: "flat-design", name: "9. Flat Design", desc: "Solid colors, no shadows, no gradients (Windows 8 style).", icon: Square, path: "/experimental/flat-design", status: "Coming Soon" },
+    { id: "material-design", name: "10. Material Design", desc: "Paper-and-ink inspired card layouts with realistic depth.", icon: Layers, path: "/experimental/material-design", status: "Coming Soon" },
+    { id: "bento-ui", name: "11. Bento UI", desc: "Strict grid boxes with rounded corners (like a Bento box).", icon: LayoutGrid, path: "/experimental/bento-ui", status: "Coming Soon" },
+    { id: "y2k-design", name: "12. Y2K Design", desc: "Retro-futurism, metallic gradients, early 2000s web.", icon: Disc3, path: "/experimental/y2k-design", status: "Coming Soon" },
+    { id: "retro-design", name: "13. Retro Design", desc: "8-bit pixel art, CRT scanlines, old-school terminal looks.", icon: Gamepad2, path: "/experimental/retro-design", status: "Coming Soon" },
+    { id: "cyberpunk", name: "14. Cyberpunk", desc: "Neon glows, dark backgrounds, hacker aesthetics.", icon: Terminal, path: "/experimental/cyberpunk", status: "Active" },
+    { id: "editorial-design", name: "15. Editorial Design", desc: "Fashion magazine style, huge serif fonts, strict grids.", icon: BookOpen, path: "/experimental/editorial-design", status: "Coming Soon" },
     
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!cardsRef.current) return;
-      const cards = cardsRef.current.getElementsByClassName("magic-card");
-      
-      // FIX: Used Array.from() to satisfy strict TypeScript iteration rules
-      for (const card of Array.from(cards)) {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        (card as HTMLElement).style.setProperty("--mouse-x", `${x}px`);
-        (card as HTMLElement).style.setProperty("--mouse-y", `${y}px`);
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [activeUI]);
+    // Custom Interactions
+    { id: "scrolling", name: "Cinematic Scrolling", desc: "Scroll-reveals, infinite marquees, and parallax text.", icon: MousePointer2, path: "/experimental/scrolling-text", status: "Active" },
+    { id: "cursor-magic", name: "Cursor Magic", desc: "Magnetic buttons and Vercel-style glowing hover cards.", icon: Wand2, path: "/experimental/cursor-magic", status: "Active" },
+  ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-500 font-sans pb-24">
+    <div className="min-h-screen bg-background text-foreground pb-24">
       
-      {/* 🧪 TOP CONTROLS & NAVIGATION */}
+      {/* Navbar */}
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-surfaceBorder p-4 md:px-8">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link 
-            href="/" 
+            href="/about" 
             className="inline-flex items-center gap-2 text-foreground/60 hover:text-primary transition-colors font-bold text-sm"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Hub
+            <ArrowLeft className="w-4 h-4" /> Back to About Us
           </Link>
-          
-          <div className="flex flex-wrap items-center gap-2 bg-surface/50 p-1.5 rounded-md border border-surfaceBorder">
-            <button onClick={() => setActiveUI("glass")} className={`px-3 md:px-4 py-2 rounded-sm text-xs font-bold transition-all flex items-center gap-2 ${activeUI === "glass" ? "bg-white/10 dark:bg-white/20 shadow-sm" : "hover:bg-surfaceBorder/50"}`}>
-              <LayoutGrid className="w-4 h-4" /> <span className="hidden sm:inline">Apple Glass</span>
-            </button>
-            <button onClick={() => setActiveUI("brutal")} className={`px-3 md:px-4 py-2 rounded-sm text-xs font-bold transition-all flex items-center gap-2 ${activeUI === "brutal" ? "bg-black text-white dark:bg-white dark:text-black shadow-sm" : "hover:bg-surfaceBorder/50"}`}>
-              <Zap className="w-4 h-4" /> <span className="hidden sm:inline">Neo-Brutalism</span>
-            </button>
-            <button onClick={() => setActiveUI("cyberpunk")} className={`px-3 md:px-4 py-2 rounded-sm text-xs font-bold transition-all flex items-center gap-2 ${activeUI === "cyberpunk" ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/50" : "hover:bg-surfaceBorder/50"}`}>
-              <Terminal className="w-4 h-4" /> <span className="hidden sm:inline">Cyberpunk</span>
-            </button>
-            <button onClick={() => setActiveUI("scroll")} className={`px-3 md:px-4 py-2 rounded-sm text-xs font-bold transition-all flex items-center gap-2 ${activeUI === "scroll" ? "bg-primary text-white shadow-sm" : "hover:bg-surfaceBorder/50"}`}>
-              <MousePointer2 className="w-4 h-4" /> <span className="hidden sm:inline">Scroll Reveal</span>
-            </button>
-            <button onClick={() => setActiveUI("hover")} className={`px-3 md:px-4 py-2 rounded-sm text-xs font-bold transition-all flex items-center gap-2 ${activeUI === "hover" ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/50" : "hover:bg-surfaceBorder/50"}`}>
-              <Wand2 className="w-4 h-4" /> <span className="hidden sm:inline">Cursor Magic</span>
-            </button>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest border border-primary/20">
+            <Beaker className="w-3.5 h-3.5" /> BAMS Hub Design Lab
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto mt-12 px-6">
-        <div className="mb-10 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-4">
-            <Beaker className="w-4 h-4" /> UI Design Laboratory
-          </span>
-          <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">
-            Experimental <span className="text-primary">Playground</span>
-          </h1>
-          <p className="text-foreground/60 max-w-2xl mx-auto">
-            Switch between different design languages above to test button interactions, hover states, and card layouts.
-          </p>
-        </div>
+      {/* Header */}
+      <div className="max-w-7xl mx-auto mt-16 px-6 mb-16 text-center">
+        <h1 className="text-5xl md:text-6xl font-heading font-black mb-6">
+          The <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success">Architecture</span> Room
+        </h1>
+        <p className="text-foreground/60 max-w-2xl mx-auto text-lg">
+          Welcome to the sandbox. This is where we test, break, and perfect the UI/UX design languages that will eventually power the future of the BAMS Hub platform.
+        </p>
+      </div>
 
-        {/* STYLE 1: APPLE GLASS */}
-        {activeUI === "glass" && (
-          <div className="relative p-8 md:p-12 rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-emerald-500/10 border border-white/10 shadow-2xl">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 bg-white/5 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.1)] hover:bg-white/10 transition-colors duration-500">
-                <h2 className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/50">Glassmorphism Bento</h2>
-                <p className="text-foreground/70 mb-8 leading-relaxed">Inspired by Apple's VisionOS. Heavy backdrop blurs and subtle white borders.</p>
-                <button className="bg-foreground text-background font-medium px-6 py-3 rounded-full hover:scale-105 transition-transform duration-300 shadow-lg">Explore</button>
-              </div>
-              <div className="bg-white/5 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center text-center group cursor-pointer hover:-translate-y-2 transition-all duration-500">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-500 to-emerald-500 flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-500">
-                  <Star className="w-8 h-8 text-white fill-white/50" />
-                </div>
-                <h3 className="font-bold text-lg">Premium</h3>
-              </div>
-            </div>
-          </div>
-        )}
+      {/* Grid Directory */}
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {uiStyles.map((style) => {
+            const Icon = style.icon;
+            const isActive = style.status === "Active";
 
-        {/* STYLE 2: BRUTALISM */}
-        {activeUI === "brutal" && (
-          <div className="bg-[#f0f0f0] dark:bg-[#1a1a1a] p-8 md:p-12 border-4 border-black dark:border-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-[#ff90e8] p-8 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
-                <h2 className="text-3xl font-black text-black uppercase tracking-tight mb-4">Neo-Brutalism</h2>
-                <p className="text-black/80 font-bold mb-8 border-l-4 border-black pl-4">Loud colors, thick borders, and hard drop shadows.</p>
-                <button className="w-full bg-[#ffc900] text-black font-black uppercase text-xl py-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-2">Click Me <ArrowRight className="w-6 h-6" /></button>
-              </div>
-              <div className="flex flex-col gap-8">
-                <div className="bg-[#3b82f6] p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                  <h3 className="font-black text-white text-xl uppercase mb-2">High Contrast</h3>
-                </div>
-                <div className="bg-[#10b981] p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                  <h3 className="font-black text-black text-xl uppercase mb-2">Aggressive UI</h3>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STYLE 3: CYBERPUNK */}
-        {activeUI === "cyberpunk" && (
-          <div className="bg-[#050505] p-8 md:p-12 border border-cyan-500/30 rounded-sm relative overflow-hidden" style={{ backgroundImage: `linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px)`, backgroundSize: '30px 30px' }}>
-            <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400/50 shadow-[0_0_15px_rgba(6,182,212,1)] opacity-50 animate-[floatDown_4s_linear_infinite]"></div>
-            <div className="flex items-center gap-3 mb-8 border-b border-cyan-500/30 pb-4">
-              <Cpu className="w-6 h-6 text-cyan-400" />
-              <h2 className="text-2xl font-mono font-bold text-cyan-400 tracking-[0.2em] uppercase">Sys.Admin_HUD</h2>
-              <span className="ml-auto text-xs font-mono text-cyan-400/50 animate-pulse">STATUS: ONLINE</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 bg-cyan-950/20 border border-cyan-500/40 p-6 backdrop-blur-sm relative group hover:bg-cyan-900/30 transition-colors cursor-crosshair">
-                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-cyan-400"></div>
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-cyan-400"></div>
-                <h3 className="font-mono text-cyan-300 text-lg mb-4 flex items-center gap-2"><span className="w-2 h-2 bg-cyan-400 rounded-full animate-ping"></span> Cyberpunk Tactical</h3>
-                <p className="font-mono text-cyan-100/70 text-sm mb-6">Sharp corners, neon glows, monospace fonts.</p>
-                <button className="bg-transparent border border-cyan-400 text-cyan-400 font-mono text-xs uppercase px-6 py-2 hover:bg-cyan-400 hover:text-black transition-all shadow-[0_0_10px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.8)]">Execute Command_</button>
-              </div>
-              <div className="bg-red-950/20 border border-red-500/40 p-6 backdrop-blur-sm relative flex flex-col justify-center items-center text-center">
-                <Terminal className="w-10 h-10 text-red-500 mb-3" />
-                <span className="font-mono text-red-400 text-sm">System Override</span>
-              </div>
-            </div>
-            <style dangerouslySetInnerHTML={{__html: `@keyframes floatDown { 0% { transform: translateY(-10px); } 100% { transform: translateY(500px); } }`}} />
-          </div>
-        )}
-
-        {/* STYLE 4: SCROLL REVEAL */}
-        {activeUI === "scroll" && (
-          <div className="bg-surface/30 border border-surfaceBorder rounded-3xl pb-24">
-            <style dangerouslySetInnerHTML={{__html: `
-              .reveal-on-scroll { opacity: 0; transform: translateY(50px) scale(0.95); transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-              .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0) scale(1); }
-              .delay-100 { transition-delay: 100ms; } .delay-200 { transition-delay: 200ms; } .delay-300 { transition-delay: 300ms; }
-            `}} />
-            <div className="h-[70vh] flex flex-col items-center justify-center text-center px-4 relative">
-              <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/50">Cinematic Scrolling</h2>
-              <p className="text-foreground/60 text-lg max-w-xl mx-auto mb-12">Scroll down to see elements smoothly reveal themselves using the Intersection Observer API.</p>
-              <div className="animate-bounce mt-8 p-3 bg-surface border border-surfaceBorder rounded-full shadow-lg"><ChevronDown className="w-6 h-6 text-primary" /></div>
-            </div>
-            <div className="max-w-4xl mx-auto px-6 py-24 border-t border-surfaceBorder/50">
-              <div className="text-center mb-16 reveal-on-scroll">
-                <h3 className="text-3xl font-bold mb-4">Staggered Entrances</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="reveal-on-scroll delay-100 bg-surface border border-surfaceBorder p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-transform"><h4 className="font-bold">First</h4></div>
-                <div className="reveal-on-scroll delay-200 bg-surface border border-surfaceBorder p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-transform"><h4 className="font-bold">Second</h4></div>
-                <div className="reveal-on-scroll delay-300 bg-surface border border-surfaceBorder p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-transform"><h4 className="font-bold">Third</h4></div>
-              </div>
-            </div>
-            
-            <div className="max-w-4xl mx-auto px-6 py-32 mt-12">
-              <div className="reveal-on-scroll bg-gradient-to-br from-primary via-purple-500 to-success p-1 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-                <div className="bg-background rounded-[22px] p-10 md:p-20 text-center">
-                  <Sparkles className="w-12 h-12 text-primary mx-auto mb-6 reveal-on-scroll delay-200" />
-                  <h2 className="text-4xl md:text-5xl font-bold mb-6 reveal-on-scroll delay-300">
-                    High-End Product Feel
-                  </h2>
-                  <p className="text-foreground/70 text-lg md:text-xl max-w-2xl mx-auto reveal-on-scroll delay-500">
-                    You can use this exact mechanic on your BAMS Hub landing page to introduce your flagship e-books or practical manuals dynamically as the user scrolls.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-          </div>
-        )}
-
-        {/* STYLE 5: CURSOR MAGIC */}
-        {activeUI === "hover" && (
-          <div className="relative py-12 px-6 border border-surfaceBorder rounded-xl bg-background overflow-hidden">
-            <style dangerouslySetInnerHTML={{__html: `
-              .magic-cards-grid:hover > .magic-card::after { opacity: 1; }
-              .magic-card { background-color: rgba(255, 255, 255, 0.03); border-radius: 0.75rem; cursor: pointer; position: relative; }
-              .magic-card:hover::before { opacity: 1; }
-              .magic-card::before, .magic-card::after { border-radius: inherit; content: ""; height: 100%; left: 0; opacity: 0; position: absolute; top: 0; transition: opacity 500ms; width: 100%; }
-              .magic-card::before { background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.15), transparent 40%); z-index: 3; }
-              .magic-card::after { background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.4), transparent 40%); z-index: 1; }
-              .magic-card > .card-content { background-color: var(--background); border-radius: inherit; margin: 1px; position: relative; z-index: 2; }
-              .dark .magic-card > .card-content { background-color: #0a0a0a; }
-              .light .magic-card > .card-content { background-color: #fafafa; }
-            `}} />
-            
-            <div className="text-center mb-12 relative z-10">
-              <h2 className="text-3xl font-bold mb-4">Cursor Magnetic Cards</h2>
-              <p className="text-foreground/60 max-w-lg mx-auto">Move your mouse over the cards below to see the dynamic border glow effect.</p>
-            </div>
-
-            <div ref={cardsRef} className="magic-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 group relative z-10">
-              {[1, 2, 3, 4, 5, 6].map((item) => (
-                <div key={item} className="magic-card h-64">
-                  <div className="card-content h-full w-full p-8 flex flex-col justify-between">
-                    <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 mb-4">
-                      <Wand2 className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold mb-2">Magic Card 0{item}</h3>
-                      <p className="text-foreground/50 text-sm">The background glow dynamically follows your mouse position via inline CSS variables.</p>
-                    </div>
+            return (
+              <Link 
+                key={style.id}
+                href={isActive ? style.path : "#"}
+                className={`group relative p-6 rounded-xl border transition-all duration-300 flex flex-col h-full
+                  ${isActive 
+                    ? "bg-surface hover:bg-surface/80 border-surfaceBorder hover:border-primary/50 shadow-sm hover:shadow-md cursor-pointer" 
+                    : "bg-surface/30 border-surfaceBorder/50 opacity-70 cursor-not-allowed"
+                  }
+                `}
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center transition-colors
+                    ${isActive ? "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white" : "bg-foreground/5 text-foreground/40"}
+                  `}>
+                    <Icon className="w-6 h-6" />
                   </div>
+                  
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border
+                    ${isActive 
+                      ? "bg-success/10 text-success border-success/20" 
+                      : "bg-foreground/5 text-foreground/40 border-surfaceBorder"
+                    }
+                  `}>
+                    {style.status}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
 
+                <h3 className="font-heading font-bold text-xl mb-2 text-foreground group-hover:text-primary transition-colors">
+                  {style.name}
+                </h3>
+                <p className="text-foreground/60 text-sm flex-grow mb-6">
+                  {style.desc}
+                </p>
+
+                <div className={`mt-auto flex items-center gap-2 text-sm font-bold transition-colors
+                  ${isActive ? "text-foreground group-hover:text-primary" : "text-foreground/30"}
+                `}>
+                  {isActive ? "Enter Sandbox" : "Under Construction"}
+                  {isActive && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
