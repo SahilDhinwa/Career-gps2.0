@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowLeft, Beaker, LayoutGrid, Zap, Terminal, Star, ArrowRight, Cpu, MousePointer2, ChevronDown, Wand2 } from "lucide-react";
+import { ArrowLeft, Beaker, LayoutGrid, Zap, Terminal, Star, ArrowRight, Cpu, MousePointer2, ChevronDown, Wand2, Sparkles } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export default function ExperimentalUIPage() {
   const { theme } = useTheme();
-  // ADDED "hover" to the state
   const [activeUI, setActiveUI] = useState<"glass" | "brutal" | "cyberpunk" | "scroll" | "hover">("glass");
 
   // Custom Intersection Observer Engine for Scroll Animations
@@ -77,7 +76,6 @@ export default function ExperimentalUIPage() {
             <button onClick={() => setActiveUI("scroll")} className={`px-3 md:px-4 py-2 rounded-sm text-xs font-bold transition-all flex items-center gap-2 ${activeUI === "scroll" ? "bg-primary text-white shadow-sm" : "hover:bg-surfaceBorder/50"}`}>
               <MousePointer2 className="w-4 h-4" /> <span className="hidden sm:inline">Scroll Reveal</span>
             </button>
-            {/* ADDED 5TH BUTTON */}
             <button onClick={() => setActiveUI("hover")} className={`px-3 md:px-4 py-2 rounded-sm text-xs font-bold transition-all flex items-center gap-2 ${activeUI === "hover" ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/50" : "hover:bg-surfaceBorder/50"}`}>
               <Wand2 className="w-4 h-4" /> <span className="hidden sm:inline">Cursor Magic</span>
             </button>
@@ -189,75 +187,46 @@ export default function ExperimentalUIPage() {
                 <div className="reveal-on-scroll delay-300 bg-surface border border-surfaceBorder p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-transform"><h4 className="font-bold">Third</h4></div>
               </div>
             </div>
+            
+            {/* The block that caused the error is now fixed because Sparkles is imported */}
+            <div className="max-w-4xl mx-auto px-6 py-32 mt-12">
+              <div className="reveal-on-scroll bg-gradient-to-br from-primary via-purple-500 to-success p-1 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+                <div className="bg-background rounded-[22px] p-10 md:p-20 text-center">
+                  <Sparkles className="w-12 h-12 text-primary mx-auto mb-6 reveal-on-scroll delay-200" />
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 reveal-on-scroll delay-300">
+                    High-End Product Feel
+                  </h2>
+                  <p className="text-foreground/70 text-lg md:text-xl max-w-2xl mx-auto reveal-on-scroll delay-500">
+                    You can use this exact mechanic on your BAMS Hub landing page to introduce your flagship e-books or practical manuals dynamically as the user scrolls.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
           </div>
         )}
 
-        {/* =======================================================
-            STYLE 5: CURSOR MAGIC (VERCEL / LINEAR STYLE)
-            ======================================================= */}
+        {/* STYLE 5: CURSOR MAGIC */}
         {activeUI === "hover" && (
           <div className="relative py-12 px-6 border border-surfaceBorder rounded-xl bg-background overflow-hidden">
-            {/* The CSS that makes the magic glow follow the mouse */}
             <style dangerouslySetInnerHTML={{__html: `
-              .magic-cards-grid:hover > .magic-card::after {
-                opacity: 1;
-              }
-              .magic-card {
-                background-color: rgba(255, 255, 255, 0.03);
-                border-radius: 0.75rem;
-                cursor: pointer;
-                position: relative;
-              }
-              .magic-card:hover::before {
-                opacity: 1;
-              }
-              .magic-card::before,
-              .magic-card::after {
-                border-radius: inherit;
-                content: "";
-                height: 100%;
-                left: 0;
-                opacity: 0;
-                position: absolute;
-                top: 0;
-                transition: opacity 500ms;
-                width: 100%;
-              }
-              /* Inner glow on hover */
-              .magic-card::before {
-                background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.15), transparent 40%);
-                z-index: 3;
-              }
-              /* Border glow */
-              .magic-card::after {
-                background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.4), transparent 40%);
-                z-index: 1;
-              }
-              .magic-card > .card-content {
-                background-color: var(--background);
-                border-radius: inherit;
-                margin: 1px;
-                position: relative;
-                z-index: 2;
-              }
-              /* Dark mode specific tweak */
-              .dark .magic-card > .card-content {
-                background-color: #0a0a0a;
-              }
-              .light .magic-card > .card-content {
-                background-color: #fafafa;
-              }
+              .magic-cards-grid:hover > .magic-card::after { opacity: 1; }
+              .magic-card { background-color: rgba(255, 255, 255, 0.03); border-radius: 0.75rem; cursor: pointer; position: relative; }
+              .magic-card:hover::before { opacity: 1; }
+              .magic-card::before, .magic-card::after { border-radius: inherit; content: ""; height: 100%; left: 0; opacity: 0; position: absolute; top: 0; transition: opacity 500ms; width: 100%; }
+              .magic-card::before { background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.15), transparent 40%); z-index: 3; }
+              .magic-card::after { background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.4), transparent 40%); z-index: 1; }
+              .magic-card > .card-content { background-color: var(--background); border-radius: inherit; margin: 1px; position: relative; z-index: 2; }
+              .dark .magic-card > .card-content { background-color: #0a0a0a; }
+              .light .magic-card > .card-content { background-color: #fafafa; }
             `}} />
             
             <div className="text-center mb-12 relative z-10">
               <h2 className="text-3xl font-bold mb-4">Cursor Magnetic Cards</h2>
-              <p className="text-foreground/60 max-w-lg mx-auto">
-                Move your mouse over the cards below. A subtle indigo glow tracks your cursor's exact coordinates to illuminate the borders and interior.
-              </p>
+              <p className="text-foreground/60 max-w-lg mx-auto">Move your mouse over the cards below to see the dynamic border glow effect.</p>
             </div>
 
             <div ref={cardsRef} className="magic-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 group relative z-10">
-              
               {[1, 2, 3, 4, 5, 6].map((item) => (
                 <div key={item} className="magic-card h-64">
                   <div className="card-content h-full w-full p-8 flex flex-col justify-between">
@@ -271,7 +240,6 @@ export default function ExperimentalUIPage() {
                   </div>
                 </div>
               ))}
-
             </div>
           </div>
         )}
