@@ -357,7 +357,52 @@ export default function ExperimentalDirectoryPage() {
           Compare 17 iconic UI paradigms side-by-side. Each card below is engineered using the exact borders, shadows, textures, and typography of the style it represents.
         </p>
       </div>
+      
+      {/* 🚀 PROJECT ATREYA & BAMS SCHOLAR DUAL-GATEWAY LAUNCHER */}
+      <div className="max-w-7xl mx-auto mb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Link
+          href="/atreya"
+          className="group rounded-3xl bg-gradient-to-br from-[#122A20] via-[#0B1913] to-[#211A0B] border-2 border-[#D4AF37]/60 p-7 text-white shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between"
+        >
+          <div>
+            <span className="inline-block text-[10px] font-mono uppercase tracking-widest bg-[#D4AF37] text-black font-black px-3 py-1 rounded-full mb-4">
+              TRACK B • INTERNATIONAL GATEWAY
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold mb-2">
+              Project ATREYA (Global Ayurveda)
+            </h2>
+            <p className="text-white/75 text-sm leading-relaxed mb-6">
+              Features the 3-Stage Familiar-to-Profound Funnel, Interactive Clinical X-Ray Cards, and the 8 Branches of Ashtanga Ayurveda.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#D4AF37]">
+            <span>Open Global Gateway (/atreya)</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
 
+        <Link
+          href="/bams-scholar"
+          className="group rounded-3xl bg-zinc-900 border-2 border-emerald-500/50 p-7 text-white shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between"
+        >
+          <div>
+            <span className="inline-block text-[10px] font-mono uppercase tracking-widest bg-emerald-500 text-black font-black px-3 py-1 rounded-full mb-4">
+              TRACK A • INDIA MEDICAL GATEWAY
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black mb-2">
+              BAMS Scholar Syllabus &amp; Exam Hub
+            </h2>
+            <p className="text-zinc-300 text-sm leading-relaxed mb-6">
+              NCISM Prof I, II, &amp; III syllabus checklists, high-yield Samhita topics, and Viva-Voce PYQ focus points.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
+            <span>Open BAMS Scholar Hub (/bams-scholar)</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+      </div>
+      
       {/* Multi-Style Chameleon Grid */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {uiStyles.map((style) => {
