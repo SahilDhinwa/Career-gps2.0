@@ -241,21 +241,23 @@ export default function ExperimentalDirectoryPage() {
     },
 
     // 13. RETRO DESIGN
+        // 13. RETRO DESIGN (WARM 1970s VINTAGE RADIO VIBE)
     {
       id: "retro-design",
       number: "13",
-      name: "Retro Arcade CRT",
-      desc: "1980s phosphor green monitor scanlines, 8-bit command prompts, and classic arcade cabinet nostalgia.",
+      name: "Retro Design",
+      desc: "Inspired by past decades—warm vintage cream paper, bold rust-red serif typography, and 1970s sunset stripes.",
       icon: Gamepad2,
       path: "/experimental/retro-design",
       status: "Active",
-      cardClass: "bg-[#08140a] text-[#4ade80] font-mono rounded-xl p-6 border-4 border-[#1e3a24] shadow-[inset_0_0_30px_rgba(74,222,128,0.15)]",
-      iconWrapClass: "w-12 h-12 bg-[#0f2914] border border-[#4ade80] text-[#4ade80] flex items-center justify-center shadow-[0_0_10px_rgba(74,222,128,0.4)]",
-      badgeClass: "bg-[#4ade80] text-[#08140a] font-mono font-bold text-[10px] uppercase px-2 py-0.5",
-      titleClass: "font-mono font-bold text-xl uppercase tracking-widest text-[#4ade80] drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]",
-      descClass: "font-mono text-[#4ade80]/80 text-xs leading-relaxed",
-      footerClass: "font-mono text-xs uppercase text-amber-400 border border-amber-400/60 px-3 py-1.5 bg-amber-400/10",
+      cardClass: "bg-[#EFE3C8] text-[#2B2118] font-serif rounded-2xl p-6 border-2 border-[#23332F] shadow-[6px_6px_0px_#9E3420] hover:-translate-y-1 transition-all overflow-hidden",
+      iconWrapClass: "w-12 h-12 rounded-xl bg-[#23332F] text-[#E5A93B] border-2 border-[#9E3420] flex items-center justify-center shadow-sm",
+      badgeClass: "bg-[#23332F] text-[#EFE3C8] font-sans font-bold text-[10px] uppercase tracking-wider px-3 py-1 rounded",
+      titleClass: "font-serif font-black text-2xl text-[#9E3420] tracking-tight",
+      descClass: "font-sans text-[#4A3828] font-medium text-xs leading-relaxed",
+      footerClass: "bg-[#5E2C1E] text-[#F5EAD4] font-sans font-black text-xs uppercase tracking-wider px-4 py-2 rounded-lg shadow-[0_3px_0_#2B1306]",
     },
+    
 
     // 14. CYBERPUNK
     {
