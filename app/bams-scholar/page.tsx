@@ -4,23 +4,54 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { 
   ArrowLeft, BookOpen, ShieldCheck, CheckSquare, 
-  Award, Flame, FileText, Globe, Sparkles, ArrowUpRight, Layers 
+  Award, Flame, Globe, Sparkles, ArrowUpRight, 
+  Stethoscope, Brain, Eye, CheckCircle2 
 } from "lucide-react";
 
 type ProfKey = "prof1" | "prof2" | "prof3";
 
-export default function BAMSScholarGatewayPage() {
+export default function AtreyaMedBAMSScholarPage() {
   const [activeProf, setActiveProf] = useState<ProfKey>("prof1");
   const [completedTopics, setCompletedTopics] = useState<string[]>([
     "Padartha Vigyan & Darshana",
     "Tridosha & Prakriti Physiology",
   ]);
+  const [selectedShloka, setSelectedShloka] = useState<number>(0);
+  const [revealMeaning, setRevealMeaning] = useState<boolean>(true);
 
   const toggleTopic = (topic: string) => {
     setCompletedTopics((prev) =>
       prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
     );
   };
+
+  // High-Yield Shloka Memorization & Mnemonic Vault
+  const shlokaVault = [
+    {
+      tag: "1st Prof • Ashtanga Hridaya Sutra 1/20",
+      title: "Tridosha Chief Sites (Sthana)",
+      sanskrit: "तेषां मेदोऽस्थिनाभ्याधो हृदयनाभ्यधः स्थितः ।",
+      padaccheda: "पक्वाधानं (Vata: Below Umbilicus) • नाभिः (Pitta: Umbilicus/Stomach) • उरः (Kapha: Thorax/Head)",
+      mnemonicTrick: "TOP-TO-BOTTOM RULE: Kapha rules the Roof (Chest/Head), Pitta rules the Furnace (Mid-abdomen), Vata rules the Foundation (Pelvis/Colon).",
+      aiapgetPearl: "Asked 6+ times in AIAPGET: 'Pakvashaya' is the Vishesha Sthana (chief seat) of Vata, whereas 'Amashaya' is the seat of Kapha & Pitta.",
+    },
+    {
+      tag: "2nd Prof • Charaka Chikitsa 15/15",
+      title: "Shatkriyakala & Agni Pathology",
+      sanskrit: "आयुर्वर्णो बलं स्वास्थ्यमुत्साहोपचयौ प्रभा । ओजस्तेजोऽग्नयः प्राणाश्चोक्ता देहाग्निहेतुकाः ॥",
+      padaccheda: "आयुः (Longevity) • वर्णः (Complexion) • बलम् (Strength) • ओजः (Immunity) = देहाग्नि-हेतुकाः (Rooted in Agni)",
+      mnemonicTrick: "A-V-B-S-U-P-O: If Jatharagni dies, life ceases; if it burns cleanly, Ojas and Prana thrive.",
+      aiapgetPearl: "Direct 5-mark Viva & MCQ favorite: 'Shama' vs 'Nirama' differentiation always begins with evaluating Agni Bala.",
+    },
+    {
+      tag: "3rd Prof • Sushruta Sutrasthana 15/41",
+      title: "The Definition of Complete Health (Swasthya)",
+      sanskrit: "समदोषः समाग्निश्च समधातुमलक्रियः । प्रसन्नात्मेन्द्रियमनाः स्वस्थ इत्यभिधीयते ॥",
+      padaccheda: "सम-दोषः (Balanced Doshas) + सम-अग्निः (Balanced Agni) + प्रसन्न-आत्म-इन्द्रिय-मनाः (Joyful Soul, Senses & Mind)",
+      mnemonicTrick: "4 SAMAs + 3 PRASANNAs: 4 physical balances (Dosha, Agni, Dhatu, Mala) + 3 spiritual/mental balances (Atma, Indriya, Manas).",
+      aiapgetPearl: "The World Health Organization (WHO) definition of health closely mirrors Acharya Sushruta’s 2,600-year-old verse.",
+    },
+  ];
 
   const syllabusData: Record<ProfKey, {
     label: string;
@@ -52,7 +83,7 @@ export default function BAMSScholarGatewayPage() {
           highYieldTopics: [
             "Tridosha & Prakriti Physiology",
             "Panchavidha Vata, Pitta & Kapha Subtypes",
-            "Sapta Dhatu Posana Nyayas & Ojas Immunity",
+            "Sapta Dhatu Poshana Nyayas & Ojas Immunity",
           ],
           pyqFocus: "Clinical Viva on Deha Prakriti Assessment & Agni",
         },
@@ -90,7 +121,7 @@ export default function BAMSScholarGatewayPage() {
             "100+ Detailed Classical Medicinal Plant Monographs",
             "Mishraka Gana (Triphala, Trikatu, Dashamoola)",
           ],
-          pyqFocus: "Dry/Wet Herbarium Specimen Identification &Botanical Names",
+          pyqFocus: "Dry/Wet Herbarium Specimen Identification & Botanical Names",
         },
         {
           name: "Rasa Shastra Evam Bhaishajya Kalpana",
@@ -120,7 +151,7 @@ export default function BAMSScholarGatewayPage() {
             "Chaturvimshati Upakrama (24 Antidote Procedures)",
             "Medical Jurisprudence & Forensic Autopsy",
           ],
-          pyqFocus: "Snakebite Differential (Sarpa,igha, Mandali, Rajimanta)",
+          pyqFocus: "Snakebite Differential (Darvikara, Mandali, Rajimanta)",
         },
       ],
     },
@@ -163,6 +194,7 @@ export default function BAMSScholarGatewayPage() {
   };
 
   const currentProf = syllabusData[activeProf];
+  const currentShloka = shlokaVault[selectedShloka];
 
   return (
     <div className="min-h-screen bg-[#080B0A] text-white font-sans pt-6 pb-32 px-4 sm:px-8">
@@ -177,9 +209,15 @@ export default function BAMSScholarGatewayPage() {
             <ArrowLeft className="w-4 h-4" /> Home
           </Link>
           <span className="text-zinc-700">|</span>
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-400">
-            BAMS Scholar Gateway • NCISM Curriculum Hub
-          </span>
+          <div className="flex items-center gap-2">
+            <Stethoscope className="w-4 h-4 text-emerald-400" />
+            <span className="text-sm font-black tracking-wider uppercase text-white">
+              ATREYA <span className="text-emerald-400">Med</span>
+            </span>
+            <span className="hidden md:inline-block text-[11px] font-mono text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-2.5 py-0.5 rounded-full">
+              Track 1 • BAMS &amp; AIAPGET Prep
+            </span>
+          </div>
         </div>
 
         <Link
@@ -187,32 +225,106 @@ export default function BAMSScholarGatewayPage() {
           className="inline-flex items-center gap-2 bg-[#D4AF37]/15 hover:bg-[#D4AF37] hover:text-black text-[#D4AF37] border border-[#D4AF37]/40 font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-xl transition-all"
         >
           <Globe className="w-3.5 h-3.5" />
-          <span>View Global Project ATREYA Gateway</span>
+          <span>Switch to Track 2: ATREYA Med Global</span>
         </Link>
       </div>
 
       {/* Hero Banner */}
-      <div className="max-w-7xl mx-auto rounded-3xl bg-gradient-to-br from-[#0F261D] via-zinc-900 to-zinc-950 border border-emerald-500/30 p-8 sm:p-12 mb-10">
+      <div className="max-w-7xl mx-auto rounded-3xl bg-gradient-to-br from-[#0F261D] via-zinc-900 to-zinc-950 border border-emerald-500/30 p-8 sm:p-12 mb-12">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-4">
-              <ShieldCheck className="w-3.5 h-3.5" /> Track A • For Indian BAMS Medical Scholars
+              <ShieldCheck className="w-3.5 h-3.5" /> Ayurvedic Training, Research &amp; Education for Young Aspirants
             </span>
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
-              Complete Your NCISM Syllabus. <br />
-              <span className="text-[#D4AF37]">Dominate University Exams &amp; AIAPGET.</span>
+              Master the NCISM Syllabus. <br />
+              <span className="text-[#D4AF37]">Crack University Exams &amp; AIAPGET.</span>
             </h1>
             <p className="text-zinc-300 text-sm sm:text-base leading-relaxed">
-              Structured year-wise subject trackers, high-yield Samhita checklists, and practical viva-voce focus points so you never feel overwhelmed before professional examinations.
+              The clinical prep companion for India&apos;s BAMS scholars—combining simplified Samhita breakdowns, Shloka memorization tricks, PYQ focus areas, and Veblen Good viva-voce confidence.
             </p>
           </div>
 
           {/* Progress Counter Card */}
           <div className="bg-black/50 border border-white/10 rounded-2xl p-6 min-w-[240px] text-center">
-            <p className="text-xs font-mono uppercase text-zinc-400 mb-1">Topics Mastered</p>
+            <p className="text-xs font-mono uppercase text-zinc-400 mb-1">Syllabus Topics Mastered</p>
             <p className="text-4xl font-black text-[#D4AF37]">{completedTopics.length}</p>
-            <p className="text-xs text-emerald-400 mt-1">Click any topic below to check off</p>
+            <p className="text-xs text-emerald-400 mt-1">Click any checklist item below</p>
           </div>
+        </div>
+      </div>
+
+      {/* =================================================================
+          INTERACTIVE SHLOKA MEMORIZATION & MNEMONIC DECODER
+          ================================================================= */}
+      <div className="max-w-7xl mx-auto mb-14 rounded-3xl bg-zinc-900/90 border border-[#D4AF37]/40 p-6 sm:p-10 shadow-2xl">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#D4AF37] mb-1">
+              <Brain className="w-4 h-4" /> High-Yield Samhita Memory Engine
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              Shloka Memorization Tricks &amp; AIAPGET Pearls
+            </h2>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {shlokaVault.map((s, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedShloka(idx)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  selectedShloka === idx
+                    ? "bg-[#D4AF37] text-black border-[#D4AF37]"
+                    : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white"
+                }`}
+              >
+                Verse #{idx + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-6 sm:p-8 rounded-2xl bg-black/60 border border-white/10">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <span className="text-xs font-mono text-emerald-400">{currentShloka.tag}</span>
+            <button
+              onClick={() => setRevealMeaning(!revealMeaning)}
+              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase px-3 py-1 rounded-lg bg-white/10 text-white hover:bg-white/20 cursor-pointer"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>{revealMeaning ? "Hide Memory Trick" : "Reveal Memory Trick"}</span>
+            </button>
+          </div>
+
+          <h3 className="text-lg font-bold text-zinc-300 mb-3">{currentShloka.title}</h3>
+          <p className="font-serif text-2xl sm:text-3xl text-[#D4AF37] leading-relaxed mb-4">
+            {currentShloka.sanskrit}
+          </p>
+          <p className="text-xs sm:text-sm font-mono text-zinc-300 mb-6">
+            <strong>Padaccheda:</strong> {currentShloka.padaccheda}
+          </p>
+
+          {revealMeaning && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/10">
+              <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-emerald-300 mb-1">
+                  ATREYA MED MEMORY TRICK
+                </p>
+                <p className="text-xs sm:text-sm text-white font-medium">
+                  {currentShloka.mnemonicTrick}
+                </p>
+              </div>
+              <div className="p-4 rounded-xl bg-amber-950/40 border border-[#D4AF37]/40">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] mb-1">
+                  AIAPGET &amp; VIVA-VOCE HIGH-YIELD PEARL
+                </p>
+                <p className="text-xs sm:text-sm text-white font-medium">
+                  {currentShloka.aiapgetPearl}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
