@@ -244,7 +244,42 @@ export default function AtreyaMedBAMSScholarPage() {
               The clinical prep companion for India&apos;s BAMS scholars—combining simplified Samhita breakdowns, Shloka memorization tricks, PYQ focus areas, and Veblen Good viva-voce confidence.
             </p>
           </div>
+          
+      {/* 🔥 FEATURED VAULT: BAMS 2ND PROF STUDY HUB (/bams-hub) */}
+      <div className="max-w-7xl mx-auto mb-12">
+        <div className="bg-gradient-to-r from-amber-950/60 via-zinc-900 to-zinc-950 border-2 border-amber-500/40 rounded-3xl p-6 sm:p-10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group hover:border-amber-400 transition-all">
+          
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-5 relative z-10 text-center md:text-left">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 text-amber-400">
+              <Sparkles className="w-7 h-7" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-[11px] font-mono font-bold uppercase tracking-widest text-amber-300 mb-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+                BATCH 2023 PROF II PAPERS &amp; CHARAKA MCQS LIVE
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">
+                Dedicated BAMS 2nd Prof Study Vault
+              </h2>
+              <p className="text-zinc-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+                Access interactive Charaka Samhita MCQs, downloadable previous year question paper PDFs, and high-yield 2nd Prof revision notes.
+              </p>
+            </div>
+          </div>
 
+          <div className="shrink-0 w-full md:w-auto relative z-10">
+            <Link
+              href="/bams-hub"
+              className="w-full md:w-auto bg-amber-500 hover:bg-amber-400 text-black font-black text-xs sm:text-sm uppercase tracking-wider py-4 px-8 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(245,158,11,0.3)]"
+            >
+              <span>Open BAMS 2nd Prof Vault</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+        </div>
+      </div>
+          
           {/* Progress Counter Card */}
           <div className="bg-black/50 border border-white/10 rounded-2xl p-6 min-w-[240px] text-center">
             <p className="text-xs font-mono uppercase text-zinc-400 mb-1">Syllabus Topics Mastered</p>
