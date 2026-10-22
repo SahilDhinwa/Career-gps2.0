@@ -203,7 +203,12 @@ export default function EBooksDirectory() {
   const phoneNumber = "918769892303";
   const [activeBook, setActiveBook] = useState<CareerAsset | null>(null);
   const [pageIndex, setPageIndex] = useState<number>(0);
+  
+  // Swipe & Page-Curl Physics State
   const [flipState, setFlipState] = useState<"idle" | "turning-next" | "turning-prev">("idle");
+  const [dragDeltaX, setDragDeltaX] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const dragStartXRef = useRef<number | null>(null);
 
   const getWhatsappUrl = (bookTitle: string) => {
     const message = encodeURIComponent(`Hi Sahil, I want to purchase the E-Book: '${bookTitle}'!`);
@@ -219,11 +224,14 @@ export default function EBooksDirectory() {
     setActiveBook(asset);
     setPageIndex(0);
     setFlipState("idle");
+    setDragDeltaX(0);
   };
 
   const closeBookModal = useCallback(() => {
     setActiveBook(null);
     setFlipState("idle");
+    setDragDeltaX(0);
+    setIsDragging(false);
   }, []);
 
   const triggerNextPage = useCallback(() => {
@@ -259,16 +267,38 @@ export default function EBooksDirectory() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [activeBook, closeBookModal, triggerNextPage, triggerPrevPage]);
 
+  // Touch Swipe Handlers for Realistic Curling
+  const handlePointerStart = (clientX: number) => {
+    if (flipState !== "idle") return;
+    dragStartXRef.current = clientX;
+    setIsDragging(true);
+  };
+
+  const handlePointerMove = (clientX: number) => {
+    if (!isDragging || dragStartXRef.current === null) return;
+    const delta = clientX - dragStartXRef.current;
+    setDragDeltaX(Math.max(-250, Math.min(250, delta)));
+  };
+
+  const handlePointerEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    const threshold = 50;
+    if (dragDeltaX < -threshold) {
+      triggerNextPage();
+    } else if (dragDeltaX > threshold) {
+      triggerPrevPage();
+    }
+    setDragDeltaX(0);
+    dragStartXRef.current = null;
+  };
+
   const getLeatherGradient = (tone: "obsidian" | "cognac" | "espresso" | "saddle") => {
     switch (tone) {
-      case "obsidian":
-        return "linear-gradient(90deg, #09090b 0%, #27272a 24%, #18181b 52%, #09090b 85%, #030304 100%)";
-      case "cognac":
-        return "linear-gradient(90deg, #2b1405 0%, #703b15 24%, #572b0c 52%, #361905 85%, #1c0b02 100%)";
-      case "espresso":
-        return "linear-gradient(90deg, #140d08 0%, #3a281d 24%, #281b13 52%, #160e09 85%, #0a0604 100%)";
-      case "saddle":
-        return "linear-gradient(90deg, #361b08 0%, #82471c 24%, #633412 52%, #3d1e07 85%, #210e02 100%)";
+      case "obsidian": return "linear-gradient(90deg, #09090b 0%, #27272a 24%, #18181b 52%, #09090b 85%, #030304 100%)";
+      case "cognac": return "linear-gradient(90deg, #2b1405 0%, #703b15 24%, #572b0c 52%, #361905 85%, #1c0b02 100%)";
+      case "espresso": return "linear-gradient(90deg, #140d08 0%, #3a281d 24%, #281b13 52%, #160e09 85%, #0a0604 100%)";
+      case "saddle": return "linear-gradient(90deg, #361b08 0%, #82471c 24%, #633412 52%, #3d1e07 85%, #210e02 100%)";
     }
   };
 
@@ -305,21 +335,63 @@ export default function EBooksDirectory() {
         }
 
         /* LOCKED FIXED-ASPECT BOOK CONTAINER (Prevents size jumping) */
-        .fixed-book-spread {
+        .fixed-book-container {
           width: 100%;
-          max-width: 860px;
-          height: 520px;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
+          max-width: 900px;
+          height: 70vh;
+          min-height: 480px;
+          max-height: 650px;
           background: #EFECE6;
           border-radius: 12px;
           overflow: hidden;
           box-shadow: inset 0 0 25px rgba(0,0,0,0.12);
         }
-        @media (max-width: 768px) {
-          .fixed-book-spread {
-            height: 440px;
-          }
+
+        /* Scrollable content areas inside the locked book */
+        .book-content-scroll {
+          overflow-y: auto;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(138, 102, 15, 0.3) transparent;
+        }
+
+        /* 3D Page Curl Animations */
+        .page-corner-peel {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, transparent 46%, rgba(0,0,0,0.15) 48%, #fff 50%, #e6dec8 68%, #cbbd9f 100%);
+          border-top-left-radius: 12px;
+          box-shadow: -6px -6px 16px rgba(0, 0, 0, 0.2);
+          transition: width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease;
+          pointer-events: none;
+          z-index: 25;
+        }
+        .swipe-active .page-corner-peel {
+          width: 100px;
+          height: 100px;
+          box-shadow: -12px -12px 28px rgba(0, 0, 0, 0.3);
+        }
+
+        .arching-page-next {
+          animation: realCurlNext 0.45s cubic-bezier(0.32, 0.08, 0.24, 1) forwards;
+          transform-origin: left center;
+        }
+        .arching-page-prev {
+          animation: realCurlPrev 0.45s cubic-bezier(0.32, 0.08, 0.24, 1) forwards;
+          transform-origin: left center;
+        }
+
+        @keyframes realCurlNext {
+          0% { transform: perspective(1500px) rotateY(0deg) translateZ(0); opacity: 1; }
+          50% { transform: perspective(1500px) rotateY(-90deg) translateZ(30px); background: #ffffff; box-shadow: -20px 0 30px rgba(0,0,0,0.2); }
+          100% { transform: perspective(1500px) rotateY(-180deg) translateZ(0); opacity: 0; }
+        }
+        @keyframes realCurlPrev {
+          0% { transform: perspective(1500px) rotateY(-180deg) translateZ(0); opacity: 0; }
+          50% { transform: perspective(1500px) rotateY(-90deg) translateZ(30px); background: #ffffff; box-shadow: -20px 0 30px rgba(0,0,0,0.2); opacity: 1; }
+          100% { transform: perspective(1500px) rotateY(0deg) translateZ(0); opacity: 1; }
         }
       `}} />
 
@@ -472,99 +544,117 @@ export default function EBooksDirectory() {
       </div>
 
       {/* =================================================================
-          FIXED-ASPECT 3D BOOK READER (LOCKED HEIGHT, STABLE SPREAD)
+          FIXED-ASPECT 3D BOOK READER (LOCKED HEIGHT, MOBILE 1-PAGE, DESKTOP 2-PAGE SPREAD)
           ================================================================= */}
       {activeBook && (
         <div 
           onClick={closeBookModal}
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-3 sm:p-6"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-3 sm:p-6 animate-fadeIn"
         >
-          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-4xl flex flex-col items-center">
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-5xl flex flex-col items-center">
             
             {/* Top Bar */}
-            <div className="w-full flex items-center justify-between mb-3 px-4 py-2.5 rounded-xl bg-zinc-900 border border-[#D4AF37]/40 text-white shadow-xl">
+            <div className="w-full flex items-center justify-between mb-4 px-4 py-3 rounded-xl bg-zinc-900 border border-[#D4AF37]/40 text-white shadow-xl">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-[#D4AF37]" />
-                <span className="font-bold text-xs sm:text-sm">{activeBook.title}</span>
-                <span className="text-xs text-white/60 font-mono">
+                <span className="font-bold text-sm truncate max-w-[150px] sm:max-w-xs">{activeBook.title}</span>
+                <span className="hidden sm:inline text-xs text-white/60 font-mono">
                   • Page {pageIndex + 1} / {activeBook.pages.length}
                 </span>
+              </div>
+
+              <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-[#D4AF37] font-mono">
+                <Hand className="w-3.5 h-3.5" />
+                <span>Swipe Left/Right to Turn Pages</span>
               </div>
 
               <button
                 type="button"
                 onClick={closeBookModal}
-                className="px-3 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-bold uppercase transition-all"
+                className="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-bold uppercase transition-all"
               >
-                <X className="w-3.5 h-3.5 inline mr-1" /> Close Book
+                <X className="w-3.5 h-3.5 inline mr-1" /> Close
               </button>
             </div>
 
-            {/* LOCKED SPREAD CONTAINER (Fixed height eliminates vertical jumping) */}
-            <div className="fixed-book-spread relative border-2 border-[#78512a] shadow-[0_35px_90px_rgba(0,0,0,0.95)]">
-              
-              {/* Center Spine Crease */}
-              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-10 bg-gradient-to-r from-transparent via-black/20 to-transparent pointer-events-none z-30" />
+            {/* LOCKED SPREAD CONTAINER */}
+            {/* Mobile: 1 Column (Right Page Only). Desktop: 2 Columns (Left Index + Right Content) */}
+            <div 
+              className={`fixed-book-container relative border-2 border-[#78512a] shadow-[0_35px_90px_rgba(0,0,0,0.95)] flex flex-col md:flex-row ${isDragging ? "swipe-active" : ""}`}
+              onTouchStart={(e) => handlePointerStart(e.touches[0].clientX)}
+              onTouchMove={(e) => handlePointerMove(e.touches[0].clientX)}
+              onTouchEnd={handlePointerEnd}
+              onMouseDown={(e) => handlePointerStart(e.clientX)}
+              onMouseMove={(e) => handlePointerMove(e.clientX)}
+              onMouseUp={handlePointerEnd}
+              onMouseLeave={() => isDragging && handlePointerEnd()}
+            >
+              {/* Center Spine Crease (Hidden on Mobile) */}
+              <div className="hidden md:block absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-10 bg-gradient-to-r from-transparent via-black/20 to-transparent pointer-events-none z-30" />
 
-              {/* LEFT PAGE */}
-              <div 
-                onClick={triggerPrevPage}
-                className="p-6 sm:p-9 border-r border-[#d6cfc2] flex flex-col justify-between bg-gradient-to-r from-[#E2DDD2] via-[#F2EFE9] to-[#EAE5DA] cursor-pointer overflow-y-auto"
-              >
+              {/* LEFT PAGE (Cover / Index) - Hidden on Mobile to maintain single-page book feel */}
+              <div className="hidden md:flex w-1/2 p-6 lg:p-10 border-r border-[#d6cfc2] flex-col justify-between bg-gradient-to-r from-[#E2DDD2] via-[#F2EFE9] to-[#EAE5DA] select-none book-content-scroll">
                 <div>
-                  <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#78716c] pb-2 mb-4 border-b border-[#d6cfc2]">
+                  <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#78716c] pb-3 mb-6 border-b border-[#d6cfc2]">
                     <span>{activeBook.tag}</span>
                     <span>VEBLEN GOOD ARCHIVE</span>
                   </div>
 
-                  <h2 className="font-serif text-xl sm:text-3xl font-bold text-[#1c1917] mb-1">
+                  <h2 className="font-serif text-3xl lg:text-4xl font-bold text-[#1c1917] mb-2 leading-tight">
                     {activeBook.title}
                   </h2>
-                  <p className="font-serif italic text-xs text-[#57534e] mb-4">
+                  <p className="font-serif italic text-sm text-[#57534e] mb-6">
                     {activeBook.subtitle}
                   </p>
 
-                  <div className="p-3.5 rounded-lg bg-black/[0.04] border border-black/10 text-xs text-[#44403c] leading-relaxed">
-                    <p className="font-bold uppercase tracking-wider text-[10px] text-[#8a660f] mb-1">SYNOPSIS</p>
+                  <div className="p-4 rounded-lg bg-black/[0.04] border border-black/10 text-xs text-[#44403c] leading-relaxed">
+                    <p className="font-bold uppercase tracking-wider text-[10px] text-[#8a660f] mb-2">SYNOPSIS</p>
                     {activeBook.description}
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#d6cfc2] flex items-center justify-between text-xs text-[#57534e]">
+                <div className="pt-6 mt-6 border-t border-[#d6cfc2] flex items-center justify-between text-xs text-[#57534e]">
                   <span className="font-serif font-bold">By {activeBook.author}</span>
-                  <span className="font-mono text-[11px] text-[#8a660f] font-bold">← Click Left for Prev</span>
                 </div>
               </div>
 
-              {/* RIGHT PAGE */}
+              {/* RIGHT PAGE (Dynamic Content) - Takes full width on mobile */}
               <div 
-                onClick={triggerNextPage}
-                className="p-6 sm:p-9 flex flex-col justify-between bg-gradient-to-l from-[#E4DFD3] via-[#FAF8F5] to-[#F0ECE1] cursor-pointer overflow-y-auto relative"
+                className={`w-full md:w-1/2 p-6 lg:p-10 flex flex-col justify-between bg-gradient-to-l from-[#E4DFD3] via-[#FAF8F5] to-[#F0ECE1] select-none relative book-content-scroll ${
+                  flipState === "turning-next" ? "arching-page-next" : flipState === "turning-prev" ? "arching-page-prev" : ""
+                }`}
+                style={{
+                  transform: isDragging && dragDeltaX < 0 
+                    ? `perspective(1500px) rotateY(${Math.max(-45, dragDeltaX * 0.4)}deg)` 
+                    : undefined
+                }}
               >
+                <div className="page-corner-peel" />
+
                 {(() => {
                   const page = activeBook.pages[pageIndex];
                   return (
                     <>
                       <div>
-                        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#8a660f] pb-2 mb-4 border-b border-[#d6cfc2]">
+                        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#8a660f] pb-3 mb-5 border-b border-[#d6cfc2]">
                           <span>{page.heading}</span>
                           <span>PAGE 0{page.pageNumber}</span>
                         </div>
 
-                        <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1c1917] mb-3">
+                        <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1c1917] mb-4 tracking-tight">
                           {page.subheading}
                         </h3>
 
-                        <div className="space-y-3 font-serif text-xs sm:text-sm text-[#292524] leading-relaxed">
+                        <div className="space-y-4 font-serif text-sm sm:text-base text-[#292524] leading-relaxed">
                           {page.body.map((paragraph, idx) => (
                             <p key={idx}>{paragraph}</p>
                           ))}
                         </div>
 
                         {page.bullets && (
-                          <ul className="mt-3 space-y-1.5 text-xs text-[#292524] font-medium pl-1">
+                          <ul className="mt-4 space-y-2 text-xs sm:text-sm text-[#292524] font-medium pl-1">
                             {page.bullets.map((b, idx) => (
-                              <li key={idx} className="flex items-start gap-1.5">
+                              <li key={idx} className="flex items-start gap-2">
                                 <span className="text-[#8a660f] font-black">•</span>
                                 <span>{b}</span>
                               </li>
@@ -573,14 +663,14 @@ export default function EBooksDirectory() {
                         )}
 
                         {page.highlightQuote && (
-                          <blockquote className="mt-4 p-3 border-l-3 border-[#8a660f] bg-[#ede4cf]/80 font-serif italic text-xs text-[#1c1917]">
+                          <blockquote className="mt-6 p-4 border-l-3 border-[#8a660f] bg-[#ede4cf]/80 font-serif italic text-sm text-[#1c1917]">
                             &ldquo;{page.highlightQuote}&rdquo;
                           </blockquote>
                         )}
                       </div>
 
-                      <div className="pt-4 border-t border-[#d6cfc2] flex items-center justify-between text-xs">
-                        <span className="font-serif italic text-[#78716c]">Click Right for Next →</span>
+                      <div className="pt-6 mt-8 border-t border-[#d6cfc2] flex items-center justify-between text-xs">
+                        <span className="font-serif italic text-[#78716c]">Swipe left to turn →</span>
                         <span className="font-mono text-[11px] font-bold text-[#8a660f]">
                           {pageIndex + 1} / {activeBook.pages.length}
                         </span>
@@ -593,29 +683,25 @@ export default function EBooksDirectory() {
             </div>
 
             {/* Bottom Controls */}
-            <div className="mt-4 flex items-center justify-center gap-3">
+            <div className="mt-5 flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={triggerPrevPage}
                 disabled={pageIndex === 0}
-                className="px-5 py-2 rounded-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-40 text-white border border-white/15 text-xs font-bold uppercase transition-all"
+                className="px-5 py-3 rounded-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-40 text-white border border-white/15 text-xs font-bold uppercase transition-all"
               >
                 <ChevronLeft className="w-4 h-4 inline mr-1" /> Prev
               </button>
 
-              <button
-                type="button"
-                onClick={() => setPageIndex(0)}
-                className="px-4 py-2 rounded-full bg-zinc-900 text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-mono uppercase"
-              >
-                <RotateCcw className="w-3.5 h-3.5 inline mr-1" /> Page 1
-              </button>
+              <span className="text-xs text-white/50 font-mono hidden sm:inline">
+                {pageIndex + 1} / {activeBook.pages.length}
+              </span>
 
               <button
                 type="button"
                 onClick={triggerNextPage}
                 disabled={pageIndex === activeBook.pages.length - 1}
-                className="px-5 py-2 rounded-full bg-[#D4AF37] hover:bg-amber-300 disabled:opacity-40 text-black font-black text-xs uppercase transition-all"
+                className="px-5 py-3 rounded-full bg-[#D4AF37] hover:bg-amber-300 disabled:opacity-40 text-black font-black text-xs uppercase transition-all"
               >
                 Next <ChevronRight className="w-4 h-4 inline ml-1" />
               </button>
