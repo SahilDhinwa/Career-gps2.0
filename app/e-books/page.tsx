@@ -497,7 +497,10 @@ export default function EBooksDirectory() {
                   onClick={() => openBookModal(asset)}
                   className={`w-full sm:w-2/5 py-10 px-4 sm:p-6 md:p-8 flex items-center justify-center bg-gradient-to-br ${asset.color} relative overflow-hidden cursor-pointer`}
                 >
-                  <div className="w-[200px] sm:w-full max-w-[220px] aspect-[54/85] rounded-md shadow-2xl flex flex-col justify-between p-4 relative z-10 border border-white/10 overflow-hidden"
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-warning/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                  
+                  <div 
+                    className="w-[200px] sm:w-full max-w-[220px] aspect-[54/85] rounded-md shadow-2xl flex flex-col justify-between p-4 relative z-10 border border-white/10 overflow-hidden"
                     style={{
                       background: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9))`,
                       backgroundImage: `url(${asset.coverBgImage})`,
