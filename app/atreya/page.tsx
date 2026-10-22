@@ -1,216 +1,169 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { 
-  ArrowRight, Globe, ShieldCheck, BookOpen, 
-  Activity, Eye, Layers, Microscope, Stethoscope, 
-  HeartPulse, Sparkles 
+  ArrowLeft, ArrowRight, Globe, Microscope, Activity, 
+  FlaskConical, GitMerge, Users, ShieldCheck, Sparkles, 
+  BookOpen, Stethoscope, CheckCircle2, Layers 
 } from "lucide-react";
 
-export default function AtreyaMedGlobalPage() {
-  const [xrayCards, setXrayCards] = useState<number[]>([0]);
-  const [selectedBranch, setSelectedBranch] = useState<number>(0);
-  const [quizAnswers, setQuizAnswers] = useState<{
-    frame: "vata" | "pitta" | "kapha";
-    agni: "vata" | "pitta" | "kapha";
-    response: "vata" | "pitta" | "kapha";
-  }>({
-    frame: "pitta",
-    agni: "pitta",
-    response: "vata",
-  });
+const STRATEGIC_PHASES = [
+  {
+    phase: "PHASE 01 • MONTHS 1–6",
+    status: "ACTIVE NOW",
+    title: "Establish Scientific Authority",
+    desc: "Demystify classical Sanskrit Samhitas into peer-grade biomedical language. Prove that Ayurveda is a 5,000-year-old clinical science through evidence-based research papers and interactive diagnostic tools.",
+    pillarsIncluded: "Powers Pillars 01, 02 & 03",
+    badgeColor: "bg-success/15 text-success border-success/30",
+  },
+  {
+    phase: "PHASE 02 • MONTHS 6–12",
+    status: "CURRICULUM OPEN",
+    title: "Launch Gateway Clinical Education",
+    desc: "Replace commercialized 200-hour 'spa certificates' with rigorous foundational training in Tridosha physiology, Sapta Dhatu tissue kinetics, Srotas micro-channels, and Shatkriyakala pathology.",
+    pillarsIncluded: "Powers Pillar 04",
+    badgeColor: "bg-amber-500/15 text-amber-800 dark:text-amber-400 border-amber-500/30",
+  },
+  {
+    phase: "PHASE 03 • YEAR 2 & BEYOND",
+    status: "ECOSYSTEM EXPANSION",
+    title: "Build the Global Vaidya Movement",
+    desc: "Host digital clinical symposiums, case-study debates, and research exchanges connecting authentic BAMS doctors and Vaidyas in India directly with international medical learners.",
+    pillarsIncluded: "Powers Pillar 05",
+    badgeColor: "bg-primary/15 text-primary border-primary/30",
+  },
+];
 
-  const toggleXray = (index: number) => {
-    setXrayCards((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
-  };
+const GLOBAL_PILLARS = [
+  {
+    slug: "science-vault",
+    number: "PILLAR 01",
+    phaseTag: "PHASE 1 • RESEARCH VAULT",
+    title: "Beyond the Spa: Clinical Science Vault",
+    subtitle: "Research Monograph + Interactive Neuro-Physiological X-Ray Lab",
+    desc: "Read our flagship paper 'Beyond the Spa: The Clinical Reality of Ayurvedic Internal Medicine' and inspect the trigeminal, vagal, and HPA-axis mechanisms behind Shirodhara, Abhyanga, and Nasya.",
+    cta: "Open Science Vault",
+    highlights: ["Full Research Paper", "3 Interactive X-Ray Decoders", "Samhita Citations"],
+    icon: Microscope,
+    spanFull: false,
+  },
+  {
+    slug: "diagnostics",
+    number: "PILLAR 02",
+    phaseTag: "PHASE 1 • PRECISION MEDICINE",
+    title: "Prakriti, Vikriti & Agni Diagnostic Lab",
+    subtitle: "Research Monograph + Charaka Vimanasthana Clinical Profiler",
+    desc: "Read 'Decoding Prakriti: The Original Personalized Medicine' (genomic & epigenetic correlations) and run a multi-parameter constitutional and metabolic fire (Jatharagni) assessment.",
+    cta: "Launch Diagnostic Lab",
+    highlights: ["Epigenetics Paper", "5-Step Clinical Profiler", "Pathya Regimen Output"],
+    icon: Activity,
+    spanFull: false,
+  },
+  {
+    slug: "gut-brain-pharmacology",
+    number: "PILLAR 03",
+    phaseTag: "PHASE 1 • ENTERIC & HERBAL SCIENCE",
+    title: "The Gut-Brain Axis & Dravyaguna Lab",
+    subtitle: "Enteric Neurology Paper + Classical Anupana Pharmacokinetics",
+    desc: "Explore 'The Gut-Brain Axis: What Ayurveda Knew 3,000 Years Ago' (linking Grahani, Ama, and Prana Vata to the microbiome) plus why herbs like Ashwagandha and Brahmi require specific lipid carriers.",
+    cta: "Explore Pharmacology Vault",
+    highlights: ["Gut-Brain Research Paper", "Rasa-Virya-Vipaka Matrix", "Anupana Carrier Science"],
+    icon: FlaskConical,
+    spanFull: false,
+  },
+  {
+    slug: "gateway-curriculum",
+    number: "PILLAR 04",
+    phaseTag: "PHASE 2 • GATEWAY COURSE & FLOWCHARTS",
+    title: "Foundations of Clinical Ayurveda (Course & Flowcharts)",
+    subtitle: "4-Module Structured Syllabus + Tactical Pathogenesis Flowcharts",
+    desc: "Our flagship international curriculum stripping away commercial fluff. Master Dosha subtypes, the 7 Dhatu tissue transformations, Srotas pathology, and the 6 stages of Shatkriyakala.",
+    cta: "Open Course & Flowcharts",
+    highlights: ["4 Core Syllabus Modules", "Interactive Shatkriyakala Map", "Self-Assessment Checklists"],
+    icon: GitMerge,
+    spanFull: false,
+  },
+  {
+    slug: "global-symposium",
+    number: "PILLAR 05",
+    phaseTag: "PHASE 3 • 8 SPECIALTIES & GLOBAL COMMUNITY",
+    title: "Ashtanga Specialties & Indo-Global Vaidya Symposiums",
+    subtitle: "The 8 Hospital Departments of Classical Ayurveda + Live Case Exchanges",
+    desc: "Inspect all 8 classical branches—including Acharya Sushruta's reconstructive surgery (Shalya Tantra), internal medicine (Kayachikitsa), and toxicology—and join clinical dialogues with Indian BAMS scholars.",
+    cta: "Enter Specialties & Symposium Hub",
+    highlights: ["All 8 Ashtanga Faculties", "Sushruta Surgical Instruments", "Indo-Global Case Rounds"],
+    icon: Users,
+    spanFull: true,
+  },
+];
 
-  const getDominantDosha = () => {
-    const counts = { vata: 0, pitta: 0, kapha: 0 };
-    counts[quizAnswers.frame]++;
-    counts[quizAnswers.agni]++;
-    counts[quizAnswers.response]++;
-    if (counts.vata >= counts.pitta && counts.vata >= counts.kapha) return "Vata";
-    if (counts.pitta >= counts.vata && counts.pitta >= counts.kapha) return "Pitta";
-    return "Kapha";
-  };
-
-  const dominantDosha = getDominantDosha();
-
-  const doshaProfiles: Record<string, {
-    title: string;
-    agniType: string;
-    metabolism: string;
-    clinicalAdvice: string;
-    sutraRef: string;
-  }> = {
-    Vata: {
-      title: "Vata-Predominant Constitution (Vatala Prakriti)",
-      agniType: "Vishama Agni (Variable Digestive Fire)",
-      metabolism: "High neuro-sensory speed and creativity, but prone to variable digestion, cold extremities, and autonomic fatigue when overstimulated.",
-      clinicalAdvice: "Prioritize warm, unctuous cooked meals, rhythmic sleep-wake cycles (Dinacharya), and transdermal sesame oil application (Abhyanga) to stabilize cellular Vata.",
-      sutraRef: "Charaka Vimanasthana 8/98",
-    },
-    Pitta: {
-      title: "Pitta-Predominant Constitution (Paittika Prakriti)",
-      agniType: "Teekshna Agni (Hyper-Metabolic Digestive Fire)",
-      metabolism: "Strong enzymatic digestion, sharp clinical intellect (Medha), and high thermal regulation, but susceptible to systemic inflammation and acidity.",
-      clinicalAdvice: "Incorporate cooling, bitter-sweet-astringent botanicals, avoid skipping meals when Agni peaks at midday, and protect hepatic balance.",
-      sutraRef: "Charaka Vimanasthana 8/97",
-    },
-    Kapha: {
-      title: "Kapha-Predominant Constitution (Shleshmala Prakriti)",
-      agniType: "Manda Agni (Steady / Slow Metabolic Fire)",
-      metabolism: "Exceptional structural endurance, synovial joint lubrication, and robust Ojas (baseline immunity), with a tendency toward sluggish lipid metabolism if sedentary.",
-      clinicalAdvice: "Stimulate metabolic kinetics using pungent-bitter spices like dry ginger (Shunti) and Pippali, vigorous morning exercise (Vyayama), and light warm dinners.",
-      sutraRef: "Charaka Vimanasthana 8/96",
-    },
-  };
-
-  const bridgeCards = [
-    {
-      familiarTag: "Familiar Ritual • Forehead Oil Flow",
-      familiarTitle: "Shirodhara Therapy",
-      familiarDesc: "Often marketed in Western spas as a soothing warm-oil head treatment for weekend relaxation.",
-      clinicalTitle: "Neuro-Endocrine & Vagus Nerve Modulation",
-      sutra: "Murdhni Tailam (Ashtanga Hridaya Sutrasthana 22/23)",
-      doshaAction: "Pacifies Prana Vata & Tarpaka Kapha in the Shira (Cranial Marma).",
-      modernScience: "Continuous rhythmic fluid pressure on the forehead stimulates the trigeminal nerve and down-regulates the HPA axis, measurably lowering plasma cortisol and inducing alpha/theta brainwave coherence in clinical insomnia (Anidra).",
-    },
-    {
-      familiarTag: "Familiar Herb • Adaptogen Capsule",
-      familiarTitle: "Ashwagandha Root (Withania somnifera)",
-      familiarDesc: "Sold globally in supermarket capsules as a generic herbal booster for stress and gym recovery.",
-      clinicalTitle: "Rasayana Cellular Pharmacology & Anupana Kinetics",
-      sutra: "Balya • Brimhaniya • Vatakaphahara (Charaka Sutrasthana 25)",
-      doshaAction: "Tikta-Kashaya Rasa, Ushna Virya, Madhura Vipaka; targets Mamsa & Shukra Dhatu.",
-      modernScience: "Contains bioactive withanolides that modulate GABAergic signaling and mitochondrial ATP synthesis. In clinical Ayurveda, its bioavailability depends on specific lipid/milk carriers (Anupana) and patient Agni.",
-    },
-    {
-      familiarTag: "Familiar Therapy • Warm Oil Massage",
-      familiarTitle: "Abhyanga (Medicated Lipid Application)",
-      familiarDesc: "Commonly viewed abroad as a luxury aromatic body rub before a steam bath.",
-      clinicalTitle: "Transdermal Lymphatic Drainage & Vata Control",
-      sutra: "Abhyangam Acharayen Nityam (Ashtanga Hridaya Sutrasthana 2/8)",
-      doshaAction: "Nourishes Bhrajaka Pitta & Twak (Skin), prevents Vata Prakopa (degenerative aging).",
-      modernScience: "Warm decoction-processed lipid molecules penetrate the stratum corneum, stimulating cutaneous C-tactile afferents, enhancing microvascular perfusion, and accelerating lymphatic clearance.",
-    },
-  ];
-
-  const ashtangaBranches = [
-    {
-      code: "01",
-      sanskrit: "Kayachikitsa",
-      modern: "Internal Medicine",
-      desc: "The flagship clinical discipline governing systemic diseases—fevers (Jwara), metabolic syndromes (Prameha), autoimmune disorders (Amavata), and gastrointestinal pathology (Grahani) through Agni-restoration.",
-      milestone: "Charaka Samhita • 120 Chapters of Clinical Protocols",
-    },
-    {
-      code: "02",
-      sanskrit: "Shalya Tantra",
-      modern: "General & Plastic Surgery",
-      desc: "Pioneered by Acharya Sushruta over 2,600 years ago. Encompasses 101 blunt instruments (Yantras), 20 sharp surgical blades (Shastras), rhinoplasty, fracture reduction, and Kshara Sutra therapy.",
-      milestone: "Sushruta Samhita • Foundation of Global Plastic Surgery",
-    },
-    {
-      code: "03",
-      sanskrit: "Shalakya Tantra",
-      modern: "Ophthalmology & ENT",
-      desc: "Specialized diagnosis and micro-procedural management of 76 ocular diseases, auditory disorders, nasal pathologies, and oral-dental conditions above the clavicle.",
-      milestone: "Nimi Tantra & Uttara Tantra Surgical Compendium",
-    },
-    {
-      code: "04",
-      sanskrit: "Kaumarbhritya",
-      modern: "Pediatrics & OB-GYN",
-      desc: "Covers prenatal fetal development (Garbha Vijnana), neonatal care, breast-milk pathology, pediatric immunization (Swarna Prashana), and childhood developmental disorders.",
-      milestone: "Kashyapa Samhita • Classical Pediatric Treatise",
-    },
-    {
-      code: "05",
-      sanskrit: "Agada Tantra",
-      modern: "Clinical Toxicology",
-      desc: "Emergency differential diagnosis and antidote pharmacology for plant toxins (Sthavara Visha), animal venoms (Jangama Visha), and cumulative environmental toxins (Dushi Visha).",
-      milestone: "24 Classical Antidote Modalities (Chaturvimshati Upakrama)",
-    },
-    {
-      code: "06",
-      sanskrit: "Bhuta Vidya",
-      modern: "Psychiatry & Neurology",
-      desc: "Examines disturbances of Manas (mind)—Rajas and Tamas imbalances, clinical depression (Vishada), psychosis (Unmada), and epilepsy (Apasmara) through cognitive counseling (Satvavajaya).",
-      milestone: "Three-Pillar Psychotherapy Protocol",
-    },
-    {
-      code: "07",
-      sanskrit: "Rasayana Tantra",
-      modern: "Regenerative & Longevity Medicine",
-      desc: "Cellular rejuvenation protocols designed to optimize Ojas (immune resilience), preserve cognitive integrity (Medhya Rasayana), and arrest premature tissue degeneration.",
-      milestone: "Kuti Praveshika & Vatatapika Regimens",
-    },
-    {
-      code: "08",
-      sanskrit: "Vajikarana Tantra",
-      modern: "Reproductive Medicine & Genetics",
-      desc: "Focuses on the purification and vitality of Shukra/Artava Dhatu (gamete health), treatment of infertility (Vandhyatva), and optimal constitutional vigor in offspring.",
-      milestone: "Pre-Conception Reproductive Endocrinology",
-    },
-  ];
-
-  const activeBranch = ashtangaBranches[selectedBranch];
-  const activeProfile = doshaProfiles[dominantDosha];
-
+export default function AyurvedaGlobalMasterPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300 pb-24">
+    <div className="min-h-screen bg-background text-foreground pb-24 transition-colors duration-300">
       
+      {/* Top Breadcrumb Bar */}
+      <div className="max-w-6xl mx-auto pt-6 px-4 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-sm bg-surface border border-surfaceBorder text-xs font-bold text-foreground/80 hover:text-primary hover:border-primary/40 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
+          </Link>
+
+          <Link
+            href="/bams-scholar"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-sm bg-surface border border-surfaceBorder text-xs font-bold text-amber-800 dark:text-amber-400 hover:border-amber-500/50 transition-colors"
+          >
+            <Stethoscope className="w-3.5 h-3.5" /> Switch to India BAMS Scholar Hub →
+          </Link>
+        </div>
+      </div>
+
       {/* =================================================================
-          1. CLEAN HERO SECTION (MATCHES MAIN HOMEPAGE TYPOGRAPHY)
+          1. HERO COMMAND BANNER (WITH FULL A.T.R.E.Y.A. ACRONYM HEADING)
           ================================================================= */}
-      <section className="relative px-4 sm:px-6 pt-10 pb-16 md:py-20 border-b border-surfaceBorder bg-surface/40">
-        <div className="max-w-5xl mx-auto text-center">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+        <div className="bg-surface border border-surfaceBorder rounded-sm p-6 sm:p-10 md:p-12 shadow-lg relative overflow-hidden">
           
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/25 text-xs font-bold text-primary uppercase tracking-wider mb-6">
-            <Globe className="w-3.5 h-3.5" />
-            <span>ATREYA Med • Global Clinical Gateway</span>
+          <div className="flex flex-wrap items-center gap-2 mb-5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-primary/15 border border-primary/30 text-[10px] font-bold uppercase tracking-widest text-primary">
+              <Globe className="w-3 h-3" /> AYURVEDA GLOBAL
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-background border border-surfaceBorder text-[10px] font-bold uppercase tracking-widest text-foreground/70">
+              5 CORE PILLARS ACTIVE • 3 STRATEGIC PHASES
+            </span>
           </div>
 
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-foreground tracking-tight leading-[1.12] mb-6">
-            You Know the Calm of the Herbs. <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#D4AF37] to-success">
-              Now Discover the 5,000-Year-Old Clinical Science.
-            </span>
-          </h1>
-
-          <p className="text-base sm:text-lg md:text-xl text-foreground/75 max-w-3xl mx-auto font-medium leading-relaxed mb-8">
-            What the West often meets as a &ldquo;spa day&rdquo; is only the surface of a rigorous medical system encompassing internal medicine, surgery, toxicology, and cellular longevity.
+          {/* Full Form Heading for International Students */}
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.15em] text-amber-800 dark:text-[#D4AF37] mb-2">
+            A.T.R.E.Y.A. — Ayurvedic Traditional Research &amp; Education for Youth Abroad
           </p>
 
-          {/* Clean Manifesto Card */}
-          <div className="max-w-3xl mx-auto bg-surface border border-surfaceBorder border-l-4 border-l-primary p-6 sm:p-8 rounded-sm shadow-sm text-left mb-8">
-            <p className="font-heading text-lg sm:text-xl font-bold text-foreground leading-relaxed mb-2">
-              &ldquo;Ayurveda is a 5,000-year-old clinical science, not just a massage therapy. ATREYA Med exists to bring authentic research and medical education to the modern world.&rdquo;
-            </p>
-            <p className="text-xs font-bold uppercase tracking-wider text-primary">
-              — Learn Authentic Ayurveda From the Platform That Trains India&apos;s Future BAMS Doctors
-            </p>
-          </div>
+          <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl font-bold text-foreground tracking-tight leading-[1.12] mb-5">
+            Ayurveda Global <span className="text-primary">Command Center</span>
+          </h1>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <p className="text-foreground/75 text-sm sm:text-lg max-w-3xl font-medium leading-relaxed mb-8">
+            The West has largely commodified Ayurveda into a &ldquo;spa day.&rdquo; This portal exists to restore its true identity as a 5,000-year-old clinical science encompassing internal medicine, reconstructive surgery, enteric neurology, and personalized genomics.
+          </p>
+
+          <div className="p-5 sm:p-6 rounded-sm bg-background border border-surfaceBorder border-l-4 border-l-primary flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <p className="font-heading text-base sm:text-lg font-bold text-foreground mb-1">
+                &ldquo;Learn authentic Ayurveda from the exact platform that trains India&apos;s future Ayurvedic doctors.&rdquo;
+              </p>
+              <p className="text-xs text-foreground/60 font-medium">
+                Every research monograph and diagnostic tool below is peer-aligned with India&apos;s 5.5-year NCISM BAMS curriculum.
+              </p>
+            </div>
             <Link
-              href="/bams-scholar"
-              className="bg-primary text-white font-bold px-6 py-3.5 rounded-sm shadow-md hover:bg-primaryHover transition-all inline-flex items-center gap-2 text-sm"
+              href="/atreya/science-vault"
+              className="shrink-0 bg-primary text-white font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-sm hover:bg-primaryHover transition-all inline-flex items-center justify-center gap-2 shadow-sm"
             >
-              <Stethoscope className="w-4 h-4" />
-              <span>View India BAMS Curriculum</span>
+              <span>Start With Pillar 01</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/interactive-topics"
-              className="bg-surface hover:bg-foreground/5 text-foreground border border-surfaceBorder font-bold px-6 py-3.5 rounded-sm transition-all inline-flex items-center gap-2 text-sm"
-            >
-              <Activity className="w-4 h-4 text-success" />
-              <span>Explore Clinical Modules</span>
             </Link>
           </div>
 
@@ -218,286 +171,131 @@ export default function AtreyaMedGlobalPage() {
       </section>
 
       {/* =================================================================
-          2. INTERACTIVE CLINICAL X-RAY CARDS (CLEAN & UNCLUTTERED)
+          2. THE 3-PHASE STRATEGIC ROADMAP (AUTHORITY -> EDUCATION -> MOVEMENT)
           ================================================================= */}
-      <section className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-14">
+        <div className="mb-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+            Strategic Sequencing
+          </p>
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
+            The 3-Phase Global Roadmap
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {STRATEGIC_PHASES.map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-surface border border-surfaceBorder rounded-sm p-6 flex flex-col justify-between shadow-sm"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/60">
+                    {item.phase}
+                  </span>
+                  <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-sm border ${item.badgeColor}`}>
+                    {item.status}
+                  </span>
+                </div>
+
+                <h3 className="font-heading text-xl font-bold text-foreground mb-2">
+                  {idx + 1}. {item.title}
+                </h3>
+                <p className="text-foreground/70 text-sm leading-relaxed mb-6">
+                  {item.desc}
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-surfaceBorder flex items-center justify-between text-xs font-bold text-primary">
+                <span>{item.pillarsIncluded}</span>
+                <CheckCircle2 className="w-4 h-4 text-success" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* =================================================================
+          3. THE 5 CORE PILLARS OF AYURVEDA GLOBAL (COMMAND CENTER GRID)
+          Matches your BAMS 2nd Prof Command Center layout!
+          ================================================================= */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2 flex items-center gap-1.5">
-              <Microscope className="w-4 h-4" /> Stage 01 • The Curiosity Bridge
+            <p className="text-xs font-bold uppercase tracking-widest text-amber-800 dark:text-[#D4AF37] mb-1">
+              Interactive Sub-Repositories
             </p>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground">
-              From Familiar Ritual to Clinical Mechanism
+            <h2 className="font-heading text-2xl sm:text-4xl font-bold text-foreground">
+              5 Core Clinical Pillars
             </h2>
           </div>
-          <p className="text-sm text-foreground/65 font-medium max-w-md">
-            Tap <strong>Clinical X-Ray</strong> on any card to inspect the classical Sanskrit reference and modern neuro-biological mechanism.
+          <p className="text-xs sm:text-sm text-foreground/65 font-medium">
+            Select any pillar below to enter its dedicated research &amp; interactive laboratory.
           </p>
         </div>
 
-        <div className="space-y-6">
-          {bridgeCards.map((card, idx) => {
-            const isXrayOpen = xrayCards.includes(idx);
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {GLOBAL_PILLARS.map((pillar) => {
+            const IconComponent = pillar.icon;
             return (
               <div
-                key={idx}
-                className="bg-surface border border-surfaceBorder rounded-sm p-6 sm:p-8 shadow-sm transition-all"
+                key={pillar.slug}
+                className={`bg-surface border border-surfaceBorder hover:border-primary/60 rounded-sm p-6 sm:p-8 flex flex-col justify-between shadow-md hover:shadow-xl transition-all ${
+                  pillar.spanFull ? "md:col-span-2" : ""
+                }`}
               >
-                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                  <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-sm bg-primary/10 text-primary border border-primary/20">
-                    {card.familiarTag}
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() => toggleXray(idx)}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                      isXrayOpen
-                        ? "bg-primary text-white shadow-sm"
-                        : "bg-background hover:bg-foreground/5 text-foreground border border-surfaceBorder"
-                    }`}
-                  >
-                    <Eye className="w-4 h-4" />
-                    <span>{isXrayOpen ? "Clinical X-Ray Active" : "Reveal Clinical X-Ray"}</span>
-                  </button>
-                </div>
-
-                <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-2">
-                  {card.familiarTitle}
-                </h3>
-                <p className="text-foreground/75 text-sm sm:text-base max-w-3xl font-medium">
-                  {card.familiarDesc}
-                </p>
-
-                {isXrayOpen && (
-                  <div className="mt-6 pt-6 border-t border-surfaceBorder grid grid-cols-1 lg:grid-cols-12 gap-6 bg-background p-5 sm:p-6 rounded-sm">
-                    <div className="lg:col-span-5 space-y-2 border-b lg:border-b-0 lg:border-r border-surfaceBorder pb-4 lg:pb-0 lg:pr-6">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-[#D4AF37] block">
-                        Classical Samhita Reference
-                      </span>
-                      <p className="font-heading text-base sm:text-lg font-bold text-foreground">
-                        {card.sutra}
-                      </p>
-                      <p className="text-xs sm:text-sm text-primary font-semibold">
-                        Dosha Action: {card.doshaAction}
-                      </p>
+                <div>
+                  {/* Top Row: Icon + Pillar Number */}
+                  <div className="flex items-center justify-between gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary">
+                      <IconComponent className="w-6 h-6" />
                     </div>
-
-                    <div className="lg:col-span-7 space-y-1.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-success block">
-                        Modern Biomedical Mechanism
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/30">
+                        {pillar.phaseTag}
                       </span>
-                      <h4 className="font-heading text-base sm:text-lg font-bold text-foreground">
-                        {card.clinicalTitle}
-                      </h4>
-                      <p className="text-sm text-foreground/80 leading-relaxed">
-                        {card.modernScience}
-                      </p>
+                      <span className="text-xs font-bold uppercase tracking-widest text-foreground/50">
+                        {pillar.number}
+                      </span>
                     </div>
                   </div>
-                )}
+
+                  {/* Title & Subtitle */}
+                  <h3 className="font-heading text-2xl font-bold text-foreground mb-1.5">
+                    {pillar.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm font-bold text-primary mb-3">
+                    {pillar.subtitle}
+                  </p>
+                  <p className="text-foreground/75 text-sm leading-relaxed mb-6">
+                    {pillar.desc}
+                  </p>
+
+                  {/* Feature Tags */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {pillar.highlights.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[11px] font-bold px-3 py-1 rounded-sm bg-background border border-surfaceBorder text-foreground/80"
+                      >
+                        ✓ {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <Link
+                  href={`/atreya/${pillar.slug}`}
+                  className="w-full py-3.5 px-6 rounded-sm bg-primary/15 hover:bg-primary text-primary hover:text-white border border-primary/30 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                >
+                  <span>{pillar.cta}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* =================================================================
-          3. INTERACTIVE PRAKRITI & AGNI DIAGNOSTIC PROFILER
-          ================================================================= */}
-      <section className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-8">
-        <div className="bg-surface border border-surfaceBorder rounded-sm p-6 sm:p-10 shadow-md">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1 flex items-center gap-1.5">
-                <Activity className="w-4 h-4" /> Stage 02 • Root-Cause Diagnostic
-              </p>
-              <h2 className="font-heading text-2xl sm:text-4xl font-bold text-foreground">
-                Interactive Prakriti &amp; Agni Profiler
-              </h2>
-            </div>
-            <span className="text-xs font-bold bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-sm">
-              Charaka Vimanasthana Ch. 8
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-background border border-surfaceBorder rounded-sm p-5">
-              <p className="font-heading text-sm font-bold text-foreground mb-3">
-                1. Anatomical Frame (Akriti)
-              </p>
-              <div className="space-y-2">
-                {[
-                  { id: "vata" as const, label: "Lean frame, prominent joints, quick gait" },
-                  { id: "pitta" as const, label: "Medium symmetrical build, warm skin" },
-                  { id: "kapha" as const, label: "Broad, solid bone structure, steady" },
-                ].map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => setQuizAnswers((p) => ({ ...p, frame: opt.id }))}
-                    className={`w-full text-left p-3 rounded-sm text-xs font-bold border transition-all cursor-pointer ${
-                      quizAnswers.frame === opt.id
-                        ? "bg-primary text-white border-primary"
-                        : "bg-surface text-foreground/75 border-surfaceBorder hover:border-primary/40"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-background border border-surfaceBorder rounded-sm p-5">
-              <p className="font-heading text-sm font-bold text-foreground mb-3">
-                2. Metabolic Fire (Jatharagni)
-              </p>
-              <div className="space-y-2">
-                {[
-                  { id: "vata" as const, label: "Variable appetite, prone to bloating" },
-                  { id: "pitta" as const, label: "Intense hunger, cannot skip meals" },
-                  { id: "kapha" as const, label: "Steady mild hunger, slow digestion" },
-                ].map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => setQuizAnswers((p) => ({ ...p, agni: opt.id }))}
-                    className={`w-full text-left p-3 rounded-sm text-xs font-bold border transition-all cursor-pointer ${
-                      quizAnswers.agni === opt.id
-                        ? "bg-primary text-white border-primary"
-                        : "bg-surface text-foreground/75 border-surfaceBorder hover:border-primary/40"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-background border border-surfaceBorder rounded-sm p-5">
-              <p className="font-heading text-sm font-bold text-foreground mb-3">
-                3. Thermal &amp; Stress Response
-              </p>
-              <div className="space-y-2">
-                {[
-                  { id: "vata" as const, label: "Dislikes cold/wind; racing thoughts" },
-                  { id: "pitta" as const, label: "Dislikes heat/sun; sharp focus" },
-                  { id: "kapha" as const, label: "Dislikes damp/cold; calm under stress" },
-                ].map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => setQuizAnswers((p) => ({ ...p, response: opt.id }))}
-                    className={`w-full text-left p-3 rounded-sm text-xs font-bold border transition-all cursor-pointer ${
-                      quizAnswers.response === opt.id
-                        ? "bg-primary text-white border-primary"
-                        : "bg-surface text-foreground/75 border-surfaceBorder hover:border-primary/40"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-background border-2 border-primary/40 rounded-sm p-6 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-surfaceBorder">
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                Live Constitutional Synthesis
-              </span>
-              <span className="text-xs font-bold text-foreground/60">
-                {activeProfile.sutraRef}
-              </span>
-            </div>
-            <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-1">
-              {activeProfile.title}
-            </h3>
-            <p className="text-xs sm:text-sm font-bold text-amber-800 dark:text-[#D4AF37] mb-3">
-              Metabolic Profile: {activeProfile.agniType}
-            </p>
-            <p className="text-sm sm:text-base text-foreground/80 leading-relaxed mb-4">
-              {activeProfile.metabolism}
-            </p>
-            <div className="p-4 rounded-sm bg-primary/10 border border-primary/25 text-xs sm:text-sm text-foreground font-medium">
-              <strong>Clinical Regimen (Pathya):</strong> {activeProfile.clinicalAdvice}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          4. ASHTANGA AYURVEDA — THE 8 MEDICAL SPECIALTIES
-          ================================================================= */}
-      <section className="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-12">
-        <div className="bg-surface border border-surfaceBorder rounded-sm p-6 sm:p-10 shadow-md">
-          <div className="max-w-3xl mb-8">
-            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2 flex items-center gap-1.5">
-              <Layers className="w-4 h-4" /> Stage 03 • The 8 Medical Faculties
-            </p>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-3">
-              Ashtanga Ayurveda: Full-Spectrum Medicine
-            </h2>
-            <p className="text-foreground/70 text-sm sm:text-base font-medium leading-relaxed">
-              Long before modern hospital departments existed, classical Ayurvedic universities organized medicine into eight specialized clinical faculties. Select any branch below:
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-            {ashtangaBranches.map((b, idx) => {
-              const active = selectedBranch === idx;
-              return (
-                <button
-                  key={b.code}
-                  type="button"
-                  onClick={() => setSelectedBranch(idx)}
-                  className={`p-4 rounded-sm text-left border transition-all cursor-pointer ${
-                    active
-                      ? "bg-primary text-white border-primary shadow-md"
-                      : "bg-background hover:bg-foreground/5 text-foreground border-surfaceBorder"
-                  }`}
-                >
-                  <span className={`text-[10px] font-bold uppercase block mb-1 ${active ? "text-white/80" : "text-primary"}`}>
-                    Branch #{b.code}
-                  </span>
-                  <p className="font-heading font-bold text-sm sm:text-base leading-tight">{b.sanskrit}</p>
-                  <p className={`text-xs mt-1 line-clamp-1 ${active ? "text-white/90" : "text-foreground/60"}`}>
-                    {b.modern}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="p-6 sm:p-8 rounded-sm bg-background border border-surfaceBorder">
-            <div className="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 border-b border-surfaceBorder">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                  Specialty Faculty #{activeBranch.code}
-                </span>
-                <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mt-1">
-                  {activeBranch.sanskrit} — <span className="text-primary">{activeBranch.modern}</span>
-                </h3>
-              </div>
-              <HeartPulse className="w-8 h-8 text-primary shrink-0" />
-            </div>
-
-            <p className="text-sm sm:text-base text-foreground/80 leading-relaxed mb-6 font-medium">
-              {activeBranch.desc}
-            </p>
-
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-surfaceBorder text-xs font-bold">
-              <span className="text-foreground/70">Classical Canon: {activeBranch.milestone}</span>
-              <Link
-                href="/bams-scholar"
-                className="inline-flex items-center gap-1.5 text-primary hover:underline"
-              >
-                <span>See BAMS Syllabus for This Branch</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-
         </div>
       </section>
 
