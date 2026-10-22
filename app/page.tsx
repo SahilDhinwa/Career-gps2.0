@@ -4,8 +4,8 @@ import LandingReels from "../components/LandingReels";
 
 import { 
   ArrowRight, Globe, ShieldCheck, Heart, BookOpen, 
-  Leaf, Sparkles, CheckCircle, Stethoscope, Microscope, 
-  Brain, Layers, Eye, Activity, FileText 
+  Leaf, Sparkles, CheckCircle, Stethoscope, 
+  Brain, Layers, Eye, Activity 
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -67,19 +67,19 @@ export default function LandingPage() {
       `}} />
 
       {/* =================================================================
-          1. HERO SECTION — 100% ATREYA MED & AYURVEDA CLINICAL FOCUS
+          1. HERO SECTION — EARLIER FONT STYLE & CLEAN LAYOUT
           ================================================================= */}
-      <div className="relative flex-grow flex items-center justify-center px-6 pt-10 pb-14 md:py-20 lg:py-24 overflow-hidden bg-background z-40">
+      <div className="relative flex-grow flex items-center justify-center px-6 py-12 md:py-20 lg:py-28 overflow-hidden bg-background z-40">
         
         <div className="perspective-container">
           <div className="glowing-core"></div>
           <div className="perspective-grid"></div>
         </div>
 
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+        <div className="max-w-5xl mx-auto text-center relative z-10 pt-2 md:pt-4">
           <Link 
             href="/bams-scholar"
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 md:px-4 md:py-2 rounded-full bg-surface/90 backdrop-blur-sm border border-surfaceBorder hover:border-primary text-xs md:text-sm font-bold text-primary mb-5 md:mb-8 shadow-sm transition-colors"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 md:px-4 md:py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder hover:border-primary text-xs md:text-sm font-bold text-primary mb-5 md:mb-8 shadow-sm transition-colors"
           >
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
             <span>ATREYA MED • NCISM BAMS PROF I–III &amp; GLOBAL SCIENCE LIVE</span>
@@ -97,8 +97,7 @@ export default function LandingPage() {
             Ayurveda is a rigorous medical science, not just a spa therapy. Learn authentic clinical Ayurveda from the exact platform that trains India&apos;s future BAMS doctors.
           </p>
           
-          {/* Primary Gateway Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto relative z-20">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto relative z-20">
             <Link 
               href="/bams-scholar" 
               className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5"
@@ -110,9 +109,9 @@ export default function LandingPage() {
             
             <Link 
               href="/atreya" 
-              className="w-full sm:w-auto bg-surface hover:bg-foreground/5 text-foreground border-2 border-[#D4AF37]/70 hover:border-[#D4AF37] font-bold px-8 py-4 rounded-sm shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5"
+              className="w-full sm:w-auto bg-surface hover:bg-foreground/5 text-foreground border-2 border-[#D4AF37]/60 hover:border-[#D4AF37] font-bold px-8 py-4 rounded-sm shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5"
             >
-              <Globe className="w-5 h-5 text-[#D4AF37]" />
+              <Globe className="w-5 h-5 text-[#b8860b] dark:text-[#D4AF37]" />
               <span>Explore Global Ayurveda</span>
             </Link>
           </div>
@@ -120,57 +119,29 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================
-          2. LIVE VAULT COUNTER STRIP (INSTANT CREDIBILITY & NAVIGATION)
+          2. CORE PILLARS GRID — CLICKABLE CARDS WITH EARLIER FONT STYLE
           ================================================================= */}
-      <div className="bg-surface border-y border-surfaceBorder py-6 px-4 md:px-6 relative z-20">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          <Link href="/bams-scholar" className="group p-3.5 rounded-sm bg-background border border-surfaceBorder hover:border-primary/50 transition-all text-center">
-            <p className="font-heading text-xl md:text-2xl font-bold text-primary">Prof I – III</p>
-            <p className="text-xs font-bold text-foreground/70 group-hover:text-foreground">NCISM Syllabus &amp; Shloka Hacks →</p>
-          </Link>
-
-          <Link href="/bams-hub" className="group p-3.5 rounded-sm bg-background border border-surfaceBorder hover:border-primary/50 transition-all text-center">
-            <p className="font-heading text-xl md:text-2xl font-bold text-success">Batch 2023</p>
-            <p className="text-xs font-bold text-foreground/70 group-hover:text-foreground">2nd Prof PYQs &amp; Charaka MCQs →</p>
-          </Link>
-
-          <Link href="/atreya" className="group p-3.5 rounded-sm bg-background border border-surfaceBorder hover:border-primary/50 transition-all text-center">
-            <p className="font-heading text-xl md:text-2xl font-bold text-[#b8860b] dark:text-[#D4AF37]">8 Branches</p>
-            <p className="text-xs font-bold text-foreground/70 group-hover:text-foreground">Ashtanga Clinical X-Ray Lab →</p>
-          </Link>
-
-          <Link href="/e-books" className="group p-3.5 rounded-sm bg-background border border-surfaceBorder hover:border-primary/50 transition-all text-center">
-            <p className="font-heading text-xl md:text-2xl font-bold text-foreground">100% Free</p>
-            <p className="text-xs font-bold text-foreground/70 group-hover:text-foreground">Interactive 3D E-Book Vault →</p>
-          </Link>
-        </div>
-      </div>
-
-      {/* =================================================================
-          3. CLICKABLE CORE PILLARS GRID (DIRECT ENTRY TO ALL 3 MODULES)
-          ================================================================= */}
-      <div className="bg-surface/60 backdrop-blur-md py-16 md:py-20 px-6 relative z-10 transition-colors duration-300">
+      <div className="bg-surface backdrop-blur-md border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 md:mb-16">
-            <span className="inline-block text-xs font-mono uppercase tracking-widest text-primary font-bold mb-2">
+          <div className="text-center mb-16">
+            <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">
               ATREYA Med • A Veblen Good Initiative
-            </span>
+            </p>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
               Why Scholars &amp; Global Learners Choose ATREYA Med
             </h2>
-            <p className="text-foreground/70 font-medium max-w-2xl mx-auto text-sm md:text-base">
+            <p className="text-foreground/60 font-medium max-w-2xl mx-auto">
               Bridging classical Sanskrit Samhitas with modern biomedical evidence, structured exam preparation, and clinical authority.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {/* Pillar 1 -> Links to /bams-scholar */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Link 
               href="/bams-scholar"
-              className="group bg-background p-8 border border-surfaceBorder hover:border-primary rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between"
+              className="group bg-background p-8 border border-surfaceBorder hover:border-primary/50 rounded-sm shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                   <Brain className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-heading text-xl font-bold text-foreground mb-3">
@@ -185,20 +156,19 @@ export default function LandingPage() {
               </span>
             </Link>
 
-            {/* Pillar 2 -> Links to /interactive-topics (Clinical Modules) */}
             <Link 
               href="/interactive-topics"
-              className="group bg-background p-8 border border-surfaceBorder hover:border-success rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between"
+              className="group bg-background p-8 border border-surfaceBorder hover:border-success/50 rounded-sm shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mb-6">
                   <Activity className="w-6 h-6 text-success" />
                 </div>
                 <h3 className="font-heading text-xl font-bold text-foreground mb-3">
-                  Interactive Clinical Modules
+                  Evidence-Based Clinical Modules
                 </h3>
                 <p className="text-foreground/70 leading-relaxed text-sm md:text-base mb-6">
-                  Go beyond passive reading. Master visual Samprapti flowcharts, Dravyaguna pharmacology, and modern neuro-physiological correlations through interactive clinical modules.
+                  Go beyond generic wellness trends. Explore interactive clinical modules that connect classical Dravyaguna and Panchakarma to modern neuro-physiology.
                 </p>
               </div>
               <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-success">
@@ -206,101 +176,113 @@ export default function LandingPage() {
               </span>
             </Link>
 
-            {/* Pillar 3 -> Links to /e-books */}
             <Link 
               href="/e-books"
-              className="group bg-background p-8 border border-surfaceBorder hover:border-[#D4AF37] rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between"
+              className="group bg-background p-8 border border-surfaceBorder hover:border-warning/50 rounded-sm shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 bg-warning/15 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-6 h-6 text-[#b8860b] dark:text-[#D4AF37]" />
+                <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-6">
+                  <ShieldCheck className="w-6 h-6 text-amber-700 dark:text-warning" />
                 </div>
                 <h3 className="font-heading text-xl font-bold text-foreground mb-3">
                   Unshakeable Clinical Aura
                 </h3>
                 <p className="text-foreground/70 leading-relaxed text-sm md:text-base mb-6">
-                  Overcome the 3-second viva translation trap and master bedside communication with our interactive 3D library so you command respect in every medical room.
+                  Master bedside case-taking, viva-voce examination confidence, and scientific communication so you command respect in any medical symposium worldwide.
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#b8860b] dark:text-[#D4AF37]">
-                Enter 3D E-Book Vault <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-warning">
+                Open 3D E-Book Library <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </span>
             </Link>
           </div>
         </div>
       </div>
-      
+
       {/* =================================================================
-          4. HIGH-CONTRAST INTERACTIVE PORTALS (FIXED FOR LIGHT & DARK MODE)
+          3. TWO-TRACK PORTAL & BAMS VAULT
+          Original badge/card gradients preserved; ONLY text color darkened in light mode!
           ================================================================= */}
-      <div className="bg-background py-12 md:py-16 px-4 md:px-6 relative z-10 border-t border-surfaceBorder transition-colors duration-300">
-        <div className="max-w-6xl mx-auto flex flex-col gap-6 md:gap-8">
+      <div className="bg-background py-8 md:py-12 px-4 md:px-6 relative z-10 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto flex flex-col gap-6 md:gap-10">
           
-          {/* PORTAL 1: TRACK 2 — GLOBAL AYURVEDA X-RAY & PRAKRITI DIAGNOSTIC LAB */}
-          <div className="bg-surface border-2 border-surfaceBorder hover:border-primary/60 p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 rounded-sm shadow-md transition-all w-full">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start md:items-center text-center sm:text-left gap-4 md:gap-6 w-full md:w-auto">
-              <div className="w-14 h-14 md:w-16 md:h-16 bg-primary/10 rounded-full flex items-center justify-center shrink-0 border border-primary/25">
-                <Eye className="w-7 h-7 md:w-8 md:h-8 text-primary" />
-              </div>
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-primary/10 border border-primary/25 text-[10px] font-mono uppercase tracking-widest text-primary font-bold mb-2">
-                  <Globe className="w-3 h-3" /> Track 2 • International Clinical Portal
+          {/* BANNER 1: GLOBAL AYURVEDA X-RAY & PRAKRITI DIAGNOSTIC LAB */}
+          <div className="relative p-[1px] rounded-sm bg-gradient-to-r from-[#D4AF37]/50 via-emerald-500/30 to-[#D4AF37]/50 shadow-sm hover:shadow-md transition-shadow w-full">
+            <div className="bg-surface backdrop-blur-md p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 rounded-sm relative overflow-hidden">
+              
+              <div className="absolute top-0 left-0 w-full h-full bg-[#D4AF37]/5 pointer-events-none"></div>
+
+              <div className="flex flex-col sm:flex-row items-center sm:items-start md:items-center text-center sm:text-left gap-4 md:gap-5 z-10 w-full md:w-auto">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-[#D4AF37]/15 rounded-full flex items-center justify-center shrink-0 border border-[#D4AF37]/30">
+                  <Eye className="w-6 h-6 md:w-8 md:h-8 text-amber-800 dark:text-[#D4AF37]" />
                 </div>
-                <h2 className="font-heading text-xl md:text-3xl font-bold text-foreground mb-2">
-                  Interactive Clinical X-Ray &amp; Prakriti Profiler
-                </h2>
-                <p className="text-foreground/75 font-medium max-w-xl text-sm md:text-base leading-relaxed">
-                  See how familiar rituals like <em>Shirodhara</em> and <em>Ashwagandha</em> work at the neurological level, and run a classical <em>Charaka Vimanasthana</em> constitution diagnostic.
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-900 dark:text-[#D4AF37] font-bold mb-1">
+                    Track 2 • International Clinical Portal
+                  </div>
+                  <h2 className="font-heading text-xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">
+                    Interactive Clinical X-Ray &amp; Prakriti Profiler
+                  </h2>
+                  <p className="text-foreground/80 font-medium max-w-xl text-sm md:text-base">
+                    See how familiar rituals like Shirodhara and Ashwagandha work at the neurological level, and run a classical Charaka Vimanasthana constitution diagnostic.
+                  </p>
+                </div>
+              </div>
+            
+              <div className="shrink-0 z-10 w-full md:w-auto flex flex-col items-center md:items-end">
+                <Link 
+                  href="/atreya"
+                  className="w-full md:w-auto bg-primary text-white font-bold px-6 md:px-8 py-3.5 md:py-4 rounded-sm shadow-md hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mb-3"
+                >
+                  Open Global Science Lab <ArrowRight className="w-5 h-5" />
+                </Link>
+                <p className="text-[10px] md:text-xs font-bold text-foreground/70 flex items-center gap-1.5 text-center md:text-right">
+                  <Layers className="w-3.5 h-3.5 md:w-4 md:h-4 text-success" />
+                  Includes all 8 Branches of Ashtanga Ayurveda
                 </p>
               </div>
-            </div>
-          
-            <div className="shrink-0 w-full md:w-auto flex flex-col items-center md:items-end">
-              <Link 
-                href="/atreya"
-                className="w-full md:w-auto bg-primary text-white font-bold px-6 md:px-8 py-3.5 md:py-4 rounded-sm shadow-md hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mb-2.5"
-              >
-                Open Global Science Lab <ArrowRight className="w-5 h-5" />
-              </Link>
-              <p className="text-[11px] font-bold text-foreground/70 flex items-center gap-1.5 text-center md:text-right">
-                <Layers className="w-3.5 h-3.5 text-success" />
-                Includes all 8 Branches of Ashtanga Ayurveda
-              </p>
+
             </div>
           </div>
           
-          {/* PORTAL 2: TRACK 1 — BAMS SCHOLAR GATEWAY & 2ND PROF VAULT (CRISP LIGHT/DARK CONTRAST) */}
-          <div className="bg-surface border-2 border-surfaceBorder hover:border-[#D4AF37] p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 rounded-sm shadow-md transition-all w-full">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start md:items-center text-center sm:text-left gap-4 md:gap-6 w-full md:w-auto">
-              <div className="w-14 h-14 md:w-16 md:h-16 bg-amber-500/15 rounded-full flex items-center justify-center shrink-0 border border-amber-500/35">
-                <Leaf className="w-7 h-7 md:w-8 md:h-8 text-amber-700 dark:text-amber-400" />
-              </div>
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-amber-500/15 border border-amber-500/35 text-[10px] font-mono uppercase tracking-widest text-amber-800 dark:text-amber-300 font-bold mb-2">
-                  <Sparkles className="w-3 h-3" /> Track 1 • NCISM BAMS Curriculum
-                </div>
-                <h2 className="font-heading text-xl md:text-3xl font-bold text-foreground mb-2">
-                  BAMS Scholar &amp; 2nd Prof Exam Vault
-                </h2>
-                <p className="text-foreground/75 font-medium max-w-xl text-sm md:text-base leading-relaxed">
-                  Track your 1st, 2nd &amp; 3rd Prof syllabus, decode high-yield Sanskrit Shlokas, and practice interactive Charaka Samhita MCQs &amp; university exam papers.
-                </p>
-              </div>
-            </div>
+          {/* BANNER 2: BAMS SCHOLAR & 2ND PROF VAULT (ORIGINAL GRADIENT PRESERVED, TEXT COLOR FIXED) */}
+          <div className="w-full">
+            <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-sm p-6 md:p-12 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden group hover:border-amber-700/50 transition-colors duration-500 w-full">
+              
+              <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
-            <div className="shrink-0 w-full md:w-auto flex flex-col sm:flex-row md:flex-col gap-3">
-              <Link 
-                href="/bams-scholar" 
-                className="w-full md:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 px-6 md:px-8 rounded-sm transition-all flex items-center justify-center gap-2 shadow-md"
-              >
-                Open BAMS Scholar Hub <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link 
-                href="/bams-hub" 
-                className="w-full md:w-auto bg-background hover:bg-foreground/5 text-foreground border-2 border-surfaceBorder font-bold py-2.5 px-6 rounded-sm transition-all flex items-center justify-center gap-2 text-xs"
-              >
-                <CheckCircle className="w-3.5 h-3.5 text-success" /> Direct to 2nd Prof Papers
-              </Link>
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 relative z-10 w-full md:w-auto text-center md:text-left">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-amber-500/10 rounded-full flex items-center justify-center shrink-0 border border-amber-500/30 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                  <Leaf className="w-6 h-6 md:w-8 md:h-8 text-amber-800 dark:text-amber-500" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center justify-center md:justify-start gap-1.5 px-2.5 md:px-3 py-1 rounded-sm bg-amber-500/15 text-[9px] md:text-[10px] uppercase font-bold tracking-widest text-amber-950 dark:text-amber-400 mb-2 md:mb-3 border border-amber-600/30">
+                    <Sparkles className="w-3 h-3" /> Track 1 • NCISM BAMS Curriculum
+                  </div>
+                  <h2 className="font-heading text-2xl md:text-4xl font-bold text-foreground mb-2 md:mb-3">
+                    BAMS Scholar &amp; 2nd Prof Vault
+                  </h2>
+                  <p className="text-foreground/80 font-medium max-w-xl leading-relaxed mx-auto md:mx-0 text-sm md:text-base">
+                    Track your 1st, 2nd &amp; 3rd Prof syllabus, decode high-yield Sanskrit Shlokas, and access interactive Charaka Samhita MCQs &amp; university exam papers.
+                  </p>
+                </div>
+              </div>
+
+              <div className="shrink-0 w-full md:w-auto relative z-10 flex flex-col sm:flex-row md:flex-col gap-3">
+                <Link 
+                  href="/bams-scholar" 
+                  className="w-full md:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 px-6 md:px-8 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
+                >
+                  Open BAMS Scholar Hub <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link 
+                  href="/bams-hub" 
+                  className="w-full md:w-auto bg-amber-500/15 hover:bg-amber-500/25 text-amber-950 dark:text-amber-300 border border-amber-700/40 dark:border-amber-500/40 font-bold py-2.5 px-6 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 text-xs"
+                >
+                  <CheckCircle className="w-3.5 h-3.5 text-amber-800 dark:text-amber-400" /> Direct to 2nd Prof Papers
+                </Link>
+              </div>
+              
             </div>
           </div>
 
@@ -308,36 +290,33 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================
-          5. PROMO BANNER FOR YOUR ACTUAL 3D E-BOOKS (UPDATED TITLES)
+          4. PROMO BANNER FOR E-BOOKS (UPDATED TO REAL BOOK TITLES)
           ================================================================= */}
-      <div className="bg-background pb-12 md:pb-16 pt-2 px-4 md:px-6 relative z-10">
+      <div className="bg-background pb-8 md:pb-12 pt-2 md:pt-4 px-4 md:px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-gradient-to-r from-gray-900 via-zinc-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-sm shadow-xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden">
             
             <div className="absolute top-0 left-0 w-full h-full bg-primary/10 blur-3xl pointer-events-none"></div>
 
             <div className="flex-1 text-center md:text-left z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[10px] md:text-xs font-bold text-[#D4AF37] mb-3 md:mb-4 border border-[#D4AF37]/30 uppercase tracking-widest">
-                <BookOpen className="w-3.5 h-3.5" /> Interactive 3D Vault Library • 100% Free
+              <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 rounded-full bg-white/10 text-[10px] md:text-xs font-bold text-white mb-3 md:mb-4 border border-white/20 uppercase tracking-widest">
+                <BookOpen className="w-3 h-3 text-warning" /> Veblen Good Publication
               </div>
               <h2 className="font-heading text-2xl md:text-4xl font-bold text-white mb-2 md:mb-3">
-                Command Authority in Every Viva &amp; Room
+                Command Authority in Every Viva &amp; Symposium
               </h2>
-              <p className="text-gray-300 text-sm md:text-base mb-0 font-medium max-w-2xl leading-relaxed">
-                Read our complete original editions—<span className="text-white font-bold">The Unspoken Aura</span> and <span className="text-white font-bold">The Invisible Art of Speaking</span>—inside our interactive 3D page-turning book reader or download the full PDFs for free.
+              <p className="text-gray-300 text-sm md:text-lg mb-0 font-medium max-w-xl leading-relaxed">
+                Read our flagship E-Books—<span className="text-white font-bold">The Unspoken Aura</span> &amp; <span className="text-white font-bold">The Invisible Art of Speaking</span>—in our interactive 3D reader. Completely free for a limited time.
               </p>
             </div>
 
-            <div className="shrink-0 z-10 w-full md:w-auto flex flex-col items-center md:items-end gap-2">
+            <div className="shrink-0 z-10 w-full md:w-auto">
               <Link 
                 href="/e-books"
                 className="w-full md:w-auto bg-primary text-white font-bold px-6 md:px-8 py-3.5 md:py-4 rounded-sm shadow-lg hover:bg-primaryHover hover:scale-105 transition-all flex items-center justify-center gap-2"
               >
-                Open 3D Book Library <ArrowRight className="w-5 h-5" />
+                Open 3D Book Vault <ArrowRight className="w-5 h-5" />
               </Link>
-              <span className="text-[11px] font-mono text-gray-400">
-                Includes Direct PDF Access
-              </span>
             </div>
 
           </div>
@@ -345,12 +324,12 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================
-          6. REELS SECTION (MOVED AFTER MAIN ENGAGEMENT CONTENT)
+          5. REELS SECTION (POSITIONED AFTER MAIN ENGAGEMENT CONTENT)
           ================================================================= */}
       <LandingReels />
 
       {/* =================================================================
-          7. COMMUNITY SUPPORT SECTION
+          6. COMMUNITY SUPPORT SECTION
           ================================================================= */}
       <div className="bg-background border-t border-surfaceBorder py-12 md:py-20 px-4 md:px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
