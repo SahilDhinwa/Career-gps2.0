@@ -67,7 +67,7 @@ export default function LandingPage() {
       `}} />
 
       {/* =================================================================
-          1. HERO SECTION — EARLIER FONT STYLE & CLEAN LAYOUT
+          1. HERO SECTION — ATREYA MED MASTER BRANDING
           ================================================================= */}
       <div className="relative flex-grow flex items-center justify-center px-6 py-12 md:py-20 lg:py-28 overflow-hidden bg-background z-40">
         
@@ -82,7 +82,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 md:px-4 md:py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder hover:border-primary text-xs md:text-sm font-bold text-primary mb-5 md:mb-8 shadow-sm transition-colors"
           >
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
-            <span>ATREYA MED • NCISM BAMS PROF I–III &amp; GLOBAL SCIENCE LIVE</span>
+            <span>ATREYA MED • NCISM BAMS PROF I–III &amp; AYURVEDA GLOBAL LIVE</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           
@@ -112,20 +112,20 @@ export default function LandingPage() {
               className="w-full sm:w-auto bg-surface hover:bg-foreground/5 text-foreground border-2 border-[#D4AF37]/60 hover:border-[#D4AF37] font-bold px-8 py-4 rounded-sm shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5"
             >
               <Globe className="w-5 h-5 text-[#b8860b] dark:text-[#D4AF37]" />
-              <span>Explore Global Ayurveda</span>
+              <span>Ayurveda Global</span>
             </Link>
           </div>
         </div>
       </div>
 
       {/* =================================================================
-          2. CORE PILLARS GRID — CLICKABLE CARDS WITH EARLIER FONT STYLE
+          2. CORE PILLARS GRID — CLICKABLE CARDS
           ================================================================= */}
       <div className="bg-surface backdrop-blur-md border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">
-              ATREYA Med • A Veblen Good Initiative
+              ATREYA Med • Clinical &amp; Academic Ecosystem
             </p>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
               Why Scholars &amp; Global Learners Choose ATREYA Med
@@ -200,13 +200,12 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================
-          3. TWO-TRACK PORTAL & BAMS VAULT
-          Original badge/card gradients preserved; ONLY text color darkened in light mode!
+          3. TWO-TRACK PORTAL: AYURVEDA GLOBAL & BAMS SCHOLAR VAULT
           ================================================================= */}
       <div className="bg-background py-8 md:py-12 px-4 md:px-6 relative z-10 transition-colors duration-300">
         <div className="max-w-6xl mx-auto flex flex-col gap-6 md:gap-10">
           
-          {/* BANNER 1: GLOBAL AYURVEDA X-RAY & PRAKRITI DIAGNOSTIC LAB */}
+          {/* BANNER 1: AYURVEDA GLOBAL COMMAND CENTER (5 PILLARS & 3 PHASES) */}
           <div className="relative p-[1px] rounded-sm bg-gradient-to-r from-[#D4AF37]/50 via-emerald-500/30 to-[#D4AF37]/50 shadow-sm hover:shadow-md transition-shadow w-full">
             <div className="bg-surface backdrop-blur-md p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 rounded-sm relative overflow-hidden">
               
@@ -218,13 +217,13 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-900 dark:text-[#D4AF37] font-bold mb-1">
-                    Track 2 • International Clinical Portal
+                    Track 2 • A.T.R.E.Y.A. International Command Center
                   </div>
                   <h2 className="font-heading text-xl md:text-3xl font-bold text-foreground mb-1 md:mb-2">
-                    Interactive Clinical X-Ray &amp; Prakriti Profiler
+                    Ayurveda Global: 5 Clinical Pillars
                   </h2>
                   <p className="text-foreground/80 font-medium max-w-xl text-sm md:text-base">
-                    See how familiar rituals like Shirodhara and Ashwagandha work at the neurological level, and run a classical Charaka Vimanasthana constitution diagnostic.
+                    Explore peer-grade research papers, the Clinical X-Ray Decoder, the Prakriti &amp; Agni Diagnostic Lab, Gut-Brain Pharmacology, and our Gateway Course.
                   </p>
                 </div>
               </div>
@@ -234,18 +233,18 @@ export default function LandingPage() {
                   href="/atreya"
                   className="w-full md:w-auto bg-primary text-white font-bold px-6 md:px-8 py-3.5 md:py-4 rounded-sm shadow-md hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mb-3"
                 >
-                  Open Global Science Lab <ArrowRight className="w-5 h-5" />
+                  Open Ayurveda Global <ArrowRight className="w-5 h-5" />
                 </Link>
                 <p className="text-[10px] md:text-xs font-bold text-foreground/70 flex items-center gap-1.5 text-center md:text-right">
                   <Layers className="w-3.5 h-3.5 md:w-4 md:h-4 text-success" />
-                  Includes all 8 Branches of Ashtanga Ayurveda
+                  5 Core Pillars &amp; 8 Branches of Ashtanga Ayurveda
                 </p>
               </div>
 
             </div>
           </div>
           
-          {/* BANNER 2: BAMS SCHOLAR & 2ND PROF VAULT (ORIGINAL GRADIENT PRESERVED, TEXT COLOR FIXED) */}
+          {/* BANNER 2: BAMS SCHOLAR & 2ND PROF VAULT */}
           <div className="w-full">
             <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-sm p-6 md:p-12 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden group hover:border-amber-700/50 transition-colors duration-500 w-full">
               
@@ -279,7 +278,7 @@ export default function LandingPage() {
                   href="/bams-hub" 
                   className="w-full md:w-auto bg-amber-500/15 hover:bg-amber-500/25 text-amber-950 dark:text-amber-300 border border-amber-700/40 dark:border-amber-500/40 font-bold py-2.5 px-6 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 text-xs"
                 >
-                  <CheckCircle className="w-3.5 h-3.5 text-amber-800 dark:text-amber-400" /> Direct to 2nd Prof Papers
+                  <CheckCircle className="w-3.5 h-3.5 text-amber-800 dark:text-amber-400" /> Direct to 2nd Prof Command Center
                 </Link>
               </div>
               
@@ -290,7 +289,7 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================
-          4. PROMO BANNER FOR E-BOOKS (UPDATED TO REAL BOOK TITLES)
+          4. PROMO BANNER FOR E-BOOKS
           ================================================================= */}
       <div className="bg-background pb-8 md:pb-12 pt-2 md:pt-4 px-4 md:px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
@@ -324,7 +323,7 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================
-          5. REELS SECTION (POSITIONED AFTER MAIN ENGAGEMENT CONTENT)
+          5. REELS SECTION
           ================================================================= */}
       <LandingReels />
 
