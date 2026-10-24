@@ -1,109 +1,134 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { 
   ArrowLeft, Eye, Microscope, Layers, Leaf, Activity, 
-  RotateCcw, ZoomIn, ZoomOut, FlaskConical, Compass, 
-  CheckCircle2, Sparkles, Crosshair, Sliders, ChevronRight, 
-  Maximize2, Minimize2, Dna 
+  RotateCcw, FlaskConical, Compass, Sparkles, Crosshair, 
+  Maximize2, Minimize2, Dna, Box, Sun, Smartphone, Play, Pause 
 } from "lucide-react";
 
-type OrganNodeId = "canopy" | "calyx" | "collar" | "taproot" | "rootlets" | "histology";
-type HudTab = "morphology" | "rasapanchaka" | "kinetics";
-type TsLayerId = "cork" | "cortex" | "phloem" | "cambium" | "xylem";
+type OrganNodeId = "pod" | "canopy" | "flowers" | "bark" | "root" | "dissection";
+type HudTab = "rasapanchaka" | "kinetics" | "morphology";
+type ShaderPreset = "emerald" | "gold" | "xray" | "clay";
+type PodChamberLayer = "pericarp" | "septa" | "phalamajja" | "seeds";
 
-export default function BotanicalDissectionStudio() {
-  // Active Selected Anatomical Organ Pin
-  const [activeOrgan, setActiveOrgan] = useState<OrganNodeId>("taproot");
+export default function Aragwadha3DDissectionStudio() {
+  const [activeOrgan, setActiveOrgan] = useState<OrganNodeId>("pod");
   const [activeHudTab, setActiveHudTab] = useState<HudTab>("rasapanchaka");
   const [hudExpanded, setHudExpanded] = useState<boolean>(true);
 
-  // Anatomy-App Style Layer Peeling Toggles
-  const [layers, setLayers] = useState({
-    epidermis: true,      // Outer realistic plant tissue
-    vascularSap: true,    // Internal Xylem/Phloem animated sap channels
-    molecules: true,      // Bioactive Withanolide molecular hotspots
-    pins: true,           // Anatomical leader-line callout pins
-  });
+  // 3D WebGL Material & Viewport Controls
+  const [shaderPreset, setShaderPreset] = useState<ShaderPreset>("emerald");
+  const [autoRotate, setAutoRotate] = useState<boolean>(true);
+  const [showHotspots, setShowHotspots] = useState<boolean>(true);
+  const [exposure, setExposure] = useState<number>(1.15);
+  const [modelLoaded, setModelLoaded] = useState<boolean>(false);
 
-  // Interactive Microscopic T.S. Tissue Ring Selector
-  const [activeTsRing, setActiveTsRing] = useState<TsLayerId>("cortex");
+  // Pod Internal Dissection State (Node 06)
+  const [activePodLayer, setActivePodLayer] = useState<PodChamberLayer>("phalamajja");
 
-  // Camera Zoom, Pan & 3D Orbit Tilt State
-  const [zoom, setZoom] = useState<number>(1.15);
-  const [rotation, setRotation] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [panY, setPanY] = useState<number>(0);
-  const isDraggingRef = useRef<boolean>(false);
-  const lastPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const modelViewerRef = useRef<any>(null);
 
-  const toggleLayer = (key: keyof typeof layers) => {
-    setLayers((prev) => ({ ...prev, [key]: !prev[key] }));
+  // ===========================================================================
+  // LIVE WEBGL PBR SHADER CONTROLLER (TINTS YOUR WHITE .GLB MESH IN 3D)
+  // ===========================================================================
+  const applyWebGLShader = (preset: ShaderPreset) => {
+    setShaderPreset(preset);
+    const mv = modelViewerRef.current;
+    if (!mv || !mv.model || !mv.model.materials) return;
+
+    const presets: Record<
+      ShaderPreset,
+      { color: [number, number, number, number]; metallic: number; roughness: number }
+    > = {
+      emerald: { color: [0.16, 0.58, 0.38, 1.0], metallic: 0.18, roughness: 0.45 },
+      gold: { color: [0.85, 0.68, 0.22, 1.0], metallic: 0.78, roughness: 0.25 },
+      xray: { color: [0.06, 0.85, 0.62, 0.88], metallic: 0.4, roughness: 0.15 },
+      clay: { color: [0.92, 0.89, 0.82, 1.0], metallic: 0.05, roughness: 0.75 },
+    };
+
+    const target = presets[preset];
+    mv.model.materials.forEach((mat: any) => {
+      if (mat.pbrMetallicRoughness) {
+        mat.pbrMetallicRoughness.setBaseColorFactor(target.color);
+        mat.pbrMetallicRoughness.setMetallicFactor(target.metallic);
+        mat.pbrMetallicRoughness.setRoughnessFactor(target.roughness);
+      }
+    });
   };
 
-  // Focus Camera Smoothly on Specific Organ Node
+  // Trigger shader once the .glb finishes loading
+  useEffect(() => {
+    const mv = modelViewerRef.current;
+    if (!mv) return;
+
+    const handleLoad = () => {
+      setModelLoaded(true);
+      applyWebGLShader(shaderPreset);
+    };
+
+    mv.addEventListener("load", handleLoad);
+    return () => mv.removeEventListener("load", handleLoad);
+  }, [shaderPreset]);
+
+  // ===========================================================================
+  // 3D CAMERA ORBIT & TARGET COORDINATES FOR ARAGWADHA-TREE.GLB
+  // Smoothly flies the 3D camera to each part of your tree model!
+  // ===========================================================================
+  const cameraPresets: Record<
+    Exclude<OrganNodeId, "dissection">,
+    { orbit: string; target: string; fov: string }
+  > = {
+    pod: {
+      orbit: "-28deg 82deg 70%",
+      target: "-0.18m 0.42m 0m",
+      fov: "24deg",
+    },
+    canopy: {
+      orbit: "15deg 62deg 75%",
+      target: "0m 0.78m 0m",
+      fov: "28deg",
+    },
+    flowers: {
+      orbit: "42deg 70deg 68%",
+      target: "0.15m 0.68m 0.08m",
+      fov: "24deg",
+    },
+    bark: {
+      orbit: "0deg 80deg 62%",
+      target: "0m 0.38m 0m",
+      fov: "22deg",
+    },
+    root: {
+      orbit: "20deg 84deg 72%",
+      target: "0m 0.12m 0m",
+      fov: "25deg",
+    },
+  };
+
   const focusOnOrgan = (organ: OrganNodeId) => {
     setActiveOrgan(organ);
     setHudExpanded(true);
-    switch (organ) {
-      case "canopy":
-        setZoom(1.55);
-        setPanY(115);
-        break;
-      case "calyx":
-        setZoom(1.75);
-        setPanY(75);
-        break;
-      case "collar":
-        setZoom(1.6);
-        setPanY(-10);
-        break;
-      case "taproot":
-        setZoom(1.65);
-        setPanY(-115);
-        break;
-      case "rootlets":
-        setZoom(1.75);
-        setPanY(-155);
-        break;
-      case "histology":
-        setZoom(1.15);
-        setPanY(0);
-        setRotation({ x: 0, y: 0 });
-        break;
+
+    if (organ !== "dissection" && modelViewerRef.current) {
+      const preset = cameraPresets[organ];
+      modelViewerRef.current.cameraOrbit = preset.orbit;
+      modelViewerRef.current.cameraTarget = preset.target;
+      modelViewerRef.current.fieldOfView = preset.fov;
     }
   };
 
-  const resetCamera = () => {
-    setZoom(1.1);
-    setPanY(0);
-    setRotation({ x: 0, y: 0 });
-  };
-
-  // Pointer Drag for 2.5D Orbital Inspection
-  const handlePointerDown = (clientX: number, clientY: number) => {
-    isDraggingRef.current = true;
-    lastPosRef.current = { x: clientX, y: clientY };
-  };
-
-  const handlePointerMove = (clientX: number, clientY: number) => {
-    if (!isDraggingRef.current) return;
-    const dx = clientX - lastPosRef.current.x;
-    const dy = clientY - lastPosRef.current.y;
-    lastPosRef.current = { x: clientX, y: clientY };
-
-    setRotation((prev) => ({
-      x: Math.max(-28, Math.min(28, prev.x + dx * 0.25)),
-      y: Math.max(-18, Math.min(18, prev.y - dy * 0.2)),
-    }));
-  };
-
-  const handlePointerUp = () => {
-    isDraggingRef.current = false;
+  const reset3DCamera = () => {
+    if (!modelViewerRef.current) return;
+    modelViewerRef.current.cameraOrbit = "0deg 75deg 105%";
+    modelViewerRef.current.cameraTarget = "auto auto auto";
+    modelViewerRef.current.fieldOfView = "30deg";
   };
 
   // ===========================================================================
-  // ORGAN-SPECIFIC CLINICAL & BOTANICAL DISSECTION DATABASE
+  // BAMS 2ND PROF DRAVYAGUNA DATABASE: ARAGWADHA (CASSIA FISTULA)
   // ===========================================================================
   const organDatabase: Record<
     OrganNodeId,
@@ -134,238 +159,235 @@ export default function BotanicalDissectionStudio() {
       };
     }
   > = {
-    canopy: {
-      code: "NODE 01 • PATRA",
-      sanskritTitle: "अश्वगन्धा पत्र (Leaf Lamina & Shoot)",
-      latinPart: "Folium Withaniae • Aerial Vegetative Canopy",
-      prayojyaStatus: "Secondary Therapeutic Part (External Upanaha & Shothahara)",
+    pod: {
+      code: "NODE 01 • PHALA & PHALAMAJJA",
+      sanskritTitle: "आरग्वध फलमज्जा (Cylindrical Pod & Pulp)",
+      latinPart: "Pulpa Cassiae Fistulae • Chaturangula Dirghaphala",
+      prayojyaStatus: "PRIMARY PRAYOJYA ANGA (Official Drug Part — Phalamajja)",
       morphology: {
         summary:
-          "Simple, petiolate, ovate to oblong-ovate leaves (5–10 cm long) arranged sub-oppositely along terete branches clothed in dense stellate (star-shaped) hairs.",
+          "Pendulous, smooth, cylindrical, dark blackish-brown indehiscent pod (30–60 cm long, 2–2.5 cm thick) visible hanging beneath the branches in the 3D specimen, internally divided by transverse septa containing sticky sweet black pulp.",
         markers: [
-          { label: "Venation", value: "Unicostate reticulate with prominent arcuate midrib" },
-          { label: "Indumentum", value: "Velvety greyish-green stellate pubescence" },
-          { label: "Margin & Apex", value: "Entire margin, acute to sub-obtuse apex" },
-          { label: "Stomatal Index", value: "Anisocytic stomata predominantly on abaxial epidermis" },
+          { label: "Classical Name", value: "Chaturangula / Dirghaphala (1–2 feet long cylindrical pod)" },
+          { label: "Exocarp", value: "Hard, woody, dark chocolate-brown, smooth & finely striated" },
+          { label: "Internal Septa", value: "25–100 transverse chambers filled with dark Phalamajja" },
+          { label: "Odor & Taste", value: "Sweetish characteristic odor; sweet, mucilaginous taste" },
         ],
         spottingPearl:
-          "Rubbing the fresh leaf produces a pungent, bitter-green odor distinct from the horse-like smell of the subterranean root.",
+          "Shake a mature dried Aragwadha pod during 2nd Prof Spotting—if the seeds rattle loudly inside, the Phalamajja has dried out; fresh heavy pods that do NOT rattle contain potent moist pulp.",
       },
       rasapanchaka: {
-        rasa: "Tikta (Bitter) & Katu (Pungent)",
-        guna: "Laghu (Light), Ruksha (Drying)",
-        virya: "Ushna Virya (Thermogenic)",
-        vipaka: "Katu Vipaka (Catabolic / Lekhana)",
-        prabhava: "Shothahara (Anti-inflammatory) & Granthihara",
-        doshaKarma: "Kapha-Vatahara • Medohara (Used in obesity & lymphadenopathy)",
-        shloka: "पत्रं तु शोथघ्नं ग्रन्थिगण्डमालाविनाशनम् ।",
+        rasa: "Madhura (Sweet — Primary in Phalamajja), Tikta (Bitter)",
+        guna: "Guru (Heavy), Mridu (Soft/Gentle), Snigdha (Unctuous)",
+        virya: "Sheeta Virya (Cooling Potency)",
+        vipaka: "Madhura Vipaka (Anabolic / Non-Irritating)",
+        prabhava: "Sramsana (Supreme Mild Laxative — Mridu Virechana)",
+        doshaKarma: "Vata-Pittahara • Koshtha-Shodhana • Jwaraghna • Hridya",
+        shloka: "आरग्वधो गुरुः स्वादुः शीतलः स्रंसनोत्तमः । ज्वरहृद्रोगपित्तास्रवातोदावर्तशूलनुत् ॥ (भा.प्र.)",
       },
       kinetics: {
-        primaryMolecules: "Withaferin A (0.2–1.1% dry wt), Withanone, Chlorogenic Acid",
-        srotasTarget: "Raktavaha, Mamsavaha & Medovaha Srotas",
-        anupanaVehicle: "Warm Water Paste (Kalka Lepa) or Leaf Swarasa",
+        primaryMolecules: "Anthraquinone Glycosides (Sennosides A & B, Rhein, Barbaloin), Pectin (25%), Mucilage & Sucrose",
+        srotasTarget: "Purishavaha, Annavaha & Raktavaha Srotas",
+        anupanaVehicle: "Warm Milk or Draksha Kwatha (For Sukumara, Bala & Garbhini Virechana)",
         mechanism:
-          "Withaferin A synthesised in leaf chloroplasts covalently modifies IKKβ, blocking NF-κB activation, inhibiting angiogenesis in benign growths (Granthi), and accelerating localized wound resolution.",
+          "Classical Sramsana Action ('पक्तव्यं न पचत्येव आश्लिष्टं कोष्ठसंश्रितम् नयत्यधः'): Anthraquinone glycosides remain unabsorbed in the small intestine and are cleaved by colonic microflora into active rhein-anthrones, gently stimulating Auerbach's plexus peristalsis while pectin/mucilage coats the mucosa to prevent griping.",
       },
     },
-    calyx: {
-      code: "NODE 02 • PHALA & KOSHA",
-      sanskritTitle: "अश्वगन्धा फल एवं कोश (Fruiting Calyx & Berry)",
-      latinPart: "Fructus Withaniae • Accrescent Lantern Calyx",
-      prayojyaStatus: "Taxonomic Diagnostic Organ & Coagulant Seed Source",
+    canopy: {
+      code: "NODE 02 • PATRA CANOPY",
+      sanskritTitle: "आरग्वध पत्र (Pinnate Compound Leaves)",
+      latinPart: "Folium Cassiae • Kushthaghna & Dadrughna Canopy",
+      prayojyaStatus: "Primary Topical Drug for Twak Vikara (Skin Diseases)",
       morphology: {
         summary:
-          "Globose, smooth, shining orange-red berry (6–8 mm diameter) completely enclosed within a persistent, inflated, 5-angled papery bladder-like calyx.",
+          "Large paripinnate compound leaves (20–40 cm long) bearing 4 to 8 pairs of opposite, large ovate-oblong leaflets with a glossy coriaceous upper surface.",
         markers: [
-          { label: "Inflorescence", value: "Axillary umbellate cymes of 4–6 subsessile flowers" },
-          { label: "Fruiting Calyx", value: "Membranous, urceolate, 5-ribbed reticulately veined sac" },
-          { label: "Pericarp", value: "Thin, glossy scarlet-orange exocarp when ripe" },
-          { label: "Seeds (Bija)", value: " numerosos, yellow, reniform (kidney-shaped), compressed" },
+          { label: "Leaf Type", value: "Paripinnate (Even-pinnate) compound leaf" },
+          { label: "Leaflets", value: "4–8 pairs, 7–15 cm long, ovate with acute apex" },
+          { label: "Venation", value: "Closely set parallel-arcuate secondary lateral veins" },
+          { label: "Seasonal Shedding", value: "Briefly deciduous in spring just before golden flowering" },
         ],
         spottingPearl:
-          "The lantern-like papery calyx (resembling Physalis) is the fastest visual field marker to identify Solanaceae genus Withania.",
+          "Charaka placed Aragwadha at the very top of Kushthaghna and Kandughna Mahakashayas; its leaf paste rubbed in sour Kanji or Takra is the textbook prescription for Dadru (ringworm).",
+      },
+      rasapanchaka: {
+        rasa: "Tikta (Bitter) & Kashaya (Astringent)",
+        guna: "Laghu (Light), Ruksha (Drying)",
+        virya: "Sheeta Virya",
+        vipaka: "Katu Vipaka (Locally Kaphahara & Lekhana)",
+        prabhava: "Kushthaghna (Dermatological Specific) & Kandughna (Anti-pruritic)",
+        doshaKarma: "Kapha-Pittahara • Raktashodhaka • Krimighna",
+        shloka: "आरग्वधस्य पत्राणि काञ्जिकेन प्रपेषयेत् । दद्रुकिट्टिमकुष्ठानि हन्ति लेपेन तत्क्षणात् ॥",
+      },
+      kinetics: {
+        primaryMolecules: "Chrysophanol, Physcion, Rhein, Sennosides & Epicatechin",
+        srotasTarget: "Raktavaha & Swedavaha Srotas (Cutaneous Microcirculation)",
+        anupanaVehicle: "Takra (Buttermilk) or Kanji (Fermented Rice Water) as External Lepa",
+        mechanism:
+          "Free anthraquinones (chrysophanol and rhein) in the leaves disrupt dermatophyte ergosterol cell membranes (Trichophyton & Microsporum species) and down-regulate epidermal IL-17 inflammatory signaling in psoriasis (Kitibha) and tinea (Dadru).",
+      },
+    },
+    flowers: {
+      code: "NODE 03 • PUSHPA MANJARI",
+      sanskritTitle: "सुवर्णक पुष्प (Pendulous Golden Racemes)",
+      latinPart: "Flos Cassiae Fistulae • Kritamala / Rajavriksha Pushpa",
+      prayojyaStatus: "Classical Pushpa Avaleha & Raktapittahara Drug",
+      morphology: {
+        summary:
+          "Drooping, lax axillary racemes (30–50 cm long) bearing fragrant, bright golden-yellow flowers with 5 subequal veined petals and 10 stamens (3 long sickle-shaped, 4 medium, 3 short staminodes).",
+        markers: [
+          { label: "Synonyms", value: "Suvarnaka (Golden), Kritamala (Garlanded), Rajavriksha" },
+          { label: "Corolla", value: "5 obovate, shortly clawed, bright yellow veined petals" },
+          { label: "Androecium", value: "10 stamens; 3 lower longest with curved filaments" },
+          { label: "Flowering Season", value: "Grishma Ritu (April–June peak golden bloom)" },
+        ],
+        spottingPearl:
+          "When the entire tree is draped in golden racemes during Grishma Ritu, it embodies the synonym 'Rajavriksha' (King of the Forest) and 'Suvarnaka'.",
+      },
+      rasapanchaka: {
+        rasa: "Tikta (Bitter), Kashaya (Astringent), Madhura (Sweet)",
+        guna: "Laghu, Snigdha, Mridu",
+        virya: "Sheeta Virya (Cooling)",
+        vipaka: "Madhura Vipaka",
+        prabhava: "Dipana-Mridurechana & Raktastambhana",
+        doshaKarma: "Pitta-Kaphahara • Dahaprashamana",
+        shloka: "पुष्पं शीतं कषायं च तिक्तं संग्राहि वातलम् ।",
+      },
+      kinetics: {
+        primaryMolecules: "Kaempferol, Fistulin, Rhein glycosides, Leucopelargonidin & Aurantiamide",
+        srotasTarget: "Pranavaha & Raktavaha Srotas",
+        anupanaVehicle: "Sharkara (Prepared as Aragwadha Pushpa Gulkand / Avaleha)",
+        mechanism:
+          "Flavonoids (kaempferol and fistulin) stabilize capillary endothelium and soothe bronchial & gastric mucosal inflammation in Raktapitta and Pittaja Kasa.",
+      },
+    },
+    bark: {
+      code: "NODE 04 • KANDA-TWAK",
+      sanskritTitle: "आरग्वध त्वक् (Stem Bark / Aragwadhadi Kwatha)",
+      latinPart: "Cortex Cassiae Fistulae • Vyadhighata Twak",
+      prayojyaStatus: "Key Ingredient of Sushruta's Aragwadhadi Gana Kwatha",
+      morphology: {
+        summary:
+          "Smooth, pale greenish-grey bark in young trunks (as sculpted in the central trunk of the 3D model), exfoliating in hard, dark reddish-brown rectangular scales in older trees.",
+        markers: [
+          { label: "Young Bark", value: "Smooth, ash-grey to pale greenish-grey" },
+          { label: "Mature Bark", value: "Rough, dark brown, exfoliating in woody scales" },
+          { label: "Inner Bark", value: "Pinkish-buff, fibrous fracture, strongly astringent taste" },
+          { label: "Key Formulation", value: "Aragwadhadi Kwatha & Mahamanjishthadi Kwatha" },
+        ],
+        spottingPearl:
+          "Sushruta named an entire pharmacological group—Aragwadhadi Gana—after this tree for managing Dushta Vrana (chronic non-healing ulcers), Kushtha, and Prameha.",
       },
       rasapanchaka: {
         rasa: "Tikta (Bitter) & Kashaya (Astringent)",
         guna: "Laghu, Ruksha",
-        virya: "Ushna Virya",
+        virya: "Sheeta Virya",
         vipaka: "Katu Vipaka",
-        prabhava: " Ksheera-skandana (Milk-coagulating enzymatic action of seeds)",
-        doshaKarma: "Kaphahara • Mutrala (Diuretic in dysuria)",
-        shloka: "फलं तिक्तं कषायं च मूत्रकृच्छ्रनिबर्हणम् ।",
+        prabhava: "Vranashodhana (Wound Debridement) & Shothahara",
+        doshaKarma: "Kapha-Pittahara • Kledashoshana",
+        shloka: "आरग्वधादिरित्येष गणः श्लेष्मविषापहः । प्रमेहकुष्ठज्वरनुद् वमिंडूव्रणशोधनः ॥ (सु.सू. ३८)",
       },
       kinetics: {
-        primaryMolecules: "Withanamides A–I (Berry), Withania protease (Seeds)",
-        srotasTarget: "Mutravaha Srotas",
-        anupanaVehicle: "Seed decoction (used externally/traditionally; seeds are mildly narcotic in excess)",
+        primaryMolecules: "Condensed Tannins (10–14%), Fistucacidin, Lupeol, β-Sitosterol & Leucoanthocyanidins",
+        srotasTarget: "Raktavaha, Medovaha & Udakavaha Srotas",
+        anupanaVehicle: "Kwatha (Decoction) for Internal Use or Vrana Prakshalana (Wound Wash)",
         mechanism:
-          "Withanamides in the ripe fruit exhibit potent lipid-peroxidation inhibition, while the berries signal the seasonal maturity peak when root harvesting yields maximum glycowithanolides.",
+          "Catechin tannins and lupeol precipitate necrotic proteins on ulcer beds (Vranashodhana), inhibit bacterial biofilm formation, and improve peripheral insulin sensitivity in Kaphaja Prameha.",
       },
     },
-    collar: {
-      code: "NODE 03 • MULA-SHIRA",
-      sanskritTitle: "मूल-शिर (Hypocotyl Crown & Transition Zone)",
-      latinPart: "Collum Radicis • Root-Stem Vascular Transition",
-      prayojyaStatus: "Vascular Junction & Vegetative Crown",
+    root: {
+      code: "NODE 05 • MULA & MULA-TWAK",
+      sanskritTitle: "आरग्वध मूल (Root & Root Bark Base)",
+      latinPart: "Radix Cassiae Fistulae • Jwaraghna Root System",
+      prayojyaStatus: "Potent Antipyretic (Jwaraghna) & Vatarakta Drug",
       morphology: {
         summary:
-          "Thickened, knotty lignified crown at the soil interface where the green aerial stem transitions into the subterranean storage taproot.",
+          "Deep woody taproot and spreading lateral root system (anchored in the pedestal base of the 3D model) clothed in reddish-brown suberized root bark.",
         markers: [
-          { label: "External Texture", value: "Suberized, longitudinally furrowed root-crown" },
-          { label: "Bud Scars", value: "Contains dormant perennating axillary shoot buds" },
-          { label: "Vascular Shift", value: "Exarch root xylem transitions to endarch stem bundles" },
-          { label: "Fracture", value: "Fibrous-woody (harder than the starchy taproot below)" },
+          { label: "Root Bark Color", value: "Reddish-brown externally, yellowish-pink internally" },
+          { label: "Ecological Role", value: "Drought-hardy root system thriving in Jangala & Sadharana Desha" },
+          { label: "Taste", value: "Astringent-bitter with warming tonic aftertaste" },
+          { label: "Therapeutic Class", value: "Jwaraghna, Amavatahara & Virechanopaga" },
         ],
         spottingPearl:
-          "In commercial market drug evaluation (Dravya Pariksha), excessive woody crown pieces lower the grade of Ashwagandha Churna compared to pure starchy taproots.",
+          "In classical Nighantus, Aragwadha root bark is regarded as the strongest Jwaraghna (antipyretic) part of the plant for stubborn Vishama Jwara and burning joint pain in Vatarakta.",
       },
       rasapanchaka: {
-        rasa: "Tikta-Kashaya",
-        guna: "Guru (Heavy), Ruksha",
-        virya: "Ushna Virya",
-        vipaka: "Madhura-Katu Transition",
-        prabhava: "Vahaka (Bi-directional Phloem-Xylem Conduit)",
-        doshaKarma: "Vata-Kaphahara",
-        shloka: "मूलशिरः काष्ठमयं रसवहनसन्धिगम् ।",
-      },
-      kinetics: {
-        primaryMolecules: "Tropane & Pyrazole Alkaloids (Withanine, Somniferine, Anaferine)",
-        srotasTarget: "Rasavaha & Pranavaha Srotas",
-        anupanaVehicle: "Processed in Decoctions (Kwatha Kalpana)",
-        mechanism:
-          "Acts as the high-pressure vascular bottleneck where foliar photosynthates descend via secondary phloem to be polymerized into storage starch and withanosides inside the taproot.",
-      },
-    },
-    taproot: {
-      code: "NODE 04 • PRADHANA MULA",
-      sanskritTitle: "अश्वगन्धा मूल (Official Starchy Taproot)",
-      latinPart: "Radix Withaniae • API Official Pharmacopoeial Drug",
-      prayojyaStatus: "PRIMARY PRAYOJYA ANGA (Official BAMS & API Drug Part)",
-      morphology: {
-        summary:
-          "Straight, unbranched, plump conical tuberous taproot (5–15 cm long, 1–2 cm thick), buff to greyish-yellow externally with a pure creamy-white starchy interior.",
-        markers: [
-          { label: "Odor (Gandha)", value: "Ashwa-Gandha (Distinct equine/horse-like odor when fresh)" },
-          { label: "Fracture", value: "Short, uneven, starchy, non-fibrous in genuine Nagori roots" },
-          { label: "Taste", value: "Mucilaginous at first, followed by bitter and slightly acrid" },
-          { label: "Elite Variety", value: "Nagori Ashwagandha (Jhunjhunu/Nagaur arid belt, Rajasthan)" },
-        ],
-        spottingPearl:
-          "2nd Prof Exam Gold: Snap the root—if it breaks with a crisp, chalky white starchy snap rather than splintering like wood, it is high-potency Nagori Ashwagandha.",
-      },
-      rasapanchaka: {
-        rasa: "Tikta (Bitter), Kashaya (Astringent), Madhura (Sweet)",
-        guna: "Laghu (Light), Snigdha (Unctuous)",
-        virya: "Ushna Virya (Warming Metabolic Potency)",
-        vipaka: "Madhura Vipaka (Anabolic / Tissue-Building)",
-        prabhava: "Balya • Brimhaniya • Rasayana • Vajikarana",
-        doshaKarma: "Vata-Kaphashamaka (Supreme pacifier of systemic Vata degeneration)",
-        shloka: "अश्वगन्धाऽनिलश्लेष्मश्वित्रशोथक्षयापहा । बल्या रसायनी तिक्ता कषायोष्णाऽतिशुक्रला ॥ (भा.प्र.)",
-      },
-      kinetics: {
-        primaryMolecules: "Withanolide A, Withanoside IV & VI, Sitoindosides VII–X",
-        srotasTarget: "Majjavaha (CNS), Mamsavaha (Muscle) & Shukravaha Srotas",
-        anupanaVehicle: "Kshira Paka (Warm Milk Decoction) or Purana Ghrita",
-        mechanism:
-          "Lipophilic Withanolide A & Withanoside IV micellize in milk fat globules, crossing the blood-brain barrier to upregulate GABA-A receptor signaling (curing Anidra/insomnia), lower HPA-axis cortisol, and stimulate axonal regeneration.",
-      },
-    },
-    rootlets: {
-      code: "NODE 05 • UPAMULA",
-      sanskritTitle: "उपमूल एवं मूलरोम (Lateral Rootlets & Rhizosphere)",
-      latinPart: "Radiculae Laterales • Mineral & Nitrogen Absorption Zone",
-      prayojyaStatus: "Bio-Mineral Uptake & Secondary Alkaloid Synthesis Site",
-      morphology: {
-        summary:
-          "Slender, wiry secondary lateral rootlets branching at acute angles from the primary taproot, covered near the tips with absorptive root hairs.",
-        markers: [
-          { label: "Diameter", value: "1–3 mm slender cylindrical root branches" },
-          { label: "Soil Preference", value: "Well-drained sandy-loam (Jangala Desha) with pH 7.5–8.0" },
-          { label: "Surface", value: "Light brown, finely wrinkled longitudinally" },
-          { label: "Drying Process", value: "Trimmed during grading to isolate Grade-A stout taproots" },
-        ],
-        spottingPearl:
-          "Rootlets have a higher surface-to-volume ratio of outer cork to starchy parenchyma, making them slightly more bitter and fibrous than the central taproot.",
-      },
-      rasapanchaka: {
-        rasa: "Tikta-Katu",
+        rasa: "Tikta, Kashaya",
         guna: "Laghu, Snigdha",
-        virya: "Ushna Virya",
-        vipaka: "Madhura Vipaka",
-        prabhava: "Deepana (Kindles tissue-level Dhatvagni)",
-        doshaKarma: "Vatahara",
-        shloka: "जाङ्गलदेशजातायाः मूलं वीर्यवत्तरम् ।",
+        virya: "Sheeta Virya",
+        vipaka: "Madhura-Katu",
+        prabhava: "Jwaraghna (Antipyretic) & Vedanasthapana",
+        doshaKarma: "Vata-Pittahara • Raktaprasadana",
+        shloka: "मूलं ज्वरहरं श्रेष्ठं वातरक्तविनाशनम् ।",
       },
       kinetics: {
-        primaryMolecules: "Tropine, Pseudotropine, Cuscohygrine & Iron-chelated glycowithanolides",
-        srotasTarget: "Rasavaha & Raktavaha Srotas",
-        anupanaVehicle: "Ashwagandharishta (Self-generated hydro-alcoholic extraction)",
+        primaryMolecules: "Rhein, Aloe-emodin, Rhamnetin-3-O-gentiobioside & Oxyanthraquinones",
+        srotasTarget: "Rasavaha, Raktavaha & Asthivaha Srotas",
+        anupanaVehicle: "Milk Decoction (Kshirapaka) or Kwatha in Jwara",
         mechanism:
-          "Rootlet meristems synthesize precursor alkaloids and absorb trace iron from arid soils, contributing to Ashwagandha's hematinic (Raktavardhaka) effect in Pandu (anemia).",
+          "Root-derived oxyanthraquinones and rhamnetin glycosides inhibit prostaglandin E2 (PGE2) synthesis in the hypothalamic thermoregulatory center and reduce synovial uric acid inflammation in Vatarakta (gout).",
       },
     },
-    histology: {
-      code: "NODE 06 • MICROSCOPIC T.S.",
-      sanskritTitle: "मूल अनुप्रस्थ काट (40x Microscopic Root Histology)",
-      latinPart: "Sectio Transversalis Radicis • Cellular Tissue Dissection",
-      prayojyaStatus: "2nd Prof BAMS Practical Record & Pharmacognosy Standard",
+    dissection: {
+      code: "NODE 06 • POD L.S. DISSECTION",
+      sanskritTitle: "चतुरङ्गुल फल आन्तरिक काट (Pod Chamber Dissection)",
+      latinPart: "Sectio Longitudinalis Fructus • Septa & Phalamajja Anatomy",
+      prayojyaStatus: "2nd Prof Practical Spotting & Bhaishajya Kalpana Extraction",
       morphology: {
         summary:
-          "Circular transverse section exhibiting exfoliating suberized cork, a wide starchy parenchymatous cortex, a distinct cambium ring, and a broad central xylem core traversed by medullary rays.",
+          "Longitudinal section of the cylindrical fruit pod revealing the outer woody pericarp, 25–100 transverse papery septa (Koshtha), dark viscid Phalamajja pulp, and flat glossy yellowish-brown seeds.",
         markers: [
-          { label: "1. Cork (Phellem)", value: "3–6 rows of tangentially elongated, non-lignified suberized cells" },
-          { label: "2. Cortex", value: "10–15 layers of parenchyma packed with compound starch grains" },
-          { label: "3. Cambium", value: "2–4 layers of meristematic tangentially dividing cells" },
-          { label: "4. Xylem & Rays", value: "Tracheids, pitted vessels & starch-filled medullary rays" },
+          { label: "1. Pericarp (Phalatwak)", value: "Indehiscent woody shell with ventral & dorsal sutures" },
+          { label: "2. Transverse Septa", value: "Thin transverse dissepiments every 0.5–1 cm" },
+          { label: "3. Phalamajja (Pulp)", value: "Blackish-brown, sticky, sweet mucilaginous coat on septa" },
+          { label: "4. Bija (Seeds)", value: "1 oval, flattened, smooth yellowish-brown seed per chamber" },
         ],
         spottingPearl:
-          "Crucial Viva Answer: Complete absence of stone cells (sclereids) and bast fibers in the cortex distinguishes genuine Withania somnifera root under the microscope.",
+          "Important Bhaishajya Rule: Never boil Aragwadha Phalamajja vigorously over high fire—heat degrades its thermolabile sennoside glycosides! Always prepare as a Phanta (hot infusion) or Mridu Kwatha.",
       },
       rasapanchaka: {
-        rasa: "Madhura-Tikta (Localized in Cortical Starch & Phloem)",
-        guna: "Snigdha-Guru (Amyloplast Starch Reserves)",
-        virya: "Ushna Virya",
+        rasa: "Madhura (Pulp) • Tikta (Seed Coat)",
+        guna: "Guru, Mridu, Snigdha",
+        virya: "Sheeta Virya",
         vipaka: "Madhura Vipaka",
-        prabhava: "Shuddha Dravya Pariksha (Pharmacognostic Purity Standard)",
-        doshaKarma: "Vata-Kaphahara • Brimhana",
-        shloka: "निःशूकं मधुरं स्निग्धं चूर्णयोग्यं प्रशस्यते ।",
+        prabhava: "Sukhavirechana (Painless, safe purgation without cramps)",
+        doshaKarma: "Vata-Pittahara • Udavartahara",
+        shloka: "चतुरङ्गुलो मृदुफलः कोष्ठशुद्धिकरः परः । बालानां गर्भिणीनां च वृद्धानां च प्रशस्यते ॥",
       },
       kinetics: {
-        primaryMolecules: "Compound Starch Grains (15–30 µm) + Microsphenoidal Calcium Oxalate",
-        srotasTarget: "Mamsavaha & Shukravaha Srotas",
-        anupanaVehicle: "80-Mesh Fine Sieved Churna + Warm Milk",
+        primaryMolecules: "Sennoside A & B (1.2–2.0% in Pulp), Galactomannan Gum (in Seeds)",
+        srotasTarget: "Purishavaha Srotas (Descending & Sigmoid Colon)",
+        anupanaVehicle: "Warm Water Phanta or Warm Milk (Dose: 10–20 g Phalamajja)",
         mechanism:
-          "Histochemical staining proves Withanolide A and Withanoside IV are concentrated in the secondary phloem and outer cortical parenchyma—never peel the buff outer bark too deeply during cleaning.",
+          "While the black Phalamajja is a gentle Sramsana laxative, the crushed seeds alone act as an emetic (Vamaka) in large doses—which is why classical texts instruct separating the seeds when preparing Phalamajja Leha.",
       },
     },
   };
 
-  // Interactive Microscopic T.S. Ring Details
-  const tsRingDetails: Record<TsLayerId, { title: string; histology: string; chemistry: string }> = {
-    cork: {
-      title: "1. Phellem (Outer Suberized Cork)",
-      histology: "3 to 6 layers of thin-walled, tabular, tangentially elongated suberized cells; exfoliating in mature roots.",
-      chemistry: "Protective hydrophobic barrier; contains trace sterols and defensive phenolic amides.",
+  const podChamberDetails: Record<
+    PodChamberLayer,
+    { title: string; anatomy: string; clinicalNote: string }
+  > = {
+    pericarp: {
+      title: "1. Woody Exocarp / Pericarp (फलत्वक्)",
+      anatomy: "Hard, dark chocolate-brown lignified outer wall marked by two longitudinal sutures (ventral and dorsal) that do not split open spontaneously (indehiscent lomentum).",
+      clinicalNote: "Protects the inner moisture of the Phalamajja; gently cracked with a wooden mallet during drug collection.",
     },
-    cortex: {
-      title: "2. Phelloderm & Cortical Parenchyma",
-      histology: "10 to 15 layers of isodiametric thin-walled parenchyma cells densely packed with 2–4 compound starch grains and microsphenoidal calcium oxalate crystals.",
-      chemistry: "Primary reservoir of Madhura Vipaka anabolic polysaccharides and glycowithanolides (Withanoside IV).",
+    septa: {
+      title: "2. Transverse Septa / Dissepiments (कोष्ठ भित्ति)",
+      anatomy: "25 to 100 thin, woody-papery transverse partitions dividing the 60 cm pod into single-seeded chambers every 6–8 mm.",
+      clinicalNote: "Gives the tree its classical synonym 'Chaturangula' and 'Suvarnaphala'.",
     },
-    phloem: {
-      title: "3. Secondary Phloem Zone",
-      histology: "Narrow zone composed of sieve tubes, companion cells, and phloem parenchyma; completely devoid of lignified phloem fibers.",
-      chemistry: "Highest concentration of bioactive Withanolide A translocated from upper aerial shoots.",
+    phalamajja: {
+      title: "3. Black Viscid Phalamajja Pulp (फलमज्जा — Official Drug)",
+      anatomy: "Lustrous, dark brownish-black, sweet, mucilaginous pulp coating both faces of the transverse septa.",
+      clinicalNote: "Contains Sennosides A & B + Rhein + Pectin. Scraped off with a blunt spatula and administered (10–20 g) with warm milk for Sramsana.",
     },
-    cambium: {
-      title: "4. Vascular Cambium Ring",
-      histology: "Distinct continuous ring of 2 to 4 rows of tangentially elongated meristematic cells.",
-      chemistry: "Active zone of secondary radial thickening that produces the plump Nagori tuberous morphology.",
-    },
-    xylem: {
-      title: "5. Secondary Xylem & Medullary Rays",
-      histology: "Forms the bulk of the central core; vessels with pitted and scalariform thickening separated by 1–3 cell wide starch-bearing medullary rays.",
-      chemistry: "Provides the crisp, short starchy fracture when young; becomes overly lignified if harvested too late.",
+    seeds: {
+      title: "4. Albuminous Flattened Seeds (बीज)",
+      anatomy: "Each transverse chamber houses one horizontal, broadly ovate, flattened, glossy yellowish-brown seed embedded in the black pulp.",
+      clinicalNote: "Rich in galactomannan endospermic gum; separated from the pulp during Bhaishajya Kalpana preparation.",
     },
   };
 
@@ -374,9 +396,14 @@ export default function BotanicalDissectionStudio() {
   return (
     <div className="relative w-full min-h-[calc(100vh-3.5rem)] bg-[#040B08] text-white overflow-hidden flex flex-col justify-between select-none">
       
-      {/* =================================================================
-          SCOPED 3D ANATOMY STUDIO STYLES (PERSPECTIVE GRID & SAP FLOW)
-          ================================================================= */}
+      {/* Load Google Model Viewer WebGL Engine via CDN (Zero npm package required!) */}
+      <Script
+        type="module"
+        src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"
+        strategy="afterInteractive"
+      />
+
+      {/* Scoped Studio Floor & Hotspot Styles */}
       <style dangerouslySetInnerHTML={{__html: `
         .studio-floor-grid {
           position: absolute;
@@ -393,66 +420,92 @@ export default function BotanicalDissectionStudio() {
           -webkit-mask-image: radial-gradient(ellipse at center, black 15%, transparent 70%);
           pointer-events: none;
         }
-        .sap-flow-up {
-          stroke-dasharray: 6 8;
-          animation: flowUp 1.8s linear infinite;
+        model-viewer {
+          width: 100%;
+          height: 100%;
+          background-color: transparent;
+          --poster-color: transparent;
         }
-        .sap-flow-down {
-          stroke-dasharray: 5 10;
-          animation: flowDown 2.2s linear infinite;
+        .atreya-3d-pin {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 5px 10px;
+          border-radius: 6px;
+          background: rgba(6, 20, 14, 0.88);
+          border: 1.5px solid #D4AF37;
+          color: #F5DE93;
+          font-family: monospace;
+          font-size: 10px;
+          font-weight: 700;
+          cursor: pointer;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.75);
+          transition: all 0.25s ease;
+          white-space: nowrap;
         }
-        @keyframes flowUp {
-          from { stroke-dashoffset: 28; }
-          to { stroke-dashoffset: 0; }
+        .atreya-3d-pin:hover,
+        .atreya-3d-pin.active-pin {
+          background: rgba(16, 185, 129, 0.95);
+          border-color: #fff;
+          color: #000;
+          transform: scale(1.08);
         }
-        @keyframes flowDown {
-          from { stroke-dashoffset: 0; }
-          to { stroke-dashoffset: 30; }
+        .pin-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 9999px;
+          background: #10b981;
+          box-shadow: 0 0 8px #10b981;
         }
-        .bio-node-pulse {
-          animation: bioPulse 2.4s ease-in-out infinite;
-        }
-        @keyframes bioPulse {
-          0%, 100% { r: 5px; opacity: 0.9; }
-          50% { r: 8px; opacity: 0.4; }
+        .active-pin .pin-dot {
+          background: #000;
         }
       `}} />
 
       {/* Ambient Depth-of-Field Clinical Spotlight */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_42%_48%,rgba(16,185,129,0.14)_0%,rgba(212,175,55,0.05)_35%,transparent_72%)] pointer-events-none" />
+      <div
+        className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
+          shaderPreset === "xray"
+            ? "bg-[radial-gradient(circle_at_40%_50%,rgba(16,185,129,0.25)_0%,rgba(6,182,212,0.08)_40%,transparent_72%)]"
+            : shaderPreset === "gold"
+            ? "bg-[radial-gradient(circle_at_40%_50%,rgba(212,175,55,0.22)_0%,rgba(16,185,129,0.06)_40%,transparent_72%)]"
+            : "bg-[radial-gradient(circle_at_40%_50%,rgba(16,185,129,0.16)_0%,rgba(212,175,55,0.06)_38%,transparent_72%)]"
+        }`}
+      />
       <div className="studio-floor-grid" />
 
       {/* =================================================================
           1. TOP FLOATING SURGICAL HEADER BAR
           ================================================================= */}
-      <header className="relative z-30 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 pt-4 pb-2 pointer-events-auto">
+      <header className="relative z-30 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 pt-4 pb-2">
         <div className="flex items-center gap-3">
           <Link
             href="/bams-hub"
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-zinc-900/85 backdrop-blur-md border border-white/15 text-xs font-bold text-white/85 hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Exit Studio
+            <ArrowLeft className="w-3.5 h-3.5" /> Exit 3D Studio
           </Link>
 
           <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-zinc-900/75 backdrop-blur-md border border-emerald-500/30 text-xs">
-            <Dna className="w-3.5 h-3.5 text-emerald-400" />
+            <Box className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span className="font-mono uppercase tracking-wider text-emerald-300 font-bold">
-              3D Dravyaguna Dissection Studio
+              WebGL .GLB Specimen #01
             </span>
             <span className="text-white/40">|</span>
-            <span className="font-serif italic text-white/90">Withania somnifera (L.) Dunal</span>
+            <span className="font-bold text-white">आरग्वध (Aragwadha)</span>
+            <span className="font-serif italic text-white/75">Cassia fistula Linn.</span>
           </div>
         </div>
 
-        {/* Center-Right Quick Organ Jump Pills */}
+        {/* Top Organ Camera Jump Bar */}
         <div className="flex items-center gap-1.5 bg-zinc-900/85 backdrop-blur-md p-1 rounded-lg border border-white/15 overflow-x-auto max-w-full">
           {([
-            { id: "canopy" as const, label: "Patra (Leaf)" },
-            { id: "calyx" as const, label: "Phala (Berry)" },
-            { id: "collar" as const, label: "Crown" },
-            { id: "taproot" as const, label: "Mula (Taproot)" },
-            { id: "rootlets" as const, label: "Rootlets" },
-            { id: "histology" as const, label: "40x Root T.S." },
+            { id: "pod" as const, label: "01. Phala (Hanging Pods) ★" },
+            { id: "canopy" as const, label: "02. Patra (Leaf Canopy)" },
+            { id: "flowers" as const, label: "03. Pushpa (Racemes)" },
+            { id: "bark" as const, label: "04. Twak (Stem Bark)" },
+            { id: "root" as const, label: "05. Mula (Root Base)" },
+            { id: "dissection" as const, label: "06. Pod L.S. Dissection" },
           ]).map((tab) => {
             const active = activeOrgan === tab.id;
             return (
@@ -474,620 +527,400 @@ export default function BotanicalDissectionStudio() {
       </header>
 
       {/* =================================================================
-          2. LEFT FLOATING ANATOMICAL LAYER PEELER DOCK (LIKE COMPLETE ANATOMY)
+          2. LEFT FLOATING 3D SHADER & CAMERA CONTROL DOCK
           ================================================================= */}
-      <aside className="fixed left-4 top-24 z-30 hidden md:flex flex-col gap-2 w-56 bg-zinc-950/85 backdrop-blur-xl border border-white/15 rounded-xl p-3.5 shadow-2xl">
-        <div className="flex items-center justify-between pb-2 mb-1 border-b border-white/10">
+      <aside className="fixed left-4 top-24 z-30 hidden md:flex flex-col gap-2.5 w-60 bg-zinc-950/85 backdrop-blur-xl border border-white/15 rounded-xl p-4 shadow-2xl">
+        <div className="flex items-center justify-between pb-2 border-b border-white/10">
           <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] font-bold flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5" /> Tissue Layer Peel
+            <Layers className="w-3.5 h-3.5" /> 3D Mesh Shader Mode
           </span>
-          <span className="text-[9px] font-mono text-emerald-400">LIVE</span>
+          <span className="text-[9px] font-mono text-emerald-400">
+            {modelLoaded ? "GLB ACTIVE" : "LOADING..."}
+          </span>
         </div>
 
-        {[
+        {/* 4 Live WebGL Material Shaders for Your White .GLB Model */}
+        {([
           {
-            key: "epidermis" as const,
-            label: "1. Exomorphology",
-            sub: "Bark, Lamina & Calyx",
-            color: "bg-emerald-500",
+            id: "emerald" as const,
+            label: "1. Botanical Jade PBR",
+            sub: "Natural Chlorophyll & Bark Tint",
+            dot: "bg-emerald-500",
           },
           {
-            key: "vascularSap" as const,
-            label: "2. Vascular Sap Flow",
-            sub: "Xylem & Phloem Channels",
-            color: "bg-cyan-400",
+            id: "gold" as const,
+            label: "2. Suvarnaka Gold",
+            sub: "Metallic Rajavriksha Finish",
+            dot: "bg-[#D4AF37]",
           },
           {
-            key: "molecules" as const,
-            label: "3. Withanolide Loci",
-            sub: "Bioactive Synthesis Nodes",
-            color: "bg-amber-400",
+            id: "xray" as const,
+            label: "3. Clinical X-Ray Scan",
+            sub: "Bioluminescent Hologram",
+            dot: "bg-cyan-400",
           },
           {
-            key: "pins" as const,
-            label: "4. Anatomical Pins",
-            sub: "Leader-Line Callouts",
-            color: "bg-rose-400",
+            id: "clay" as const,
+            label: "4. Anatomical Clay",
+            sub: "Original Alabaster Mesh",
+            dot: "bg-stone-200",
           },
-        ].map((item) => {
-          const isOn = layers[item.key];
+        ]).map((sh) => {
+          const active = shaderPreset === sh.id;
           return (
             <button
-              key={item.key}
+              key={sh.id}
               type="button"
-              onClick={() => toggleLayer(item.key)}
+              onClick={() => applyWebGLShader(sh.id)}
               className={`w-full text-left p-2.5 rounded-lg border transition-all cursor-pointer flex items-center justify-between ${
-                isOn
-                  ? "bg-white/10 border-emerald-500/40 text-white"
-                  : "bg-black/40 border-white/5 text-white/40"
+                active
+                  ? "bg-white/10 border-emerald-500/50 text-white shadow-sm"
+                  : "bg-black/40 border-white/5 text-white/55 hover:text-white"
               }`}
             >
               <div>
-                <p className="text-xs font-bold leading-tight">{item.label}</p>
-                <p className="text-[10px] text-white/55 mt-0.5">{item.sub}</p>
+                <p className="text-xs font-bold leading-tight">{sh.label}</p>
+                <p className="text-[10px] text-white/50 mt-0.5">{sh.sub}</p>
               </div>
-              <span
-                className={`w-2.5 h-2.5 rounded-full ${
-                  isOn ? `${item.color} shadow-[0_0_8px_currentColor]` : "bg-zinc-700"
-                }`}
-              />
+              <span className={`w-3 h-3 rounded-full ${sh.dot} ${active ? "ring-2 ring-white" : ""}`} />
             </button>
           );
         })}
 
-        {/* Camera Orbit & Zoom Sliders */}
+        {/* 3D Viewport Controls */}
         <div className="pt-3 mt-1 border-t border-white/10 space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setAutoRotate(!autoRotate)}
+              className={`flex-1 py-2 px-2.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
+                autoRotate
+                  ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
+                  : "bg-white/5 border-white/10 text-white/60"
+              }`}
+            >
+              {autoRotate ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+              <span>{autoRotate ? "Orbiting" : "Paused"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowHotspots(!showHotspots)}
+              className={`flex-1 py-2 px-2.5 rounded-lg border text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
+                showHotspots
+                  ? "bg-amber-500/20 border-[#D4AF37]/40 text-[#F5DE93]"
+                  : "bg-white/5 border-white/10 text-white/60"
+              }`}
+            >
+              <Crosshair className="w-3 h-3" />
+              <span>{showHotspots ? "Pins ON" : "Pins OFF"}</span>
+            </button>
+          </div>
+
+          {/* Studio Lighting Exposure Slider */}
           <div>
             <div className="flex justify-between text-[10px] font-mono text-white/70 mb-1">
-              <span>OPTICAL ZOOM</span>
-              <span className="text-[#D4AF37]">{Math.round(zoom * 100)}%</span>
+              <span className="flex items-center gap-1">
+                <Sun className="w-3 h-3 text-[#D4AF37]" /> STUDIO EXPOSURE
+              </span>
+              <span className="text-[#D4AF37]">{exposure.toFixed(2)}x</span>
             </div>
             <input
               type="range"
-              min="0.85"
-              max="2.2"
+              min="0.5"
+              max="2.0"
               step="0.05"
-              value={zoom}
-              onChange={(e) => setZoom(parseFloat(e.target.value))}
+              value={exposure}
+              onChange={(e) => setExposure(parseFloat(e.target.value))}
               className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
             />
           </div>
 
           <button
             type="button"
-            onClick={resetCamera}
-            className="w-full py-1.5 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-white/80 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+            onClick={reset3DCamera}
+            className="w-full py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-white/85 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
           >
-            <RotateCcw className="w-3 h-3 text-[#D4AF37]" /> Reset Camera View
+            <RotateCcw className="w-3 h-3 text-[#D4AF37]" /> Reset 3D Camera Orbit
           </button>
         </div>
       </aside>
 
       {/* =================================================================
-          3. CENTER BOUNDLESS 3D ANATOMICAL SPECIMEN STAGE
-          (Drag anywhere to orbit/tilt; click any leader-line pin to inspect)
+          3. CENTER BOUNDLESS 3D WEBGL STAGE (/models/aragwadha-tree.glb)
           ================================================================= */}
-      <main
-        onMouseDown={(e) => handlePointerDown(e.clientX, e.clientY)}
-        onMouseMove={(e) => handlePointerMove(e.clientX, e.clientY)}
-        onMouseUp={handlePointerUp}
-        onMouseLeave={handlePointerUp}
-        onTouchStart={(e) => {
-          if (e.touches[0]) handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
-        }}
-        onTouchMove={(e) => {
-          if (e.touches[0]) handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
-        }}
-        onTouchEnd={handlePointerUp}
-        className="relative flex-grow flex items-center justify-center w-full h-[640px] sm:h-[720px] cursor-grab active:cursor-grabbing overflow-hidden"
-      >
-        <div
-          style={{
-            transform: `perspective(1400px) rotateY(${rotation.x}deg) rotateX(${rotation.y}deg) scale(${zoom}) translateY(${panY}px)`,
-            transition: isDraggingRef.current
-              ? "none"
-              : "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
-          }}
-          className="relative w-full max-w-[760px] h-full flex items-center justify-center md:mr-72"
-        >
-          {activeOrgan !== "histology" ? (
-            /* =============================================================
-               HIGH-REALISM MULTI-LAYER BOTANICAL & VASCULAR SPECIMEN SVG
-               ============================================================= */
-             <model-viewer src="/models/ashwagandha-tree-firstry.glb" camera-controls auto-rotate>
-              <defs>
-                {/* 3D Cylindrical Shading Gradients for Realistic Root & Stem */}
-                <linearGradient id="nagoriTaprootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#7c5e38" />
-                  <stop offset="28%" stopColor="#e5cfa9" />
-                  <stop offset="55%" stopColor="#d4b88c" />
-                  <stop offset="85%" stopColor="#8c6b41" />
-                  <stop offset="100%" stopColor="#4f3a1f" />
-                </linearGradient>
+      <main className="relative flex-grow flex items-center justify-center w-full h-[640px] sm:h-[740px] md:pr-80">
+        {activeOrgan !== "dissection" ? (
+          <div
+            className={`w-full h-full relative flex items-center justify-center transition-all duration-500 ${
+              shaderPreset === "xray"
+                ? "drop-shadow-[0_0_35px_rgba(16,185,129,0.55)]"
+                : "drop-shadow-[0_25px_45px_rgba(0,0,0,0.85)]"
+            }`}
+          >
+            {/* TypeScript-Safe <model-viewer> Web Component Wrapper */}
+            {(React.createElement as any)(
+              "model-viewer",
+              {
+                ref: modelViewerRef,
+                src: "/models/aragwadha-tree.glb",
+                alt: "Aragwadha (Cassia fistula) 3D Botanical Specimen",
+                "camera-controls": true,
+                "auto-rotate": autoRotate ? true : undefined,
+                "auto-rotate-delay": "0",
+                "rotation-per-second": "18deg",
+                "shadow-intensity": "1.4",
+                "shadow-softness": "0.85",
+                exposure: String(exposure),
+                "environment-image": "neutral",
+                "camera-orbit": "0deg 75deg 100%",
+                "min-camera-orbit": "auto 15deg auto",
+                "max-camera-orbit": "auto 95deg auto",
+                "interpolation-decay": "120",
+                ar: true,
+                "ar-modes": "webxr scene-viewer quick-look",
+                style: {
+                  width: "100%",
+                  height: "100%",
+                  outline: "none",
+                },
+              },
 
-                <linearGradient id="woodyStemGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#264027" />
-                  <stop offset="40%" stopColor="#6ea164" />
-                  <stop offset="75%" stopColor="#3c663b" />
-                  <stop offset="100%" stopColor="#1b2e1c" />
-                </linearGradient>
+              /* --- 3D HOTSPOT PIN 1: HANGING CYLINDRICAL PODS (PHALA) --- */
+              showHotspots && (
+                <button
+                  key="pin-pod"
+                  slot="hotspot-pod"
+                  data-position="-0.22m 0.42m 0.08m"
+                  data-normal="-1m 0m 0.2m"
+                  onClick={() => focusOnOrgan("pod")}
+                  className={`atreya-3d-pin ${activeOrgan === "pod" ? "active-pin" : ""}`}
+                >
+                  <span className="pin-dot" />
+                  <span>01. PHALA (CHATURANGULA POD) ★</span>
+                </button>
+              ),
 
-                <radialGradient id="leaf3dGrad" cx="35%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#529e66" />
-                  <stop offset="55%" stopColor="#27633a" />
-                  <stop offset="100%" stopColor="#0f2e19" />
-                </radialGradient>
+              /* --- 3D HOTSPOT PIN 2: UPPER PINNATE LEAF CANOPY (PATRA) --- */
+              showHotspots && (
+                <button
+                  key="pin-canopy"
+                  slot="hotspot-canopy"
+                  data-position="-0.15m 0.82m 0.12m"
+                  data-normal="0m 1m 0.2m"
+                  onClick={() => focusOnOrgan("canopy")}
+                  className={`atreya-3d-pin ${activeOrgan === "canopy" ? "active-pin" : ""}`}
+                >
+                  <span className="pin-dot" />
+                  <span>02. PATRA (KUSHTHAGHNA CANOPY)</span>
+                </button>
+              ),
 
-                <radialGradient id="berryGlow" cx="35%" cy="35%" r="65%">
-                  <stop offset="0%" stopColor="#fb923c" />
-                  <stop offset="50%" stopColor="#dc2626" />
-                  <stop offset="100%" stopColor="#7f1d1d" />
-                </radialGradient>
+              /* --- 3D HOTSPOT PIN 3: PENDULOUS FLOWER CLUSTERS (PUSHPA) --- */
+              showHotspots && (
+                <button
+                  key="pin-flowers"
+                  slot="hotspot-flowers"
+                  data-position="0.22m 0.65m 0.14m"
+                  data-normal="1m 0.2m 0.2m"
+                  onClick={() => focusOnOrgan("flowers")}
+                  className={`atreya-3d-pin ${activeOrgan === "flowers" ? "active-pin" : ""}`}
+                >
+                  <span className="pin-dot" />
+                  <span>03. SUVARNAKA PUSHPA (RACEME)</span>
+                </button>
+              ),
 
-                <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="4" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
+              /* --- 3D HOTSPOT PIN 4: WOODY TRUNK BARK (KANDA-TWAK) --- */
+              showHotspots && (
+                <button
+                  key="pin-bark"
+                  slot="hotspot-bark"
+                  data-position="0.03m 0.36m 0.08m"
+                  data-normal="0m 0m 1m"
+                  onClick={() => focusOnOrgan("bark")}
+                  className={`atreya-3d-pin ${activeOrgan === "bark" ? "active-pin" : ""}`}
+                >
+                  <span className="pin-dot" />
+                  <span>04. KANDA-TWAK (STEM BARK)</span>
+                </button>
+              ),
 
-              {/* 3D Surgical Turntable Ring at Soil Horizon (Y = 365) */}
-              <g transform="translate(350, 365)">
-                <ellipse
-                  cx="0"
-                  cy="0"
-                  rx="210"
-                  ry="32"
-                  fill="rgba(16, 185, 129, 0.04)"
-                  stroke="rgba(212, 175, 55, 0.45)"
-                  strokeWidth="1.5"
-                  strokeDasharray="6 4"
-                />
-                <ellipse
-                  cx="0"
-                  cy="0"
-                  rx="145"
-                  ry="20"
-                  fill="rgba(30, 20, 12, 0.55)"
-                  stroke="rgba(16, 185, 129, 0.35)"
-                  strokeWidth="1"
-                />
-                <text x="-205" y="-12" fill="#D4AF37" fontSize="9" fontFamily="monospace" opacity="0.8">
-                  BHUMI-REKHA • SOIL HORIZON (0.0 cm)
-                </text>
-              </g>
+              /* --- 3D HOTSPOT PIN 5: ROOT & PEDESTAL BASE (MULA) --- */
+              showHotspots && (
+                <button
+                  key="pin-root"
+                  slot="hotspot-root"
+                  data-position="0.08m 0.10m 0.15m"
+                  data-normal="0m 0.5m 1m"
+                  onClick={() => focusOnOrgan("root")}
+                  className={`atreya-3d-pin ${activeOrgan === "root" ? "active-pin" : ""}`}
+                >
+                  <span className="pin-dot" />
+                  <span>05. MULA (JWARAGHNA ROOT)</span>
+                </button>
+              ),
 
-              {/* ===========================================================
-                  DISSECTION LAYER 1: REALISTIC EXOMORPHOLOGY (BARK, LEAVES, ROOT)
-                  Fades to translucent ghost wireframe when peeled off!
-                  =========================================================== */}
-              <g
-                opacity={layers.epidermis ? 1 : 0.16}
-                className="transition-opacity duration-500"
+              /* --- NATIVE AUGMENTED REALITY (AR) DESK PROJECTION BUTTON --- */
+              <button
+                key="ar-btn"
+                slot="ar-button"
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 px-5 py-2.5 rounded-full bg-[#D4AF37] text-black font-bold text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(212,175,55,0.5)] flex items-center gap-2 cursor-pointer"
               >
-                {/* --- SUBTERRANEAN NAGORI TAPROOT SYSTEM (Y = 360 to 635) --- */}
-                <g onClick={() => focusOnOrgan("taproot")} className="cursor-pointer">
-                  {/* Secondary Lateral Rootlets (Upamula) */}
-                  <path
-                    d="M 338 415 C 295 430, 255 465, 220 515 M 336 465 C 285 495, 250 540, 232 585 M 362 425 C 405 445, 442 480, 475 525 M 360 480 C 405 510, 435 555, 455 595"
-                    fill="none"
-                    stroke="url(#nagoriTaprootGrad)"
-                    strokeWidth="7"
-                    strokeLinecap="round"
-                  />
-                  {/* Fine Absorptive Tertiary Root Hairs */}
-                  <path
-                    d="M 275 450 L 245 442 M 252 480 L 222 488 M 272 520 L 245 538 M 425 462 L 458 452 M 445 495 L 478 502 M 420 532 L 452 548"
-                    fill="none"
-                    stroke="#c7ab7e"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                  />
-
-                  {/* Primary Plump Conical Nagori Taproot (Pradhana Mula) */}
-                  <path
-                    d="M 330 360 C 325 415, 326 495, 342 612 C 345 632, 355 632, 358 612 C 374 495, 375 415, 370 360 Z"
-                    fill="url(#nagoriTaprootGrad)"
-                    stroke="#5c4424"
-                    strokeWidth="1.5"
-                  />
-
-                  {/* Realistic Longitudinal Furrows & Lenticels on Taproot */}
-                  <path
-                    d="M 343 375 C 340 435, 342 515, 347 595 M 356 380 C 358 445, 356 510, 352 585 M 335 405 L 342 405 M 360 440 L 367 440 M 334 490 L 342 490"
-                    fill="none"
-                    stroke="#5c4020"
-                    strokeWidth="1.1"
-                    opacity="0.65"
-                  />
-                </g>
-
-                {/* --- HYPOCOTYL CROWN / COLLAR ZONE (Y = 335 to 370) --- */}
-                <g onClick={() => focusOnOrgan("collar")} className="cursor-pointer">
-                  <path
-                    d="M 326 364 C 326 346, 336 336, 350 336 C 364 336, 374 346, 374 364 Z"
-                    fill="#6b5839"
-                    stroke="#D4AF37"
-                    strokeWidth="1.5"
-                  />
-                </g>
-
-                {/* --- AERIAL STEM, BRANCHES & OVATE FOLIAGE (Y = 55 to 345) --- */}
-                <g onClick={() => focusOnOrgan("canopy")} className="cursor-pointer">
-                  {/* Main Erect Tomentose Stem & Sympodial Branches */}
-                  <path
-                    d="M 350 345 C 350 265, 346 175, 350 75 M 348 285 C 305 255, 260 225, 212 185 M 350 240 C 398 210, 445 178, 492 140 M 348 180 C 302 150, 265 118, 232 85 M 350 135 C 392 110, 430 85, 462 60"
-                    fill="none"
-                    stroke="url(#woodyStemGrad)"
-                    strokeWidth="8.5"
-                    strokeLinecap="round"
-                  />
-
-                  {/* Detailed Ovate Leaves with Arcuate Lateral Venation */}
-                  {[
-                    { x: 212, y: 185, rot: -42, s: 1.15 },
-                    { x: 492, y: 140, rot: 40, s: 1.15 },
-                    { x: 232, y: 85, rot: -34, s: 1.0 },
-                    { x: 462, y: 60, rot: 32, s: 0.96 },
-                    { x: 268, y: 242, rot: -52, s: 0.95 },
-                    { x: 438, y: 205, rot: 48, s: 0.95 },
-                    { x: 350, y: 65, rot: 0, s: 0.92 },
-                  ].map((lf, idx) => (
-                    <g
-                      key={idx}
-                      transform={`translate(${lf.x}, ${lf.y}) rotate(${lf.rot}) scale(${lf.s})`}
-                    >
-                      {/* Leaf Petiole */}
-                      <line x1="0" y1="8" x2="0" y2="-6" stroke="#5c8d53" strokeWidth="3.5" />
-                      {/* Ovate Leaf Blade */}
-                      <path
-                        d="M 0 0 C -34 -20, -38 -64, 0 -92 C 38 -64, 34 -20, 0 0 Z"
-                        fill="url(#leaf3dGrad)"
-                        stroke="#6ee7b7"
-                        strokeWidth="1.2"
-                      />
-                      {/* Prominent Midrib & Arcuate Secondary Veins */}
-                      <path
-                        d="M 0 -2 L 0 -86 M 0 -20 Q -16 -28 -22 -42 M 0 -36 Q 18 -44 24 -58 M 0 -50 Q -15 -58 -19 -70 M 0 -64 Q 12 -70 15 -78"
-                        fill="none"
-                        stroke="#a7f3d0"
-                        strokeWidth="1.3"
-                        opacity="0.7"
-                      />
-                    </g>
-                  ))}
-                </g>
-
-                {/* --- AXILLARY ACCRESCENT CALYX & ORANGE-RED BERRIES --- */}
-                <g onClick={() => focusOnOrgan("calyx")} className="cursor-pointer">
-                  {[
-                    { x: 332, y: 242, rot: -15 },
-                    { x: 368, y: 215, rot: 18 },
-                    { x: 334, y: 168, rot: -12 },
-                    { x: 366, y: 132, rot: 15 },
-                    { x: 292, y: 212, rot: -22 },
-                    { x: 408, y: 175, rot: 22 },
-                  ].map((cal, i) => (
-                    <g key={i} transform={`translate(${cal.x}, ${cal.y}) rotate(${cal.rot})`}>
-                      {/* Inflated 5-Angled Papery Calyx Sac */}
-                      <path
-                        d="M 0 16 C -17 11, -20 -10, 0 -22 C 20 -10, 17 11, 0 16 Z"
-                        fill="rgba(229, 211, 179, 0.52)"
-                        stroke="#facc15"
-                        strokeWidth="1.4"
-                      />
-                      {/* Calyx Longitudinal Ribs */}
-                      <path
-                        d="M 0 15 L 0 -20 M -8 12 Q -10 -4 0 -20 M 8 12 Q 10 -4 0 -20"
-                        fill="none"
-                        stroke="#ca8a04"
-                        strokeWidth="0.8"
-                      />
-                      {/* Inner Scarlet-Orange Winter Cherry Berry */}
-                      <circle cx="0" cy="2" r="7.5" fill="url(#berryGlow)" stroke="#fde047" strokeWidth="0.8" />
-                    </g>
-                  ))}
-                </g>
-              </g>
-
-              {/* ===========================================================
-                  DISSECTION LAYER 2: VASCULAR XYLEM & PHLOEM SAP CHANNELS
-                  Shows animated bi-directional transport across the plant!
-                  =========================================================== */}
-              {layers.vascularSap && (
-                <g filter="url(#glowFilter)">
-                  {/* Ascending Xylem Water/Mineral Stream (Cyan — Rootlets to Leaves) */}
-                  <path
-                    d="M 225 512 Q 290 435 346 410 L 346 85 M 470 520 Q 410 445 354 420 L 354 140 L 480 145 M 346 280 L 220 190"
-                    fill="none"
-                    stroke="#22d3ee"
-                    strokeWidth="2.5"
-                    className="sap-flow-up"
-                  />
-
-                  {/* Descending Phloem Withanolide/Assimilate Stream (Gold — Shoot to Taproot) */}
-                  <path
-                    d="M 240 95 Q 305 150 350 185 L 350 605 M 455 70 Q 400 115 352 140"
-                    fill="none"
-                    stroke="#facc15"
-                    strokeWidth="2.5"
-                    className="sap-flow-down"
-                  />
-                </g>
-              )}
-
-              {/* ===========================================================
-                  DISSECTION LAYER 3: PHYTOCHEMICAL SYNTHESIS HOTSPOT NODES
-                  =========================================================== */}
-              {layers.molecules && (
-                <g>
-                  {[
-                    { x: 212, y: 145, color: "#10b981", label: "Withaferin A" },
-                    { x: 368, y: 215, color: "#fb923c", label: "Withanamides" },
-                    { x: 350, y: 350, color: "#a855f7", label: "Somniferine" },
-                    { x: 350, y: 475, color: "#facc15", label: "Withanolide A + Starch" },
-                    { x: 255, y: 525, color: "#22d3ee", label: "Withanoside IV" },
-                  ].map((m, idx) => (
-                    <g key={idx} transform={`translate(${m.x}, ${m.y})`}>
-                      <circle cx="0" cy="0" r="6" fill={m.color} className="bio-node-pulse" />
-                      <circle cx="0" cy="0" r="3" fill="#fff" />
-                    </g>
-                  ))}
-                </g>
-              )}
-
-              {/* ===========================================================
-                  DISSECTION LAYER 4: TETHERED ANATOMICAL LEADER-LINE PINS
-                  Click any callout pin directly on the canvas to inspect!
-                  =========================================================== */}
-              {layers.pins && (
-                <g>
-                  {[
-                    {
-                      id: "canopy" as const,
-                      targetX: 235,
-                      targetY: 145,
-                      boxX: 25,
-                      boxY: 110,
-                      title: "01. PATRA (LEAF LAMINA)",
-                      sub: "Withaferin-A • Shothahara",
-                    },
-                    {
-                      id: "calyx" as const,
-                      targetX: 372,
-                      targetY: 170,
-                      boxX: 485,
-                      boxY: 140,
-                      title: "02. PHALA & KOSHA",
-                      sub: "5-Ribbed Lantern Calyx",
-                    },
-                    {
-                      id: "collar" as const,
-                      targetX: 332,
-                      targetY: 350,
-                      boxX: 35,
-                      boxY: 315,
-                      title: "03. MULA-SHIRA (CROWN)",
-                      sub: "Vascular Transition Zone",
-                    },
-                    {
-                      id: "taproot" as const,
-                      targetX: 362,
-                      targetY: 485,
-                      boxX: 485,
-                      boxY: 455,
-                      title: "04. PRADHANA MULA ★",
-                      sub: "Official Nagori Drug Root",
-                    },
-                    {
-                      id: "rootlets" as const,
-                      targetX: 245,
-                      targetY: 545,
-                      boxX: 30,
-                      boxY: 535,
-                      title: "05. UPAMULA (ROOTLETS)",
-                      sub: "Alkaloid & Iron Uptake",
-                    },
-                  ].map((pin) => {
-                    const isSelected = activeOrgan === pin.id;
-                    return (
-                      <g
-                        key={pin.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          focusOnOrgan(pin.id);
-                        }}
-                        className="cursor-pointer group"
-                      >
-                        {/* Tethered Diagonal SVG Leader Line */}
-                        <polyline
-                          points={`${pin.targetX},${pin.targetY} ${
-                            pin.boxX < 300 ? pin.boxX + 185 : pin.boxX
-                          },${pin.boxY + 20}`}
-                          fill="none"
-                          stroke={isSelected ? "#10b981" : "#D4AF37"}
-                          strokeWidth={isSelected ? "2.2" : "1.2"}
-                          strokeDasharray={isSelected ? "none" : "3 3"}
-                        />
-                        {/* Target Bullseye on Plant Organ */}
-                        <circle
-                          cx={pin.targetX}
-                          cy={pin.targetY}
-                          r={isSelected ? "7" : "5"}
-                          fill={isSelected ? "#10b981" : "#D4AF37"}
-                          stroke="#000"
-                          strokeWidth="1.5"
-                        />
-
-                        {/* Callout Flag Badge */}
-                        <g transform={`translate(${pin.boxX}, ${pin.boxY})`}>
-                          <rect
-                            x="0"
-                            y="0"
-                            width="185"
-                            height="42"
-                            rx="6"
-                            fill={isSelected ? "rgba(6, 78, 59, 0.95)" : "rgba(9, 13, 22, 0.88)"}
-                            stroke={isSelected ? "#10b981" : "rgba(212, 175, 55, 0.5)"}
-                            strokeWidth={isSelected ? "2" : "1"}
-                          />
-                          <text
-                            x="10"
-                            y="17"
-                            fill={isSelected ? "#6ee7b7" : "#F5DE93"}
-                            fontSize="10"
-                            fontWeight="bold"
-                            fontFamily="monospace"
-                          >
-                            {pin.title}
-                          </text>
-                          <text x="10" y="32" fill="#d1d5db" fontSize="9.5" fontFamily="sans-serif">
-                            {pin.sub}
-                          </text>
-                        </g>
-                      </g>
-                    );
-                  })}
-                </g>
-              )}
-            </svg>
-          ) : (
-            /* =============================================================
-               INTERACTIVE 40x MICROSCOPIC ROOT T.S. DISSECTION STAGE
-               Click any concentric histological ring to isolate that tissue!
-               ============================================================= */
-            <div className="flex flex-col items-center">
-              <div className="mb-3 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-xs font-mono text-emerald-300">
-                Click any concentric histological tissue ring below to inspect its cellular anatomy
-              </div>
-
-              <svg viewBox="0 0 500 500" className="w-[360px] sm:w-[460px] h-[360px] sm:h-[460px]">
-                {/* 1. Outer Cork (Phellem) */}
-                <circle
-                  cx="250"
-                  cy="250"
-                  r="210"
-                  onClick={() => setActiveTsRing("cork")}
-                  fill={activeTsRing === "cork" ? "#78350f" : "#3b2314"}
-                  stroke={activeTsRing === "cork" ? "#facc15" : "#D4AF37"}
-                  strokeWidth={activeTsRing === "cork" ? "6" : "3"}
-                  strokeDasharray="12 4"
-                  className="cursor-pointer transition-all"
-                />
-
-                {/* 2. Wide Parenchymatous Cortex (Starch & Withanosides) */}
-                <circle
-                  cx="250"
-                  cy="250"
-                  r="182"
-                  onClick={() => setActiveTsRing("cortex")}
-                  fill={activeTsRing === "cortex" ? "#065f46" : "#1e2923"}
-                  stroke={activeTsRing === "cortex" ? "#34d399" : "#6ee7b7"}
-                  strokeWidth="3"
-                  className="cursor-pointer transition-all"
-                />
-
-                {/* 3. Secondary Phloem Zone */}
-                <circle
-                  cx="250"
-                  cy="250"
-                  r="130"
-                  onClick={() => setActiveTsRing("phloem")}
-                  fill={activeTsRing === "phloem" ? "#115e59" : "#133836"}
-                  stroke="#2dd4bf"
-                  strokeWidth="2.5"
-                  strokeDasharray="6 4"
-                  className="cursor-pointer transition-all"
-                />
-
-                {/* 4. Distinct Vascular Cambium Ring */}
-                <circle
-                  cx="250"
-                  cy="250"
-                  r="104"
-                  onClick={() => setActiveTsRing("cambium")}
-                  fill="none"
-                  stroke={activeTsRing === "cambium" ? "#f43f5e" : "#facc15"}
-                  strokeWidth={activeTsRing === "cambium" ? "10" : "5"}
-                  className="cursor-pointer transition-all"
-                />
-
-                {/* 5. Central Secondary Xylem & Medullary Rays */}
-                <circle
-                  cx="250"
-                  cy="250"
-                  r="98"
-                  onClick={() => setActiveTsRing("xylem")}
-                  fill={activeTsRing === "xylem" ? "#713f12" : "#271c15"}
-                  className="cursor-pointer transition-all"
-                />
-
-                {/* Radial Medullary Rays */}
-                {Array.from({ length: 16 }).map((_, idx) => {
-                  const angle = (idx * 360) / 16;
-                  return (
-                    <line
-                      key={idx}
-                      x1="250"
-                      y1="250"
-                      x2={250 + 96 * Math.cos((angle * Math.PI) / 180)}
-                      y2={250 + 96 * Math.sin((angle * Math.PI) / 180)}
-                      stroke="#fbbf24"
-                      strokeWidth="1.5"
-                      opacity="0.7"
-                      pointerEvents="none"
-                    />
-                  );
-                })}
-
-                {/* Pitted Xylem Vessels */}
-                {[
-                  { x: 215, y: 215 },
-                  { x: 285, y: 215 },
-                  { x: 215, y: 285 },
-                  { x: 285, y: 285 },
-                  { x: 250, y: 195 },
-                  { x: 250, y: 305 },
-                ].map((v, i) => (
-                  <circle
-                    key={i}
-                    cx={v.x}
-                    cy={v.y}
-                    r="8"
-                    fill="#fde047"
-                    stroke="#451a03"
-                    strokeWidth="2"
-                    pointerEvents="none"
-                  />
-                ))}
-              </svg>
-
-              {/* Selected Microscopic Ring Readout Bar */}
-              <div className="max-w-lg bg-zinc-900/95 border border-emerald-500/40 rounded-xl p-4 mt-2 text-left shadow-2xl">
-                <p className="text-xs font-mono font-bold text-[#D4AF37] uppercase">
-                  {tsRingDetails[activeTsRing].title}
-                </p>
-                <p className="text-xs text-white/85 mt-1 leading-relaxed">
-                  <strong>Histology:</strong> {tsRingDetails[activeTsRing].histology}
-                </p>
-                <p className="text-xs text-emerald-300 mt-1 leading-relaxed">
-                  <strong>Phytochemistry:</strong> {tsRingDetails[activeTsRing].chemistry}
-                </p>
-              </div>
+                <Smartphone className="w-4 h-4" />
+                <span>Project 3D Aragwadha on Your Desk (AR)</span>
+              </button>
+            )}
+          </div>
+        ) : (
+          /* ===============================================================
+             NODE 06: INTERACTIVE LONGITUDINAL POD DISSECTION (PHALAMAJJA)
+             Opens when the student clicks "Pod L.S. Dissection"
+             =============================================================== */
+          <div className="flex flex-col items-center px-4 max-w-2xl">
+            <div className="mb-4 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-xs font-mono text-emerald-300 text-center">
+              Longitudinal Dissection of the Hanging Chaturangula Pod • Click any chamber layer below
             </div>
-          )}
-        </div>
+
+            {/* Interactive SVG Longitudinal Section of Cassia fistula Pod */}
+            <svg viewBox="0 0 680 260" className="w-full max-w-[640px] h-auto drop-shadow-2xl">
+              {/* 1. Outer Woody Pericarp Shell */}
+              <rect
+                x="30"
+                y="55"
+                width="620"
+                height="135"
+                rx="65"
+                onClick={() => setActivePodLayer("pericarp")}
+                fill={activePodLayer === "pericarp" ? "#5c3418" : "#2e190b"}
+                stroke={activePodLayer === "pericarp" ? "#facc15" : "#D4AF37"}
+                strokeWidth="4"
+                className="cursor-pointer transition-all"
+              />
+
+              {/* Inner Chamber Cavity */}
+              <rect
+                x="56"
+                y="75"
+                width="568"
+                height="95"
+                rx="45"
+                fill="#120905"
+                stroke="#78350f"
+                strokeWidth="2"
+              />
+
+              {/* 2 & 3. Transverse Septa & Sticky Black Phalamajja Pulp Coating */}
+              {Array.from({ length: 11 }).map((_, idx) => {
+                const xPos = 105 + idx * 48;
+                return (
+                  <g key={idx}>
+                    {/* Black Viscid Phalamajja Pulp Layer */}
+                    <rect
+                      x={xPos - 14}
+                      y="78"
+                      width="28"
+                      height="89"
+                      rx="6"
+                      onClick={() => setActivePodLayer("phalamajja")}
+                      fill={activePodLayer === "phalamajja" ? "#065f46" : "#1c1311"}
+                      stroke={activePodLayer === "phalamajja" ? "#34d399" : "#3f2e26"}
+                      strokeWidth="1.5"
+                      className="cursor-pointer transition-all"
+                    />
+
+                    {/* Woody-Papery Transverse Septum Line */}
+                    <line
+                      x1={xPos}
+                      y1="76"
+                      x2={xPos}
+                      y2="168"
+                      onClick={() => setActivePodLayer("septa")}
+                      stroke={activePodLayer === "septa" ? "#facc15" : "#d6b886"}
+                      strokeWidth={activePodLayer === "septa" ? "4" : "2.2"}
+                      className="cursor-pointer"
+                    />
+
+                    {/* 4. Glossy Flattened Yellowish-Brown Seed in Each Chamber */}
+                    {idx < 10 && (
+                      <ellipse
+                        cx={xPos + 24}
+                        cy="122"
+                        rx="9"
+                        ry="15"
+                        onClick={() => setActivePodLayer("seeds")}
+                        fill={activePodLayer === "seeds" ? "#facc15" : "#ca8a04"}
+                        stroke="#fff"
+                        strokeWidth="1.2"
+                        className="cursor-pointer transition-all"
+                      />
+                    )}
+                  </g>
+                );
+              })}
+
+              {/* Callout Labels */}
+              <text x="65" y="38" fill="#F5DE93" fontSize="11" fontWeight="bold" fontFamily="monospace">
+                1. PHALATWAK (WOODY PERICARP)
+              </text>
+              <text x="330" y="38" fill="#6ee7b7" fontSize="11" fontWeight="bold" fontFamily="monospace">
+                3. PHALAMAJJA (BLACK LAXATIVE PULP ★)
+              </text>
+              <text x="160" y="225" fill="#fde047" fontSize="11" fontWeight="bold" fontFamily="monospace">
+                2. TRANSVERSE SEPTA (KOSHTHA)
+              </text>
+              <text x="430" y="225" fill="#fb923c" fontSize="11" fontWeight="bold" fontFamily="monospace">
+                4. ALBUMINOUS SEEDS (BIJA)
+              </text>
+            </svg>
+
+            {/* Dissected Pod Layer Selector Buttons */}
+            <div className="flex flex-wrap gap-2 my-4 justify-center">
+              {([
+                { id: "phalamajja" as const, label: "3. Phalamajja Pulp (Official Drug ★)" },
+                { id: "septa" as const, label: "2. Transverse Septa" },
+                { id: "pericarp" as const, label: "1. Woody Pericarp" },
+                { id: "seeds" as const, label: "4. Seeds (Bija)" },
+              ]).map((btn) => (
+                <button
+                  key={btn.id}
+                  type="button"
+                  onClick={() => setActivePodLayer(btn.id)}
+                  className={`px-3.5 py-2 rounded-lg text-xs font-bold border cursor-pointer transition-all ${
+                    activePodLayer === btn.id
+                      ? "bg-emerald-500 text-black border-emerald-400"
+                      : "bg-zinc-900 text-white/75 border-white/15"
+                  }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="w-full bg-zinc-900/95 border border-emerald-500/40 rounded-xl p-5 shadow-2xl">
+              <h4 className="font-mono text-xs font-bold uppercase text-[#D4AF37] mb-1">
+                {podChamberDetails[activePodLayer].title}
+              </h4>
+              <p className="text-xs sm:text-sm text-white/85 leading-relaxed mb-2">
+                <strong>Internal Anatomy:</strong> {podChamberDetails[activePodLayer].anatomy}
+              </p>
+              <p className="text-xs sm:text-sm text-emerald-300 leading-relaxed">
+                <strong>Dravyaguna &amp; Bhaishajya Pearl:</strong>{" "}
+                {podChamberDetails[activePodLayer].clinicalNote}
+              </p>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* =================================================================
           4. RIGHT FLOATING CLINICAL DISSECTION INSPECTOR DRAWER
-          (Replaces the static Bento Grid with a sleek surgical HUD)
           ================================================================= */}
       <aside
         className={`fixed right-4 top-20 bottom-16 z-30 transition-all duration-300 flex flex-col ${
-          hudExpanded ? "w-[92vw] sm:w-[390px]" : "w-12"
+          hudExpanded ? "w-[92vw] sm:w-[395px]" : "w-12"
         }`}
       >
-        {/* Collapse / Expand Handle */}
         <button
           type="button"
           onClick={() => setHudExpanded(!hudExpanded)}
@@ -1100,17 +933,15 @@ export default function BotanicalDissectionStudio() {
         {hudExpanded && (
           <div className="h-full bg-zinc-950/90 backdrop-blur-2xl border border-white/15 rounded-2xl p-5 flex flex-col justify-between shadow-[0_25px_70px_rgba(0,0,0,0.9)] overflow-y-auto">
             <div>
-              {/* Organ Code & Status Badge */}
               <div className="flex items-center justify-between gap-2 mb-2">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                   {currentOrgan.code}
                 </span>
                 <span className="text-[10px] font-mono text-[#D4AF37]">
-                  ASHWAGANDHA
+                  SHIMBI KULA • CAESALPINIOIDEAE
                 </span>
               </div>
 
-              {/* Organ Sanskrit & Latin Title */}
               <h2 className="font-heading text-xl sm:text-2xl font-bold text-white leading-snug">
                 {currentOrgan.sanskritTitle}
               </h2>
@@ -1126,7 +957,7 @@ export default function BotanicalDissectionStudio() {
                 {([
                   { id: "rasapanchaka" as const, label: "Rasa-Panchaka" },
                   { id: "kinetics" as const, label: "Pharmacology" },
-                  { id: "morphology" as const, label: "Morphology" },
+                  { id: "morphology" as const, label: "Spotting" },
                 ]).map((t) => (
                   <button
                     key={t.id}
@@ -1143,12 +974,12 @@ export default function BotanicalDissectionStudio() {
                 ))}
               </div>
 
-              {/* TAB 1: AYURVEDIC RASA-PANCHAKA & CLASSICAL SUTRA */}
+              {/* TAB 1: RASA-PANCHAKA */}
               {activeHudTab === "rasapanchaka" && (
                 <div className="space-y-3">
                   <div className="p-3 rounded-xl bg-amber-500/10 border border-[#D4AF37]/40">
                     <p className="text-[10px] font-mono uppercase tracking-wider text-[#D4AF37] mb-1">
-                      Classical Pramanika Shloka
+                      Classical Samhita / Nighantu Sutra
                     </p>
                     <p className="font-serif text-sm font-bold text-amber-200 leading-relaxed">
                       {currentOrgan.rasapanchaka.shloka}
@@ -1169,13 +1000,13 @@ export default function BotanicalDissectionStudio() {
                       <p className="font-bold text-white mt-0.5">{currentOrgan.rasapanchaka.guna}</p>
                     </div>
                     <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                      <span className="text-[10px] font-mono uppercase text-[#D4AF37] block">
+                      <span className="text-[10px] font-mono uppercase text-cyan-400 block">
                         Virya (Potency)
                       </span>
                       <p className="font-bold text-white mt-0.5">{currentOrgan.rasapanchaka.virya}</p>
                     </div>
                     <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                      <span className="text-[10px] font-mono uppercase text-cyan-400 block">
+                      <span className="text-[10px] font-mono uppercase text-[#D4AF37] block">
                         Vipaka (Post-Digestive)
                       </span>
                       <p className="font-bold text-white mt-0.5">{currentOrgan.rasapanchaka.vipaka}</p>
@@ -1184,19 +1015,20 @@ export default function BotanicalDissectionStudio() {
 
                   <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs">
                     <span className="text-[10px] font-mono uppercase text-emerald-300 block mb-0.5">
-                      Dosha Karma &amp; Prabhava
+                      Prabhava &amp; Dosha Karma
                     </span>
-                    <p className="font-bold text-white">{currentOrgan.rasapanchaka.doshaKarma}</p>
+                    <p className="font-bold text-white">{currentOrgan.rasapanchaka.prabhava}</p>
+                    <p className="text-white/80 mt-0.5">{currentOrgan.rasapanchaka.doshaKarma}</p>
                   </div>
                 </div>
               )}
 
-              {/* TAB 2: MOLECULAR & ANUPANA PHARMACOKINETICS */}
+              {/* TAB 2: MOLECULAR & SROTAS PHARMACOKINETICS */}
               {activeHudTab === "kinetics" && (
                 <div className="space-y-3 text-xs">
                   <div className="p-3 rounded-lg bg-white/5 border border-white/10">
                     <span className="text-[10px] font-mono uppercase text-amber-400 block mb-1">
-                      Isolated Bioactive Phytochemicals
+                      Key Bioactive Phytochemicals
                     </span>
                     <p className="font-bold text-white leading-relaxed">
                       {currentOrgan.kinetics.primaryMolecules}
@@ -1205,21 +1037,21 @@ export default function BotanicalDissectionStudio() {
 
                   <div className="p-3 rounded-lg bg-white/5 border border-white/10">
                     <span className="text-[10px] font-mono uppercase text-cyan-400 block mb-1">
-                      Target Srotas &amp; Tissue Affinity
+                      Target Srotas Affinity
                     </span>
                     <p className="font-bold text-white">{currentOrgan.kinetics.srotasTarget}</p>
                   </div>
 
                   <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
                     <span className="text-[10px] font-mono uppercase text-emerald-300 block mb-1">
-                      Optimal Anupana (Bio-Carrier)
+                      Classical Anupana &amp; Kalpana
                     </span>
                     <p className="font-bold text-white">{currentOrgan.kinetics.anupanaVehicle}</p>
                   </div>
 
                   <div className="p-3.5 rounded-lg bg-black/50 border border-white/10 leading-relaxed text-white/80">
                     <strong className="text-[#D4AF37] block text-[10px] font-mono uppercase mb-1">
-                      Cellular &amp; Neuro-Endocrine Mechanism:
+                      Clinical &amp; Enteric Mechanism:
                     </strong>
                     {currentOrgan.kinetics.mechanism}
                   </div>
@@ -1249,7 +1081,7 @@ export default function BotanicalDissectionStudio() {
 
                   <div className="p-3 rounded-lg bg-amber-500/15 border border-amber-500/35 text-amber-200 leading-relaxed">
                     <strong className="block text-[10px] font-mono uppercase text-[#D4AF37] mb-0.5">
-                      ★ BAMS Spotting &amp; Identification Pearl:
+                      ★ 2nd Prof Spotting &amp; Viva Pearl:
                     </strong>
                     {currentOrgan.morphology.spottingPearl}
                   </div>
@@ -1257,20 +1089,20 @@ export default function BotanicalDissectionStudio() {
               )}
             </div>
 
-            {/* Bottom Inspector Footer: Switch to 40x Histology Slide */}
-            <div className="pt-3 mt-4 border-t border-white/10 flex items-center justify-between gap-2">
+            {/* Bottom Button: Switch Between 3D Tree & Dissected Pod Chambers */}
+            <div className="pt-3 mt-4 border-t border-white/10">
               <button
                 type="button"
                 onClick={() =>
-                  focusOnOrgan(activeOrgan === "histology" ? "taproot" : "histology")
+                  focusOnOrgan(activeOrgan === "dissection" ? "pod" : "dissection")
                 }
                 className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all shadow-lg"
               >
                 <Microscope className="w-4 h-4" />
                 <span>
-                  {activeOrgan === "histology"
-                    ? "Return to 3D Whole Plant"
-                    : "Inspect 40x Root T.S. Slide"}
+                  {activeOrgan === "dissection"
+                    ? "Return to 3D Aragwadha Tree (.GLB)"
+                    : "Dissect Hanging Pod & Phalamajja"}
                 </span>
               </button>
             </div>
@@ -1279,17 +1111,28 @@ export default function BotanicalDissectionStudio() {
       </aside>
 
       {/* =================================================================
-          5. BOTTOM FLOATING INTERACTION COMPASS BAR
+          5. BOTTOM MOBILE SHADER BAR & INTERACTION COMPASS
           ================================================================= */}
-      <footer className="relative z-20 px-4 sm:px-6 pb-4 flex flex-wrap items-center justify-between gap-3 text-[11px] text-white/60 pointer-events-auto">
-        <div className="flex items-center gap-4 bg-zinc-950/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+      <footer className="relative z-20 px-4 sm:px-6 pb-4 flex flex-wrap items-center justify-between gap-3 text-[11px] text-white/60">
+        <div className="flex items-center gap-3 bg-zinc-950/85 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
           <span className="flex items-center gap-1.5 text-emerald-400 font-mono font-bold">
-            <Crosshair className="w-3.5 h-3.5" /> DRAG TO ORBIT 3D STAGE
+            <Crosshair className="w-3.5 h-3.5" /> PINCH / DRAG TO ORBIT 3D .GLB
           </span>
-          <span className="hidden sm:inline text-white/30">•</span>
-          <span className="hidden sm:inline">
-            Cyan Stream = Ascending Xylem • Gold Stream = Descending Withanolide Phloem
-          </span>
+          {/* Mobile Quick Shader Switcher */}
+          <div className="flex md:hidden items-center gap-1.5 pl-2 border-l border-white/15">
+            {(["emerald", "gold", "xray", "clay"] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => applyWebGLShader(p)}
+                className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold ${
+                  shaderPreset === p ? "bg-emerald-500 text-black" : "bg-white/10 text-white/70"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
         </div>
       </footer>
 
