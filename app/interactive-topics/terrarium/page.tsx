@@ -594,7 +594,7 @@ export default function BotanicalDissectionStudio() {
             /* =============================================================
                HIGH-REALISM MULTI-LAYER BOTANICAL & VASCULAR SPECIMEN SVG
                ============================================================= */
-            <svg viewBox="0 0 700 680" className="w-full h-full max-h-[680px] overflow-visible">
+             <model-viewer src="/models/ashwagandha-tree-firstry.glb" camera-controls auto-rotate>
               <defs>
                 {/* 3D Cylindrical Shading Gradients for Realistic Root & Stem */}
                 <linearGradient id="nagoriTaprootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
