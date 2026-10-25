@@ -807,7 +807,7 @@ export default function Aragwadha3DDissectionStudio() {
               </button>
             )}
           </div>
-      )}
+      )
         ) : (
           /* ===============================================================
              NODE 06: INTERACTIVE LONGITUDINAL POD DISSECTION (PHALAMAJJA)
