@@ -25,7 +25,8 @@ export default function Aragwadha3DDissectionStudio() {
   const [showHotspots, setShowHotspots] = useState<boolean>(true);
   const [exposure, setExposure] = useState<number>(1.15);
   const [modelLoaded, setModelLoaded] = useState<boolean>(false);
-
+  const [viewEngine, setViewEngine] = useState<"sketchfab" | "glb">("sketchfab");
+  
   // Pod Internal Dissection State (Node 06)
   const [activePodLayer, setActivePodLayer] = useState<PodChamberLayer>("phalamajja");
 
@@ -530,6 +531,27 @@ export default function Aragwadha3DDissectionStudio() {
           2. LEFT FLOATING 3D SHADER & CAMERA CONTROL DOCK
           ================================================================= */}
       <aside className="fixed left-4 top-24 z-30 hidden md:flex flex-col gap-2.5 w-60 bg-zinc-950/85 backdrop-blur-xl border border-white/15 rounded-xl p-4 shadow-2xl">
+      <div className="grid grid-cols-2 gap-1 bg-black/60 p-1 rounded-lg border border-white/10 mb-1">
+  <button
+    type="button"
+    onClick={() => setViewEngine("sketchfab")}
+    className={`py-1.5 rounded text-[10px] font-bold cursor-pointer ${
+      viewEngine === "sketchfab" ? "bg-emerald-500 text-black" : "text-white/60"
+    }`}
+  >
+    Full-Color 3D
+  </button>
+  <button
+    type="button"
+    onClick={() => setViewEngine("glb")}
+    className={`py-1.5 rounded text-[10px] font-bold cursor-pointer ${
+      viewEngine === "glb" ? "bg-[#D4AF37] text-black" : "text-white/60"
+    }`}
+  >
+    Local .GLB
+  </button>
+</div>
+
         <div className="flex items-center justify-between pb-2 border-b border-white/10">
           <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] font-bold flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5" /> 3D Mesh Shader Mode
@@ -650,8 +672,21 @@ export default function Aragwadha3DDissectionStudio() {
           3. CENTER BOUNDLESS 3D WEBGL STAGE (/models/aragwadha-tree.glb)
           ================================================================= */}
       <main className="relative flex-grow flex items-center justify-center w-full h-[640px] sm:h-[740px] md:pr-80">
-        {activeOrgan !== "dissection" ? (
-          <div
+  {activeOrgan !== "dissection" ? (
+    viewEngine === "sketchfab" ? (
+      <div className="w-full h-full p-2 sm:p-6 md:pl-64 flex flex-col items-center justify-center">
+        <div className="w-full h-full rounded-2xl overflow-hidden border border-emerald-500/30 shadow-[0_20px_60px_rgba(0,0,0,0.85)] relative bg-black/40">
+          <iframe
+            title="Golden Shower Tree (Aragwadha) 3D Model"
+            src="https://sketchfab.com/models/8b088dca5ca0408c94093d6ff6068488/embed?autostart=1&transparent=1&ui_infos=0&ui_watermark=0&ui_stop=0&dnt=1"
+            className="w-full h-full border-0"
+            allow="autoplay; fullscreen; xr-spatial-tracking"
+            allowFullScreen
+          />
+        </div>
+      </div>
+    ) : (
+      <div
             className={`w-full h-full relative flex items-center justify-center transition-all duration-500 ${
               shaderPreset === "xray"
                 ? "drop-shadow-[0_0_35px_rgba(16,185,129,0.55)]"
@@ -772,6 +807,7 @@ export default function Aragwadha3DDissectionStudio() {
               </button>
             )}
           </div>
+      )}
         ) : (
           /* ===============================================================
              NODE 06: INTERACTIVE LONGITUDINAL POD DISSECTION (PHALAMAJJA)
