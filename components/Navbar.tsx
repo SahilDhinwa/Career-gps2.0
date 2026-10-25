@@ -82,7 +82,11 @@ export default function Navbar() {
             ========================================================= */}
         <div className="hidden lg:flex items-center gap-4 xl:gap-6 font-medium text-sm">
           <Link href="/e-books" className={getLinkStyle("/e-books")}>E-Books</Link>
-
+          
+          {/*DASHBOARD DINCHARYA*/} 
+          
+          <Link href="/dinacharya">Dinacharya Palan</Link>
+          
           <Link 
             href="/atreya" 
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold transition-all duration-300 border ${
