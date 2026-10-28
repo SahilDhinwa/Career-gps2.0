@@ -6,7 +6,7 @@ import { HandwrittenCanvas, HandwrittenTitle, HandwrittenBox } from "@/component
 import { NAccent } from "@/components/NoteElements";
 
 const PAPER1_CHAPTERS = [
-  { name: "Chapter 1: Swastha and Swasthya (स्वस्थ एवं स्वास्थ्य)", link: "short-notes/swasth-vritta/paper-1/chapter-1", status: "Active" },
+  { name: "Chapter 1: Swastha and Swasthya (स्वस्थ एवं स्वास्थ्य)", link: "/short-notes/swasth-vritta/paper-1/chapter-1", status: "Active" },
   { name: "Chapter 10: Naturopathy (प्राकृतिक चिकित्सा)", link: "/short-notes/swasth-vritta/paper-1/chapter-10-naturopathy", status: "Active" },
   { name: "Chapter 11: Public Health & Epidemiology", link: "#", status: "Draft" }
 ];
