@@ -42,9 +42,12 @@ const kalam = Kalam({
 })
 
 export const metadata: Metadata = {
-  title: 'Veblen Good | Global Scholarships & Roadmaps',
-  description: 'Your step-by-step roadmap to a better future. Unlock fully funded global scholarships.',
-}
+  title: "ATREYA Med",
+  description: "Clinical Ayurveda & BAMS Dissection Studio",
+  verification: {
+    google: "PASTE_YOUR_UNIQUE_CODE_HERE", 
+  },
+};
 
 export default function RootLayout({
   children,
