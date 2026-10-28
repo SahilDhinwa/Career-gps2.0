@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, MapPin, Heart, ArrowRight, MessageCircle } from "lucide-react";
+import { Mail, MapPin, Sparkles, ArrowRight, MessageCircle } from "lucide-react";
 import Logo from "./Logo";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -19,7 +19,7 @@ export default function Footer() {
   
   // WhatsApp Configuration
   const phoneNumber = "918769892303";
-  const defaultMessage = encodeURIComponent("Hi Sahil, I have a question about Veblen Good!");
+  const defaultMessage = encodeURIComponent("Hi Sahil, I have a question regarding ATREYA Med!");
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
@@ -34,40 +34,44 @@ export default function Footer() {
               <Logo />
             </div>
 
+            <p className={`text-xs font-bold uppercase tracking-widest mb-2 transition-colors ${isBatman ? 'text-red-500' : 'text-primary'}`}>
+              Ayurvedic Traditional Research &amp; Education for Youth Abroad
+            </p>
+
             <p className={`font-medium leading-relaxed mb-6 text-sm transition-colors ${isBatman ? 'text-gray-300' : 'text-foreground/70'}`}>
-              Democratizing global education. We provide students from tier-2 and tier-3 cities with the exact, fully-funded roadmaps needed to study abroad debt-free.
+              Bridging classical Samhita wisdom with modern clinical technology. Equipped with interactive 3D botanical dissection studios, NCISM-aligned handwritten notes, and chronobiological Dinacharya engines for BAMS scholars and global learners.
             </p>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-success/10 border border-success/20 text-success text-xs font-bold uppercase tracking-wider">
-              <Heart className="w-3.5 h-3.5 fill-current" /> Zero Gatekeeping
+              <Sparkles className="w-3.5 h-3.5 fill-current" /> Swasthasya Swasthya Rakshanam
             </div>
           </div>
 
           {/* QUICK LINKS */}
           <div className="md:col-span-3 lg:col-span-4 flex flex-col md:mx-auto">
-            <h3 className={`font-heading font-bold mb-5 text-lg transition-colors ${isBatman ? 'text-gray-100' : 'text-foreground'}`}>Platform</h3>
+            <h3 className={`font-heading font-bold mb-5 text-lg transition-colors ${isBatman ? 'text-gray-100' : 'text-foreground'}`}>Clinical Modules</h3>
             <ul className="space-y-3 text-sm font-medium">
               <li>
-                <Link href="/pathways" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
+                <Link href="/short-notes" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
-                  Pathways
+                  BAMS Handwritten Notes
                 </Link>
               </li>
               <li>
-                <Link href="/scholarships" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
+                <Link href="/short-notes/swasth-vritta" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
-                  Scholarship Database
+                  Swasthavritta &amp; Yoga Hub
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/vault" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
+                <Link href="/dinacharya" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
-                  The Action Vault
+                  Dinacharya &amp; Agni Analyzer
                 </Link>
               </li>
               <li>
-                <Link href="/e-books" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
+                <Link href="/dravyaguna" className={`flex items-center gap-2 group transition-colors ${isBatman ? 'text-gray-300 hover:text-red-500' : 'text-foreground/70 hover:text-primary'}`}>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> 
-                  Premium E-Books
+                  3D Dravyaguna Studio
                 </Link>
               </li>
             </ul>
@@ -75,7 +79,7 @@ export default function Footer() {
 
           {/* DEDICATED CONTACT & SUPPORT HUB */}
           <div className="md:col-span-4 lg:col-span-4">
-            <h3 className={`font-heading font-bold mb-5 text-lg transition-colors ${isBatman ? 'text-gray-100' : 'text-foreground'}`}>Support & Contact</h3>
+            <h3 className={`font-heading font-bold mb-5 text-lg transition-colors ${isBatman ? 'text-gray-100' : 'text-foreground'}`}>Academic &amp; Tech Support</h3>
             <ul className="space-y-4 text-sm font-medium">
               
               {/* Clickable WhatsApp Integration */}
@@ -84,7 +88,7 @@ export default function Footer() {
                   <MessageCircle className="w-4 h-4 text-[#25D366]" />
                 </div>
                 <div>
-                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>WhatsApp Support</p>
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Direct WhatsApp</p>
                   <a 
                     href={whatsappUrl}
                     target="_blank"
@@ -101,7 +105,7 @@ export default function Footer() {
                   <Mail className={`w-4 h-4 ${isBatman ? 'text-red-500' : 'text-primary'}`} />
                 </div>
                 <div>
-                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Email Inquiries</p>
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Research &amp; Inquiries</p>
                   <a href="mailto:sahilkumardhinwa82@gmail.com" className={`font-bold transition-colors ${isBatman ? 'text-gray-100 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
                       sahilkumardhinwa82@gmail.com
                   </a>
@@ -113,7 +117,7 @@ export default function Footer() {
                   <MapPin className={`w-4 h-4 ${isBatman ? 'text-red-500' : 'text-primary'}`} />
                 </div>
                 <div>
-                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Founder & Architect</p>
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Founder &amp; Lead Architect</p>
                   <Link href="/about" className={`font-bold transition-colors flex items-center gap-1 group ${isBatman ? 'text-gray-100 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
                     Sahil Dhinwa <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
@@ -126,11 +130,11 @@ export default function Footer() {
 
         {/* BOTTOM LEGAL/COPYRIGHT BAR */}
         <div className={`pt-8 border-t border-surfaceBorder flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>
-          <p>© {currentYear} Veblen Good. All rights reserved.</p>
+          <p>© {currentYear} ATREYA Med. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link href="/about" className={`transition-colors ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>About Us</Link>
+            <Link href="/about" className={`transition-colors ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>About ATREYA</Link>
             <span className={`transition-colors cursor-not-allowed opacity-50 ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>Privacy Policy</span>
-            <span className={`transition-colors cursor-not-allowed opacity-50 ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>Terms of Service</span>
+            <span className={`transition-colors cursor-not-allowed opacity-50 ${isBatman ? 'hover:text-gray-100' : 'hover:text-foreground'}`}>Terms of Clinical Use</span>
           </div>
         </div>
         
