@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Clinical Ayurveda & BAMS Dissection Studio",
   // Add this exact block right here:
   verification: {
-    google: "PASTE_YOUR_UNIQUE_CODE_HERE", 
+    google: "google5d6579aa2a41b08f.html", 
   },
 };
 
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   title: "ATREYA Med",
   description: "Clinical Ayurveda & BAMS Dissection Studio",
   verification: {
-    google: "PASTE_YOUR_UNIQUE_CODE_HERE", 
+    google: "google5d6579aa2a41b08f.html", 
   },
 };
 
