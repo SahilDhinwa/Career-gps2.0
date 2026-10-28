@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "Clinical Ayurveda & BAMS Dissection Studio",
   verification: {
     // Paste the code from the Google "HTML Tag" option here
-    google: "PASTE_CODE_HERE", 
+    google: "google5d6579aa2a41b08f.html", 
   },
 };
 
