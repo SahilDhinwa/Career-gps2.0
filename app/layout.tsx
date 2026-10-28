@@ -1,5 +1,16 @@
 import AnalyticsTracker from '../components/AnalyticsTracker'
-import type { Metadata } from 'next'
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ATREYA Med",
+  description: "Clinical Ayurveda & BAMS Dissection Studio",
+  // Add this exact block right here:
+  verification: {
+    google: "PASTE_YOUR_UNIQUE_CODE_HERE", 
+  },
+};
+
 import { Syne, DM_Sans, Kalam } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/Navbar'
