@@ -1,37 +1,36 @@
-import AnalyticsTracker from '../components/AnalyticsTracker'
-
 import type { Metadata } from "next";
+import { Syne, DM_Sans, Kalam } from 'next/font/google';
+import './globals.css';
+
+import AnalyticsTracker from '../components/AnalyticsTracker';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { ThemeProvider } from '../components/ThemeProvider';
+import { AuthProvider } from '../context/AuthContext';
+import BatcaveBackground from '../components/BatcaveBackground';
 
 export const metadata: Metadata = {
   title: "ATREYA Med",
   description: "Clinical Ayurveda & BAMS Dissection Studio",
-  // Add this exact block right here:
   verification: {
-    google: "google5d6579aa2a41b08f.html", 
+    // Paste the code from the Google "HTML Tag" option here
+    google: "PASTE_CODE_HERE", 
   },
 };
-
-import { Syne, DM_Sans, Kalam } from 'next/font/google'
-import './globals.css'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import { ThemeProvider } from '../components/ThemeProvider'
-import { AuthProvider } from '../context/AuthContext'
-import BatcaveBackground from '../components/BatcaveBackground' 
 
 // 1. Configure the Heading Font (Syne)
 const syne = Syne({ 
   subsets: ['latin'],
   variable: '--font-syne',
   display: 'swap',
-})
+});
 
 // 2. Configure the Body Font (DM Sans)
 const dmSans = DM_Sans({ 
   subsets: ['latin'],
   variable: '--font-dm-sans',
   display: 'swap',
-})
+});
 
 // 3. Configure the Handwritten Font (Kalam)
 const kalam = Kalam({
@@ -39,15 +38,7 @@ const kalam = Kalam({
   subsets: ['latin', 'devanagari'],
   variable: '--font-kalam',
   display: 'swap',
-})
-
-export const metadata: Metadata = {
-  title: "ATREYA Med",
-  description: "Clinical Ayurveda & BAMS Dissection Studio",
-  verification: {
-    google: "google5d6579aa2a41b08f.html", 
-  },
-};
+});
 
 export default function RootLayout({
   children,
@@ -74,9 +65,8 @@ export default function RootLayout({
             </main>
             <Footer />
           </AuthProvider>
-
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
