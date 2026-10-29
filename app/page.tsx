@@ -290,7 +290,7 @@ export default function LandingPage() {
               Search Topics or Test New Designs
             </h1>
             <p className="text-xs sm:text-sm text-foreground/65 max-w-lg mx-auto">
-              BAMS नोट्स, संहिता या नए एक्सपेरिमेंटल डिज़ाइन नीचे सर्च करें और अपना सुझाव दें।
+              
             </p>
           </div>
 
