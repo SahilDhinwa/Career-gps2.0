@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -177,6 +178,31 @@ export default function LandingPage() {
         @keyframes pulse-core {
           0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.7; }
           50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+        }
+
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-reverse-slow {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(0deg); }
+        }
+
+        @keyframes float-orb {
+          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.35; }
+          50% { transform: translateY(-18px) scale(1.1); opacity: 0.7; }
+        }
+
+        .circadian-ring-1 {
+          animation: spin-slow 38s linear infinite;
+        }
+        .circadian-ring-2 {
+          animation: spin-reverse-slow 52s linear infinite;
+        }
+        .floating-bio-orb {
+          animation: float-orb 6s ease-in-out infinite;
         }
       `,
         }}
@@ -387,39 +413,67 @@ export default function LandingPage() {
       </section>
 
       {/* =================================================================
-          3. DYNAMIC FAMILIARITY-BIAS PORTAL BOX (SINGLE UPPER BOX)
+          3. DYNAMIC FAMILIARITY-BIAS PORTAL BOX (FOR YOUTH & STUDENTS ABROAD)
           ================================================================= */}
       <section
         id="global-discovery-box"
-        className="bg-background py-12 md:py-16 px-4 md:px-6 relative z-20 scroll-mt-16"
+        className="bg-background py-8 md:py-14 px-4 md:px-6 relative z-20 scroll-mt-16"
       >
         <div className="max-w-6xl mx-auto">
-          <div className="relative p-[2px] rounded-3xl bg-gradient-to-r from-[#D4AF37] via-emerald-500 to-[#D4AF37] shadow-xl overflow-hidden">
+          {/* Outer Glowing Animated Border */}
+          <div className="relative p-[2px] rounded-3xl bg-gradient-to-r from-[#D4AF37] via-emerald-500 to-[#D4AF37] shadow-2xl overflow-hidden">
+
+            {/* Inner Dark Glassmorphic Stage with Animated Background */}
             <div className="relative bg-slate-950 text-white rounded-[22px] p-6 sm:p-10 md:p-12 overflow-hidden">
+
+              {/* --- ANIMATED BACKGROUND LAYER (No External Images Needed!) --- */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+                {/* Rotating Sacred Circadian Rings */}
+                <div className="circadian-ring-1 absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full border border-dashed border-[#D4AF37]/40" />
+                <div className="circadian-ring-2 absolute -top-20 -right-20 w-[320px] h-[320px] rounded-full border border-emerald-400/30" />
+
+                {/* Floating Golden & Emerald Bio-Orbs */}
+                <div className="floating-bio-orb absolute top-1/4 left-10 w-36 h-36 rounded-full bg-[#D4AF37]/20 blur-2xl" />
+                <div
+                  className="floating-bio-orb absolute bottom-10 right-1/4 w-48 h-48 rounded-full bg-emerald-500/20 blur-3xl"
+                  style={{ animationDelay: "2.5s" }}
+                />
+                <div
+                  className="floating-bio-orb absolute top-10 left-1/2 w-28 h-28 rounded-full bg-amber-500/15 blur-2xl"
+                  style={{ animationDelay: "1.2s" }}
+                />
+              </div>
+
+              {/* --- FOREGROUND CONTENT --- */}
               <div className="relative z-10">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-extrabold uppercase tracking-wider">
+                {/* Top Hook Badge */}
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-extrabold uppercase tracking-widest">
                     <Globe className="w-3.5 h-3.5" />
                     <span>Ayurveda Global • Interactive Discovery Portal</span>
                   </div>
+
+                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+                    Built for International Students &amp; Biohackers
+                  </span>
                 </div>
 
+                {/* Curiosity-Driven Clickbait Headline */}
                 <div className="max-w-3xl mb-8">
-                  <h2 className="font-sans text-2xl sm:text-4xl font-extrabold tracking-tight leading-snug mb-3 text-white">
+                  <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.15] mb-3 text-white">
                     Wait... Isn&apos;t Ayurveda Just{" "}
-                    <span className="text-[#D4AF37] border-b-2 border-[#D4AF37]/60">
+                    <span className="underline decoration-[#D4AF37] decoration-wavy underline-offset-4 text-[#D4AF37]">
                       Turmeric Lattes, Ashwagandha &amp; Spa Massages?
                     </span>
                   </h2>
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                    Pick a viral wellness trend you already know below to uncover the{" "}
-                    <strong className="text-white">
-                      5,000-year-old clinical neuroscience and gut biology
-                    </strong>{" "}
-                    hiding behind it:
+                  <p className="text-sm sm:text-lg text-slate-300 leading-relaxed font-medium">
+                    You&apos;ve already seen fragments of Ayurveda go viral on social media. Pick a trend you already know below to uncover the{" "}
+                    <strong className="text-white">5,000-year-old clinical neuroscience and gut biology</strong> hiding behind it:
                   </p>
                 </div>
 
+                {/* 4 Interactive "Familiarity Bias" Click-Magnet Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                   {FAMILIARITY_HOOKS.map((item, idx) => {
                     const Icon = item.icon;
@@ -433,8 +487,8 @@ export default function LandingPage() {
                           item.accent
                         } ${
                           isSelected
-                            ? "ring-2 ring-[#D4AF37] bg-slate-900/95"
-                            : "bg-slate-900/60 hover:bg-slate-900/90"
+                            ? "ring-2 ring-[#D4AF37] scale-[1.02] shadow-xl bg-slate-900/90"
+                            : "bg-slate-900/60 hover:bg-slate-900/90 opacity-90 hover:opacity-100"
                         }`}
                       >
                         <div>
@@ -445,11 +499,11 @@ export default function LandingPage() {
                             <Icon className="w-5 h-5 shrink-0" />
                           </div>
 
-                          <p className="text-xs font-semibold text-slate-300 italic mb-1.5">
+                          <p className="text-xs font-bold text-slate-300 italic mb-1">
                             &ldquo;{item.knownAs}&rdquo;
                           </p>
 
-                          <h3 className="font-sans text-base sm:text-lg font-extrabold text-white mb-2 leading-snug group-hover:text-[#D4AF37] transition-colors">
+                          <h3 className="font-heading text-lg font-extrabold text-white mb-2 leading-snug group-hover:text-[#D4AF37] transition-colors">
                             {item.hookTitle}
                           </h3>
 
@@ -460,34 +514,41 @@ export default function LandingPage() {
 
                         <Link
                           href={item.href}
-                          className="w-full py-2.5 px-3 rounded-xl bg-white/10 group-hover:bg-[#D4AF37] text-white group-hover:text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                          className="w-full py-2.5 px-3 rounded-xl bg-white/10 group-hover:bg-[#D4AF37] text-white group-hover:text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm"
                         >
                           <span>{item.cta}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                       </div>
                     );
                   })}
                 </div>
 
-                <div className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/15 flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 text-center sm:text-left">
-                    <Eye className="hidden sm:block w-6 h-6 text-[#D4AF37] shrink-0" />
-                    <p className="text-xs sm:text-sm text-slate-200 font-medium">
-                      Explore all <strong>5 Clinical Pillars</strong>, the{" "}
-                      <strong>24-Hour Body Clock</strong>, and{" "}
-                      <strong>8 Specialties</strong>.
-                    </p>
+                {/* Bottom Master Portal Bar */}
+                <div className="p-4 sm:p-6 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3.5 text-center sm:text-left">
+                    <div className="hidden sm:flex w-12 h-12 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 items-center justify-center shrink-0">
+                      <Eye className="w-6 h-6 text-[#D4AF37]" />
+                    </div>
+                    <div>
+                      <p className="text-sm sm:text-base font-extrabold text-white">
+                        Ready for the Complete International Experience?
+                      </p>
+                      <p className="text-xs sm:text-sm text-slate-300">
+                        Explore all 5 Clinical Pillars, the 24-Hour Body Clock, and 8 Hospital Specialties of Classical Ayurveda.
+                      </p>
+                    </div>
                   </div>
 
                   <Link
                     href="/atreya"
-                    className="w-full md:w-auto shrink-0 px-6 py-3.5 rounded-xl bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                    className="w-full md:w-auto shrink-0 px-7 py-4 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:from-amber-400 hover:to-[#D4AF37] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-[#D4AF37]/25 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
                   >
                     <span>Enter Full Ayurveda Global Hub</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
+
               </div>
             </div>
           </div>
