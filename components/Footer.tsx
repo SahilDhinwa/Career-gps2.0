@@ -106,8 +106,8 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Research &amp; Inquiries</p>
-                  <a href="mailto:sahilkumardhinwa82@gmail.com" className={`font-bold transition-colors ${isBatman ? 'text-gray-100 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
-                      sahilkumardhinwa82@gmail.com
+                  <a href="mailto: ayuratreyamed@gmail.com" className={`font-bold transition-colors ${isBatman ? 'text-gray-100 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
+                      ayuratreyamed@gmail.com
                   </a>
                 </div>
               </li>
@@ -119,7 +119,7 @@ export default function Footer() {
                 <div>
                   <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 transition-colors ${isBatman ? 'text-gray-400' : 'text-foreground/50'}`}>Founder &amp; Lead Architect</p>
                   <Link href="/about" className={`font-bold transition-colors flex items-center gap-1 group ${isBatman ? 'text-gray-100 hover:text-red-500' : 'text-foreground hover:text-primary'}`}>
-                    Sahil Dhinwa <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    Stranger <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>
               </li>
