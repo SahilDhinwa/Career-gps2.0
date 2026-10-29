@@ -1,961 +1,871 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import {
+  ArrowLeft,
+  ArrowRight,
   Sun,
-  ShieldCheck,
-  Clock,
-  Eye,
-  Activity,
-  Sparkles,
-  AlertTriangle,
-  CheckCircle2,
-  XCircle,
   Droplets,
   Wind,
+  Sparkles,
+  Smile,
+  ShieldCheck,
+  Eye,
+  HeartHandshake,
   Flame,
-  HeartPulse,
-  ArrowLeft,
-  BookOpen,
-  Layers,
-  Info,
+  Bath,
+  CheckCircle2,
+  AlertTriangle,
+  Brain,
+  Clock,
+  RotateCcw,
 } from "lucide-react";
 
-type ModuleKey = "all" | "prevention" | "morning" | "cranial" | "somatic";
+// Load engaging, high-readability editorial fonts specifically for Global Learners
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-playfair",
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
+});
+
+type SubTab = "habit" | "science" | "safety";
 type PrakritiType = "vata" | "pitta" | "kapha";
 
-export default function GlobalDinacharyaMasterclass() {
-  const [activeModule, setActiveModule] = useState<ModuleKey>("all");
-  const [selectedPrakriti, setSelectedPrakriti] = useState<PrakritiType>("vata");
+interface JourneyStep {
+  id: number;
+  time: string;
+  sanskrit: string;
+  pronunciation: string;
+  title: string;
+  tagline: string;
+  icon: React.ElementType;
+  quickAction: string;
+  habitPoints: { label: string; text: string }[];
+  sciencePoints: { label: string; text: string }[];
+  safetyTitle: string;
+  safetyPoints: string[];
+  shloka?: { sanskrit: string; meaning: string };
+  hasPrakritiWidget?: boolean;
+  hasPowderTable?: boolean;
+}
 
-  const modules = [
-    { id: "all", label: "Complete Masterclass", icon: Layers },
-    { id: "prevention", label: "01. Preventive Medicine & Vihara", icon: ShieldCheck },
-    { id: "morning", label: "02. Circadian Awakening", icon: Sun },
-    { id: "cranial", label: "03. Cranial & Sensory Care (8)", icon: Eye },
-    { id: "somatic", label: "04. Somatic & Dermal Regimen (6)", icon: Activity },
-  ];
+const DINACHARYA_JOURNEY: JourneyStep[] = [
+  {
+    id: 1,
+    time: "FOUNDATION",
+    sanskrit: "Swasthavritta & Vihara",
+    pronunciation: "Swas-tha-vrit-ta",
+    title: "Why Your Daily Clock Beats Medicine",
+    tagline:
+      "Before prescribing a single herb, Ayurveda redesigns how you live across a 24-hour cycle to stop disease before it ever starts.",
+    icon: ShieldCheck,
+    quickAction:
+      "Align your meals, sleep, and hygiene with the sun's clock (Niyata Kala Vihara) and never suppress natural bodily urges (Aniyata Kala Vihara).",
+    habitPoints: [
+      {
+        label: "Time-Bound Routines (Niyata Kala Vihara)",
+        text: "Habits performed at fixed biological hours every day—specifically your Daily Routine (Dinacharya) and Seasonal Routine (Ritucharya).",
+      },
+      {
+        label: "Body-Signal Routines (Aniyata Kala Vihara)",
+        text: "Listening to immediate body needs: never suppressing natural urges like sneeze, sleep, or bowel movements (Adharaniya Vega), and avoiding pathogens (Bhutadi Asparshana).",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "1. Primordial Prevention (Stopping Risk Factors)",
+        text: "Practicing Dinacharya and ethical living (Sadvritta) from childhood so metabolic risks like obesity or diabetes never develop.",
+      },
+      {
+        label: "2. Primary Prevention (Pre-Disease Shield)",
+        text: "Using seasonal cellular detox (Ritu Shodhana), longevity herbs (Rasayana), and trigger avoidance (Nidana Parivarjana).",
+      },
+      {
+        label: "3. Secondary & Tertiary Prevention",
+        text: "Catching imbalances in early sub-clinical stages (Shatkriyakala) with fasting/digestive herbs, and using Panchakarma rehabilitation for advanced conditions.",
+      },
+    ],
+    safetyTitle: "The Golden Rule of Diet & Lifestyle (Ahara & Vihara)",
+    safetyPoints: [
+      "Wholesome habits (Hitakara) keep your tissues balanced (Dhatusamya). Unwholesome habits at the wrong hour (Ahitakara) confuse your biological clock and trigger chronic inflammation.",
+    ],
+  },
+  {
+    id: 2,
+    time: "04:30 AM",
+    sanskrit: "Brahma Muhurta Jagarana",
+    pronunciation: "Brah-ma Moo-hoor-tah",
+    title: "Waking in the 'Creator's Window'",
+    tagline:
+      "Wake up exactly 96 minutes before sunrise—when the atmosphere is rich in pure oxygen and your brain is primed for deep focus.",
+    icon: Sun,
+    quickAction:
+      "Set your alarm ~1.5 hours before local sunrise, pause in bed for 30 seconds, and check if last night's dinner feels completely digested.",
+    habitPoints: [
+      {
+        label: "What is a Muhurta?",
+        text: "One Muhurta equals 48 minutes. 'Brahma Muhurta' is the 14th Muhurta of the night—occurring 96 minutes (1 hr 36 mins) before sunrise (roughly 4:00 AM to 5:30 AM).",
+      },
+      {
+        label: "Why This Exact Window?",
+        text: "In the quiet pre-dawn hours, ambient pollution is at its lowest, nascent oxygen is abundant, and external sensory noise is zero.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Master Circadian Reset",
+        text: "Waking with approaching dawn synchronizes your brain's suprachiasmatic nucleus (master clock), gently calibrating your morning cortisol awakening response.",
+      },
+      {
+        label: "Serotonin & Melatonin Balance",
+        text: "Early morning light exposure boosts daytime serotonin (mood & sharp memory / Smriti) and triggers timely melatonin release at night for deep sleep.",
+      },
+    ],
+    safetyTitle: "Wait! Check Your Stomach First (Jirnajirnam Nirupayan)",
+    safetyPoints: [
+      "Classical Rule: Only wake up at Brahma Muhurta if your previous night's dinner is 100% digested!",
+      "If you ate late and still feel heavy, bloated, or Indigested (Ajirna), sleep a little longer until digestion finishes so you don't aggravate Vata.",
+    ],
+  },
+  {
+    id: 3,
+    time: "05:00 AM",
+    sanskrit: "Usha Jalapana",
+    pronunciation: "Oo-sha Ja-la-paa-na",
+    title: "The Copper Vessel Morning Flush",
+    tagline:
+      "Before you even touch your toothbrush, hydrate your internal organs with water rested overnight in a copper or clay vessel.",
+    icon: Droplets,
+    quickAction:
+      "Drink 2 to 3 glasses (640–750 ml) of room-temperature water stored overnight in a pure copper cup right after getting out of bed.",
+    habitPoints: [
+      {
+        label: "How Much to Drink?",
+        text: "Classically measured as '8 Prasriti'—which equals roughly 640 ml to 750 ml (2 to 3 glasses), adjusted comfortably to your capacity.",
+      },
+      {
+        label: "Which Vessel is Best?",
+        text: "Store pure water overnight in a copper tumbler, earthen clay pot, or clean glass bottle. Drink it BEFORE brushing your teeth.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Triggers the Gastro-Colic Reflex",
+        text: "Gentle stomach distension from morning water sends an immediate neural signal to your colon, triggering a smooth, effortless morning bowel movement.",
+      },
+      {
+        label: "Renal & Metabolic Detox",
+        text: "Flushes overnight kidney metabolites, prevents constipation (Vibandha), piles (Arsha), and bloating (Shotha), and slows cellular aging (Jara).",
+      },
+    ],
+    safetyTitle: "Water Temperature Tip",
+    safetyPoints: [
+      "Avoid ice-cold refrigerator water in the morning—it shocks your digestive fire (Agni) and constricts gut blood vessels. Room-temperature or slightly lukewarm water is ideal.",
+    ],
+  },
+  {
+    id: 4,
+    time: "05:15 AM",
+    sanskrit: "Malatyaga in Vata Kaala",
+    pronunciation: "Ma-la-tyaa-ga",
+    title: "Effortless Morning Elimination",
+    tagline:
+      "Use the body's natural pre-dawn 'expulsion window' to clear digestive waste before toxins can be reabsorbed.",
+    icon: Wind,
+    quickAction:
+      "Sit calmly for bowel evacuation in the early morning without straining or scrolling on your phone.",
+    habitPoints: [
+      {
+        label: "The Apana Vayu Window",
+        text: "The last third of the night and early dawn are governed by Vata Dosha (specifically pelvic Apana Vayu), whose natural job is downward elimination.",
+      },
+      {
+        label: "Never Force, Never Hold",
+        text: "Respond immediately when the morning urge arrives, but never strain forcefully (Vegaudirana), which damages pelvic nerves and causes hemorrhoids.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Stops Endotoxin Reabsorption (Ama)",
+        text: "Clearing the colon early prevents stagnant fecal waste from fermenting and leaking inflammatory toxins (Ama) back into the bloodstream.",
+      },
+      {
+        label: "Ignites True Morning Hunger",
+        text: "Creates physical lightness in the gut (Koshtha Laghava), sharpens sense organs, and naturally ignites your digestive enzymes (Agni Deepana).",
+      },
+    ],
+    safetyTitle: "Modern Bathroom Trap",
+    safetyPoints: [
+      "Reading news or scrolling social media on the toilet distracts the parasympathetic nervous system and prolongs sitting time, increasing hemorrhoid risk.",
+    ],
+  },
+  {
+    id: 5,
+    time: "05:30 AM",
+    sanskrit: "Mukhaprakshalana",
+    pronunciation: "Moo-kha-prak-sha-la-na",
+    title: "Botanical Face & Eye Hydro-Refresh",
+    tagline:
+      "Wake up your cranial nerves and protect your skin's natural lipid barrier without harsh foaming detergents.",
+    icon: Sparkles,
+    quickAction:
+      "Splash your face and closed eyes with cool water in summer or lukewarm water in winter, using mild herbal cleansers instead of foaming sulfates.",
+    habitPoints: [
+      {
+        label: "Seasonal Water Temperature",
+        text: "Use cool water in hot summer/autumn months to calm Pitta, and lukewarm water in winter to prevent Vata dryness.",
+      },
+      {
+        label: "Classical Herbal Infusions",
+        text: "Traditionally performed using cooling decoctions like Amalaki (Indian Gooseberry) water, Lodhra paste, or Ksheerivriksha bark infusions.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Ocular Nerve Recovery",
+        text: "Gentle cool splashes over the eyes relieve morning microvascular congestion, clear sleep discharge, and refresh the optic nerve.",
+      },
+      {
+        label: "Acne & Sebum Balance",
+        text: "Prevents clogged pores and inflammatory breakouts (Mukhadushika) while boosting natural facial circulation (Mukha Kanti).",
+      },
+    ],
+    safetyTitle: "Modern Face Wash Warning (SLS & Parabens)",
+    safetyPoints: [
+      "Commercial foaming face washes loaded with Sodium Lauryl Sulfate (SLS) and parabens strip your skin's acid mantle, causing dry patches and rebound oiliness.",
+      "Choose pH-balanced, sulfate-free, or botanical powder cleansers.",
+    ],
+  },
+  {
+    id: 6,
+    time: "05:45 AM",
+    sanskrit: "Dantadhavana & Jihwanirlekhana",
+    pronunciation: "Dan-ta-dhaa-va-na",
+    title: "Herbal Brushing & Copper Tongue Scraping",
+    tagline:
+      "Why sweet minty toothpastes miss the mark—and how bitter botanicals and metal scrapers transform oral immunity.",
+    icon: Smile,
+    quickAction:
+      "Brush gently at a 45° angle with a soft brush (herbal paste), then glide a curved copper or steel scraper 5 times across your tongue.",
+    habitPoints: [
+      {
+        label: "1. Botanical Brushing (Dantadhavana)",
+        text: "Traditionally done twice daily using a fresh 12-Angula (~9 inch) twig as thick as your pinky finger, chewed into soft bristles. Best tastes: Bitter (Neem), Astringent (Acacia/Khadira), or Pungent (Karanja).",
+      },
+      {
+        label: "2. Tongue Scraping (Jihwanirlekhana)",
+        text: "Use a smooth, curved 10-Angula metal scraper (copper, silver, brass, or stainless steel) to gently clear the white morning coating from back to front.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Eliminates Halitosis at the Root",
+        text: "75% of morning bad breath comes from anaerobic bacteria hiding at the back of the tongue. Scraping removes this biofilm (Mala) and wakes up your taste buds (Ruchi).",
+      },
+      {
+        label: "Modified Bass Brushing Technique",
+        text: "Modern dentistry aligns with gentle gum care: angle soft bristles at 45° toward the gumline using tiny circular vibrations rather than harsh horizontal scrubbing.",
+      },
+    ],
+    safetyTitle: "Copper vs. Plastic & When NOT to Brush With Twigs",
+    safetyPoints: [
+      "Never use plastic tongue scrapers—microscopic grooves harbor bacteria. Copper and steel are naturally antibacterial!",
+      "Avoid harsh twig brushing during facial paralysis (Ardita), acute fever, severe indigestion, vomiting, asthma, or active mouth ulcers.",
+    ],
+  },
+  {
+    id: 7,
+    time: "06:00 AM",
+    sanskrit: "Gandusha, Kavala & Tambula",
+    pronunciation: "Gan-doo-sha & Ka-va-la",
+    title: "Oil Pulling & Microbiome Defense",
+    tagline:
+      "Nourish your gums and vocal cords with warm sesame oil instead of nuking your mouth's good bacteria with alcohol rinses.",
+    icon: HeartHandshake,
+    quickAction:
+      "Swish 1 tablespoon of warm sesame or coconut oil in your mouth for 3–5 minutes while preparing your morning tea, then spit it into the trash.",
+    habitPoints: [
+      {
+        label: "Gandusha vs. Kavala (What's the Difference?)",
+        text: "Gandusha is filling the mouth 100% full with warm oil/decoction and holding it still until your eyes water slightly. Kavala is filling it 3/4th full and actively swishing/gargling.",
+      },
+      {
+        label: "Post-Meal Herbal Leaf (Tambula Sevana)",
+        text: "Chewing a fresh Betel leaf with cardamom, clove, nutmeg, and camphor after meals stimulates digestive enzymes and clears throat mucus.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Lipid Saponification of Plaque",
+        text: "Swishing warm sesame oil (Tila Taila) binds to fat-soluble bacterial membranes, strengthening the jaw (Hanu Bala), voice, and tooth enamel against sensitivity (Dantaharsha).",
+      },
+      {
+        label: "Protects Your Nitric Oxide Pathway",
+        text: "Unlike chemical mouthwashes, oil pulling preserves beneficial oral bacteria that help regulate healthy blood pressure.",
+      },
+    ],
+    safetyTitle: "2 Major Modern Traps: Chemical Mouthwash & Gutkha",
+    safetyPoints: [
+      "Trap 1 (Alcohol & Chlorhexidine Rinses): Long-term use stains teeth and kills beneficial oral bacteria.",
+      "Trap 2 (Commercial Pan Masala / Gutkha): Classical Tambula has ZERO tobacco. Modern Gutkha contains cured tobacco and heavy lime, causing Oral Submucous Fibrosis (OSMF) and oral cancer!",
+    ],
+  },
+  {
+    id: 8,
+    time: "06:15 AM",
+    sanskrit: "Anjana, Nasya & Dhoomapana",
+    pronunciation: "Pra-ti-mar-sha Nas-ya",
+    title: "The Nose-to-Brain & Digital Eye Shield",
+    tagline:
+      "'Nasa Hi Shiraso Dwaram' — The nose is the direct doorway to the brain. Protect your eyes, sinuses, and cranial nerves.",
+    icon: Eye,
+    quickAction:
+      "Lubricate each nostril with 2 drops of warm sesame oil (or Anu Taila) using your clean pinky finger or a dropper every morning.",
+    habitPoints: [
+      {
+        label: "1. Daily Nasal Drops (Pratimarsha Nasya)",
+        text: "Instill 2 drops (Dwi-Bindu) of Anu Taila, Shadbindu Taila, or pure sesame oil into each nostril. Safe for all ages (from babies to seniors) in any season!",
+      },
+      {
+        label: "2. Soothing Eye Care (Anjana)",
+        text: "Eyes are fiery (Pitta) and vulnerable to mucus stagnation (Kapha). Mild Sauveeranjana cools digital eye strain for coders, drivers, and students.",
+      },
+      {
+        label: "3. Herbal Vapor Inhalation (Prayogika Dhoomapana)",
+        text: "Inhaling mild aromatic fumes of turmeric, cardamom, and sandalwood through the nose and exhaling strictly through the mouth to clear sinus heaviness.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Olfactory & Trigeminal Brain Pathway",
+        text: "Lipid drops applied to the nasal mucosa coats nerve endings, relieves neck stiffness (Manyastambha) and migraines, and prevents premature graying/hair fall.",
+      },
+      {
+        label: "Pollution & Dust Barrier",
+        text: "Acts as a natural microscopic filter for teachers, singers, commuters, and construction workers exposed to urban smog.",
+      },
+    ],
+    safetyTitle: "Crucial Safety Rules & The Hookah/Vape Myth",
+    safetyPoints: [
+      "Golden Rule of Herbal Smoke: Inhale via the nose, EXHALE ONLY VIA THE MOUTH (पिबेन्मुखेन च त्यजेत्). Exhaling smoke through the nose damages eyesight!",
+      "Tobacco & Hookah Warning: Cigarettes, vapes, and Hookahs contain nicotine, tar, and heavy metals. Passing smoke through Hookah water does NOT filter out carcinogens!",
+    ],
+  },
+  {
+    id: 9,
+    time: "06:30 AM",
+    sanskrit: "Abhyanga (Oil Massage)",
+    pronunciation: "Abh-yan-ga",
+    title: "Warm Oil Self-Massage & Nervous System Reset",
+    tagline:
+      "Spend 10 minutes massaging warm oil into your skin before your shower—or target the 3 non-negotiable nerve hubs if you're short on time.",
+    icon: Sparkles,
+    quickAction:
+      "Short on time? Massage warm oil onto just 3 spots before bathing: 1. Crown of your head, 2. Outer ears, and 3. Soles of your feet.",
+    shloka: {
+      sanskrit:
+        "अभ्यंगं आचरेत् नित्यं, स जरा श्रम वातहा। दृष्टि प्रसाद पुष्ट्यायुः स्वप्न सुत्वक्त्व दार्ढ्यकृत्।।",
+      meaning:
+        "Practice oil massage daily: it delays aging, melts fatigue and stress (Vata), sharpens eyesight, nourishes tissues, induces deep sleep, and makes skin radiant and resilient.",
+    },
+    habitPoints: [
+      {
+        label: "The 3 Mandatory Zones (If You Have Only 2 Minutes)",
+        text: "1. Head (Shiroabhyanga): Prevents headaches, hair fall, and insomnia. 2. Ears (Karna Purana): Prevents tinnitus and jaw/neck tension. 3. Feet (Padabhyanga): Relieves sciatica, cracked heels, and directly nourishes eyesight via foot-to-eye nerve pathways!",
+      },
+      {
+        label: "Choose Your Oil by Season & Climate",
+        text: "In Winter or cold climates: Use warming Sesame Oil (Tila Taila) or Mustard Oil. In Summer or hot climates: Use cooling Coconut Oil (Narikela Taila) or Ghee.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "C-Tactile Nerve Fiber Activation",
+        text: "Warm rhythmic touch activates specialized cutaneous nerve fibers that lower stress cortisol, release oxytocin, and shift your brain into calm parasympathetic mode.",
+      },
+      {
+        label: "Lymphatic & Microvascular Drainage",
+        text: "Nourishes the skin's lipid barrier and accelerates lymphatic clearance of cellular waste after sleep.",
+      },
+    ],
+    safetyTitle: "When to Skip Oil Massage (Contraindications)",
+    safetyPoints: [
+      "Do NOT perform Abhyanga when you have a fresh fever (Navajwara), active indigestion (Ajirna), heavy sinus congestion (Kapha disorders), or immediately after detox therapies.",
+    ],
+  },
+  {
+    id: 10,
+    time: "07:00 AM",
+    sanskrit: "Vyayama & Udvartana",
+    pronunciation: "Vyaa-yaa-ma",
+    title: "The 50% Exercise Rule & Herbal Body Scrubs",
+    tagline:
+      "Why working out to total exhaustion ages your body—and how Ayurveda uses 3 simple body signals to tell you the exact moment to stop.",
+    icon: Flame,
+    quickAction:
+      "Exercise until sweat beads appear on your forehead and you begin breathing deeply through your mouth—then stop and recover!",
+    shloka: {
+      sanskrit:
+        "शरीरचेष्टा या चेष्टा स्थैर्यार्था बलवर्धिनी। देहव्यायामसङ्ख्याता मात्रया तामाचरेत्।।",
+      meaning:
+        "Any physical movement that builds core stability and strength is called Vyayama. Always practice it in measured moderation.",
+    },
+    hasPrakritiWidget: true,
+    hasPowderTable: true,
+    habitPoints: [
+      {
+        label: "The 3 Signs of 'Half-Capacity' (Ardhashakti Lakshana)",
+        text: "Stop exercising the moment you notice: 1. Sweat forming on your forehead, nose tip, and underarms (Svedagama), 2. Deepened breathing (Shwasavriddhi), and 3. Dryness in your throat/mouth (Mukhashosha).",
+      },
+      {
+        label: "Upward Herbal Powder Massage (Pratiloma Gati)",
+        text: "After exercise, rubbing dry or oiled herbal powders (like Triphala) upward toward the heart melts stubborn subcutaneous fat and opens clogged pores.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Metabolic Ignition Without Burnout",
+        text: "Exercising to 50% capacity ignites digestive fire (Deeptagnitvam), tones muscle fibers, and creates physical lightness without spiking destructive oxidative stress.",
+      },
+      {
+        label: "Dangers of Over-Training (Ati-Vyayama)",
+        text: "Pushing past exhaustion causes tissue breakdown (Kshaya), chronic fatigue, respiratory distress, bleeding tendencies (Raktapitta), and premature aging.",
+      },
+    ],
+    safetyTitle: "Who Should Avoid Heavy Exercise?",
+    safetyPoints: [
+      "Never exercise immediately after a meal, during acute indigestion, during severe Vata-Pitta aggravation, or in late pregnancy and frail advanced age.",
+    ],
+  },
+  {
+    id: 11,
+    time: "07:45 AM",
+    sanskrit: "Snana, Anulepana & Vastra",
+    pronunciation: "Snaa-na & Va-stra",
+    title: "The Two-Temperature Shower & Clean Cosmetics",
+    tagline:
+      "Finish your morning ritual with the cranial temperature rule, breathable botanical scents, and seasonal natural fabrics.",
+    icon: Bath,
+    quickAction:
+      "Wash your body from the neck down with warm water, but ALWAYS switch to cool or room-temperature water when washing your head and hair!",
+    shloka: {
+      sanskrit:
+        "दीपनं वृष्यमायुष्यं स्नानं ऊर्जाबलप्रदम्। कण्डूमलश्रमस्वेदतन्द्रातृड्दाहपाप्मजित्।।",
+      meaning:
+        "A proper bath ignites appetite, boosts vitality and longevity, and washes away itching, sweat, fatigue, drowsiness, and mental gloom.",
+    },
+    habitPoints: [
+      {
+        label: "1. The Head vs. Body Water Rule (Snana)",
+        text: "Lukewarm water below the neck builds physical strength—but pouring hot water over the head (Uttamanga) weakens hair roots and damages eyesight! Always use cool/normal water on your head.",
+      },
+      {
+        label: "2. Botanical Scents & Seasonal Attire (Anulepana & Vastra)",
+        text: "Apply breathable sandalwood or saffron hydrosols after bathing, and wear clean cotton/silk in summer and warm layered wool in winter.",
+      },
+    ],
+    sciencePoints: [
+      {
+        label: "Thermoregulation & Vagal Refresh",
+        text: "Keeping the cranium cool prevents scalp inflammation and ocular vasodilation while warm water below the neck relaxes skeletal muscles.",
+      },
+      {
+        label: "Microbiological Skin Hygiene",
+        text: "Wearing fresh, unsoiled natural fabrics (Dhauta Vastra) allows sweat evaporation and prevents fungal tinea infections.",
+      },
+    ],
+    safetyTitle: "Cosmetic Toxicology Alert & Bath Contraindications",
+    safetyPoints: [
+      "Antiperspirant & Cosmetic Risks: Aluminum deodorants physically plug sweat ducts (Swedavaha Srotas Rodha), lipsticks may carry trace lead, and parabens disrupt hormones.",
+      "Never bathe immediately after eating a meal (Bhuktva Cha)—it diverts blood flow away from your stomach and halts digestion!",
+    ],
+  },
+];
+
+export default function EngagingGlobalDinacharyaPage() {
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<SubTab>("habit");
+  const [selectedPrakriti, setSelectedPrakriti] = useState<PrakritiType>("vata");
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
+  const step = DINACHARYA_JOURNEY[currentStepIndex];
+  const StepIcon = step.icon;
+  const totalSteps = DINACHARYA_JOURNEY.length;
+  const progressPercent = Math.round(((currentStepIndex + 1) / totalSteps) * 100);
+
+  // Reset sub-tab to "The Habit" and smoothly scroll to top whenever step changes
+  const goToStep = (index: number) => {
+    setCurrentStepIndex(index);
+    setActiveTab("habit");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleNext = () => {
+    if (!completedSteps.includes(step.id)) {
+      setCompletedSteps((prev) => [...prev, step.id]);
+    }
+    if (currentStepIndex < totalSteps - 1) {
+      goToStep(currentStepIndex + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStepIndex > 0) {
+      goToStep(currentStepIndex - 1);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20 transition-colors duration-300">
+    <div
+      className={`${jakarta.variable} ${playfair.variable} min-h-screen bg-background text-foreground pb-24 transition-colors duration-300`}
+      style={{ fontFamily: "var(--font-jakarta), sans-serif" }}
+    >
       {/* ========================================================= */}
-      {/* HERO HEADER: GLOBAL CHRONOBIOLOGY PORTAL                  */}
+      {/* 1. COMPACT, ULTRA-CLEAN TOP NAVIGATION & PROGRESS BAR      */}
       {/* ========================================================= */}
-      <section className="relative border-b border-surfaceBorder bg-surface/60 backdrop-blur-md pt-10 pb-14 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <Link
-              href="/atreya"
-              className="inline-flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-foreground/70 hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" /> Back to ATREYA Portal
-            </Link>
+      <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-surfaceBorder">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+          <Link
+            href="/atreya"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-foreground/75 hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Exit to Command Center</span>
+          </Link>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest">
-              <Sparkles className="w-3.5 h-3.5" /> Global Clinical Curriculum • Module 02
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-primary">
+              Step {currentStepIndex + 1} of {totalSteps}
+            </span>
+            <div className="w-24 sm:w-36 h-2 rounded-full bg-background border border-surfaceBorder overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-500 rounded-full"
+                style={{ width: `${progressPercent}%` }}
+              />
             </div>
           </div>
+        </div>
 
-          <h1 className="font-heading text-3xl sm:text-5xl font-extrabold tracking-tight mb-4">
-            Ayurvedic Chronobiology &amp;{" "}
-            <span className="text-primary">Dinacharya</span>
-          </h1>
-          <p className="text-base sm:text-lg text-foreground/80 max-w-3xl leading-relaxed mb-8">
-            An evidence-aligned clinical blueprint of daily preventive regimens
-            (<span className="font-semibold italic">Dinacharya</span>). Explore how classical
-            Ayurvedic physiological protocols synchronize human circadian rhythms,
-            protect mucosal microbiomes, and prevent chronic lifestyle disorders.
-          </p>
-
-          {/* Sticky / Interactive Module Selector */}
-          <div className="flex flex-wrap gap-2 pt-2">
-            {modules.map((mod) => {
-              const Icon = mod.icon;
-              const isActive = activeModule === mod.id;
+        {/* Horizontal Interactive Clock Timeline Bar */}
+        <div className="border-t border-surfaceBorder/60 bg-background/50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            {DINACHARYA_JOURNEY.map((item, idx) => {
+              const isCurrent = idx === currentStepIndex;
+              const isDone = completedSteps.includes(item.id);
               return (
                 <button
-                  key={mod.id}
-                  onClick={() => setActiveModule(mod.id as ModuleKey)}
-                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all border ${
-                    isActive
-                      ? "bg-primary text-white border-primary shadow-md"
-                      : "bg-background/80 text-foreground/75 border-surfaceBorder hover:border-primary/50 hover:text-foreground"
+                  key={item.id}
+                  onClick={() => goToStep(idx)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border cursor-pointer ${
+                    isCurrent
+                      ? "bg-primary text-white border-primary shadow-sm scale-105"
+                      : isDone
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                      : "bg-surface text-foreground/65 border-surfaceBorder hover:border-primary/40"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  {mod.label}
+                  {isDone && !isCurrent && <CheckCircle2 className="w-3 h-3" />}
+                  <span>{item.time}</span>
                 </button>
               );
             })}
           </div>
         </div>
-      </section>
+      </header>
 
-      <div className="max-w-6xl mx-auto px-6 mt-12 space-y-16">
-        {/* ========================================================= */}
-        {/* MODULE 1: LEVELS OF PREVENTION & VIHARA ARCHITECTURE      */}
-        {/* ========================================================= */}
-        {(activeModule === "all" || activeModule === "prevention") && (
-          <section className="space-y-10">
-            <div className="border-l-4 border-primary pl-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">
-                Section 01 • Epidemiological Correlation
+      {/* ========================================================= */}
+      {/* 2. FOCUSED SINGLE-STEP INTERACTIVE STORY CARD              */}
+      {/* ========================================================= */}
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-8">
+        
+        {/* Intro Context Pill */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-extrabold uppercase tracking-wider">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{step.time}</span>
+            <span>•</span>
+            <span>{step.sanskrit}</span>
+          </div>
+
+          <span className="text-xs font-medium text-foreground/55 italic">
+            Pronounced: &ldquo;{step.pronunciation}&rdquo;
+          </span>
+        </div>
+
+        {/* MAIN STEP CARD */}
+        <div className="bg-surface border border-surfaceBorder rounded-3xl p-6 sm:p-10 shadow-lg relative overflow-hidden">
+          
+          {/* Editorial Title & Conversational Hook */}
+          <div className="flex items-start justify-between gap-4 mb-6">
+            <div>
+              <h1
+                className="text-2xl sm:text-4xl font-bold text-foreground leading-tight mb-3"
+                style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+              >
+                {step.title}
+              </h1>
+              <p className="text-base sm:text-lg text-foreground/80 leading-relaxed font-medium">
+                {step.tagline}
+              </p>
+            </div>
+
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shrink-0">
+              <StepIcon className="w-6 h-6 sm:w-7 sm:h-7" />
+            </div>
+          </div>
+
+          {/* "TRY THIS TODAY" MICRO-HABIT CALLOUT */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 mb-8 flex items-start gap-3.5">
+            <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+            <div>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-0.5">
+                10-Second Actionable Takeaway
               </span>
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold mt-1">
-                1. The Four Levels of Disease Prevention in Ayurveda
-              </h2>
-              <p className="text-sm sm:text-base text-foreground/75 mt-1">
-                Modern preventive medicine categorizes intervention into four distinct stages,
-                each mapping directly onto classical Ayurvedic clinical frameworks.
+              <p className="text-sm sm:text-base font-bold text-foreground leading-snug">
+                {step.quickAction}
               </p>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Primordial */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 shadow-sm hover:border-primary/40 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-xs font-bold uppercase">
-                    Stage 01 • Risk Factor Inhibition
-                  </span>
-                  <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-2">
-                  Primordial Prevention
-                </h3>
-                <p className="text-sm text-foreground/80 leading-relaxed mb-4">
-                  Preventing the emergence and establishment of environmental, behavioral,
-                  and metabolic risk factors before they ever appear in a population.
-                </p>
-                <div className="p-3.5 rounded-lg bg-background/80 border border-surfaceBorder text-xs sm:text-sm">
-                  <span className="font-bold text-primary block mb-1">
-                    Ayurvedic Clinical Application:
-                  </span>
-                  Instituting <span className="font-semibold">Dinacharya</span> (daily biological routines),{" "}
-                  <span className="font-semibold">Ritucharya</span> (seasonal adaptations), and{" "}
-                  <span className="font-semibold">Sadvritta</span> (psychosocial ethics) from early childhood so non-communicable lifestyle disorders (obesity, Type-2 diabetes, hypertension) never take root.
-                </div>
-              </div>
-
-              {/* Primary */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 shadow-sm hover:border-primary/40 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-1 rounded bg-blue-500/10 text-blue-500 border border-blue-500/20 text-xs font-bold uppercase">
-                    Stage 02 • Pre-Pathogenesis
-                  </span>
-                  <ShieldCheck className="w-5 h-5 text-blue-500" />
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-2">
-                  Primary Prevention
-                </h3>
-                <p className="text-sm text-foreground/80 leading-relaxed mb-4">
-                  Targeted action taken prior to the biological onset of disease, removing
-                  the possibility that pathology will be initiated.
-                </p>
-                <div className="p-3.5 rounded-lg bg-background/80 border border-surfaceBorder text-xs sm:text-sm">
-                  <span className="font-bold text-primary block mb-1">
-                    Ayurvedic Clinical Application:
-                  </span>
-                  Practicing <span className="font-semibold">Ritu Shodhana</span> (prophylactic seasonal cellular detoxification), administering{" "}
-                  <span className="font-semibold">Rasayana</span> (epigenetic immunomodulators), and strictly executing{" "}
-                  <span className="font-semibold">Nidana Parivarjana</span> (avoidance of known etiological triggers).
-                </div>
-              </div>
-
-              {/* Secondary */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 shadow-sm hover:border-primary/40 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-1 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 text-xs font-bold uppercase">
-                    Stage 03 • Early Pathogenesis
-                  </span>
-                  <Activity className="w-5 h-5 text-amber-500" />
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-2">
-                  Secondary Prevention
-                </h3>
-                <p className="text-sm text-foreground/80 leading-relaxed mb-4">
-                  Halting the progression of a disease at its incipient subclinical stage
-                  and preventing irreversible tissue complications.
-                </p>
-                <div className="p-3.5 rounded-lg bg-background/80 border border-surfaceBorder text-xs sm:text-sm">
-                  <span className="font-bold text-primary block mb-1">
-                    Ayurvedic Clinical Application:
-                  </span>
-                  Intercepting pathology during the initial stages of{" "}
-                  <span className="font-semibold">Shatkriyakala</span> (<span className="italic">Sanchaya</span> / accumulation,{" "}
-                  <span className="italic">Prakopa</span> / aggravation, and <span className="italic">Prasara</span> / overflow) and reversing it via{" "}
-                  <span className="font-semibold">Langhana</span> (metabolic lightening), <span className="font-semibold">Deepana</span>, and{" "}
-                  <span className="font-semibold">Pachana</span> (enzymatic toxin clearance).
-                </div>
-              </div>
-
-              {/* Tertiary */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 shadow-sm hover:border-primary/40 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-1 rounded bg-purple-500/10 text-purple-500 border border-purple-500/20 text-xs font-bold uppercase">
-                    Stage 04 • Rehabilitation
-                  </span>
-                  <HeartPulse className="w-5 h-5 text-purple-500" />
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-2">
-                  Tertiary Prevention
-                </h3>
-                <p className="text-sm text-foreground/80 leading-relaxed mb-4">
-                  Limiting physical impairments, structural disabilities, and suffering once
-                  a disease has advanced beyond early reversibility.
-                </p>
-                <div className="p-3.5 rounded-lg bg-background/80 border border-surfaceBorder text-xs sm:text-sm">
-                  <span className="font-bold text-primary block mb-1">
-                    Ayurvedic Clinical Application:
-                  </span>
-                  Strict <span className="font-semibold">Pathya-Apathya</span> (therapeutic dietetics),{" "}
-                  <span className="font-semibold">Panchakarma</span> neuro-rehabilitation in conditions like stroke/paralysis (<span className="italic">Pakshaghata</span>), and tissue-regenerative <span className="font-semibold">Rasayana</span> therapy.
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Importance of Ahara and Vihara */}
-            <div className="bg-surface/70 border border-surfaceBorder rounded-2xl p-6 sm:p-8">
-              <h3 className="font-heading text-xl sm:text-2xl font-bold mb-2">
-                2. Architecture of Ahara (Diet) &amp; Vihara (Lifestyle Regimen)
-              </h3>
-              <p className="text-sm sm:text-base text-foreground/80 leading-relaxed mb-6">
-                <span className="font-bold text-primary">Ahara</span> and{" "}
-                <span className="font-bold text-primary">Vihara</span> form the twin pillars of
-                physiological homeostasis. When practiced wholesomely (<span className="italic font-semibold">Hitakara</span>),
-                they sustain <span className="font-semibold">Dhatusamya</span> (tissue equilibrium),
-                vitality, and immunity. When practiced unwholesomely (<span className="italic font-semibold">Ahitakara</span>),
-                they directly destabilize bio-humors (<span className="italic">Doshas</span>) and initiate pathology.
+          {/* Optional Classical Shloka Pill (Clean & Collapsible-style) */}
+          {step.shloka && (
+            <div className="mb-8 p-4 rounded-2xl bg-background border border-surfaceBorder text-center">
+              <p className="text-xs sm:text-sm font-bold text-primary mb-1">
+                &ldquo;{step.shloka.sanskrit}&rdquo;
               </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-surfaceBorder bg-background/60 rounded-xl p-5">
-                  <div className="flex items-center gap-2 text-primary font-bold text-base mb-2">
-                    <Clock className="w-5 h-5" />
-                    A. Niyata Kala Vihara (Time-Bound Regimens)
-                  </div>
-                  <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed mb-3">
-                    Structured physiological routines executed at fixed astronomical and
-                    circadian intervals to keep biological clocks entrained.
-                  </p>
-                  <ul className="space-y-1.5 text-xs sm:text-sm font-medium">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span><strong>Dinacharya:</strong> 24-hour circadian lifestyle protocol.</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span><strong>Ritucharya:</strong> Bi-monthly seasonal metabolic adaptation.</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="border border-surfaceBorder bg-background/60 rounded-xl p-5">
-                  <div className="flex items-center gap-2 text-primary font-bold text-base mb-2">
-                    <Activity className="w-5 h-5" />
-                    B. Aniyata Kala Vihara (Need-Based Regimens)
-                  </div>
-                  <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed mb-3">
-                    Adaptive behavioral and therapeutic interventions performed independent
-                    of clock time, dictated by immediate physiological demands:
-                  </p>
-                  <ul className="space-y-1.5 text-xs sm:text-sm font-medium">
-                    <li>• <strong>Adharaniya Vega:</strong> Never suppressing natural autonomic urges (<span className="italic">Vegadharana</span>) nor forcefully initiating them (<span className="italic">Vegaudirana</span>).</li>
-                    <li>• <strong>Ritu Shodhana &amp; Brumhana:</strong> Cellular detoxification when toxins accumulate, or anabolic nourishment (<span className="italic">Brumhana</span>) during tissue depletion.</li>
-                    <li>• <strong>Bhutadi Asparshana:</strong> Microbiological and environmental hygiene—avoiding contact with pathogens, vectors, and toxic environments.</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ========================================================= */}
-        {/* MODULE 2: EARLY MORNING CIRCADIAN REGIMEN                 */}
-        {/* ========================================================= */}
-        {(activeModule === "all" || activeModule === "morning") && (
-          <section className="space-y-8">
-            <div className="border-l-4 border-primary pl-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">
-                Section 02 • Dawn Chronobiology
-              </span>
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold mt-1">
-                3. Early Morning Regimen (Pratahkalina Dinacharya)
-              </h2>
-              <p className="text-sm sm:text-base text-foreground/75 mt-1">
-                Aligning neuroendocrine awakening, renal hydration, and autonomic bowel
-                evacuation with the pre-dawn <span className="italic">Vata</span> phase.
+              <p className="text-xs text-foreground/70 italic">
+                {step.shloka.meaning}
               </p>
             </div>
+          )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* A. Brahma Muhurta */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-primary mb-2">
-                    <span>Step 01 • ~04:00 – 05:30 AM</span>
-                    <Sun className="w-4 h-4" />
-                  </div>
-                  <h3 className="font-heading text-xl font-bold mb-2">
-                    A. Waking at Brahma Muhurta
+          {/* ===================================================== */}
+          {/* 3 BITE-SIZED TABS (Eliminates Wall of Text!)           */}
+          {/* ===================================================== */}
+          <div className="grid grid-cols-3 gap-2 p-1.5 rounded-2xl bg-background border border-surfaceBorder mb-6">
+            <button
+              type="button"
+              onClick={() => setActiveTab("habit")}
+              className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeTab === "habit"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-foreground/70 hover:text-foreground"
+              }`}
+            >
+              <Sparkles className="w-4 h-4 shrink-0" />
+              <span>1. The Ritual</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("science")}
+              className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeTab === "science"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-foreground/70 hover:text-foreground"
+              }`}
+            >
+              <Brain className="w-4 h-4 shrink-0" />
+              <span>2. Why It Works</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("safety")}
+              className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeTab === "safety"
+                  ? "bg-rose-500 text-white shadow-sm"
+                  : "text-foreground/70 hover:text-foreground"
+              }`}
+            >
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>3. Modern Traps</span>
+            </button>
+          </div>
+
+          {/* TAB 1 CONTENT: THE RITUAL */}
+          {activeTab === "habit" && (
+            <div className="space-y-4">
+              {step.habitPoints.map((pt, i) => (
+                <div
+                  key={i}
+                  className="p-5 rounded-2xl bg-background/80 border border-surfaceBorder"
+                >
+                  <h3 className="text-sm sm:text-base font-extrabold text-primary mb-1.5">
+                    {pt.label}
                   </h3>
-                  <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed mb-4">
-                    <span className="font-semibold">Brahma</span> signifies supreme knowledge; a{" "}
-                    <span className="font-semibold">Muhurta</span> equals 48 minutes. It is the{" "}
-                    <strong>14th Muhurta of the night</strong>, occurring exactly{" "}
-                    <strong>96 minutes (1 hr 36 mins) before sunrise</strong>.
-                  </p>
-                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs mb-4">
-                    <strong className="text-amber-500 block mb-0.5">
-                      Mandatory Metabolic Prerequisite:
-                    </strong>
-                    A healthy individual must wake in Brahma Muhurta <em>only</em> after assessing
-                    that the previous night&apos;s meal is completely digested (
-                    <span className="font-semibold">जीर्णाजीर्णं निरूपयन् / Jirnajirnam Nirupayan</span>).
-                  </div>
-                </div>
-                <div className="border-t border-surfaceBorder pt-3 text-xs text-foreground/75 space-y-1">
-                  <strong className="text-foreground block">Biomedical &amp; Circadian Impact:</strong>
-                  <p>
-                    Synchronizes the suprachiasmatic nucleus (master circadian clock),
-                    optimizes morning cortisol awakening response, boosts synaptic serotonin,
-                    supplies nascent pollution-free oxygen, enhances memory (<span className="italic">Smriti</span>),
-                    and guarantees timely melatonin onset at night.
+                  <p className="text-sm sm:text-base text-foreground/85 leading-relaxed">
+                    {pt.text}
                   </p>
                 </div>
-              </div>
+              ))}
 
-              {/* B. Usha Jalapana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-primary mb-2">
-                    <span>Step 02 • Pre-Brushing Hydration</span>
-                    <Droplets className="w-4 h-4" />
+              {/* Interactive Body Type Workout Matcher (Only on Step 10) */}
+              {step.hasPrakritiWidget && (
+                <div className="p-5 rounded-2xl bg-background border-2 border-primary/30 mt-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-primary">
+                      Interactive Matcher: Best Workout for Your Body Type
+                    </span>
+                    <div className="flex gap-1.5">
+                      {(["vata", "pitta", "kapha"] as PrakritiType[]).map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setSelectedPrakriti(t)}
+                          className={`px-3 py-1 rounded-lg text-xs font-bold uppercase cursor-pointer border ${
+                            selectedPrakriti === t
+                              ? "bg-primary text-white border-primary"
+                              : "bg-surface text-foreground/70 border-surfaceBorder"
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="font-heading text-xl font-bold mb-2">
-                    B. Usha Jalapana (Dawn Hydration)
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed mb-4">
-                    Ingesting pure water stored overnight in a <strong>copper, earthen (clay), or glass vessel</strong> immediately upon waking, prior to brushing teeth.
-                  </p>
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 text-xs mb-4">
-                    <strong className="text-primary block mb-0.5">
-                      Classical Volumetric Dosage:
-                    </strong>
-                    <strong>8 Prasriti</strong> (approx. <strong>640 ml to 750 ml</strong>, or 2 to 3 glasses), calibrated to individual digestive capacity.
-                  </div>
-                </div>
-                <div className="border-t border-surfaceBorder pt-3 text-xs text-foreground/75 space-y-1">
-                  <strong className="text-foreground block">Physiological Therapeutics:</strong>
-                  <p>
-                    Triggers the <strong>gastro-colic reflex</strong> for effortless bowel evacuation, enhances glomerular filtration to flush renal metabolites, resolves chronic constipation (<span className="italic">Vibandha</span>), hemorrhoids (<span className="italic">Arsha</span>), and edema (<span className="italic">Shotha</span>), delays cellular senescence (<span className="italic">Jara</span>), and primes enzymatic <span className="italic">Agni</span>.
-                  </p>
-                </div>
-              </div>
-
-              {/* C. Malatyaga */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-primary mb-2">
-                    <span>Step 03 • Apana Vayu Window</span>
-                    <Wind className="w-4 h-4" />
-                  </div>
-                  <h3 className="font-heading text-xl font-bold mb-2">
-                    C. Malatyaga in Vata Kaala
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed mb-4">
-                    The final third of the night and early dawn are physiologically governed
-                    by <strong>Vata Dosha</strong> (specifically pelvic{" "}
-                    <span className="font-semibold">Apana Vayu</span>), whose natural vector is downward
-                    expulsion (<span className="italic">Mala-Mutra Visarjana</span>).
-                  </p>
-                </div>
-                <div className="border-t border-surfaceBorder pt-3 text-xs text-foreground/75 space-y-2">
-                  <strong className="text-foreground block">Systemic Benefits of Timely Evacuation:</strong>
-                  <ul className="space-y-1">
-                    <li>• Prevents colonic reabsorption of metabolic endotoxins (<span className="italic">Ama</span>).</li>
-                    <li>• Establishes abdominal lightness (<span className="italic">Koshtha Laghava</span>).</li>
-                    <li>• Restores sensory acuity (<span className="italic">Indriya Prasada</span>) and kindles natural morning hunger (<span className="italic">Agni Deepana</span>).</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ========================================================= */}
-        {/* MODULE 3: CRANIAL, ORAL & SENSORY THERAPEUTICS (8)        */}
-        {/* ========================================================= */}
-        {(activeModule === "all" || activeModule === "cranial") && (
-          <section className="space-y-8">
-            <div className="border-l-4 border-primary pl-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">
-                Section 03 • Urdhwajatrugata Paricharya
-              </span>
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold mt-1">
-                4. Oral, Ocular &amp; Nasal Care (8 Cranial Procedures)
-              </h2>
-              <p className="text-sm sm:text-base text-foreground/75 mt-1">
-                Targeted mucosal, dental, ophthalmic, and olfactory interventions designed to
-                clear accumulated <span className="italic">Kapha</span> and fortify cranial nerves.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* A. Mukhaprakshalana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4A • Facial Hydrotherapy
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Mukhaprakshalana (Washing the Face &amp; Eyes)
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Classical Protocol:</strong> Splash face and eyes with cool water in Summer/Autumn, lukewarm water in Winter, or medicated astringent decoctions such as{" "}
-                  <span className="font-semibold">Ksheerivriksha Twak Kwatha</span> (barks of{" "}
-                  <span className="italic">Nyagrodha, Udumbara, Ashwattha, Parisha, Plaksha</span>),{" "}
-                  <span className="font-semibold">Amalaki Kwatha</span>, or <span className="font-semibold">Lodhra</span> paste.
-                </p>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Clinical Action:</strong> Relieves ocular fatigue, prevents acne vulgaris (<span className="italic">Mukhadushika</span>), clears sebum/debris, and enhances microvascular facial radiance (<span className="italic">Mukha Kanti</span>).
-                </p>
-                <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs">
-                  <strong className="text-rose-400 flex items-center gap-1.5 mb-1">
-                    <AlertTriangle className="w-3.5 h-3.5" /> Modern Dermatology Critique:
-                  </strong>
-                  Synthetic cleansers containing harsh sulfates (SLS/SLES) and parabens strip the stratum corneum&apos;s acid mantle and lipid barrier, triggering transepidermal water loss or rebound seborrhea. Mild pH-balanced or herbal infusions preserve epidermal integrity.
-                </div>
-              </div>
-
-              {/* B. Dantadhavana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4B • Periodontal Hygiene
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Dantadhavana (Botanical Tooth Brushing)
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Frequency &amp; Dimensions:</strong> Practiced twice daily (dawn and post-meals). The classical twig (<span className="italic">Dantakashtha</span>) must be fresh, straight, knot-free, <strong>12 Angula (~9 inches) long</strong>, and match the thickness of the little finger (<span className="italic">Kanishthika Anguli</span>), chewed at one end into soft bristles.
-                </p>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Botanical Pharmacology (Rasa):</strong>
-                  <br />• <em>Tikta (Bitter):</em> Nimba (Azadirachta indica)
-                  <br />• <em>Kashaya (Astringent):</em> Khadira (Acacia catechu), Babbula
-                  <br />• <em>Katu (Pungent):</em> Karanja, Arka
-                  <br />• <em>Madhura (Sweet - Sushruta):</em> Madhuka (Licorice)
-                </p>
-                <p className="text-xs text-foreground/75">
-                  <strong>Contraindications:</strong> Facial palsy (<span className="italic">Ardita</span>), active ocular/otic/oral lesions, indigestion (<span className="italic">Ajirna</span>), emesis (<span className="italic">Chhardi</span>), dyspnea (<span className="italic">Shwasa</span>), cough (<span className="italic">Kasa</span>), pyrexia (<span className="italic">Jwara</span>), and cardiac pathology (<span className="italic">Hridroga</span>).
-                </p>
-                <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 text-xs">
-                  <strong className="text-primary block mb-0.5">Modern Dental Correlation:</strong>
-                  Use ultra-soft bristles with the <strong>Modified Bass Technique</strong> (45° sulcular angle, gentle vibratory strokes). Avoid high-RDA silica abrasives, endocrine-disrupting Triclosan, and artificial sweeteners.
-                </div>
-              </div>
-
-              {/* C. Jihwanirlekhana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4C • Dorsal Lingual Debridement
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Jihwanirlekhana (Tongue Scraping)
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Classical Instrument:</strong> A curved, blunt, smooth scraper measuring <strong>10 Angula long</strong>, forged from gold, silver, copper, brass, or flexible plant twigs.
-                </p>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Physiological Benefits:</strong> Mechanically clears proteolysed debris and anaerobic biofilm (<span className="italic">Mala</span>) from the posterior dorsum of the tongue, neutralizes volatile sulfur compounds causing halitosis (<span className="italic">Daurgandhya</span>), clears obstructive <span className="italic">Kapha</span>, and sensitizes gustatory papillae (<span className="italic">Ruchi</span>).
-                </p>
-                <div className="p-2.5 rounded bg-background/70 border border-surfaceBorder text-xs">
-                  <strong>Material Science Note:</strong> Copper and surgical stainless steel scrapers exhibit natural oligodynamic (bacteriostatic) properties, whereas porous plastic scrapers accumulate microbial biofilm.
-                </div>
-              </div>
-
-              {/* D. Anjana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4D • Ophthalmic Prophylaxis
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Anjana (Medicated Collyrium)
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Bio-Humoral Rationale:</strong> The eyes are the seat of{" "}
-                  <span className="font-semibold">Alochaka Pitta (Tejas)</span> and are primarily vulnerable to congestive <span className="italic">Kapha</span> stagnation. Anjana stimulates lacrimal drainage to flush Kapha and sharpen visual acuity.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  <div className="p-2.5 rounded bg-background/70 border border-surfaceBorder">
-                    <strong className="text-primary block">1. Sauveeranjana (Daily):</strong>
-                    Soothing antimony sulfide preparation applied daily for cooling, high-contrast vision.
-                  </div>
-                  <div className="p-2.5 rounded bg-background/70 border border-surfaceBorder">
-                    <strong className="text-primary block">2. Rasanjana (Periodic):</strong>
-                    Concentrated extract of <em>Berberis aristata</em> (Daruharidra) applied once every <strong>5th or 8th night</strong> to induce therapeutic lacrimation.
-                  </div>
-                </div>
-                <p className="text-xs text-emerald-500 font-medium">
-                  <strong>Occupational Ergonomics:</strong> Promotive ocular defense for software engineers, long-haul drivers, tailors, welders, and researchers experiencing Computer Vision Syndrome.
-                </p>
-              </div>
-
-              {/* E. Pratimarsha Nasya */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4E • Trans-Nasal Neuro-Prophylaxis
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Pratimarsha Nasya (Daily Low-Dose Nasal Oil)
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Universal Safety:</strong> Unlike high-dose cleansing Nasya (<span className="italic">Marsha</span>), Pratimarsha Nasya is safe across all age groups (infancy to senescence) and all weather conditions without complication risks.
-                </p>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Lipid Vehicles &amp; Posology:</strong>{" "}
-                  <span className="font-semibold">Anu Taila</span>, <span className="font-semibold">Shadbindu Taila</span>, pure <span className="font-semibold">Tila Taila</span> (sesame oil), or <span className="font-semibold">Goghrita</span>. Instill exactly <strong>2 drops (Dwi-Bindu)</strong> into each nostril.
-                </p>
-                <p className="text-xs text-foreground/75">
-                  <strong>14 / 15 Classical Kaalas (Timings):</strong> Upon waking, post-brushing, before exiting the house, post-exercise, post-coitus, post-fatigue, post-micturition/defecation, post-Kavala/Anjana, post-meals, post-emesis, after daytime sleep, and at dusk.
-                </p>
-                <p className="text-xs text-emerald-500 font-medium">
-                  <strong>Clinical &amp; Occupational Shield:</strong> Prevents premature alopecia/canities (<span className="italic">Khalitya-Palitya</span>), cervical spondylosis (<span className="italic">Manyastambha</span>), chronic rhinitis, and protects teachers, vocalists, traffic personnel, and industrial workers from particulate inhalation.
-                </p>
-              </div>
-
-              {/* F. Kavala & Gandusha */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4F • Oral Mucosal Conditioning
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Kavala &amp; Gandusha (Gargling &amp; Oil Pulling)
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  <div className="p-2.5 rounded bg-background/70 border border-surfaceBorder">
-                    <strong className="text-primary block">Gandusha (Static Retention):</strong>
-                    Filling the buccal cavity completely to full capacity without movement, held until reflex lacrimation and nasal discharge occur.
-                  </div>
-                  <div className="p-2.5 rounded bg-background/70 border border-surfaceBorder">
-                    <strong className="text-primary block">Kavala (Dynamic Swishing):</strong>
-                    Filling the mouth partially (~3/4th capacity) and actively swishing/gargling the fluid across periodontal pockets.
-                  </div>
-                </div>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Media &amp; Effects:</strong> Warm sesame oil (<span className="italic">Tila Taila</span>), lukewarm water, milk, or <span className="italic">Triphala/Khadira</span> decoctions. Fortifies temporomandibular joint and vocal resonance (<span className="italic">Hanu-Swara Bala</span>), prevents dental caries (<span className="italic">Dantakshaya</span>) and dentin hypersensitivity (<span className="italic">Dantaharsha</span>).
-                </p>
-                <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs">
-                  <strong className="text-rose-400 block mb-0.5">
-                    Microbiome Warning on Commercial Mouthwashes:
-                  </strong>
-                  Alcohol-based and Chlorhexidine rinses indiscriminately eradicate commensal nitrate-reducing oral bacteria (which regulate systemic nitric oxide and blood pressure) and cause extrinsic tooth staining. Lipid oil pulling (<span className="italic">Sneha Gandusha</span>) saponifies plaque while preserving mucosal barriers.
-                </div>
-              </div>
-
-              {/* G. Tambula Sevana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4G • Post-Prandial Aromatics
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Tambula Sevana (Therapeutic Betel Chewing)
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Classical Formulation:</strong> Tender <span className="italic">Nagavalli</span> (Piper betle leaf) combined with <span className="italic">Jatiphala</span> (Nutmeg), <span className="italic">Kankola</span> (Cubeb), <span className="italic">Lavanga</span> (Clove), <span className="italic">Karpura</span> (Camphor), <span className="italic">Ela</span> (Cardamom), <span className="italic">Puga</span> (Areca nut), and a trace of <span className="italic">Churna</span> (slaked lime).
-                </p>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Action:</strong> Stimulates salivary amylase and post-prandial digestion, lyses pharyngeal <span className="italic">Kapha</span>, and deodorizes the oral cavity.
-                </p>
-                <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs">
-                  <strong className="text-rose-400 flex items-center gap-1.5 mb-1">
-                    <AlertTriangle className="w-3.5 h-3.5" /> Oncology Alert (Classical vs. Modern Gutkha):
-                  </strong>
-                  Classical Tambula is <strong>100% tobacco-free</strong> and uses measured carminative spices. Commercial <em>Pan Masala</em> and <em>Gutkha</em> combine cured tobacco, excessive arecoline, synthetic fragrances, and caustic lime—directly causing <strong>Oral Submucous Fibrosis (OSMF)</strong> and squamous cell oral carcinoma.
-                </div>
-              </div>
-
-              {/* H. Prayogika Dhoomapana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3">
-                <span className="text-xs font-bold uppercase text-primary">
-                  4H • Medicated Phyto-Aerosol Inhalation
-                </span>
-                <h3 className="font-heading text-xl font-bold">
-                  Prayogika Dhoomapana (Herbal Fumigation)
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  <strong>Procedure &amp; Safety Rule:</strong> A botanical wick (<span className="italic">Varti</span> of Cardamom, Cinnamon, Nagakeshara, Vetiver, Sandalwood, Turmeric—strictly excluding arsenic/Manashila) is lit inside a <strong>24-Angula Dhoomanetra</strong> pipe. Inhale via nostrils, and <strong>exhale strictly through the mouth</strong> in 3 cycles of 3 puffs:
-                </p>
-                <div className="p-2.5 rounded bg-amber-500/10 border border-amber-500/30 text-xs font-bold text-center text-amber-500">
-                  &ldquo;नेत्रयुक्तेन नासाभ्यां पिबेन्मुखेन च त्यजेत्&rdquo; — Never exhale smoke through the nasal passages, as retrograde heat damages the optic nerve and eyesight!
-                </div>
-                <p className="text-xs text-foreground/75">
-                  <strong>8 Timings:</strong> Post-bath, post-meal, post-brushing, post-sneezing, post-Nasya, post-Anjana, post-waking, and post-emesis. <strong>Contraindicated</strong> in pregnancy (<span className="italic">Garbhini</span>), bleeding disorders (<span className="italic">Raktapitta</span>), post-Virechana/Basti, poisoning, and intoxication.
-                </p>
-                <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-xs">
-                  <strong className="text-rose-400">Tobacco &amp; Hookah Pathology:</strong> Cigarettes, Beedis, and Hookahs deliver nicotine, polycyclic aromatic hydrocarbons (tar), and carbon monoxide—causing COPD, bronchogenic carcinoma, and atherosclerosis. Water filtration in a Hookah does <em>not</em> remove heavy metals or carcinogens.
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ========================================================= */}
-        {/* MODULE 4: SOMATIC CONDITIONING & DERMAL REGIMEN (6)       */}
-        {/* ========================================================= */}
-        {(activeModule === "all" || activeModule === "somatic") && (
-          <section className="space-y-10">
-            <div className="border-l-4 border-primary pl-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">
-                Section 04 • Sharirika Paricharya
-              </span>
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold mt-1">
-                5. Physical Conditioning, Transdermal Therapy &amp; Dermal Ecology
-              </h2>
-              <p className="text-sm sm:text-base text-foreground/75 mt-1">
-                Optimizing musculoskeletal resilience, peripheral circulation, and cutaneous
-                microbiome defense through six daily somatic protocols.
-              </p>
-            </div>
-
-            {/* 5A. Abhyanga */}
-            <div className="bg-surface/70 border border-surfaceBorder rounded-2xl p-6 sm:p-8 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-surfaceBorder pb-4">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary">
-                    5A • Transdermal Lipid Therapy
-                  </span>
-                  <h3 className="font-heading text-2xl font-bold mt-0.5">
-                    Abhyanga (Warm Medicated Oil Massage)
-                  </h3>
-                </div>
-                <div className="px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-center">
-                  <p className="text-xs sm:text-sm font-bold text-primary">
-                    &ldquo;अभ्यंगं आचरेत् नित्यं, स जरा श्रम वातहा। दृष्टि प्रसाद पुष्ट्यायुः स्वप्न सुत्वक्त्व दार्ढ्यकृत्।।&rdquo;
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-sm sm:text-base text-foreground/80 leading-relaxed">
-                <strong>Physiological Mechanism:</strong> Pre-bath warm oil massage decelerates cellular aging (<span className="italic">Jara</span>), myalgia/fatigue (<span className="italic">Shrama</span>), and <span className="italic">Vata</span> excitation. It sharpens eyesight (<span className="italic">Drishtiprasada</span>), nourishes deep tissues (<span className="italic">Pushti</span>), promotes slow-wave sleep (<span className="italic">Swapna</span>), enhances cutaneous elasticity (<span className="italic">Sutvaktva</span>), and stimulates arteriovenous and lymphatic drainage.
-              </p>
-
-              {/* 3 Mandatory Anatomical Sites */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-xl bg-background/70 border border-surfaceBorder">
-                  <h4 className="font-bold text-primary mb-1">
-                    1. Shiroabhyanga (Cranial Crown)
-                  </h4>
-                  <p className="text-xs sm:text-sm text-foreground/80">
-                    Prevents tension headaches, alopecia, premature graying, fortifies special sense organs, and induces restorative parasympathetic sleep.
-                  </p>
-                </div>
-                <div className="p-4 rounded-xl bg-background/70 border border-surfaceBorder">
-                  <h4 className="font-bold text-primary mb-1">
-                    2. Karna Purana (External Auditory Canal)
-                  </h4>
-                  <p className="text-xs sm:text-sm text-foreground/80">
-                    Instilling warm oil into the ears prevents otalgia, tinnitus, sensorineural hearing decline, and temporomandibular/cervical stiffness.
-                  </p>
-                </div>
-                <div className="p-4 rounded-xl bg-background/70 border border-surfaceBorder">
-                  <h4 className="font-bold text-primary mb-1">
-                    3. Padabhyanga (Plantar Soles)
-                  </h4>
-                  <p className="text-xs sm:text-sm text-foreground/80">
-                    Resolves plantar fissures (<span className="italic">Padadari</span>), neuropathy, sciatica (<span className="italic">Gridhrasi</span>), and directly nourishes eyesight via classical <span className="italic">Nadi</span> pathways linking the soles to the optic nerve.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
-                <div className="p-4 rounded-xl bg-background/50 border border-surfaceBorder">
-                  <strong className="text-foreground block mb-1">
-                    Seasonal &amp; Geographical Lipid Selection:
-                  </strong>
-                  <p className="text-foreground/80">
-                    • <strong>Winter / Cold Climates (Sheeta Kala):</strong> Warming <em>Tila Taila</em> (Sesame oil) or <em>Sarshapa Taila</em> (Mustard oil).
-                    <br />• <strong>Summer / Autumn / Arid Heat (Ushna Kala):</strong> Cooling <em>Narikela Taila</em> (Coconut oil), <em>Chandanabalalakshadi Taila</em>, or <em>Goghrita</em>.
-                  </p>
-                </div>
-                <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
-                  <strong className="text-rose-400 block mb-1">
-                    Absolute Contraindications for Abhyanga:
-                  </strong>
-                  <p className="text-foreground/80">
-                    Acute Kaphaja disorders, active indigestion (<span className="italic">Ajirna</span>), nascent fever (<span className="italic">Navajwara</span>), and immediately following purificatory <span className="italic">Shodhana</span> (Vamana/Virechana).
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* 5B. Vyayama (With Interactive Prakriti Prescription) */}
-            <div className="bg-surface/70 border border-surfaceBorder rounded-2xl p-6 sm:p-8 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-surfaceBorder pb-4">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary">
-                    5B • Kinesiology &amp; Metabolic Conditioning
-                  </span>
-                  <h3 className="font-heading text-2xl font-bold mt-0.5">
-                    Vyayama (Measured Physical Exercise)
-                  </h3>
-                </div>
-                <div className="px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-center">
-                  <p className="text-xs sm:text-sm font-bold text-primary">
-                    &ldquo;शरीरचेष्टा या चेष्टा स्थैर्यार्था बलवर्धिनी। देहव्यायामसङ्ख्याता मात्रया तामाचरेत्।।&rdquo;
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-sm sm:text-base text-foreground/80">
-                <strong>Acharya Charaka&apos;s Definition:</strong> Any physical exertion that generates bodily core stability (<span className="italic">Sthairya</span>) and augments muscular strength (<span className="italic">Bala</span>) is termed <strong>Vyayama</strong>. It must strictly be performed in calibrated moderation (<span className="italic">Matraya</span>)—producing physical lightness (<span className="italic">Laghava</span>), work endurance (<span className="italic">Karmasamarthya</span>), metabolic ignition (<span className="italic">Deeptagnitvam</span>), adipose reduction (<span className="italic">Medasa Kshaya</span>), and sculpted musculature (<span className="italic">Vibhakta-Ghana-Gatratvam</span>).
-              </p>
-
-              {/* Ardhashakti Lakshanas */}
-              <div className="p-5 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-3">
-                <div className="flex items-center gap-2 text-amber-500 font-bold text-base">
-                  <Flame className="w-5 h-5" />
-                  Clinical Stop-Signal: Ardhashakti Lakshanas (Signs of 50% Capacity)
-                </div>
-                <p className="text-xs sm:text-sm text-foreground/80">
-                  In cold seasons (<span className="italic">Hemanta &amp; Shishira</span>), exercise must cease the moment the body reaches <strong>50% of its maximal physiological reserve</strong> (and even earlier in Summer/Monsoon), clinically identified by three triad markers:
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm">
-                  <div className="p-3 rounded-lg bg-background/80 border border-surfaceBorder">
-                    <strong className="text-amber-500 block">1. Svedagama (Diaphoresis):</strong>
-                    Beads of sweat appearing on the forehead, nasal bridge, axillae, and limb joints.
-                  </div>
-                  <div className="p-3 rounded-lg bg-background/80 border border-surfaceBorder">
-                    <strong className="text-amber-500 block">2. Shwasavriddhi (Tachypnea):</strong>
-                    Noticeable deepening and acceleration of respiratory rate.
-                  </div>
-                  <div className="p-3 rounded-lg bg-background/80 border border-surfaceBorder">
-                    <strong className="text-amber-500 block">3. Mukhashosha (Oropharyngeal Dryness):</strong>
-                    Dryness of the palate/throat as <em>Prana Vayu</em> ascends from the cardiac region to the oral cavity.
-                  </div>
-                </div>
-                <p className="text-xs text-rose-400 font-medium pt-1">
-                  <strong>Risks of Over-Training (Ati-Vyayama):</strong> Crossing the Ardhashakti threshold induces tissue catabolism (<span className="italic">Kshaya</span>), severe dyspnea (<span className="italic">Pratamaka Shwasa</span>), hemorrhagic diathesis (<span className="italic">Raktapitta</span>), chronic exhaustion (<span className="italic">Shrama</span>), pyrexia, and cough.
-                </p>
-              </div>
-
-              {/* Interactive Prakriti Exercise Selector */}
-              <div className="border border-surfaceBorder rounded-xl p-5 bg-background/60">
-                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                  <h4 className="font-heading font-bold text-base sm:text-lg">
-                    Interactive Prescription: Modern Exercise by Prakriti &amp; Age
-                  </h4>
-                  <div className="flex gap-2">
-                    {(["vata", "pitta", "kapha"] as PrakritiType[]).map((type) => (
-                      <button
-                        key={type}
-                        onClick={() => setSelectedPrakriti(type)}
-                        className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all border ${
-                          selectedPrakriti === type
-                            ? "bg-primary text-white border-primary"
-                            : "bg-surface text-foreground/70 border-surfaceBorder hover:border-primary/40"
-                        }`}
-                      >
-                        {type} Prakriti
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {selectedPrakriti === "vata" && (
-                  <div className="p-4 rounded-lg bg-surface border border-surfaceBorder text-xs sm:text-sm space-y-1">
-                    <strong className="text-primary block text-base">
-                      Vata Prakriti &amp; Older Adults (Low Stamina, High Mobility)
-                    </strong>
-                    <p className="text-foreground/80">
-                      <strong>Recommended Modalities:</strong> Low-impact brisk walking, grounding Hatha Yoga, Tai Chi, gentle mobility stretching, and rhythmic breathing. Avoid high-impact plyometrics or exhausting endurance marathons that aggravate systemic Vata.
+                  {selectedPrakriti === "vata" && (
+                    <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed">
+                      <strong>Vata (Slender, Quick, Energetic) &amp; Seniors:</strong> Stick to gentle walking, grounding Yoga, mobility flows, and light cycling. Avoid exhausting marathons that burn out your nervous system.
                     </p>
-                  </div>
-                )}
-                {selectedPrakriti === "pitta" && (
-                  <div className="p-4 rounded-lg bg-surface border border-surfaceBorder text-xs sm:text-sm space-y-1">
-                    <strong className="text-primary block text-base">
-                      Pitta Prakriti (Moderate Stamina, High Core Heat)
-                    </strong>
-                    <p className="text-foreground/80">
-                      <strong>Recommended Modalities:</strong> Swimming, aquatic aerobics, evening cycling, and non-competitive strength training in cool environments. Avoid midday sun exposure or hyper-competitive hot-room workouts.
+                  )}
+                  {selectedPrakriti === "pitta" && (
+                    <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed">
+                      <strong>Pitta (Athletic, Warm, Driven):</strong> Choose cooling exercises like swimming, evening cycling, and moderate strength training. Avoid overheating in midday sun.
                     </p>
-                  </div>
-                )}
-                {selectedPrakriti === "kapha" && (
-                  <div className="p-4 rounded-lg bg-surface border border-surfaceBorder text-xs sm:text-sm space-y-1">
-                    <strong className="text-primary block text-base">
-                      Kapha Prakriti &amp; Young Adults (High Endurance, Slow Metabolism)
-                    </strong>
-                    <p className="text-foreground/80">
-                      <strong>Recommended Modalities:</strong> Vigorous cardiovascular running, High-Intensity Interval Training (HIIT), heavy compound resistance training, and dynamic Surya Namaskara to mobilize lipid stores and stimulate metabolic turnover.
+                  )}
+                  {selectedPrakriti === "kapha" && (
+                    <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed">
+                      <strong>Kapha (Strong, High Stamina, Slow Metabolism):</strong> Thrive on vigorous cardio, HIIT, brisk running, and heavy resistance training to mobilize stored energy.
                     </p>
-                  </div>
-                )}
-              </div>
-            </div>
+                  )}
+                </div>
+              )}
 
-            {/* 5C. Udvartana, Udgharshana & Utsadana Comparison Table */}
-            <div className="bg-surface/70 border border-surfaceBorder rounded-2xl p-6 sm:p-8 space-y-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">
-                5C • Pratiloma Gati Powder Therapeutics
-              </span>
-              <h3 className="font-heading text-2xl font-bold">
-                Udvartana, Udgharshana &amp; Utsadana (Cutaneous Powder Friction)
-              </h3>
-              <p className="text-sm text-foreground/80">
-                All three therapies involve massaging medicated botanical powders in the{" "}
-                <strong>reverse direction of hair follicles (Pratiloma Gati — upward toward the heart)</strong> to stimulate venous return and subcutaneous lipolysis:
-              </p>
-
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse border border-surfaceBorder text-xs sm:text-sm">
-                  <thead>
-                    <tr className="bg-primary/10 border-b border-surfaceBorder text-left">
-                      <th className="p-3 border-r border-surfaceBorder font-bold text-primary">
-                        Clinical Parameter
-                      </th>
-                      <th className="p-3 border-r border-surfaceBorder font-bold text-primary">
-                        Udvartana (उद्वर्तन)
-                      </th>
-                      <th className="p-3 border-r border-surfaceBorder font-bold text-primary">
-                        Udgharshana (उद्घर्षण)
-                      </th>
-                      <th className="p-3 font-bold text-primary">
-                        Utsadana (उत्सादन)
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-surfaceBorder">
-                    <tr>
-                      <td className="p-3 border-r border-surfaceBorder font-semibold">
-                        Nature of Medium
-                      </td>
-                      <td className="p-3 border-r border-surfaceBorder">
-                        Fine dry or slightly warmed herbal powders (<em>Kulattha, Triphala, Musta</em>).
-                      </td>
-                      <td className="p-3 border-r border-surfaceBorder">
-                        Coarse, rough dry botanical powders rubbed with vigorous mechanical friction (zero oil).
-                      </td>
-                      <td className="p-3">
-                        Herbal powder blended with <em>Sneha</em> (oil/ghee) or milk into an unctuous paste.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="p-3 border-r border-surfaceBorder font-semibold">
-                        Primary Therapeutic Action
-                      </td>
-                      <td className="p-3 border-r border-surfaceBorder">
-                        <strong>Kaphahara &amp; Medohara:</strong> Liquefies subcutaneous adipose tissue and firms skin.
-                      </td>
-                      <td className="p-3 border-r border-surfaceBorder">
-                        Deep stratum corneum exfoliation, unclogs sweat pores, resolves pruritus (<em>Kandu</em>) and urticaria (<em>Kotha</em>).
-                      </td>
-                      <td className="p-3">
-                        <strong>Vata-Pittahara:</strong> Deeply emollient, nourishing, and enhances dermal luminosity (<em>Kanti</em>).
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="p-3 border-r border-surfaceBorder font-semibold">
-                        Primary Clinical Indication
-                      </td>
-                      <td className="p-3 border-r border-surfaceBorder">
-                        Obesity, metabolic syndrome, Kapha Prakriti, dyslipidemia.
-                      </td>
-                      <td className="p-3 border-r border-surfaceBorder">
-                        Cutaneous sluggishness, hyperhidrosis, bromhidrosis (body odor).
-                      </td>
-                      <td className="p-3">
-                        Xerosis (dry skin), asthenic individuals, Vata Prakriti, aesthetic skin rejuvenation.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* 5D, 5E, 5F Grid: Snana, Anulepana, Vastradharana */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* 5D. Snana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3 flex flex-col justify-between">
-                <div className="space-y-3">
-                  <span className="text-xs font-bold uppercase text-primary">
-                    5D • Thermal Hydrotherapy
-                  </span>
-                  <h3 className="font-heading text-xl font-bold">
-                    Snana (Therapeutic Bathing)
-                  </h3>
-                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs">
-                    <strong className="text-amber-500 block mb-0.5">
-                      Cranial Thermal Polarity Rule:
+              {/* Compact 3-Type Herbal Scrub Comparison (Only on Step 10) */}
+              {step.hasPowderTable && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  <div className="p-3.5 rounded-xl bg-background border border-surfaceBorder text-xs">
+                    <strong className="text-primary block mb-1">
+                      1. Udvartana (Fat-Melting)
                     </strong>
-                    Use lukewarm water below the neck to build physical strength,{" "}
-                    <strong>but always use cool/room-temperature water for the head</strong> (
-                    <span className="italic">उष्णाम्बुना अधःकायस्य परिषेको बलावहः...</span>). Pouring hot water on the head depletes cranial nerve vitality, hair follicles, and visual acuity!
+                    Dry herbal powders (Triphala/Musta) rubbed upward to tone skin and reduce Kapha/cellulite.
                   </div>
-                  <p className="text-xs sm:text-sm text-foreground/80">
-                    <strong>Systemic Effects:</strong> Kindles digestive fire (<span className="italic">Deepana</span>), acts as a vitality enhancer (<span className="italic">Vrishya</span>), promotes longevity (<span className="italic">Ayushya</span>), and clears pruritus (<span className="italic">Kandu</span>), sweat, drowsiness (<span className="italic">Tandra</span>), burning (<span className="italic">Daha</span>), and mental gloom (<span className="italic">Papmajit</span>).
-                  </p>
+                  <div className="p-3.5 rounded-xl bg-background border border-surfaceBorder text-xs">
+                    <strong className="text-primary block mb-1">
+                      2. Udgharshana (Deep Scrub)
+                    </strong>
+                    Coarse dry powder friction (no oil) to unclog pores and stop itching/sweat odor.
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-background border border-surfaceBorder text-xs">
+                    <strong className="text-primary block mb-1">
+                      3. Utsadana (Glow Paste)
+                    </strong>
+                    Herbal powder mixed with oil/milk for dry Vata skin to restore deep radiance.
+                  </div>
                 </div>
-                <div className="border-t border-surfaceBorder pt-3 text-xs text-rose-400">
-                  <strong>Contraindications:</strong> Facial palsy (<span className="italic">Ardita</span>), ocular/otic/oral disorders, diarrhea (<span className="italic">Atisara</span>), flatulence (<span className="italic">Adhmana</span>), acute rhinitis (<span className="italic">Pinasa</span>), indigestion, and <strong>immediately after eating meals (Bhuktva Cha)</strong>.
-                </div>
-              </div>
-
-              {/* 5E. Anulepana & Cosmetics Critique */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3 flex flex-col justify-between">
-                <div className="space-y-3">
-                  <span className="text-xs font-bold uppercase text-primary">
-                    5E • Cutaneous Aromatherapy &amp; Toxicology
-                  </span>
-                  <h3 className="font-heading text-xl font-bold">
-                    Anulepana vs. Modern Cosmetics
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground/80">
-                    <strong>Classical Anulepana:</strong> Post-bath application of breathable phyto-pastes such as <span className="italic">Chandana</span> (Sandalwood), <span className="italic">Karpura</span> (Camphor), <span className="italic">Agaru</span> (Aquilaria), or <span className="italic">Kumkuma</span> (Saffron) to neutralize body odor (<span className="italic">Daurgandhya</span>), pacify thermal stress, and elevate mood.
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs space-y-1.5">
-                  <strong className="text-rose-400 flex items-center gap-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5" /> Transdermal Toxicology Alert:
-                  </strong>
-                  <p className="text-foreground/80">
-                    While modern cosmetics offer SPF protection and grooming confidence, synthetic formulations carry severe risks:
-                    <br />• <strong>Antiperspirants:</strong> Aluminum salts mechanically plug eccrine ducts, causing <em>Swedavaha Srotas Rodha</em> (sweat channel obstruction).
-                    <br />• <strong>Lipsticks &amp; Talc:</strong> Often contain trace heavy metals (lead, cadmium) and pore-occluding silicates.
-                    <br />• <strong>Parabens &amp; Phthalates:</strong> Act as xenoestrogenic endocrine disruptors and trigger allergic contact dermatitis.
-                  </p>
-                </div>
-              </div>
-
-              {/* 5F. Vastradharana */}
-              <div className="bg-surface/70 border border-surfaceBorder rounded-xl p-6 space-y-3 flex flex-col justify-between">
-                <div className="space-y-3">
-                  <span className="text-xs font-bold uppercase text-primary">
-                    5F • Textile Thermodynamics &amp; Hygiene
-                  </span>
-                  <h3 className="font-heading text-xl font-bold">
-                    Vastradharana (Seasonal Attire)
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground/80">
-                    <strong>Classical Standard:</strong> Wearing freshly laundered, breathable, unsoiled garments (<span className="italic">Dhauta, Aklishta Vastra</span>) tailored to ambient climate conditions.
-                  </p>
-                  <p className="text-xs sm:text-sm text-foreground/80">
-                    <strong>Seasonal Textile Selection:</strong>
-                    <br />• <em>Summer &amp; Autumn (Sharad):</em> Thin, breathable organic cotton or natural silk to dissipate heat.
-                    <br />• <em>Winter &amp; Monsoon:</em> Warm woolens and layered textiles to conserve core body heat and prevent Vata-Kapha aggravation.
-                  </p>
-                </div>
-                <div className="border-t border-surfaceBorder pt-3 text-xs text-foreground/75">
-                  <strong className="text-emerald-500 block mb-0.5">
-                    Psychosocial &amp; Microbiological Impact:
-                  </strong>
-                  Enhances social dignity (<span className="italic">Yashasya</span>), psychological confidence (<span className="italic">Kamyam</span>), and longevity (<span className="italic">Ayushya</span>). Strictly avoid unwashed or shared garments to prevent dermatophytosis (fungal tinea infections) and scabies.
-                </div>
-              </div>
+              )}
             </div>
-          </section>
-        )}
-      </div>
+          )}
+
+          {/* TAB 2 CONTENT: WHY IT WORKS (MODERN SCIENCE) */}
+          {activeTab === "science" && (
+            <div className="space-y-4">
+              {step.sciencePoints.map((pt, i) => (
+                <div
+                  key={i}
+                  className="p-5 rounded-2xl bg-primary/5 border border-primary/25"
+                >
+                  <h3 className="text-sm sm:text-base font-extrabold text-primary mb-1.5">
+                    {pt.label}
+                  </h3>
+                  <p className="text-sm sm:text-base text-foreground/85 leading-relaxed">
+                    {pt.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* TAB 3 CONTENT: MODERN TRAPS & SAFETY */}
+          {activeTab === "safety" && (
+            <div className="p-5 sm:p-6 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-3">
+              <div className="flex items-center gap-2 text-rose-500 font-extrabold text-sm sm:text-base">
+                <AlertTriangle className="w-5 h-5 shrink-0" />
+                <span>{step.safetyTitle}</span>
+              </div>
+              <ul className="space-y-2.5 text-sm sm:text-base text-foreground/90 leading-relaxed">
+                {step.safetyPoints.map((sp, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className="font-bold text-rose-500">•</span>
+                    <span>{sp}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* ===================================================== */}
+          {/* BOTTOM STEP-BY-STEP NAVIGATION BUTTONS                */}
+          {/* ===================================================== */}
+          <div className="mt-10 pt-6 border-t border-surfaceBorder flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={handlePrev}
+              disabled={currentStepIndex === 0}
+              className={`px-5 py-3.5 rounded-xl font-bold text-xs sm:text-sm inline-flex items-center justify-center gap-2 border transition-all ${
+                currentStepIndex === 0
+                  ? "opacity-40 cursor-not-allowed bg-background border-surfaceBorder text-foreground/50"
+                  : "bg-background hover:bg-surface border-surfaceBorder text-foreground cursor-pointer"
+              }`}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Previous Step</span>
+            </button>
+
+            {currentStepIndex < totalSteps - 1 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="px-7 py-4 rounded-xl bg-primary hover:bg-primaryHover text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2.5 shadow-md transition-all cursor-pointer"
+              >
+                <span>
+                  Next Step: {DINACHARYA_JOURNEY[currentStepIndex + 1].time} (
+                  {DINACHARYA_JOURNEY[currentStepIndex + 1].title.split(" ")[0]}...)
+                </span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => goToStep(0)}
+                  className="px-5 py-3.5 rounded-xl bg-background border border-surfaceBorder hover:border-primary/50 text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <RotateCcw className="w-4 h-4" /> Restart Journey
+                </button>
+                <Link
+                  href="/atreya"
+                  className="px-6 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2 shadow-md"
+                >
+                  <CheckCircle2 className="w-4 h-4" /> Complete &amp; Return to ATREYA
+                </Link>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </main>
     </div>
   );
 }
