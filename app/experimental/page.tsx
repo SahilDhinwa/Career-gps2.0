@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { 
   ArrowLeft, Beaker, LayoutGrid, Zap, Terminal, Box, Cloud, 
-  Square, Layers, Disc3, Gamepad2, BookOpen, Droplet, Target,
+  Square, Layers, Disc3, Gamepad2, BookOpen, Droplet, Target, Leaf,
   Minus, Flame, Briefcase, MousePointer2, Wand2, ArrowRight, Sparkles
 } from "lucide-react";
 
@@ -351,7 +351,7 @@ export default function ExperimentalDirectoryPage() {
   number: "19",
   name: "Ayurvedic Scroll Laboratory",
   desc: "Immersive botanical storytelling with scroll-reactive medicinal plants, animated extraction, interactive specimens, and cinematic knowledge reveals.",
-  icon: BookOpen,
+  icon: Leaf,
   path: "/experimental/ayurvedic-scroll-lab",
   status: "Active",
   cardClass: "bg-gradient-to-br from-[#08140d] via-[#183a25] to-[#342414] text-white rounded-3xl p-6 border border-emerald-500/40 shadow-xl hover:border-[#D4AF37] hover:-translate-y-1 transition-all",
