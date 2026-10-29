@@ -326,6 +326,25 @@ export default function ExperimentalDirectoryPage() {
       descClass: "text-indigo-100/70 text-sm",
       footerClass: "bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_0_20px_rgba(79,70,229,0.5)]",
     },
+
+    // 16. STORY SCROLLING (ACTIVE PAGE)
+    
+{
+  id: "scroll-storytelling",
+  number: "18",
+  name: "Scroll Storytelling",
+  desc: "Immersive scroll-controlled typography, word illumination, 3D perspective transformations, horizontal motion, and cinematic reveals.",
+  icon: BookOpen,
+  path: "/experimental/scroll-storytelling",
+  status: "Active",
+  cardClass: "bg-gradient-to-br from-[#050806] via-[#10251b] to-[#211a08] text-white rounded-2xl p-6 border border-emerald-500/40 shadow-[0_10px_35px_rgba(16,185,129,0.15)] hover:border-[#D4AF37] hover:-translate-y-1 transition-all",
+  iconWrapClass: "w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-400 flex items-center justify-center",
+  badgeClass: "bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full",
+  titleClass: "font-black text-2xl text-white",
+  descClass: "text-white/70 text-sm",
+  footerClass: "bg-[#D4AF37] text-slate-950 font-black text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl",
+},
+    
   ];
 
   return (
