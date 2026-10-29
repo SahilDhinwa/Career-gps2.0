@@ -55,6 +55,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/short-notes/agada-tantra/ipc-crpc-bns-notes",
     "/short-notes/swasth-vritta",
     "/short-notes/swasth-vritta/paper-1/chapter-1",
+    "/short-notes/swasth-vritta/paper-1/chapter-2",
     "/short-notes/swasth-vritta/paper-1/chapter-10-naturopathy/part-1",
   ].map((path) => ({
     path,
