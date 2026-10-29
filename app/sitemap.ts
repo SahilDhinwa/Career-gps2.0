@@ -56,6 +56,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/short-notes/swasth-vritta",
     "/short-notes/swasth-vritta/paper-1/chapter-1",
     "/short-notes/swasth-vritta/paper-1/chapter-2",
+    "/short-notes/swasth-vritta/paper-1/chapter-3",
+    "/short-notes/swasth-vritta/paper-1/chapter-4",
+    "/short-notes/swasth-vritta/paper-1/chapter-5",
+    "/short-notes/swasth-vritta/paper-1/chapter-6",
     "/short-notes/swasth-vritta/paper-1/chapter-10-naturopathy/part-1",
   ].map((path) => ({
     path,
