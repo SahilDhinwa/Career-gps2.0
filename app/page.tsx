@@ -28,6 +28,57 @@ import {
   Send,
 } from "lucide-react";
 
+const FAMILIARITY_HOOKS = [
+  {
+    id: "dosha",
+    tag: "VIRAL BODY-TYPE QUIZ",
+    knownAs: "You've heard of 'Vata, Pitta, Kapha'...",
+    hookTitle: "What Is Your True Genetic Body Type?",
+    hookDesc:
+      "Why can your friend eat anything and stay lean while you feel bloated from a salad? Take the 60-second clinical phenotype & gut-fire quiz.",
+    cta: "Take the 60-Sec Body Type Quiz",
+    href: "/atreya/diagnostics",
+    icon: Flame,
+    accent: "from-amber-500/20 to-orange-500/5 border-amber-500/40 text-amber-400",
+  },
+  {
+    id: "biohack",
+    tag: "MORNING BIOHACKING",
+    knownAs: "You've seen Tongue Scraping & Oil Pulling on TikTok...",
+    hookTitle: "The 5:00 AM 'Dopamine & Gut' Reset",
+    hookDesc:
+      "Why are Silicon Valley biohackers drinking from copper cups and swishing sesame oil? Try our interactive 11-step daily body clock.",
+    cta: "Try the 24-Hour Body Clock",
+    href: "/atreya/daily-regimen",
+    icon: Sun,
+    accent: "from-emerald-500/20 to-teal-500/5 border-emerald-500/40 text-emerald-400",
+  },
+  {
+    id: "supplements",
+    tag: "SUPPLEMENT REALITY CHECK",
+    knownAs: "You take Ashwagandha or Turmeric capsules...",
+    hookTitle: "Why 90% of Your Herbal Pills Flush Away",
+    hookDesc:
+      "Swallowing dry Ashwagandha or Curcumin with plain water gives <2% absorption. See how ancient lipid 'bio-carriers' boost uptake by 2,000%.",
+    cta: "Unlock the Herb Absorption Lab",
+    href: "/atreya/gut-brain-pharmacology",
+    icon: FlaskConical,
+    accent: "from-purple-500/20 to-indigo-500/5 border-purple-500/40 text-purple-400",
+  },
+  {
+    id: "spa",
+    tag: "SPA MYTH VS. NEUROSCIENCE",
+    knownAs: "You think Ayurveda is just a warm oil spa massage...",
+    hookTitle: "Inspect the Brain Scans Behind Forehead Oil Streams",
+    hookDesc:
+      "Shirodhara isn't a salon luxury—it stimulates your trigeminal nerve to drop cortisol and trigger deep alpha-theta brainwaves.",
+    cta: "Open the Clinical X-Ray Vault",
+    href: "/atreya/science-vault",
+    icon: Brain,
+    accent: "from-sky-500/20 to-blue-500/5 border-sky-500/40 text-sky-400",
+  },
+];
+
 // ============================================================================
 // TEMPORARY STUDENT TESTING ITEMS (Add new beta links here in 1 line)
 // ============================================================================
