@@ -28,57 +28,6 @@ import {
   Send,
 } from "lucide-react";
 
-const FAMILIARITY_HOOKS = [
-  {
-    id: "dosha",
-    tag: "VIRAL BODY-TYPE QUIZ",
-    knownAs: "You've heard of 'Vata, Pitta, Kapha'...",
-    hookTitle: "What Is Your True Genetic Body Type?",
-    hookDesc:
-      "Why can your friend eat anything and stay lean while you feel bloated from a salad? Take the 60-second clinical phenotype & gut-fire quiz.",
-    cta: "Take the 60-Sec Body Type Quiz",
-    href: "/atreya/diagnostics",
-    icon: Flame,
-    accent: "from-amber-500/20 to-orange-500/5 border-amber-500/40 text-amber-400",
-  },
-  {
-    id: "biohack",
-    tag: "MORNING BIOHACKING",
-    knownAs: "You've seen Tongue Scraping & Oil Pulling on TikTok...",
-    hookTitle: "The 5:00 AM 'Dopamine & Gut' Reset",
-    hookDesc:
-      "Why are Silicon Valley biohackers drinking from copper cups and swishing sesame oil? Try our interactive 11-step daily body clock.",
-    cta: "Try the 24-Hour Body Clock",
-    href: "/atreya/daily-regimen",
-    icon: Sun,
-    accent: "from-emerald-500/20 to-teal-500/5 border-emerald-500/40 text-emerald-400",
-  },
-  {
-    id: "supplements",
-    tag: "SUPPLEMENT REALITY CHECK",
-    knownAs: "You take Ashwagandha or Turmeric capsules...",
-    hookTitle: "Why 90% of Your Herbal Pills Flush Away",
-    hookDesc:
-      "Swallowing dry Ashwagandha or Curcumin with plain water gives <2% absorption. See how ancient lipid 'bio-carriers' boost uptake by 2,000%.",
-    cta: "Unlock the Herb Absorption Lab",
-    href: "/atreya/gut-brain-pharmacology",
-    icon: FlaskConical,
-    accent: "from-purple-500/20 to-indigo-500/5 border-purple-500/40 text-purple-400",
-  },
-  {
-    id: "spa",
-    tag: "SPA MYTH VS. NEUROSCIENCE",
-    knownAs: "You think Ayurveda is just a warm oil spa massage...",
-    hookTitle: "Inspect the Brain Scans Behind Forehead Oil Streams",
-    hookDesc:
-      "Shirodhara isn't a salon luxury—it stimulates your trigeminal nerve to drop cortisol and trigger deep alpha-theta brainwaves.",
-    cta: "Open the Clinical X-Ray Vault",
-    href: "/atreya/science-vault",
-    icon: Brain,
-    accent: "from-sky-500/20 to-blue-500/5 border-sky-500/40 text-sky-400",
-  },
-];
-
 // ============================================================================
 // TEMPORARY STUDENT TESTING ITEMS (Add new beta links here in 1 line)
 // ============================================================================
@@ -105,148 +54,6 @@ const TEMP_DEV_LINKS = [
     isPrimary: false,
   },
 ];
-{/* =================================================================
-          2. DYNAMIC FAMILIARITY-BIAS PORTAL BOX (FOR YOUTH & STUDENTS ABROAD)
-          ================================================================= */}
-      <section
-        id="global-discovery-box"
-        className="bg-background py-8 md:py-14 px-4 md:px-6 relative z-20 scroll-mt-16"
-      >
-        <div className="max-w-6xl mx-auto">
-          {/* Outer Glowing Animated Border */}
-          <div className="relative p-[2px] rounded-3xl bg-gradient-to-r from-[#D4AF37] via-emerald-500 to-[#D4AF37] shadow-2xl overflow-hidden">
-            
-            {/* Inner Dark Glassmorphic Stage with Animated Background */}
-            <div className="relative bg-slate-950 text-white rounded-[22px] p-6 sm:p-10 md:p-12 overflow-hidden">
-              
-              {/* --- ANIMATED BACKGROUND LAYER (No External Images Needed!) --- */}
-              <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
-                {/* Rotating Sacred Circadian Rings */}
-                <div className="circadian-ring-1 absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full border border-dashed border-[#D4AF37]/40" />
-                <div className="circadian-ring-2 absolute -top-20 -right-20 w-[320px] h-[320px] rounded-full border border-emerald-400/30" />
-                
-                {/* Floating Golden & Emerald Bio-Orbs */}
-                <div className="floating-bio-orb absolute top-1/4 left-10 w-36 h-36 rounded-full bg-[#D4AF37]/20 blur-2xl" />
-                <div
-                  className="floating-bio-orb absolute bottom-10 right-1/4 w-48 h-48 rounded-full bg-emerald-500/20 blur-3xl"
-                  style={{ animationDelay: "2.5s" }}
-                />
-                <div
-                  className="floating-bio-orb absolute top-10 left-1/2 w-28 h-28 rounded-full bg-amber-500/15 blur-2xl"
-                  style={{ animationDelay: "1.2s" }}
-                />
-              </div>
-
-              {/* --- FOREGROUND CONTENT --- */}
-              <div className="relative z-10">
-                {/* Top Hook Badge */}
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-extrabold uppercase tracking-widest">
-                    <Globe className="w-3.5 h-3.5" />
-                    <span>Ayurveda Global • Interactive Discovery Portal</span>
-                  </div>
-
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                    Built for International Students &amp; Biohackers
-                  </span>
-                </div>
-
-                {/* Curiosity-Driven Clickbait Headline */}
-                <div className="max-w-3xl mb-8">
-                  <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.15] mb-3 text-white">
-                    Wait... Isn&apos;t Ayurveda Just{" "}
-                    <span className="underline decoration-[#D4AF37] decoration-wavy underline-offset-4 text-[#D4AF37]">
-                      Turmeric Lattes, Ashwagandha &amp; Spa Massages?
-                    </span>
-                  </h2>
-                  <p className="text-sm sm:text-lg text-slate-300 leading-relaxed font-medium">
-                    You&apos;ve already seen fragments of Ayurveda go viral on social media. Pick a trend you already know below to uncover the{" "}
-                    <strong className="text-white">5,000-year-old clinical neuroscience and gut biology</strong> hiding behind it:
-                  </p>
-                </div>
-
-                {/* 4 Interactive "Familiarity Bias" Click-Magnet Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                  {FAMILIARITY_HOOKS.map((item, idx) => {
-                    const Icon = item.icon;
-                    const isSelected = activeHook === idx;
-                    return (
-                      <div
-                        key={item.id}
-                        onMouseEnter={() => setActiveHook(idx)}
-                        onClick={() => setActiveHook(idx)}
-                        className={`group relative rounded-2xl p-5 border transition-all duration-300 flex flex-col justify-between cursor-pointer bg-gradient-to-b ${
-                          item.accent
-                        } ${
-                          isSelected
-                            ? "ring-2 ring-[#D4AF37] scale-[1.02] shadow-xl bg-slate-900/90"
-                            : "bg-slate-900/60 hover:bg-slate-900/90 opacity-90 hover:opacity-100"
-                        }`}
-                      >
-                        <div>
-                          <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/50 text-white border border-white/10">
-                              {item.tag}
-                            </span>
-                            <Icon className="w-5 h-5 shrink-0" />
-                          </div>
-
-                          <p className="text-xs font-bold text-slate-300 italic mb-1">
-                            &ldquo;{item.knownAs}&rdquo;
-                          </p>
-
-                          <h3 className="font-heading text-lg font-extrabold text-white mb-2 leading-snug group-hover:text-[#D4AF37] transition-colors">
-                            {item.hookTitle}
-                          </h3>
-
-                          <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                            {item.hookDesc}
-                          </p>
-                        </div>
-
-                        <Link
-                          href={item.href}
-                          className="w-full py-2.5 px-3 rounded-xl bg-white/10 group-hover:bg-[#D4AF37] text-white group-hover:text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm"
-                        >
-                          <span>{item.cta}</span>
-                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Bottom Master Portal Bar */}
-                <div className="p-4 sm:p-6 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-3.5 text-center sm:text-left">
-                    <div className="hidden sm:flex w-12 h-12 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 items-center justify-center shrink-0">
-                      <Eye className="w-6 h-6 text-[#D4AF37]" />
-                    </div>
-                    <div>
-                      <p className="text-sm sm:text-base font-extrabold text-white">
-                        Ready for the Complete International Experience?
-                      </p>
-                      <p className="text-xs sm:text-sm text-slate-300">
-                        Explore all 5 Clinical Pillars, the 24-Hour Body Clock, and 8 Hospital Specialties of Classical Ayurveda.
-                      </p>
-                    </div>
-                  </div>
-
-                  <Link
-                    href="/atreya"
-                    className="w-full md:w-auto shrink-0 px-7 py-4 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:from-amber-400 hover:to-[#D4AF37] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-[#D4AF37]/25 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
-                  >
-                    <span>Enter Full Ayurveda Global Hub</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
 const FAMILIARITY_HOOKS = [
   {
@@ -384,9 +191,7 @@ export default function LandingPage() {
           <div className="perspective-grid"></div>
         </div>
 
-        {/* ---------------------------------------------------------------
-            CURVED DEVELOPMENT PHASE WARNING BOX (Placed lower from Navbar)
-            --------------------------------------------------------------- */}
+        {/* CURVED DEVELOPMENT PHASE WARNING BOX */}
         <div className="max-w-3xl w-full mx-auto mb-8 md:mb-10 relative z-20">
           <div className="bg-surface/90 backdrop-blur-md border-2 border-amber-500/40 rounded-2xl p-4 sm:px-6 sm:py-4 shadow-md flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -412,9 +217,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* ---------------------------------------------------------------
-            PRESERVED HERO HEADING, SEARCH BAR & DUAL TRACK BUTTONS
-            --------------------------------------------------------------- */}
+        {/* HERO HEADING, SEARCH BAR & DUAL TRACK BUTTONS */}
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <Link
             href="/bams-scholar"
@@ -436,7 +239,7 @@ export default function LandingPage() {
             Ayurveda is a rigorous medical science, not just a spa therapy. Learn authentic clinical Ayurveda from the exact platform that trains India&apos;s future BAMS doctors.
           </p>
 
-          {/* SEPARATE MODULAR SEARCH BAR COMPONENT */}
+          {/* MODULAR SEARCH BAR COMPONENT */}
           <GlobalSearchBar />
 
           {/* Two Primary Track Buttons */}
@@ -471,8 +274,6 @@ export default function LandingPage() {
       >
         <div className="max-w-5xl mx-auto">
           <div className="bg-background border-2 border-primary/30 rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg space-y-6">
-            
-            {/* Clear Bilingual Header */}
             <div className="border-b border-surfaceBorder pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div>
                 <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-primary mb-1">
@@ -487,7 +288,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* 3 Temporary Testing Cards (Includes /experimental) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {TEMP_DEV_LINKS.map((item) => (
                 <Link
@@ -532,7 +332,6 @@ export default function LandingPage() {
               ))}
             </div>
 
-            {/* 1-Click Student Feedback Box */}
             <form
               onSubmit={handleSendFeedback}
               className="bg-surface border border-surfaceBorder rounded-2xl p-4 sm:p-5 space-y-3"
@@ -583,13 +382,12 @@ export default function LandingPage() {
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       </section>
 
       {/* =================================================================
-          3. DYNAMIC FAMILIARITY-BIAS PORTAL BOX (FOR GLOBAL LEARNERS)
+          3. DYNAMIC FAMILIARITY-BIAS PORTAL BOX (SINGLE UPPER BOX)
           ================================================================= */}
       <section
         id="global-discovery-box"
