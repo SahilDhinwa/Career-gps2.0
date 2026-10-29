@@ -16,14 +16,99 @@ import {
   CheckCircle,
   Stethoscope,
   Brain,
-  Layers,
   Eye,
   Activity,
   Flame,
   Sun,
   FlaskConical,
-  HelpCircle,
+  Search,
+  FlaskRound,
+  MessageSquarePlus,
+  Wrench,
+  ChevronDown,
+  Send,
 } from "lucide-react";
+
+// ============================================================================
+// 1. TEMPORARY TESTING LINKS (Add any new temporary page here in 1 line!)
+// ============================================================================
+const TEMP_DEV_LINKS = [
+  {
+    title: "Experimental UI Lab",
+    hindi: "नए UI डिज़ाइन यहाँ टेस्ट करें",
+    href: "/experimental",
+    badge: "NEEDS FEEDBACK",
+    isPrimary: true,
+  },
+  {
+    title: "Swasthavritta Ch. 1 (Handwritten)",
+    hindi: "हस्तलिखित नोट्स (डेमो)",
+    href: "/short-notes/swasth-vritta/paper-1/chapter-1",
+    badge: "NEW NOTEBOOK UI",
+    isPrimary: false,
+  },
+  {
+    title: "24-Hr Body Clock (Step-by-Step)",
+    hindi: "इंटरएक्टिव दिनचर्या गाइड",
+    href: "/atreya/daily-regimen",
+    badge: "GLOBAL UI TEST",
+    isPrimary: false,
+  },
+];
+
+// ============================================================================
+// 2. SEARCHABLE DIRECTORY FOR THE HERO SEARCH BAR
+// ============================================================================
+const SEARCH_INDEX = [
+  {
+    title: "Experimental UI Designs Lab",
+    category: "Developer Testing",
+    keywords: "experimental ui design test beta layout",
+    href: "/experimental",
+  },
+  {
+    title: "Swasthavritta Chapter 1: Swastha & Swasthya",
+    category: "BAMS 2nd Prof • Handwritten Notes",
+    keywords: "swasthavritta chapter 1 swastha lakshana notes hindi",
+    href: "/short-notes/swasth-vritta/paper-1/chapter-1",
+  },
+  {
+    title: "Swasthavritta Chapter 10: Naturopathy",
+    category: "BAMS 2nd Prof • Handwritten Notes",
+    keywords: "naturopathy prakritik chikitsa chapter 10",
+    href: "/short-notes/swasth-vritta/paper-1/chapter-10-naturopathy/part-1",
+  },
+  {
+    title: "Dinacharya: 24-Hour Body Clock & Daily Routine",
+    category: "Ayurveda Global • Interactive Guide",
+    keywords: "dinacharya daily routine brahma muhurta oil pulling abhyanga",
+    href: "/atreya/daily-regimen",
+  },
+  {
+    title: "Prakriti & Agni Body-Type Quiz",
+    category: "Ayurveda Global • Pillar 02",
+    keywords: "prakriti dosha quiz vata pitta kapha agni body type",
+    href: "/atreya/diagnostics",
+  },
+  {
+    title: "BAMS Scholar Hub (1st, 2nd & 3rd Prof)",
+    category: "NCISM Curriculum",
+    keywords: "bams scholar hub india syllabus charaka samhita",
+    href: "/bams-scholar",
+  },
+  {
+    title: "3D Dravyaguna Botanical Dissection Studio",
+    category: "Clinical Studio",
+    keywords: "dravyaguna 3d plants herbs botanical studio",
+    href: "/dravyaguna",
+  },
+  {
+    title: "Ayurveda Global Command Center (5 Pillars)",
+    category: "International Portal",
+    keywords: "atreya global command center 5 pillars research",
+    href: "/atreya",
+  },
+];
 
 const FAMILIARITY_HOOKS = [
   {
@@ -77,11 +162,37 @@ const FAMILIARITY_HOOKS = [
 ];
 
 export default function LandingPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [selectedQuickTag, setSelectedQuickTag] = useState<string>("");
   const [activeHook, setActiveHook] = useState<number>(0);
+
+  // Filter live search results
+  const filteredResults =
+    searchQuery.trim().length > 0
+      ? SEARCH_INDEX.filter(
+          (item) =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.keywords.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.category.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : [];
+
+  // Send instant student feedback directly to WhatsApp
+  const handleSendFeedback = (e: React.FormEvent) => {
+    e.preventDefault();
+    const combinedMsg = `[ATREYA Med Student Feedback]\n• Tag: ${
+      selectedQuickTag || "General Suggestion"
+    }\n• Feedback: ${feedbackText || "Checked out the experimental UI!"}`;
+    const whatsappUrl = `https://wa.me/918769892303?text=${encodeURIComponent(
+      combinedMsg
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
   return (
     <div className="min-h-screen bg-background overflow-hidden flex flex-col transition-colors duration-300">
-      {/* INLINE STYLES - Grid + Custom Bio-Animations for Global Portal */}
+      {/* INLINE STYLES - Dynamic 3D Grid + Floating Ambient Glow */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -103,182 +214,345 @@ export default function LandingPage() {
           width: 200%;
           height: 150%;
           left: -50%;
-          top: 30%;
+          top: 25%;
           background-image: 
-            linear-gradient(to right, rgba(17, 66, 50, 0.15) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(17, 66, 50, 0.15) 1px, transparent 1px);
-          background-size: 60px 60px;
+            linear-gradient(to right, rgba(17, 66, 50, 0.14) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(17, 66, 50, 0.14) 1px, transparent 1px);
+          background-size: 64px 64px;
           transform: rotateX(75deg);
-          animation: pan-grid 3s linear infinite;
-          mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
-          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+          animation: pan-grid 4s linear infinite;
+          mask-image: linear-gradient(to bottom, transparent 0%, black 45%, black 100%);
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 45%, black 100%);
         }
         
         @keyframes pan-grid {
           0% { transform: rotateX(75deg) translateY(0); }
-          100% { transform: rotateX(75deg) translateY(60px); }
+          100% { transform: rotateX(75deg) translateY(64px); }
         }
 
         .glowing-core {
           position: absolute;
-          top: 0%;
+          top: 5%;
           left: 50%;
           transform: translateX(-50%);
-          width: 800px;
-          height: 800px;
-          background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
-          animation: pulse-core 8s ease-in-out infinite;
+          width: 750px;
+          height: 750px;
+          background: radial-gradient(circle, rgba(212, 175, 55, 0.10) 0%, transparent 65%);
+          animation: pulse-core 7s ease-in-out infinite;
           pointer-events: none;
         }
 
         @keyframes pulse-core {
-          0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.7; }
-          50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
-        }
-
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-
-        @keyframes spin-reverse-slow {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-
-        @keyframes float-orb {
-          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.35; }
-          50% { transform: translateY(-18px) scale(1.1); opacity: 0.7; }
-        }
-
-        .circadian-ring-1 {
-          animation: spin-slow 38s linear infinite;
-        }
-        .circadian-ring-2 {
-          animation: spin-reverse-slow 52s linear infinite;
-        }
-        .floating-bio-orb {
-          animation: float-orb 6s ease-in-out infinite;
+          0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.65; }
+          50% { transform: translateX(-50%) scale(1.18); opacity: 1; }
         }
       `,
         }}
       />
 
       {/* =================================================================
-          1. HERO SECTION — ATREYA MED MASTER BRANDING
+          TOP DEVELOPMENT PHASE NOTICE BAR (ENGLISH + HINDI)
           ================================================================= */}
-      <div className="relative flex-grow flex items-center justify-center px-6 py-12 md:py-20 lg:py-24 overflow-hidden bg-background z-40">
+      <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2.5 relative z-50">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-3 text-center">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-extrabold uppercase tracking-wider shrink-0">
+            <Wrench className="w-3 h-3" /> Beta Development Phase
+          </span>
+          <p className="text-xs sm:text-sm font-bold text-foreground/90">
+            यह वेबसाइट अभी निर्माण (Development) चरण में है।{" "}
+            <span className="font-normal text-foreground/75">
+              We need your feedback to make ATREYA Med better for every student!
+            </span>
+          </p>
+        </div>
+      </div>
+
+      {/* =================================================================
+          1. SPACIOUS, MINIMAL FIRST VIEWPORT (SEARCH + TEMP LAB & FEEDBACK)
+          Main heavy sections only appear AFTER the user scrolls down!
+          ================================================================= */}
+      <section className="relative min-h-[86vh] flex flex-col justify-between px-4 sm:px-6 pt-10 pb-8 overflow-hidden bg-background z-40">
+        {/* Dynamic Background Grid & Pulse */}
         <div className="perspective-container">
           <div className="glowing-core"></div>
           <div className="perspective-grid"></div>
         </div>
 
-        <div className="max-w-5xl mx-auto text-center relative z-10 pt-2 md:pt-4">
-          <Link
-            href="/bams-scholar"
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 md:px-4 md:py-2 rounded-full bg-surface/80 backdrop-blur-sm border border-surfaceBorder hover:border-primary text-xs md:text-sm font-bold text-primary mb-5 md:mb-8 shadow-sm transition-colors"
-          >
-            <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
-            <span>ATREYA MED • NCISM BAMS PROF I–III &amp; AYURVEDA GLOBAL LIVE</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+        {/* Center Minimal Workspace */}
+        <div className="max-w-3xl mx-auto w-full my-auto relative z-10 space-y-7">
+          
+          {/* Compact Brand Greeting */}
+          <div className="text-center space-y-2">
+            <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">
+              ATREYA Med • Open Student Beta
+            </p>
+            <h1 className="font-sans text-2xl sm:text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+              Search Topics or Test New Designs
+            </h1>
+            <p className="text-xs sm:text-sm text-foreground/65 max-w-lg mx-auto">
+              BAMS नोट्स, संहिता या नए एक्सपेरिमेंटल डिज़ाइन नीचे सर्च करें और अपना सुझाव दें।
+            </p>
+          </div>
 
-          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-foreground tracking-tight mb-4 md:mb-6 leading-[1.12] md:leading-tight drop-shadow-sm">
-            5,000 Years of Clinical Science. <br className="hidden md:block" />
+          {/* -------------------------------------------------------------
+              A. INSTANT SEARCH BAR (With Live Dropdown Suggestions)
+              ------------------------------------------------------------- */}
+          <div className="relative w-full">
+            <div className="relative flex items-center bg-surface/90 backdrop-blur-md border-2 border-surfaceBorder focus-within:border-primary rounded-2xl shadow-lg px-4 py-3 sm:py-3.5 transition-all">
+              <Search className="w-5 h-5 text-primary shrink-0 mr-3" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search Swasthavritta, Dinacharya, Prakriti Quiz, or Experimental UI..."
+                className="w-full bg-transparent text-sm sm:text-base text-foreground placeholder:text-foreground/45 focus:outline-none font-medium"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="text-xs font-bold text-foreground/50 hover:text-foreground px-2"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Live Search Results Dropdown */}
+            {filteredResults.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-2 bg-surface border border-surfaceBorder rounded-2xl shadow-2xl overflow-hidden z-50 divide-y divide-surfaceBorder">
+                {filteredResults.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex items-center justify-between px-4 py-3 hover:bg-primary/10 transition-colors"
+                  >
+                    <div>
+                      <p className="text-sm font-bold text-foreground">
+                        {item.title}
+                      </p>
+                      <p className="text-[11px] text-primary font-semibold">
+                        {item.category}
+                      </p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-primary shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* -------------------------------------------------------------
+              B. TEMPORARY STUDENT LAB & FEEDBACK BOX (Easy to Understand!)
+              ------------------------------------------------------------- */}
+          <div className="bg-surface/85 backdrop-blur-md border border-surfaceBorder rounded-3xl p-5 sm:p-7 shadow-xl space-y-6">
+            
+            {/* Header explaining what students need to do */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surfaceBorder pb-4">
+              <div>
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
+                  🛠️ Temporary Testing Zone (अस्थायी परीक्षण क्षेत्र)
+                </span>
+                <h2 className="text-base sm:text-lg font-extrabold text-foreground">
+                  Step 1: Try Our Experimental Pages &amp; Tell Us Which Design You Like Best
+                </h2>
+              </div>
+              <span className="text-[11px] font-semibold text-foreground/60 shrink-0">
+                Takes 30 seconds
+              </span>
+            </div>
+
+            {/* Temporary Links Grid (Includes /experimental right in front!) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {TEMP_DEV_LINKS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`group p-4 rounded-2xl border transition-all flex flex-col justify-between ${
+                    item.isPrimary
+                      ? "bg-primary/10 border-primary/50 hover:bg-primary hover:text-white shadow-sm"
+                      : "bg-background/80 border-surfaceBorder hover:border-primary/50"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-2">
+                      <span
+                        className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                          item.isPrimary
+                            ? "bg-primary text-white group-hover:bg-white group-hover:text-primary"
+                            : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                      <FlaskRound className="w-4 h-4 opacity-70" />
+                    </div>
+                    <p className="font-bold text-sm leading-snug mb-0.5">
+                      {item.title}
+                    </p>
+                    <p
+                      className={`text-xs ${
+                        item.isPrimary
+                          ? "text-foreground/75 group-hover:text-white/90"
+                          : "text-foreground/60"
+                      }`}
+                    >
+                      {item.hindi}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 pt-2 border-t border-current/10 flex items-center justify-between text-xs font-extrabold">
+                    <span>Open &amp; Test</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Quick Student Feedback Form */}
+            <form
+              onSubmit={handleSendFeedback}
+              className="bg-background/90 border border-surfaceBorder rounded-2xl p-4 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <label className="text-xs sm:text-sm font-extrabold text-foreground flex items-center gap-1.5">
+                  <MessageSquarePlus className="w-4 h-4 text-primary" />
+                  <span>
+                    Step 2: Give Your Suggestion / अपना फीडबैक यहाँ लिखें:
+                  </span>
+                </label>
+              </div>
+
+              {/* 1-Click Quick Feedback Chips */}
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  "👍 Experimental UI is great",
+                  "📒 Handwritten Notes are best",
+                  "🎨 Change Fonts / Colors",
+                  "📚 Add more BAMS chapters",
+                ].map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => setSelectedQuickTag(tag)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                      selectedQuickTag === tag
+                        ? "bg-primary text-white border-primary"
+                        : "bg-surface text-foreground/75 border-surfaceBorder hover:border-primary/40"
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  placeholder="Type what we should improve or add next (हिन्दी या English में लिखें)..."
+                  className="flex-1 bg-surface border border-surfaceBorder rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-foreground/45 focus:outline-none focus:border-primary"
+                />
+                <button
+                  type="submit"
+                  className="bg-primary hover:bg-primaryHover text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition-all inline-flex items-center justify-center gap-2 shrink-0 cursor-pointer shadow-sm"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Send Feedback</span>
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+        {/* Gentle Scroll Cue at Bottom of First Screen */}
+        <div className="text-center relative z-10 pt-6">
+          <a
+            href="#main-portal-start"
+            className="inline-flex flex-col items-center gap-1 text-xs font-bold text-foreground/60 hover:text-primary transition-colors"
+          >
+            <span>Scroll down for BAMS Hub &amp; Ayurveda Global</span>
+            <ChevronDown className="w-5 h-5 animate-bounce text-primary" />
+          </a>
+        </div>
+      </section>
+
+      {/* =================================================================
+          2. MAIN PORTAL INTRO (APPEARS AFTER SCROLLING DOWN)
+          ================================================================= */}
+      <section
+        id="main-portal-start"
+        className="bg-surface/60 border-t border-surfaceBorder py-16 px-6 relative z-20 scroll-mt-12"
+      >
+        <div className="max-w-4xl mx-auto text-center">
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background border border-surfaceBorder text-xs font-bold text-primary mb-5">
+            <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
+            <span>ATREYA MED • NCISM BAMS PROF I–III &amp; AYURVEDA GLOBAL</span>
+          </span>
+
+          <h2 className="font-sans text-3xl md:text-5xl font-extrabold text-foreground tracking-tight mb-4 leading-tight">
+            5,000 Years of Clinical Science.{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#D4AF37] to-success">
               Built for the Modern World.
             </span>
-          </h1>
+          </h2>
 
-          <p className="text-base md:text-xl text-foreground/80 max-w-3xl mx-auto mb-8 md:mb-10 font-medium leading-relaxed bg-surface/50 backdrop-blur-[2px] rounded-lg p-3">
-            Ayurveda is a rigorous medical science, not just a spa therapy. Learn authentic clinical Ayurveda from the exact platform that trains India&apos;s future BAMS doctors.
+          <p className="text-sm md:text-lg text-foreground/75 max-w-2xl mx-auto mb-8 font-medium leading-relaxed">
+            Ayurveda is a rigorous medical science, not just a spa therapy. Choose your track below:
           </p>
 
-          {/* Dual Primary Track Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto relative z-20">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/bams-scholar"
-              className="w-full sm:w-auto bg-primary text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:bg-primaryHover hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5"
+              className="w-full sm:w-auto bg-primary text-white font-bold px-7 py-3.5 rounded-xl shadow-md hover:bg-primaryHover transition-all flex items-center justify-center gap-2"
             >
               <Stethoscope className="w-5 h-5" />
               <span>BAMS Scholar Hub (India)</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
-            <a
-              href="#global-discovery-box"
-              className="w-full sm:w-auto bg-gradient-to-r from-amber-500/20 via-[#D4AF37]/25 to-emerald-500/20 hover:from-amber-500/30 hover:to-emerald-500/30 text-foreground border-2 border-[#D4AF37] font-extrabold px-8 py-4 rounded-xl shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5 group"
+            <Link
+              href="/atreya"
+              className="w-full sm:w-auto bg-background text-foreground border-2 border-[#D4AF37] font-bold px-7 py-3.5 rounded-xl shadow-sm hover:bg-[#D4AF37]/10 transition-all flex items-center justify-center gap-2"
             >
-              <Globe className="w-5 h-5 text-[#b8860b] dark:text-[#D4AF37] group-hover:rotate-12 transition-transform" />
-              <span>New to Ayurveda? Start Here (Global)</span>
-              <Sparkles className="w-4 h-4 text-[#b8860b] dark:text-[#D4AF37]" />
-            </a>
+              <Globe className="w-5 h-5 text-[#b8860b] dark:text-[#D4AF37]" />
+              <span>Ayurveda Global Portal</span>
+            </Link>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* =================================================================
-          2. DYNAMIC FAMILIARITY-BIAS PORTAL BOX (FOR YOUTH & STUDENTS ABROAD)
+          3. DYNAMIC FAMILIARITY-BIAS PORTAL BOX (CLEAN SANS TYPOGRAPHY!)
           ================================================================= */}
-      <section
-        id="global-discovery-box"
-        className="bg-background py-8 md:py-14 px-4 md:px-6 relative z-20 scroll-mt-16"
-      >
+      <section className="bg-background py-10 md:py-14 px-4 md:px-6 relative z-20">
         <div className="max-w-6xl mx-auto">
-          {/* Outer Glowing Animated Border */}
-          <div className="relative p-[2px] rounded-3xl bg-gradient-to-r from-[#D4AF37] via-emerald-500 to-[#D4AF37] shadow-2xl overflow-hidden">
-            
-            {/* Inner Dark Glassmorphic Stage with Animated Background */}
+          <div className="relative p-[2px] rounded-3xl bg-gradient-to-r from-[#D4AF37] via-emerald-500 to-[#D4AF37] shadow-xl overflow-hidden">
             <div className="relative bg-slate-950 text-white rounded-[22px] p-6 sm:p-10 md:p-12 overflow-hidden">
-              
-              {/* --- ANIMATED BACKGROUND LAYER (No External Images Needed!) --- */}
-              <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
-                {/* Rotating Sacred Circadian Rings */}
-                <div className="circadian-ring-1 absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full border border-dashed border-[#D4AF37]/40" />
-                <div className="circadian-ring-2 absolute -top-20 -right-20 w-[320px] h-[320px] rounded-full border border-emerald-400/30" />
-                
-                {/* Floating Golden & Emerald Bio-Orbs */}
-                <div className="floating-bio-orb absolute top-1/4 left-10 w-36 h-36 rounded-full bg-[#D4AF37]/20 blur-2xl" />
-                <div
-                  className="floating-bio-orb absolute bottom-10 right-1/4 w-48 h-48 rounded-full bg-emerald-500/20 blur-3xl"
-                  style={{ animationDelay: "2.5s" }}
-                />
-                <div
-                  className="floating-bio-orb absolute top-10 left-1/2 w-28 h-28 rounded-full bg-amber-500/15 blur-2xl"
-                  style={{ animationDelay: "1.2s" }}
-                />
-              </div>
-
-              {/* --- FOREGROUND CONTENT --- */}
               <div className="relative z-10">
-                {/* Top Hook Badge */}
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-extrabold uppercase tracking-widest">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-extrabold uppercase tracking-wider">
                     <Globe className="w-3.5 h-3.5" />
                     <span>Ayurveda Global • Interactive Discovery Portal</span>
                   </div>
-
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                    Built for International Students &amp; Biohackers
-                  </span>
                 </div>
 
-                {/* Curiosity-Driven Clickbait Headline */}
+                {/* FIXED TYPOGRAPHY: Replaced stretched font-heading & wavy line with clean sans-serif */}
                 <div className="max-w-3xl mb-8">
-                  <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.15] mb-3 text-white">
+                  <h2 className="font-sans text-2xl sm:text-4xl font-extrabold tracking-tight leading-snug mb-3 text-white">
                     Wait... Isn&apos;t Ayurveda Just{" "}
-                    <span className="underline decoration-[#D4AF37] decoration-wavy underline-offset-4 text-[#D4AF37]">
+                    <span className="text-[#D4AF37] border-b-2 border-[#D4AF37]/60">
                       Turmeric Lattes, Ashwagandha &amp; Spa Massages?
                     </span>
                   </h2>
-                  <p className="text-sm sm:text-lg text-slate-300 leading-relaxed font-medium">
-                    You&apos;ve already seen fragments of Ayurveda go viral on social media. Pick a trend you already know below to uncover the{" "}
+                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+                    Pick a viral wellness trend you already know below to uncover the{" "}
                     <strong className="text-white">5,000-year-old clinical neuroscience and gut biology</strong> hiding behind it:
                   </p>
                 </div>
 
-                {/* 4 Interactive "Familiarity Bias" Click-Magnet Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                   {FAMILIARITY_HOOKS.map((item, idx) => {
                     const Icon = item.icon;
@@ -292,8 +566,8 @@ export default function LandingPage() {
                           item.accent
                         } ${
                           isSelected
-                            ? "ring-2 ring-[#D4AF37] scale-[1.02] shadow-xl bg-slate-900/90"
-                            : "bg-slate-900/60 hover:bg-slate-900/90 opacity-90 hover:opacity-100"
+                            ? "ring-2 ring-[#D4AF37] bg-slate-900/95"
+                            : "bg-slate-900/60 hover:bg-slate-900/90"
                         }`}
                       >
                         <div>
@@ -304,11 +578,11 @@ export default function LandingPage() {
                             <Icon className="w-5 h-5 shrink-0" />
                           </div>
 
-                          <p className="text-xs font-bold text-slate-300 italic mb-1">
+                          <p className="text-xs font-semibold text-slate-300 italic mb-1.5">
                             &ldquo;{item.knownAs}&rdquo;
                           </p>
 
-                          <h3 className="font-heading text-lg font-extrabold text-white mb-2 leading-snug group-hover:text-[#D4AF37] transition-colors">
+                          <h3 className="font-sans text-base sm:text-lg font-extrabold text-white mb-2 leading-snug group-hover:text-[#D4AF37] transition-colors">
                             {item.hookTitle}
                           </h3>
 
@@ -319,41 +593,32 @@ export default function LandingPage() {
 
                         <Link
                           href={item.href}
-                          className="w-full py-2.5 px-3 rounded-xl bg-white/10 group-hover:bg-[#D4AF37] text-white group-hover:text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                          className="w-full py-2.5 px-3 rounded-xl bg-white/10 group-hover:bg-[#D4AF37] text-white group-hover:text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
                         >
                           <span>{item.cta}</span>
-                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
                     );
                   })}
                 </div>
 
-                {/* Bottom Master Portal Bar */}
-                <div className="p-4 sm:p-6 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-3.5 text-center sm:text-left">
-                    <div className="hidden sm:flex w-12 h-12 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 items-center justify-center shrink-0">
-                      <Eye className="w-6 h-6 text-[#D4AF37]" />
-                    </div>
-                    <div>
-                      <p className="text-sm sm:text-base font-extrabold text-white">
-                        Ready for the Complete International Experience?
-                      </p>
-                      <p className="text-xs sm:text-sm text-slate-300">
-                        Explore all 5 Clinical Pillars, the 24-Hour Body Clock, and 8 Hospital Specialties of Classical Ayurveda.
-                      </p>
-                    </div>
+                <div className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/15 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 text-center sm:text-left">
+                    <Eye className="hidden sm:block w-6 h-6 text-[#D4AF37] shrink-0" />
+                    <p className="text-xs sm:text-sm text-slate-200 font-medium">
+                      Explore all <strong>5 Clinical Pillars</strong>, the <strong>24-Hour Body Clock</strong>, and <strong>8 Specialties</strong>.
+                    </p>
                   </div>
 
                   <Link
                     href="/atreya"
-                    className="w-full md:w-auto shrink-0 px-7 py-4 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 hover:from-amber-400 hover:to-[#D4AF37] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-[#D4AF37]/25 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                    className="w-full md:w-auto shrink-0 px-6 py-3.5 rounded-xl bg-[#D4AF37] hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
                   >
                     <span>Enter Full Ayurveda Global Hub</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
-
               </div>
             </div>
           </div>
@@ -361,42 +626,40 @@ export default function LandingPage() {
       </section>
 
       {/* =================================================================
-          3. BAMS SCHOLAR & 2ND PROF VAULT (FOR INDIAN MEDICAL STUDENTS)
+          4. BAMS SCHOLAR & 2ND PROF VAULT
           ================================================================= */}
-      <div className="bg-background py-6 md:py-10 px-4 md:px-6 relative z-10 transition-colors duration-300">
+      <div className="bg-background py-6 md:py-10 px-4 md:px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-2xl p-6 md:p-12 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden group hover:border-amber-700/50 transition-colors duration-500 w-full">
-            <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 relative z-10 w-full md:w-auto text-center md:text-left">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-amber-500/10 rounded-full flex items-center justify-center shrink-0 border border-amber-500/30 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                <Leaf className="w-6 h-6 md:w-8 md:h-8 text-amber-800 dark:text-amber-500" />
+          <div className="bg-gradient-to-r from-amber-950/40 to-background border border-amber-900/30 rounded-2xl p-6 md:p-10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left">
+              <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center shrink-0 border border-amber-500/30">
+                <Leaf className="w-6 h-6 text-amber-800 dark:text-amber-500" />
               </div>
               <div>
-                <div className="inline-flex items-center justify-center md:justify-start gap-1.5 px-2.5 md:px-3 py-1 rounded-sm bg-amber-500/15 text-[9px] md:text-[10px] uppercase font-bold tracking-widest text-amber-950 dark:text-amber-400 mb-2 md:mb-3 border border-amber-600/30">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-[10px] uppercase font-bold tracking-widest text-amber-950 dark:text-amber-400 mb-2 border border-amber-600/30">
                   <Sparkles className="w-3 h-3" /> Track 1 • NCISM BAMS Curriculum (India)
-                </div>
-                <h2 className="font-heading text-2xl md:text-4xl font-bold text-foreground mb-2 md:mb-3">
+                </span>
+                <h2 className="font-sans text-2xl md:text-3xl font-extrabold text-foreground mb-2">
                   BAMS Scholar &amp; 2nd Prof Vault
                 </h2>
-                <p className="text-foreground/80 font-medium max-w-xl leading-relaxed mx-auto md:mx-0 text-sm md:text-base">
-                  Track your 1st, 2nd &amp; 3rd Prof syllabus, read handwritten exam notebooks, decode high-yield Sanskrit Shlokas, and practice university MCQs.
+                <p className="text-foreground/80 font-medium max-w-xl text-sm md:text-base">
+                  Track your 1st, 2nd &amp; 3rd Prof syllabus, read handwritten exam notebooks, and decode high-yield Sanskrit Shlokas.
                 </p>
               </div>
             </div>
 
-            <div className="shrink-0 w-full md:w-auto relative z-10 flex flex-col sm:flex-row md:flex-col gap-3">
+            <div className="shrink-0 w-full md:w-auto flex flex-col sm:flex-row md:flex-col gap-2.5">
               <Link
                 href="/bams-scholar"
-                className="w-full md:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold py-3.5 px-6 md:px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
+                className="w-full md:w-auto bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2"
               >
-                Open BAMS Scholar Hub <ArrowRight className="w-5 h-5" />
+                Open BAMS Scholar Hub <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/bams-hub"
-                className="w-full md:w-auto bg-amber-500/15 hover:bg-amber-500/25 text-amber-950 dark:text-amber-300 border border-amber-700/40 dark:border-amber-500/40 font-bold py-2.5 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-xs"
+                className="w-full md:w-auto bg-amber-500/15 hover:bg-amber-500/25 text-amber-950 dark:text-amber-300 border border-amber-700/40 font-bold py-2.5 px-5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs"
               >
-                <CheckCircle className="w-3.5 h-3.5 text-amber-800 dark:text-amber-400" /> Direct to 2nd Prof Command Center
+                <CheckCircle className="w-3.5 h-3.5" /> 2nd Prof Command Center
               </Link>
             </div>
           </div>
@@ -404,162 +667,37 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================
-          4. CORE PILLARS GRID — CLICKABLE CARDS
-          ================================================================= */}
-      <div className="bg-surface backdrop-blur-md border-t border-surfaceBorder py-20 px-6 relative z-10 transition-colors duration-300">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">
-              ATREYA Med • Clinical &amp; Academic Ecosystem
-            </p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Why Scholars &amp; Global Learners Choose ATREYA Med
-            </h2>
-            <p className="text-foreground/60 font-medium max-w-2xl mx-auto">
-              Bridging classical Sanskrit Samhitas with modern biomedical evidence, structured exam preparation, and clinical authority.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Link
-              href="/bams-scholar"
-              className="group bg-background p-8 border border-surfaceBorder hover:border-primary/50 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                  <Brain className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="font-heading text-xl font-bold text-foreground mb-3">
-                  NCISM &amp; AIAPGET Mastery
-                </h3>
-                <p className="text-foreground/70 leading-relaxed text-sm md:text-base mb-6">
-                  Complete year-wise BAMS (1st, 2nd &amp; 3rd Prof) syllabus checklists, Shloka memorization tricks, simplified Samhita breakdowns, and previous year question papers.
-                </p>
-              </div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-                Open BAMS Scholar Hub{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </Link>
-
-            <Link
-              href="/interactive-topics"
-              className="group bg-background p-8 border border-surfaceBorder hover:border-success/50 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mb-6">
-                  <Activity className="w-6 h-6 text-success" />
-                </div>
-                <h3 className="font-heading text-xl font-bold text-foreground mb-3">
-                  Evidence-Based Clinical Modules
-                </h3>
-                <p className="text-foreground/70 leading-relaxed text-sm md:text-base mb-6">
-                  Go beyond generic wellness trends. Explore interactive clinical modules that connect classical Dravyaguna and Panchakarma to modern neuro-physiology.
-                </p>
-              </div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-success">
-                Explore Clinical Modules{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </Link>
-
-            <Link
-              href="/e-books"
-              className="group bg-background p-8 border border-surfaceBorder hover:border-warning/50 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-6">
-                  <ShieldCheck className="w-6 h-6 text-amber-700 dark:text-warning" />
-                </div>
-                <h3 className="font-heading text-xl font-bold text-foreground mb-3">
-                  Unshakeable Clinical Aura
-                </h3>
-                <p className="text-foreground/70 leading-relaxed text-sm md:text-base mb-6">
-                  Master bedside case-taking, viva-voce examination confidence, and scientific communication so you command respect in any medical symposium worldwide.
-                </p>
-              </div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-warning">
-                Open 3D E-Book Library{" "}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* =================================================================
-          5. PROMO BANNER FOR E-BOOKS
-          ================================================================= */}
-      <div className="bg-background pb-8 md:pb-12 pt-8 md:pt-12 px-4 md:px-6 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-2xl shadow-xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full bg-primary/10 blur-3xl pointer-events-none"></div>
-
-            <div className="flex-1 text-center md:text-left z-10">
-              <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 rounded-full bg-white/10 text-[10px] md:text-xs font-bold text-white mb-3 md:mb-4 border border-white/20 uppercase tracking-widest">
-                <BookOpen className="w-3 h-3 text-warning" /> ATREYA Med Publication
-              </div>
-              <h2 className="font-heading text-2xl md:text-4xl font-bold text-white mb-2 md:mb-3">
-                Command Authority in Every Viva &amp; Symposium
-              </h2>
-              <p className="text-gray-300 text-sm md:text-lg mb-0 font-medium max-w-xl leading-relaxed">
-                Read our flagship E-Books—<span className="text-white font-bold">The Unspoken Aura</span> &amp;{" "}
-                <span className="text-white font-bold">The Invisible Art of Speaking</span>—in our interactive 3D reader. Completely free for a limited time.
-              </p>
-            </div>
-
-            <div className="shrink-0 z-10 w-full md:w-auto">
-              <Link
-                href="/e-books"
-                className="w-full md:w-auto bg-primary text-white font-bold px-6 md:px-8 py-3.5 md:py-4 rounded-xl shadow-lg hover:bg-primaryHover hover:scale-105 transition-all flex items-center justify-center gap-2"
-              >
-                Open 3D Book Vault <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* =================================================================
-          6. REELS SECTION
+          5. REELS & COMMUNITY SUPPORT
           ================================================================= */}
       <LandingReels />
 
-      {/* =================================================================
-          7. COMMUNITY SUPPORT SECTION
-          ================================================================= */}
-      <div className="bg-background border-t border-surfaceBorder py-12 md:py-20 px-4 md:px-6 relative z-10 transition-colors duration-300">
+      <div className="bg-background border-t border-surfaceBorder py-12 px-4 md:px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-surface backdrop-blur-md border border-surfaceBorder rounded-2xl shadow-sm p-6 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-12 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-
-            <div className="flex-1 text-center md:text-left z-10">
-              <div className="inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-primary/10 text-xs md:text-sm font-bold text-primary mb-4 md:mb-6 border border-primary/20">
-                <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current text-primary" /> Support ATREYA Med
+          <div className="bg-surface border border-surfaceBorder rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-xs font-bold text-primary mb-3 border border-primary/20">
+                <Heart className="w-3.5 h-3.5 fill-current text-primary" /> Support ATREYA Med
               </div>
-              <h2 className="font-heading text-2xl md:text-4xl font-bold text-foreground mb-3 md:mb-4">
+              <h2 className="font-sans text-2xl md:text-3xl font-extrabold text-foreground mb-2">
                 Help Us Take Authentic Ayurveda to the World
               </h2>
-              <p className="text-foreground/70 text-sm md:text-lg mb-5 md:mb-6 leading-relaxed">
-                We are on a mission to digitize classical Samhitas, provide free high-yield exam tools for BAMS scholars across India, and establish Ayurveda globally as a respected clinical science.
-              </p>
-              <p className="text-foreground font-bold text-xs md:text-sm bg-foreground/5 inline-block px-3 md:px-4 py-2 rounded-lg border border-surfaceBorder">
-                Scan the UPI QR code to support open-access Ayurvedic education.
+              <p className="text-foreground/70 text-sm md:text-base mb-4">
+                Scan the UPI QR code to support open-access Ayurvedic education and clinical tools.
               </p>
             </div>
 
-            <div className="shrink-0 flex flex-col items-center z-10">
-              <div className="bg-white p-3 md:p-4 rounded-xl shadow-md border border-gray-200 mb-3 md:mb-4 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+            <div className="shrink-0 flex flex-col items-center">
+              <div className="bg-white p-3 rounded-xl shadow-md border border-gray-200 mb-2">
                 <Image
                   src="/QR_1780487966.png"
                   alt="Support ATREYA Med via UPI"
-                  width={160}
-                  height={160}
-                  className="object-contain w-40 h-40 md:w-48 md:h-48"
+                  width={140}
+                  height={140}
+                  className="object-contain w-36 h-36"
                 />
               </div>
-              <p className="text-[10px] md:text-xs font-bold text-foreground/60 uppercase tracking-widest flex items-center gap-1.5 md:gap-2">
-                <ShieldCheck className="w-3.5 h-3.5 md:w-4 md:h-4 text-success" /> Secure UPI Contribution
+              <p className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-success" /> Secure UPI Contribution
               </p>
             </div>
           </div>
