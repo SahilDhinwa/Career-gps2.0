@@ -46,7 +46,7 @@ export default function GlobalDinacharyaMasterclass() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <Link
-              href="/"
+              href="/atreya"
               className="inline-flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-foreground/70 hover:text-primary transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back to ATREYA Portal
