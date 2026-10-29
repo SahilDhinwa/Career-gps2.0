@@ -327,7 +327,7 @@ export default function ExperimentalDirectoryPage() {
       footerClass: "bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_0_20px_rgba(79,70,229,0.5)]",
     },
 
-    // 16. STORY SCROLLING (ACTIVE PAGE)
+    // 18. STORY SCROLLING (ACTIVE PAGE)
     
 {
   id: "scroll-storytelling",
@@ -343,6 +343,23 @@ export default function ExperimentalDirectoryPage() {
   titleClass: "font-black text-2xl text-white",
   descClass: "text-white/70 text-sm",
   footerClass: "bg-[#D4AF37] text-slate-950 font-black text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl",
+},
+
+    // 19. SCROLLING LAB (ACTIVE PAGE)
+{
+  id: "ayurvedic-scroll-lab",
+  number: "19",
+  name: "Ayurvedic Scroll Laboratory",
+  desc: "Immersive botanical storytelling with scroll-reactive medicinal plants, animated extraction, interactive specimens, and cinematic knowledge reveals.",
+  icon: Leaf,
+  path: "/experimental/ayurvedic-scroll-lab",
+  status: "Active",
+  cardClass: "bg-gradient-to-br from-[#08140d] via-[#183a25] to-[#342414] text-white rounded-3xl p-6 border border-emerald-500/40 shadow-xl hover:border-[#D4AF37] hover:-translate-y-1 transition-all",
+  iconWrapClass: "w-12 h-12 rounded-xl bg-emerald-400/15 border border-emerald-400/40 text-emerald-300 flex items-center justify-center",
+  badgeClass: "bg-[#D4AF37] text-black text-[10px] font-black uppercase px-3 py-1 rounded-full",
+  titleClass: "font-black text-2xl text-white",
+  descClass: "text-white/75 text-sm",
+  footerClass: "bg-[#D4AF37] text-black font-black text-xs uppercase px-4 py-2.5 rounded-xl",
 },
     
   ];
