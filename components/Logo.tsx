@@ -24,10 +24,10 @@ export default function Logo({
         focus-visible:ring-[#D4AF37]
       "
     >
-      {/* Existing emblem */}
+      {/* ATREYA Infinity Emblem */}
       <div
         className={`
-          shrink-0
+          relative shrink-0
           transition-transform duration-300
           group-hover:scale-105
           ${className}
@@ -36,24 +36,29 @@ export default function Logo({
         <AtreyaIcon className="h-full w-full" />
       </div>
 
-      {/* Brand lettering and tagline */}
-      <div className="flex min-w-0 flex-col items-center">
+      {/* Wordmark and tagline */}
+      <div className="flex min-w-0 flex-col items-center justify-center">
+        {/* Custom SVG lettering */}
         <AtreyaWordmark
           className="
             block h-auto
             w-[150px] sm:w-[205px]
-            text-foreground
-            transition-colors duration-300
-            group-hover:text-[#D4AF37]
+            max-w-full
+            overflow-visible
+            transition-all duration-300
+            group-hover:brightness-110
           "
         />
 
         {showTagline && (
-          <div className="mt-1 flex w-full flex-col items-center">
+          <div className="mt-0.5 sm:mt-1 flex w-full flex-col items-center">
+            {/* Gold lines and tagline */}
             <div className="flex w-full items-center justify-center gap-1.5 sm:gap-2">
               <span
+                aria-hidden="true"
                 className="
                   h-px w-3 sm:w-5
+                  shrink-0
                   bg-gradient-to-r
                   from-transparent to-[#D4AF37]
                 "
@@ -64,6 +69,7 @@ export default function Logo({
                   whitespace-nowrap
                   text-[7px] sm:text-[8.5px]
                   font-semibold
+                  leading-none
                   tracking-[0.16em] sm:tracking-[0.22em]
                   text-[#C49A36]
                   dark:text-[#D4AF37]
@@ -73,20 +79,25 @@ export default function Logo({
               </span>
 
               <span
+                aria-hidden="true"
                 className="
                   h-px w-3 sm:w-5
+                  shrink-0
                   bg-gradient-to-l
                   from-transparent to-[#D4AF37]
                 "
               />
             </div>
 
+            {/* Central gold diamond */}
             <span
               aria-hidden="true"
               className="
-                mt-1 h-1.5 w-1.5
+                mt-1.5
+                h-1.5 w-1.5
                 rotate-45
                 bg-[#D4AF37]
+                opacity-90
               "
             />
           </div>
