@@ -29,13 +29,12 @@ export default function AtreyaWordmark({
       <defs>
         {/* Metallic gold lettering */}
         <linearGradient
-          id={gold}
-          x1="0"
-          y1="0"
-          x2="0.8"
-          y2="1"
-          objectBoundingBox="true"
-        >
+  id={gold}
+  x1="0%"
+  y1="0%"
+  x2="80%"
+  y2="100%"
+>
           <stop offset="0%" stopColor="#FFF9DD" />
           <stop offset="18%" stopColor="#FFF0B7" />
           <stop offset="38%" stopColor="#E4B75C" />
