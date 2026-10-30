@@ -1,58 +1,646 @@
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1200 1200"
+     width="1200"
+     height="1200"
+     fill="none"
+     role="img"
+     aria-labelledby="atreya-title atreya-desc">
+  <title id="atreya-title">ATREYA Infinity Emblem</title>
+  <desc id="atreya-desc">Interwoven golden and emerald infinity ribbons surrounded by botanical leaves, a golden halo, and luminous droplets.</desc>
+
   <defs>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFF0B8"/>
-      <stop offset="35%" stop-color="#EFC66D"/>
-      <stop offset="70%" stop-color="#D4A135"/>
-      <stop offset="100%" stop-color="#B57A20"/>
+    <!-- Metallic gold -->
+    <linearGradient id="inf-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8E4A0C"/>
+      <stop offset=".12" stop-color="#D9972D"/>
+      <stop offset=".24" stop-color="#FFF5B5"/>
+      <stop offset=".37" stop-color="#F8D875"/>
+      <stop offset=".53" stop-color="#BC7620"/>
+      <stop offset=".69" stop-color="#F9D270"/>
+      <stop offset=".83" stop-color="#FFF0A3"/>
+      <stop offset="1" stop-color="#96500E"/>
     </linearGradient>
-    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#317D3E"/>
-      <stop offset="45%" stop-color="#07522F"/>
-      <stop offset="100%" stop-color="#00391F"/>
+
+    <linearGradient id="inf-gold-face"
+                    x1="0" y1="0" x2=".25" y2="1">
+      <stop offset="0" stop-color="#FFF6BC"/>
+      <stop offset=".18" stop-color="#FFE18C"/>
+      <stop offset=".46" stop-color="#D18C2B"/>
+      <stop offset=".67" stop-color="#F4C362"/>
+      <stop offset=".84" stop-color="#A55D14"/>
+      <stop offset="1" stop-color="#F8D77B"/>
     </linearGradient>
-    <linearGradient id="lightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#438C45"/>
-      <stop offset="100%" stop-color="#00452B"/>
+
+    <linearGradient id="inf-gold-edge"
+                    x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8F4B13"/>
+      <stop offset=".25" stop-color="#E6AB48"/>
+      <stop offset=".5" stop-color="#FFF8CE"/>
+      <stop offset=".78" stop-color="#E9AD45"/>
+      <stop offset="1" stop-color="#7D430F"/>
     </linearGradient>
+
+    <!-- Emerald ribbon -->
+    <linearGradient id="inf-green"
+                    x1=".1" y1="0" x2=".85" y2="1">
+      <stop offset="0" stop-color="#B9D86D"/>
+      <stop offset=".15" stop-color="#61B15B"/>
+      <stop offset=".34" stop-color="#0E7546"/>
+      <stop offset=".54" stop-color="#00472F"/>
+      <stop offset=".72" stop-color="#00351F"/>
+      <stop offset=".87" stop-color="#167B49"/>
+      <stop offset="1" stop-color="#8FBD60"/>
+    </linearGradient>
+
+    <linearGradient id="inf-green-face"
+                    x1="0" y1="0" x2=".65" y2="1">
+      <stop offset="0" stop-color="#D4E58B"/>
+      <stop offset=".18" stop-color="#84BC65"/>
+      <stop offset=".36" stop-color="#2B9955"/>
+      <stop offset=".58" stop-color="#075638"/>
+      <stop offset=".82" stop-color="#003C29"/>
+      <stop offset="1" stop-color="#2B9854"/>
+    </linearGradient>
+
+    <linearGradient id="inf-green-dark"
+                    x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#185C37"/>
+      <stop offset=".5" stop-color="#00301F"/>
+      <stop offset="1" stop-color="#0D6A43"/>
+    </linearGradient>
+
+    <!-- Botanical leaves -->
+    <linearGradient id="inf-leaf"
+                    x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E4E69A"/>
+      <stop offset=".17" stop-color="#98C668"/>
+      <stop offset=".42" stop-color="#348C4E"/>
+      <stop offset=".7" stop-color="#075B39"/>
+      <stop offset="1" stop-color="#002D21"/>
+    </linearGradient>
+
+    <linearGradient id="inf-leaf-right"
+                    x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E5E99C"/>
+      <stop offset=".3" stop-color="#75B45E"/>
+      <stop offset=".65" stop-color="#116D40"/>
+      <stop offset="1" stop-color="#003621"/>
+    </linearGradient>
+
+    <linearGradient id="inf-leaf-top"
+                    x1=".05" y1=".05" x2=".95" y2="1">
+      <stop offset="0" stop-color="#FFF4B2"/>
+      <stop offset=".18" stop-color="#B9D77C"/>
+      <stop offset=".45" stop-color="#3C9A51"/>
+      <stop offset=".73" stop-color="#08613C"/>
+      <stop offset="1" stop-color="#002C20"/>
+    </linearGradient>
+
+    <!-- Halo -->
+    <linearGradient id="inf-halo"
+                    x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A9621B"/>
+      <stop offset=".18" stop-color="#FFE9A0"/>
+      <stop offset=".38" stop-color="#E8A94C"/>
+      <stop offset=".52" stop-color="#FFF7CB"/>
+      <stop offset=".75" stop-color="#CB8229"/>
+      <stop offset="1" stop-color="#8C4912"/>
+    </linearGradient>
+
+    <!-- Golden droplets -->
+    <linearGradient id="inf-droplet"
+                    x1=".12" y1=".06" x2=".85" y2=".92">
+      <stop offset="0" stop-color="#FFF9D6"/>
+      <stop offset=".2" stop-color="#FFE99B"/>
+      <stop offset=".44" stop-color="#F0BE54"/>
+      <stop offset=".7" stop-color="#A65E14"/>
+      <stop offset=".88" stop-color="#D99128"/>
+      <stop offset="1" stop-color="#FFF0A3"/>
+    </linearGradient>
+
+    <radialGradient id="inf-orb"
+                    cx=".3" cy=".22" r=".85">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset=".16" stop-color="#FFF8CB"/>
+      <stop offset=".37" stop-color="#FFD875"/>
+      <stop offset=".66" stop-color="#D38B25"/>
+      <stop offset=".85" stop-color="#9B510D"/>
+      <stop offset="1" stop-color="#F6C65D"/>
+    </radialGradient>
+
+    <linearGradient id="inf-vein"
+                    x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF7BE"/>
+      <stop offset=".5" stop-color="#D8B961"/>
+      <stop offset="1" stop-color="#5B9F57"/>
+    </linearGradient>
+
+    <filter id="inf-soft-glow"
+            x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+
+    <filter id="inf-small-glow"
+            x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+
+    <filter id="inf-drop-shadow"
+            x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"
+                      result="blur"/>
+      <feOffset dy="7" result="offset"/>
+      <feComponentTransfer in="offset" result="shadow">
+        <feFuncA type="linear" slope=".35"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
-  <path d="M67 183 C66 100 112 58 173 36"
-    fill="none" stroke="url(#gold)" stroke-width="9"/>
-  <path d="M227 36 C288 58 334 100 333 183"
-    fill="none" stroke="url(#gold)" stroke-width="9"/>
+  <!-- Circular golden halo -->
+  <g>
+    <path
+      d="M176 492
+         C232 346 365 250 500 226"
+      stroke="#EBAF4B"
+      stroke-width="16"
+      stroke-linecap="round"
+      opacity=".35"
+      filter="url(#inf-soft-glow)"
+    />
+    <path
+      d="M700 226
+         C837 249 970 345 1024 492"
+      stroke="#EBAF4B"
+      stroke-width="16"
+      stroke-linecap="round"
+      opacity=".35"
+      filter="url(#inf-soft-glow)"
+    />
 
-  <path d="M200 0 C193 18 182 29 182 45 C182 60 190 71 200 71 C210 71 218 60 218 45 C218 29 207 18 200 0Z"
-    fill="url(#gold)"/>
+    <path
+      d="M176 492
+         C232 346 365 250 500 226"
+      stroke="url(#inf-halo)"
+      stroke-width="7"
+      stroke-linecap="round"
+    />
+    <path
+      d="M700 226
+         C837 249 970 345 1024 492"
+      stroke="url(#inf-halo)"
+      stroke-width="7"
+      stroke-linecap="round"
+    />
 
-  <path d="M17 261 C60 249 99 262 145 328 C88 339 43 312 17 261Z"
-    fill="url(#green)"/>
-  <path d="M78 184 C135 193 166 253 174 329 C121 314 87 261 78 184Z"
-    fill="url(#lightGreen)"/>
-  <path d="M383 261 C340 249 301 262 255 328 C312 339 357 312 383 261Z"
-    fill="url(#green)"/>
-  <path d="M322 184 C265 193 234 253 226 329 C279 314 313 261 322 184Z"
-    fill="url(#lightGreen)"/>
+    <path
+      d="M177 868
+         C260 1010 424 1068 566 1075"
+      stroke="url(#inf-halo)"
+      stroke-width="5"
+      opacity=".85"
+    />
+    <path
+      d="M634 1075
+         C786 1067 947 1004 1024 868"
+      stroke="url(#inf-halo)"
+      stroke-width="5"
+      opacity=".85"
+    />
 
-  <path d="M110 227 C136 260 153 291 171 321"
-    fill="none" stroke="#C0D6A0" stroke-width="2" opacity=".75"/>
-  <path d="M290 227 C264 260 247 291 229 321"
-    fill="none" stroke="#C0D6A0" stroke-width="2" opacity=".75"/>
-
-  <path d="M200 79 C166 119 160 144 200 185 C240 226 239 257 200 300 C181 322 184 343 200 375"
-    fill="none" stroke="url(#gold)" stroke-width="11" stroke-linecap="round"/>
-  <path d="M200 79 C234 119 240 144 200 185 C160 226 161 257 200 300 C219 322 216 343 200 375"
-    fill="none" stroke="url(#green)" stroke-width="11" stroke-linecap="round"/>
-
-  <g fill="none" stroke="#07522F" stroke-width="5" stroke-linecap="round">
-    <path d="M177 132 H223"/>
-    <path d="M180 148 H220"/>
-    <path d="M182 219 H218"/>
-    <path d="M176 236 H224"/>
-    <path d="M180 253 H220"/>
+    <path
+      d="M235 937 Q290 988 359 1018"
+      stroke="#FFF0A0"
+      stroke-width="5"
+      opacity=".55"
+      filter="url(#inf-small-glow)"
+    />
+    <path
+      d="M840 1018 Q910 988 965 937"
+      stroke="#FFF0A0"
+      stroke-width="5"
+      opacity=".55"
+      filter="url(#inf-small-glow)"
+    />
   </g>
 
-  <path d="M200 364 L205 381 L200 398 L195 381Z"
-    fill="url(#gold)"/>
+  <!-- Botanical central stem -->
+  <path
+    d="M600 700 C600 571 600 457 600 319"
+    stroke="#9B7428"
+    stroke-width="8"
+    stroke-linecap="round"
+  />
+  <path
+    d="M600 700 C600 571 600 457 600 319"
+    stroke="#F3D777"
+    stroke-width="2"
+    opacity=".7"
+  />
+
+  <!-- Upper central leaf -->
+  <g filter="url(#inf-drop-shadow)">
+    <path
+      d="M600 80
+         C577 161 496 211 496 318
+         C496 385 546 423 600 493
+         C654 423 704 385 704 318
+         C704 211 623 161 600 80Z"
+      fill="url(#inf-leaf-top)"
+      stroke="#E8C76E"
+      stroke-width="2.5"
+    />
+
+    <path
+      d="M600 80
+         C607 174 645 224 645 316
+         C645 377 622 432 600 493
+         C657 425 687 377 688 315
+         C689 224 627 165 600 80Z"
+      fill="url(#inf-green-dark)"
+      opacity=".58"
+    />
+
+    <path
+      d="M600 85
+         C588 178 557 227 557 316
+         C557 383 581 441 600 493"
+      stroke="#FFF3B2"
+      stroke-width="2.7"
+      opacity=".85"
+    />
+
+    <path
+      d="M600 85
+         C614 183 648 242 647 317
+         C647 385 622 439 600 493"
+      stroke="#D5B85C"
+      stroke-width="2"
+      opacity=".75"
+    />
+
+    <!-- Golden inner flame -->
+    <path
+      d="M600 172
+         C595 234 569 279 568 335
+         C568 385 589 437 600 493
+         C611 437 632 385 632 335
+         C631 279 605 234 600 172Z"
+      fill="url(#inf-droplet)"
+      stroke="#FFF0B2"
+      stroke-width="2"
+    />
+
+    <path
+      d="M600 187
+         C597 280 584 331 584 374
+         C584 416 595 452 600 480"
+      stroke="#FFF9D1"
+      stroke-width="2.5"
+      opacity=".8"
+    />
+  </g>
+
+  <!-- Upper side leaves -->
+  <g>
+    <path
+      d="M584 572
+         C545 481 475 431 414 381
+         C436 461 465 527 584 572Z"
+      fill="url(#inf-leaf)"
+      stroke="#D7D98C"
+      stroke-width="2.5"
+    />
+    <path
+      d="M584 572
+         C543 507 485 444 414 381"
+      stroke="url(#inf-vein)"
+      stroke-width="3"
+    />
+    <path
+      d="M563 547
+         C526 519 486 487 457 449"
+      stroke="#E6E3A0"
+      stroke-width="1.2"
+      opacity=".5"
+    />
+
+    <path
+      d="M616 572
+         C655 481 725 431 786 381
+         C764 461 735 527 616 572Z"
+      fill="url(#inf-leaf-right)"
+      stroke="#D7D98C"
+      stroke-width="2.5"
+    />
+    <path
+      d="M616 572
+         C657 507 715 444 786 381"
+      stroke="url(#inf-vein)"
+      stroke-width="3"
+    />
+    <path
+      d="M637 547
+         C674 519 714 487 743 449"
+      stroke="#E6E3A0"
+      stroke-width="1.2"
+      opacity=".5"
+    />
+  </g>
+
+  <!-- Lower botanical leaves -->
+  <g>
+    <path
+      d="M581 836
+         C503 852 451 931 416 1026
+         C494 994 552 929 581 836Z"
+      fill="url(#inf-leaf)"
+      stroke="#E1C974"
+      stroke-width="2"
+    />
+    <path
+      d="M416 1026 C469 961 518 902 581 836"
+      stroke="url(#inf-vein)"
+      stroke-width="3"
+    />
+
+    <path
+      d="M619 836
+         C697 852 749 931 784 1026
+         C706 994 648 929 619 836Z"
+      fill="url(#inf-leaf-right)"
+      stroke="#E1C974"
+      stroke-width="2"
+    />
+    <path
+      d="M784 1026 C731 961 682 902 619 836"
+      stroke="url(#inf-vein)"
+      stroke-width="3"
+    />
+  </g>
+
+  <!-- Golden lower droplet -->
+  <path
+    d="M600 838
+       C591 896 545 937 545 974
+       C545 1012 568 1036 600 1036
+       C632 1036 655 1012 655 974
+       C655 937 609 896 600 838Z"
+    fill="#F1B94D"
+    opacity=".5"
+    filter="url(#inf-soft-glow)"
+  />
+  <path
+    d="M600 838
+       C591 896 545 937 545 974
+       C545 1012 568 1036 600 1036
+       C632 1036 655 1012 655 974
+       C655 937 609 896 600 838Z"
+    fill="url(#inf-droplet)"
+    stroke="#FDE6A0"
+    stroke-width="2.5"
+  />
+  <path
+    d="M600 855
+       C594 912 565 941 565 977
+       C565 995 573 1008 585 1016"
+    stroke="#FFF5C5"
+    stroke-width="4"
+    stroke-linecap="round"
+    opacity=".7"
+  />
+
+  <!-- Infinity ribbon: deep rear contour -->
+  <path
+    d="M600 670
+       C489 575 426 454 294 462
+       C180 469 113 556 112 677
+       C111 812 186 907 310 910
+       C437 913 517 814 600 741
+       C684 667 772 481 908 479
+       C1032 477 1101 573 1095 687
+       C1089 818 1004 909 887 910
+       C772 911 681 807 600 741"
+    stroke="#000E0A"
+    stroke-width="100"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity=".55"
+    filter="url(#inf-drop-shadow)"
+  />
+
+  <!-- Green ribbon: continuous back strand -->
+  <path
+    d="M600 670
+       C685 601 779 471 901 472
+       C1024 473 1102 562 1097 679
+       C1092 809 1005 902 889 903
+       C771 904 683 797 600 730
+       C513 800 431 904 311 904
+       C193 904 112 817 112 688
+       C112 565 191 475 301 475"
+    stroke="#00331F"
+    stroke-width="91"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <path
+    d="M600 670
+       C685 601 779 471 901 472
+       C1024 473 1102 562 1097 679
+       C1092 809 1005 902 889 903
+       C771 904 683 797 600 730
+       C513 800 431 904 311 904
+       C193 904 112 817 112 688
+       C112 565 191 475 301 475"
+    stroke="url(#inf-green-face)"
+    stroke-width="83"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Green ribbon upper reflective contour -->
+  <path
+    d="M601 627
+       C701 542 795 433 905 434
+       C1045 435 1137 543 1135 674
+       C1133 797 1052 890 943 925"
+    stroke="#D1E59A"
+    stroke-width="4"
+    stroke-linecap="round"
+    opacity=".9"
+  />
+
+  <!-- Green lower sweep highlight -->
+  <path
+    d="M154 790
+       C183 869 240 879 311 879
+       C432 879 523 762 600 707"
+    stroke="#C3D77C"
+    stroke-width="3"
+    opacity=".7"
+    stroke-linecap="round"
+  />
+
+  <!-- Gold infinity ribbon: foreground crossing -->
+  <path
+    d="M600 674
+       C510 595 422 468 300 470
+       C177 472 104 571 111 692
+       C117 812 195 897 310 899"
+    stroke="#8E4B0E"
+    stroke-width="92"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <path
+    d="M600 674
+       C510 595 422 468 300 470
+       C177 472 104 571 111 692
+       C117 812 195 897 310 899"
+    stroke="url(#inf-gold-face)"
+    stroke-width="84"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Gold ribbon crossing into lower right -->
+  <path
+    d="M600 674
+       C688 753 777 902 896 902
+       C1024 902 1100 807 1097 687"
+    stroke="#93500F"
+    stroke-width="93"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <path
+    d="M600 674
+       C688 753 777 902 896 902
+       C1024 902 1100 807 1097 687"
+    stroke="url(#inf-gold-face)"
+    stroke-width="85"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Fine metallic ribbon edges -->
+  <path
+    d="M114 660
+       C136 549 202 474 300 470
+       C420 468 513 599 600 674
+       C689 753 780 902 896 902
+       C1008 902 1081 825 1096 722"
+    stroke="#FFF6C5"
+    stroke-width="4.5"
+    stroke-linecap="round"
+    opacity=".95"
+  />
+
+  <path
+    d="M153 741
+       C164 814 221 855 304 855"
+    stroke="#FFF0A5"
+    stroke-width="3"
+    opacity=".65"
+  />
+
+  <path
+    d="M672 737
+       C752 814 817 860 895 860
+       C996 860 1053 797 1057 706"
+    stroke="#FFE99C"
+    stroke-width="3"
+    opacity=".75"
+  />
+
+  <!-- Reflective metallic streaks -->
+  <path
+    d="M133 601
+       C177 512 239 482 306 489
+       C392 499 470 591 544 646"
+    stroke="#FFFFFF"
+    stroke-width="8"
+    stroke-linecap="round"
+    opacity=".55"
+    filter="url(#inf-small-glow)"
+  />
+
+  <path
+    d="M742 800
+       C800 859 851 879 911 876"
+    stroke="#FFF5C5"
+    stroke-width="7"
+    stroke-linecap="round"
+    opacity=".45"
+    filter="url(#inf-small-glow)"
+  />
+
+  <!-- Small leaf within left infinity loop -->
+  <path
+    d="M352 705
+       C401 665 448 657 503 692
+       C448 731 402 740 352 705Z"
+    fill="url(#inf-leaf)"
+    stroke="#F3DE87"
+    stroke-width="2.5"
+  />
+  <path
+    d="M352 705 C410 697 452 693 503 692"
+    stroke="#F7E8A4"
+    stroke-width="2.5"
+    stroke-linecap="round"
+  />
+
+  <!-- Orb connector -->
+  <path
+    d="M659 705 H769"
+    stroke="#D99D35"
+    stroke-width="4"
+  />
+  <path
+    d="M659 702 H769"
+    stroke="#FFF2A5"
+    stroke-width="1.5"
+    opacity=".8"
+  />
+
+  <!-- Luminous golden orb -->
+  <circle cx="783" cy="705" r="43"
+          fill="#F6B746"
+          opacity=".35"
+          filter="url(#inf-soft-glow)"/>
+
+  <circle cx="783" cy="705" r="38"
+          fill="url(#inf-orb)"
+          stroke="#FFE8A1"
+          stroke-width="2"/>
+
+  <ellipse cx="769" cy="690" rx="13" ry="8"
+           fill="#FFFCE0"
+           opacity=".75"
+           transform="rotate(-35 769 690)"
+           filter="url(#inf-small-glow)"/>
+
+  <path
+    d="M758 721 C773 742 798 739 808 720"
+    stroke="#FFE9A2"
+    stroke-width="3"
+    opacity=".7"
+    stroke-linecap="round"/>
+
+  <!-- Halo sparkle accents -->
+  <g fill="#FFF4BB">
+    <circle cx="272" cy="332" r="3"/>
+    <circle cx="918" cy="335" r="2.5"/>
+    <circle cx="341" cy="1006" r="2"/>
+    <circle cx="866" cy="1008" r="2"/>
+  </g>
 </svg>
