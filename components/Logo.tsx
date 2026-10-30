@@ -1,71 +1,60 @@
+
 import Link from "next/link";
+import AtreyaMark from "./AtreyaMark";
 
-export default function Logo({ className = "w-10 h-10" }: { className?: string }) {
+interface LogoProps {
+  className?: string;
+}
+
+export default function Logo({
+  className = "w-12 h-12",
+}: LogoProps) {
   return (
-    <Link href="/" className="flex items-center gap-3.5 group cursor-pointer outline-none">
-      
-      {/* The Clinical Monogram Emblem */}
-      <div className={`relative flex items-center justify-center bg-gradient-to-br from-[#06140E] via-[#091C13] to-[#020705] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.4)] border border-[#D4AF37]/40 overflow-hidden shrink-0 transition-all duration-300 group-hover:scale-105 group-hover:border-[#D4AF37] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.25)] ${className}`}>
-        
-        {/* Inner ambient glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15)_0%,transparent_70%)] pointer-events-none" />
-
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-full h-full p-1.5 drop-shadow-md relative z-10">
-          
-          {/* Outer Octagon Frame (Precision Clinical Engineering) */}
-          <polygon 
-            points="32,8 68,8 92,32 92,68 68,92 32,92 8,68 8,32" 
-            fill="none" 
-            stroke="#D4AF37" 
-            strokeWidth="3.5" 
-            strokeLinejoin="round"
-            opacity="0.9"
-          />
-
-          {/* Inner Geometric Accent Ring */}
-          <circle cx="50" cy="50" r="32" fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6" />
-
-          {/* The Staff of Asclepius & Intertwined Herbal Leaf Core */}
-          {/* Central Rod / Staff */}
-          <line x1="50" y1="22" x2="50" y2="78" stroke="#F3F4F6" strokeWidth="4" strokeLinecap="round" />
-          
-          {/* Staff Top Finial (Clinical Orb) */}
-          <circle cx="50" cy="20" r="4.5" fill="#D4AF37" />
-
-          {/* Asclepius Serpent / Herbal Leaf Flourish (Left & Right Curves) */}
-          <path 
-            d="M 50 34 C 38 34, 32 46, 42 56 C 50 64, 50 72, 50 78" 
-            fill="none" 
-            stroke="#D4AF37" 
-            strokeWidth="3.5" 
-            strokeLinecap="round" 
-          />
-          <path 
-            d="M 50 46 C 62 46, 68 58, 58 66 C 52 71, 50 75, 50 78" 
-            fill="none" 
-            stroke="#10b981" 
-            strokeWidth="3" 
-            strokeLinecap="round" 
-          />
-
-          {/* Central Bindu / Core Energy Dot */}
-          <circle cx="50" cy="50" r="2.5" fill="#F3F4F6" />
-        </svg>
+    <Link
+      href="/"
+      aria-label="ATREYA Medicine and Science — Home"
+      className="group inline-flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] rounded-lg"
+    >
+      <div
+        className={`relative shrink-0 transition-transform duration-300 group-hover:scale-105 ${className}`}
+      >
+        <AtreyaMark
+          className="w-full h-full"
+          idPrefix="atreya-navbar"
+        />
       </div>
-      
-      {/* Brand Typography & Hierarchy */}
-      <div className="flex flex-col justify-center">
-        <div className="flex items-center gap-1.5">
-          <span className="font-heading font-black text-xl md:text-2xl leading-none tracking-tight text-foreground transition-colors group-hover:text-[#D4AF37]">
-            ATREYA
+
+      <div className="flex flex-col justify-center min-w-0">
+        <div className="flex items-baseline leading-none">
+          <span
+            className="font-bold text-[23px] sm:text-[28px] tracking-[-0.055em] text-[#D4AF37]"
+            style={{
+              fontFamily:
+                "'Noto Serif Devanagari', 'Nirmala UI', serif",
+            }}
+          >
+            आ
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+
+          <span
+            className="text-[23px] sm:text-[28px] font-semibold tracking-[0.025em] text-foreground group-hover:text-[#D4AF37] transition-colors"
+            style={{
+              fontFamily:
+                "'Cinzel', 'Times New Roman', serif",
+            }}
+          >
+            TREYA
+          </span>
         </div>
-        <span className="text-[10px] md:text-[11px] font-mono font-extrabold tracking-[0.35em] text-[#D4AF37] uppercase leading-none mt-1.5 opacity-95">
-          MEDICINE &amp; SCIENCE
-        </span>
+
+        <div className="flex items-center gap-1.5 mt-1.5">
+          <span className="h-px w-3 bg-[#D4AF37]/70" />
+          <span className="text-[8px] sm:text-[9px] font-semibold tracking-[0.18em] text-[#D4AF37] whitespace-nowrap">
+            MEDICINE &amp; SCIENCE
+          </span>
+          <span className="h-px w-3 bg-[#D4AF37]/70" />
+        </div>
       </div>
-      
     </Link>
   );
 }
