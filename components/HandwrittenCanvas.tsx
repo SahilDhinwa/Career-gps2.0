@@ -102,7 +102,6 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
 
   if (!mounted) return null;
 
-  // Apply specific CSS variables depending on whether we are in standard or Batman mode
   const cssVariables = isBatman ? {
     backgroundColor: "#050101",
     backgroundImage: theme.bgImage,
@@ -123,20 +122,21 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
 
   return (
     <div 
-      className="min-h-screen p-3 sm:p-6 md:p-12 lg:p-16 flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden"
+      // FLUID PADDING: Adapts perfectly from mobile screens up to ultrawide monitors
+      className="min-h-screen px-[clamp(0.5rem,3vw,3rem)] py-[clamp(1rem,4vw,4rem)] flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden"
       style={cssVariables as React.CSSProperties}
     >
       {/* Background Image (Standard Dark Mode Only) */}
       {isDark && !isBatman && theme.bgImageDark && (
-        <div className="absolute inset-0 z-0" 
+        <div className="absolute inset-0 z-0 pointer-events-none" 
              style={{ backgroundImage: theme.bgImageDark, backgroundSize: "cover", backgroundAttachment: "fixed", backgroundPosition: "center", opacity: 0.95 }}
         />
       )}
 
-      {/* THEME SELECTOR - Now handles both Standard and Batman Arrays */}
-      <div className="w-full max-w-md flex flex-col items-center mt-2 mb-10 z-20">
+      {/* THEME SELECTOR */}
+      <div className="w-full max-w-md flex flex-col items-center mt-2 mb-8 md:mb-12 z-20">
         <div 
-          className="relative w-full h-36 overflow-hidden flex justify-center items-start touch-pan-y pt-4"
+          className="relative w-full h-32 md:h-36 overflow-hidden flex justify-center items-start touch-pan-y pt-4"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -151,11 +151,12 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
 
             let styleClasses = "opacity-0 scale-50 -translate-y-8 pointer-events-none z-0";
             
-            if (diff === 0) styleClasses = "opacity-100 scale-[1.35] translate-y-12 z-30 shadow-lg border border-white/20";
-            else if (diff === -1) styleClasses = "opacity-80 scale-100 -translate-x-[4.5rem] translate-y-5 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-md";
-            else if (diff === 1) styleClasses = "opacity-80 scale-100 translate-x-[4.5rem] translate-y-5 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-md";
-            else if (diff === -2) styleClasses = "opacity-40 scale-[0.70] -translate-x-[8.5rem] translate-y-0 z-10 cursor-pointer hover:opacity-60 shadow-sm";
-            else if (diff === 2) styleClasses = "opacity-40 scale-[0.70] translate-x-[8.5rem] translate-y-0 z-10 cursor-pointer hover:opacity-60 shadow-sm";
+            // FLUID BUTTON SIZING: Ensures thumb-reach on mobile, but distinct spacing on desktop
+            if (diff === 0) styleClasses = "opacity-100 scale-[1.35] translate-y-10 md:translate-y-12 z-30 shadow-lg border border-white/20";
+            else if (diff === -1) styleClasses = "opacity-80 scale-100 -translate-x-[4rem] md:-translate-x-[4.5rem] translate-y-5 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-md";
+            else if (diff === 1) styleClasses = "opacity-80 scale-100 translate-x-[4rem] md:translate-x-[4.5rem] translate-y-5 z-20 cursor-pointer hover:opacity-100 hover:scale-105 shadow-md";
+            else if (diff === -2) styleClasses = "opacity-40 scale-[0.70] -translate-x-[7.5rem] md:-translate-x-[8.5rem] translate-y-0 z-10 cursor-pointer hover:opacity-60 shadow-sm";
+            else if (diff === 2) styleClasses = "opacity-40 scale-[0.70] translate-x-[7.5rem] md:translate-x-[8.5rem] translate-y-0 z-10 cursor-pointer hover:opacity-60 shadow-sm";
 
             return (
                 <button
@@ -172,13 +173,18 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
             );
           })}
         </div>
-        <p className="text-sm md:text-base font-bold opacity-80 text-[var(--theme-text)] mt-2 transition-all duration-300" style={{ fontFamily: "var(--font-kalam)" }}>
+        <p className="text-[clamp(0.875rem,2vw,1rem)] font-bold opacity-80 text-[var(--theme-text)] mt-2 transition-all duration-300" style={{ fontFamily: "var(--font-kalam)" }}>
           {isBatman ? "Tactical Canvas" : "Paper"}: {theme.name}
         </p>
       </div>
 
+      {/* 
+        FLUID CANVAS WIDTH: 
+        max-w-[850px] is the clinically proven optimal width for reading lines of text. 
+        It prevents desktop users from having to swing their eyes too far left/right.
+      */}
       <div 
-        className="max-w-4xl w-full z-10 relative overflow-hidden text-[var(--theme-text)]" 
+        className="max-w-[850px] w-full z-10 relative overflow-hidden text-[var(--theme-text)] shadow-2xl rounded-[4px]" 
         style={{ fontFamily: "var(--font-kalam), 'Patrick Hand', cursive, sans-serif" }}
       >
         {children}
@@ -190,15 +196,16 @@ export function HandwrittenCanvas({ children }: { children: ReactNode }) {
 // 4. HANDWRITTEN TITLE
 export function HandwrittenTitle({ children, badge }: { children: ReactNode; badge?: ReactNode }) {
   return (
-    <div className="relative text-center mb-6 md:mb-12 mt-4 md:mt-0">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl inline-block relative font-bold px-2 text-[var(--theme-text)]">
+    <div className="relative text-center mb-[clamp(1.5rem,4vw,3rem)] mt-[clamp(0.5rem,2vw,1.5rem)]">
+      {/* FLUID TITLE SCALING: text-[clamp(...)] ensures the title never breaks lines awkwardly on mobile */}
+      <h1 className="text-[clamp(1.5rem,4.5vw,2.75rem)] inline-block relative font-bold px-3 text-[var(--theme-text)] leading-tight">
         {children}
         <div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-[2px] transform -rotate-1 bg-[var(--theme-border)] opacity-80"></div>
         <div className="absolute -bottom-2 md:-bottom-3 left-2 w-[95%] h-[1px] transform rotate-1 bg-[var(--theme-border)] opacity-80"></div>
       </h1>
       {badge && (
         <div 
-          className="absolute top-0 right-0 border-2 px-2 py-0.5 md:px-3 md:py-1 text-xs md:text-lg font-bold shadow-sm hidden sm:block border-[var(--theme-accent)] bg-[var(--theme-accent-bg)] text-[var(--theme-text)]"
+          className="absolute top-0 right-0 border-2 px-[clamp(0.5rem,1.5vw,1rem)] py-[clamp(0.125rem,0.5vw,0.25rem)] text-[clamp(0.75rem,2vw,1.125rem)] font-bold shadow-sm hidden sm:block border-[var(--theme-accent)] bg-[var(--theme-accent-bg)] text-[var(--theme-text)]"
           style={handDrawnBorder}
         >
           {badge}
@@ -225,7 +232,7 @@ export function HandwrittenBox({
 
   return (
     <div 
-      className={`border-2 bg-[var(--theme-accent-bg)] px-2 py-0.5 md:px-3 md:py-1 text-base md:text-xl inline-block ${finalBorderClass} ${finalTextClass} ${className}`}
+      className={`border-2 bg-[var(--theme-accent-bg)] px-[clamp(0.5rem,2vw,1rem)] py-[clamp(0.125rem,0.5vw,0.25rem)] text-[clamp(1rem,2.5vw,1.25rem)] inline-block ${finalBorderClass} ${finalTextClass} ${className}`}
       style={handDrawnBorder}
     >
       {children}
