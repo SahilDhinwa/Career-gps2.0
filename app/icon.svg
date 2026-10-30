@@ -1,65 +1,58 @@
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 420">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
   <defs>
-    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#26783B"/>
-      <stop offset="50%" stop-color="#07522F"/>
-      <stop offset="100%" stop-color="#00351F"/>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF0B8"/>
+      <stop offset="35%" stop-color="#EFC66D"/>
+      <stop offset="70%" stop-color="#D4A135"/>
+      <stop offset="100%" stop-color="#B57A20"/>
     </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#FBE29A"/>
-      <stop offset="50%" stop-color="#D4AF37"/>
-      <stop offset="100%" stop-color="#B67A18"/>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#317D3E"/>
+      <stop offset="45%" stop-color="#07522F"/>
+      <stop offset="100%" stop-color="#00391F"/>
+    </linearGradient>
+    <linearGradient id="lightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#438C45"/>
+      <stop offset="100%" stop-color="#00452B"/>
     </linearGradient>
   </defs>
 
-  <path d="M65 195 C60 105 115 52 175 37"
-    fill="none" stroke="url(#gold)" stroke-width="8"
-    stroke-linecap="round"/>
+  <path d="M67 183 C66 100 112 58 173 36"
+    fill="none" stroke="url(#gold)" stroke-width="9"/>
+  <path d="M227 36 C288 58 334 100 333 183"
+    fill="none" stroke="url(#gold)" stroke-width="9"/>
 
-  <path d="M225 37 C285 52 340 105 335 195"
-    fill="none" stroke="url(#gold)" stroke-width="8"
-    stroke-linecap="round"/>
-
-  <path d="M200 0 C190 20 180 30 180 45 C180 60 189 70 200 70 C211 70 220 60 220 45 C220 30 210 20 200 0Z"
+  <path d="M200 0 C193 18 182 29 182 45 C182 60 190 71 200 71 C210 71 218 60 218 45 C218 29 207 18 200 0Z"
     fill="url(#gold)"/>
 
-  <path d="M24 258 C65 245 111 260 151 326 C94 334 46 308 24 258Z"
+  <path d="M17 261 C60 249 99 262 145 328 C88 339 43 312 17 261Z"
     fill="url(#green)"/>
-
-  <path d="M85 190 C143 205 164 257 175 326 C121 310 93 261 85 190Z"
+  <path d="M78 184 C135 193 166 253 174 329 C121 314 87 261 78 184Z"
+    fill="url(#lightGreen)"/>
+  <path d="M383 261 C340 249 301 262 255 328 C312 339 357 312 383 261Z"
     fill="url(#green)"/>
+  <path d="M322 184 C265 193 234 253 226 329 C279 314 313 261 322 184Z"
+    fill="url(#lightGreen)"/>
 
-  <path d="M315 190 C257 205 236 257 225 326 C279 310 307 261 315 190Z"
-    fill="url(#green)"/>
+  <path d="M110 227 C136 260 153 291 171 321"
+    fill="none" stroke="#C0D6A0" stroke-width="2" opacity=".75"/>
+  <path d="M290 227 C264 260 247 291 229 321"
+    fill="none" stroke="#C0D6A0" stroke-width="2" opacity=".75"/>
 
-  <path d="M376 258 C335 245 289 260 249 326 C306 334 354 308 376 258Z"
-    fill="url(#green)"/>
+  <path d="M200 79 C166 119 160 144 200 185 C240 226 239 257 200 300 C181 322 184 343 200 375"
+    fill="none" stroke="url(#gold)" stroke-width="11" stroke-linecap="round"/>
+  <path d="M200 79 C234 119 240 144 200 185 C160 226 161 257 200 300 C219 322 216 343 200 375"
+    fill="none" stroke="url(#green)" stroke-width="11" stroke-linecap="round"/>
 
-  <path d="M109 222 C132 256 151 284 173 319"
-    fill="none" stroke="#B6D9A2" stroke-width="2"
-    opacity=".7"/>
-
-  <path d="M291 222 C268 256 249 284 227 319"
-    fill="none" stroke="#B6D9A2" stroke-width="2"
-    opacity=".7"/>
-
-  <path d="M200 78 C150 123 150 150 200 190 C250 230 250 265 200 308 C175 330 176 350 200 390"
-    fill="none" stroke="url(#gold)" stroke-width="12"
-    stroke-linecap="round"/>
-
-  <path d="M200 78 C250 123 250 150 200 190 C150 230 150 265 200 308 C225 330 224 350 200 390"
-    fill="none" stroke="url(#green)" stroke-width="12"
-    stroke-linecap="round"/>
-
-  <g stroke="#07522F" stroke-width="5" stroke-linecap="round">
-    <line x1="182" y1="133" x2="218" y2="133"/>
-    <line x1="176" y1="158" x2="224" y2="158"/>
-    <line x1="182" y1="225" x2="218" y2="225"/>
-    <line x1="176" y1="251" x2="224" y2="251"/>
-    <line x1="186" y1="278" x2="214" y2="278"/>
+  <g fill="none" stroke="#07522F" stroke-width="5" stroke-linecap="round">
+    <path d="M177 132 H223"/>
+    <path d="M180 148 H220"/>
+    <path d="M182 219 H218"/>
+    <path d="M176 236 H224"/>
+    <path d="M180 253 H220"/>
   </g>
 
-  <path d="M200 365 L205 392 L200 410 L195 392Z"
+  <path d="M200 364 L205 381 L200 398 L195 381Z"
     fill="url(#gold)"/>
 </svg>
