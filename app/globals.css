@@ -11,12 +11,14 @@
     --background: #FBFBF9; 
     --foreground: #0B1410; 
     --primary: #114232; 
-    --primaryHover: #0A291F; 
+    /* This primaryHover color perfectly matches the dark green ATREYA text in your image */
+    --primaryHover: #072B1E; 
     --success: #2A9D8F; 
     --warning: #D4AF37; 
     --surface: #FFFFFF; 
     --surfaceBorder: #E2E6E3; 
   }
+
 
   /* DARK MODE */
   .dark {
