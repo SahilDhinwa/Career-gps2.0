@@ -361,6 +361,22 @@ export default function ExperimentalDirectoryPage() {
   descClass: "text-white/75 text-sm",
   footerClass: "bg-[#D4AF37] text-black font-black text-xs uppercase px-4 py-2.5 rounded-xl",
 },
+    // 20. BIO-TWIN SIMULATOR (NEW ACTIVE PAGE)
+{
+  id: "bio-simulator",
+  number: "20",
+  name: "Interactive Bio-Twin Simulator",
+  desc: "Zero-scroll tactile dashboard. Flip switches between modern habits and Ayurvedic protocols to watch live physiological meters and anatomical x-rays react in real-time.",
+  icon: Activity, // Make sure to import { Activity } from "lucide-react" if not already imported
+  path: "/experimental/bio-simulator",
+  status: "New",
+  cardClass: "bg-gradient-to-br from-[#070d0a] via-[#0e2218] to-[#281115] text-white rounded-3xl p-6 border border-[#e5c17b]/40 shadow-xl hover:border-[#e5c17b] hover:-translate-y-1 transition-all",
+  iconWrapClass: "w-12 h-12 rounded-xl bg-[#e5c17b]/15 border border-[#e5c17b]/40 text-[#e5c17b] flex items-center justify-center",
+  badgeClass: "bg-[#e5c17b] text-[#0b130e] text-[10px] font-black uppercase px-3 py-1 rounded-full",
+  titleClass: "font-black text-2xl text-white",
+  descClass: "text-white/75 text-sm",
+  footerClass: "bg-[#e5c17b] text-[#0c1610] font-black text-xs uppercase px-4 py-2.5 rounded-xl",
+},
     
   ];
 
