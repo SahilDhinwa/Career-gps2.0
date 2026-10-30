@@ -1,3 +1,4 @@
+
 import React, { useId } from "react";
 
 interface AtreyaWordmarkProps {
@@ -5,83 +6,55 @@ interface AtreyaWordmarkProps {
 }
 
 export default function AtreyaWordmark({
-  className = "w-72 sm:w-80 h-auto",
+  className = "w-[160px] sm:w-[205px] h-auto",
 }: AtreyaWordmarkProps) {
-  const rawId = useId().replace(/:/g, "");
-  const goldTextGrad = `atreya-wordmark-gold-${rawId}`;
+  const id = useId().replace(/:/g, "");
+  const gold = `wordmark-gold-${id}`;
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 520 130"
+      viewBox="0 0 620 145"
+      className={`${className} overflow-visible`}
       fill="none"
-      className={className}
       role="img"
-      aria-label="ATREYA Medicine & Science Wordmark"
+      aria-label="ATREYA"
     >
       <defs>
-        <linearGradient id={goldTextGrad} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#F9E498" />
-          <stop offset="50%" stopColor="#D4AF37" />
-          <stop offset="100%" stopColor="#9A6B13" />
+        <linearGradient id={gold} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#B88726" />
+          <stop offset="50%" stopColor="#E3BD54" />
+          <stop offset="100%" stopColor="#A87520" />
         </linearGradient>
       </defs>
 
-      {/* =======================================================
-          MAIN "ATREYA" LETTERFORMS (Cinzel Serif Style + Leaf A's)
-          ======================================================= */}
-      <g fill="#FFFFFF">
-        {/* Letter A (1) with Leaf Crossbar */}
-        <path d="M 42 12 L 68 80 L 55 80 L 49 63 L 29 63 L 23 80 L 10 80 L 36 12 Z M 39 37 L 31 54 L 47 54 Z" />
-        {/* Leaf Accent across Crossbar of A(1) */}
-        <path d="M 33 53 C 36 49, 42 49, 45 53 C 42 57, 36 57, 33 53 Z" fill="#26733D" />
+      <g fill="currentColor">
+        {/* A */}
+        <path d="M6 105 L47 8 H58 L99 105 H83 L71 76 H31 L19 105 Z M36 65 H66 L51 28 Z" fillRule="evenodd" />
+        <path d="M5 105 H31 V109 H5 Z M74 105 H101 V109 H74 Z" />
 
-        {/* Letter T */}
-        <path d="M 76 12 L 126 12 L 126 23 L 107 23 L 107 80 L 95 80 L 95 23 L 76 23 Z" />
+        {/* T */}
+        <path d="M115 10 H214 V25 H209 C207 17 199 15 188 15 H174 V105 H189 V109 H143 V105 H158 V15 H141 C129 15 123 18 120 25 H115 Z" />
 
-        {/* Letter R (With Connected Sweeping Tail) */}
-        <path d="M 136 12 L 175 12 C 196 12, 204 26, 204 42 C 204 57, 193 72, 172 75 L 202 80 L 188 80 L 165 47 L 148 47 L 148 80 L 136 80 Z M 148 23 L 148 37 L 173 37 C 185 37, 192 31, 192 42 C 192 53, 184 47, 173 47 L 148 47 Z" />
+        {/* R */}
+        <path d="M230 10 H274 C307 10 324 23 324 43 C324 61 311 73 292 77 L325 105 H337 V109 H306 L267 78 H253 V105 H268 V109 H230 V105 H239 V14 H230 Z M253 17 V71 H272 C295 71 308 61 308 44 C308 27 296 17 273 17 Z" fillRule="evenodd" />
 
-        {/* Letter E */}
-        <path d="M 215 12 L 273 12 L 273 23 L 227 23 L 227 41 L 268 41 L 268 52 L 227 52 L 227 69 L 274 69 L 274 80 L 215 80 Z" />
+        {/* E */}
+        <path d="M349 10 H435 V29 H430 C427 18 421 16 407 16 H373 V55 H413 V49 H418 V67 H413 V61 H373 V103 H409 C423 103 430 99 433 88 H438 V109 H349 V105 H359 V14 H349 Z" />
 
-        {/* Letter Y */}
-        <path d="M 284 12 L 298 12 L 319 45 L 340 12 L 354 12 L 328 50 L 328 80 L 310 80 L 310 50 Z" />
+        {/* Y */}
+        <path d="M447 10 H485 V14 H475 L502 54 L529 14 H518 V10 H551 V14 H543 L510 64 V105 H525 V109 H480 V105 H495 V64 L458 14 H447 Z" />
 
-        {/* Letter A (2) with Leaf Crossbar */}
-        <path d="M 395 12 L 421 80 L 408 80 L 402 63 L 382 63 L 376 80 L 363 80 L 389 12 Z M 392 37 L 384 54 L 400 54 Z" />
-        {/* Leaf Accent across Crossbar of A(2) */}
-        <path d="M 386 53 C 389 49, 395 49, 398 53 C 395 57, 389 57, 386 53 Z" fill="#26733D" />
+        {/* A */}
+        <path d="M530 105 L571 8 H582 L623 105 H607 L595 76 H555 L543 105 Z M560 65 H590 L575 28 Z" fillRule="evenodd" />
+        <path d="M529 105 H554 V109 H529 Z M599 105 H625 V109 H599 Z" />
       </g>
 
-      {/* Sweeping Golden Calligraphic Flourish Underneath 'RE' */}
+      {/* Signature gold sweep beneath the R and E */}
       <path
-        d="M 148 88 C 175 106, 220 110, 265 98 C 220 102, 178 98, 148 88 Z"
-        fill={`url(#${goldTextGrad})`}
+        d="M275 119 C309 131 345 135 385 126 C357 131 322 127 294 118 Z"
+        fill={`url(#${gold})`}
       />
-
-      {/* =======================================================
-          SUB-TAGLINE: MEDICINE & SCIENCE
-          ======================================================= */}
-      <text
-        x="260"
-        y="115"
-        fontSize="12.5"
-        fontWeight="600"
-        letterSpacing="0.25em"
-        textAnchor="middle"
-        fontFamily="var(--font-cinzel), 'Cinzel', serif"
-        fill={`url(#${goldTextGrad})`}
-      >
-        MEDICINE &amp; SCIENCE
-      </text>
-
-      {/* Flanking Gold Dividing Lines */}
-      <line x1="35" y1="111" x2="115" y2="111" stroke={`url(#${goldTextGrad})`} strokeWidth="1.2" />
-      <line x1="405" y1="111" x2="485" y2="111" stroke={`url(#${goldTextGrad})`} strokeWidth="1.2" />
-
-      {/* Centered Gold Diamond */}
-      <polygon points="260,123 264,127 260,131 256,127" fill={`url(#${goldTextGrad})`} />
     </svg>
   );
 }
