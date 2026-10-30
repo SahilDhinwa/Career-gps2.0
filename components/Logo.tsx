@@ -1,50 +1,79 @@
+
 import Link from "next/link";
 import AtreyaIcon from "./AtreyaIcon";
+import { Cinzel } from "next/font/google";
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 interface LogoProps {
   className?: string;
   showTagline?: boolean;
+  variant?: "horizontal" | "stacked";
 }
 
 export default function Logo({
-  className = "w-10 h-10 md:w-12 md:h-12",
+  className = "w-12 h-12",
   showTagline = true,
+  variant = "horizontal",
 }: LogoProps) {
+  const stacked = variant === "stacked";
+
   return (
     <Link
       href="/"
       aria-label="ATREYA Medicine and Science — Home"
-      className="group inline-flex items-center gap-3 md:gap-4 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+      className={`group inline-flex ${
+        stacked
+          ? "flex-col items-center gap-2"
+          : "flex-row items-center gap-2.5 sm:gap-3"
+      } rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]`}
     >
-      {/* Icon Wrapper */}
-      <div className={`shrink-0 ${className} drop-shadow-sm`}>
+      <div
+        className={`shrink-0 ${
+          stacked ? "w-40 h-40 sm:w-52 sm:h-52" : className
+        }`}
+      >
         <AtreyaIcon className="w-full h-full" />
       </div>
 
-      {/* Typography Wrapper */}
-      <div className="flex flex-col min-w-0 pt-1">
-        {/* Main Brand Name */}
+      <div
+        className={`flex flex-col min-w-0 ${
+          stacked ? "items-center" : "items-start"
+        }`}
+      >
         <span
-          className="text-[22px] md:text-[28px] font-semibold leading-none tracking-[0.12em] transition-colors"
-          style={{
-            fontFamily: "'Cinzel', Georgia, serif",
-            // Matches the deep forest green of the reference text in Light Mode
-            color: "var(--primaryHover)", 
-          }}
+          className={`${cinzel.className} ${
+            stacked
+              ? "text-5xl sm:text-7xl tracking-[0.1em]"
+              : "text-[22px] sm:text-[29px] tracking-[0.065em]"
+          } font-semibold leading-none text-foreground transition-colors group-hover:text-[#D4AF37]`}
         >
           ATREYA
         </span>
 
-        {/* Tagline & Golden Lines */}
         {showTagline && (
-          <div className="flex items-center gap-2 mt-2 opacity-90">
-            <span className="w-4 md:w-6 h-[1px] bg-[#D4AF37]" />
-            
-            <span className="text-[7.5px] md:text-[8.5px] font-medium tracking-[0.2em] whitespace-nowrap text-[#D4AF37] uppercase">
-              Medicine &amp; Science
+          <div
+            className={`flex items-center justify-center gap-1.5 ${
+              stacked ? "mt-4" : "mt-2"
+            }`}
+          >
+            <span className="w-3 sm:w-5 h-px bg-[#D4AF37]" />
+
+            <span
+              className={`${
+                stacked
+                  ? "text-[10px] sm:text-sm tracking-[0.25em]"
+                  : "text-[8px] sm:text-[10px] tracking-[0.12em]"
+              } font-medium whitespace-nowrap text-[#D4AF37]`}
+            >
+              MEDICINE &amp; SCIENCE
             </span>
-            
-            <span className="w-4 md:w-6 h-[1px] bg-[#D4AF37]" />
+
+            <span className="w-3 sm:w-5 h-px bg-[#D4AF37]" />
           </div>
         )}
       </div>
