@@ -1,66 +1,65 @@
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 420">
   <defs>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FFF1BC"/>
-      <stop offset=".5" stop-color="#D4AF37"/>
-      <stop offset="1" stop-color="#99661F"/>
-    </linearGradient>
     <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#B5E890"/>
-      <stop offset=".5" stop-color="#238B4D"/>
-      <stop offset="1" stop-color="#07502D"/>
+      <stop offset="0%" stop-color="#26783B"/>
+      <stop offset="50%" stop-color="#07522F"/>
+      <stop offset="100%" stop-color="#00351F"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FBE29A"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#B67A18"/>
     </linearGradient>
   </defs>
 
-  <rect
-    width="128"
-    height="128"
-    rx="26"
-    fill="#082B1C"
-    stroke="#D4AF37"
-    stroke-opacity=".4"
-    stroke-width="2"
-  />
+  <path d="M65 195 C60 105 115 52 175 37"
+    fill="none" stroke="url(#gold)" stroke-width="8"
+    stroke-linecap="round"/>
 
-  <text
-    x="9"
-    y="101"
-    font-size="90"
-    font-weight="600"
-    font-family="Noto Serif Devanagari, Nirmala UI, serif"
-    fill="url(#gold)"
-  >ॐ</text>
+  <path d="M225 37 C285 52 340 105 335 195"
+    fill="none" stroke="url(#gold)" stroke-width="8"
+    stroke-linecap="round"/>
 
-  <text
-    x="70"
-    y="100"
-    font-size="65"
-    font-weight="600"
-    font-family="Cinzel, Georgia, serif"
-    fill="url(#gold)"
-  >A</text>
+  <path d="M200 0 C190 20 180 30 180 45 C180 60 189 70 200 70 C211 70 220 60 220 45 C220 30 210 20 200 0Z"
+    fill="url(#gold)"/>
 
-  <path
-    d="M76 43 C81 21 101 15 119 11 C115 34 99 48 76 43Z"
-    fill="url(#green)"
-    stroke="#D4AF37"
-    stroke-width="1.2"
-  />
+  <path d="M24 258 C65 245 111 260 151 326 C94 334 46 308 24 258Z"
+    fill="url(#green)"/>
 
-  <path
-    d="M75 48 C89 34 103 23 116 14"
-    fill="none"
-    stroke="#E6E9A5"
-    stroke-width="1.8"
-    stroke-linecap="round"
-  />
+  <path d="M85 190 C143 205 164 257 175 326 C121 310 93 261 85 190Z"
+    fill="url(#green)"/>
 
-  <path
-    d="M75 48 C71 55 69 60 68 67"
-    fill="none"
-    stroke="url(#gold)"
-    stroke-width="2.5"
-    stroke-linecap="round"
-  />
+  <path d="M315 190 C257 205 236 257 225 326 C279 310 307 261 315 190Z"
+    fill="url(#green)"/>
+
+  <path d="M376 258 C335 245 289 260 249 326 C306 334 354 308 376 258Z"
+    fill="url(#green)"/>
+
+  <path d="M109 222 C132 256 151 284 173 319"
+    fill="none" stroke="#B6D9A2" stroke-width="2"
+    opacity=".7"/>
+
+  <path d="M291 222 C268 256 249 284 227 319"
+    fill="none" stroke="#B6D9A2" stroke-width="2"
+    opacity=".7"/>
+
+  <path d="M200 78 C150 123 150 150 200 190 C250 230 250 265 200 308 C175 330 176 350 200 390"
+    fill="none" stroke="url(#gold)" stroke-width="12"
+    stroke-linecap="round"/>
+
+  <path d="M200 78 C250 123 250 150 200 190 C150 230 150 265 200 308 C225 330 224 350 200 390"
+    fill="none" stroke="url(#green)" stroke-width="12"
+    stroke-linecap="round"/>
+
+  <g stroke="#07522F" stroke-width="5" stroke-linecap="round">
+    <line x1="182" y1="133" x2="218" y2="133"/>
+    <line x1="176" y1="158" x2="224" y2="158"/>
+    <line x1="182" y1="225" x2="218" y2="225"/>
+    <line x1="176" y1="251" x2="224" y2="251"/>
+    <line x1="186" y1="278" x2="214" y2="278"/>
+  </g>
+
+  <path d="M200 365 L205 392 L200 410 L195 392Z"
+    fill="url(#gold)"/>
 </svg>
