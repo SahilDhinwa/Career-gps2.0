@@ -1,3 +1,4 @@
+
 import React, { useId } from "react";
 
 interface AtreyaIconProps {
@@ -9,119 +10,141 @@ export default function AtreyaIcon({
 }: AtreyaIconProps) {
   const id = useId().replace(/:/g, "");
   const gold = `atreya-gold-${id}`;
-  const greenOuter = `atreya-green-outer-${id}`;
-  const greenInner = `atreya-green-inner-${id}`;
+  const green = `atreya-green-${id}`;
+  const lightGreen = `atreya-light-green-${id}`;
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 500 500"
+      viewBox="0 0 400 400"
+      fill="none"
       className={className}
       role="img"
-      aria-label="ATREYA Botanical DNA Emblem"
+      aria-label="ATREYA Lotus and DNA emblem"
     >
       <defs>
-        {/* Rich Golden Gradient */}
         <linearGradient id={gold} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FDE68A" />
-          <stop offset="50%" stopColor="#D4AF37" />
-          <stop offset="100%" stopColor="#926018" />
+          <stop offset="0%" stopColor="#FFF0B8" />
+          <stop offset="35%" stopColor="#EFC66D" />
+          <stop offset="70%" stopColor="#D4A135" />
+          <stop offset="100%" stopColor="#B57A20" />
         </linearGradient>
 
-        {/* Deep Forest Green for Outer Leaves */}
-        <linearGradient id={greenOuter} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0B4226" />
-          <stop offset="100%" stopColor="#042012" />
+        <linearGradient id={green} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#317D3E" />
+          <stop offset="45%" stopColor="#07522F" />
+          <stop offset="100%" stopColor="#00391F" />
         </linearGradient>
 
-        {/* Lighter Botanical Green for Inner Leaves */}
-        <linearGradient id={greenInner} x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#115E33" />
-          <stop offset="100%" stopColor="#1E824C" />
+        <linearGradient
+          id={lightGreen}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
+        >
+          <stop offset="0%" stopColor="#438C45" />
+          <stop offset="100%" stopColor="#00452B" />
         </linearGradient>
       </defs>
 
-      {/* Golden Halo / Arch */}
+      {/* Golden arch */}
       <path
-        d="M130 220 C 130 110, 370 110, 370 220"
-        fill="none"
+        d="M67 183 C66 100 112 58 173 36"
         stroke={`url(#${gold})`}
-        strokeWidth="6"
-        strokeLinecap="round"
+        strokeWidth="9"
+        strokeLinecap="butt"
+      />
+      <path
+        d="M227 36 C288 58 334 100 333 183"
+        stroke={`url(#${gold})`}
+        strokeWidth="9"
+        strokeLinecap="butt"
       />
 
-      {/* Floating Golden Droplet (Top Center) */}
+      {/* Golden droplet */}
       <path
-        d="M250 30 C 235 60, 230 75, 230 90 C 230 102, 239 110, 250 110 C 261 110, 270 102, 270 90 C 270 75, 265 60, 250 30 Z"
+        d="M200 0 C193 18 182 29 182 45 C182 60 190 71 200 71 C210 71 218 60 218 45 C218 29 207 18 200 0Z"
         fill={`url(#${gold})`}
       />
 
-      {/* LEFT OUTER LEAF */}
+      {/* Outer left lotus petal */}
       <path
-        d="M60 280 C 80 230, 160 270, 190 350 C 130 360, 50 330, 60 280 Z"
-        fill={`url(#${greenOuter})`}
-      />
-      
-      {/* LEFT INNER LEAF */}
-      <path
-        d="M130 200 C 170 180, 220 270, 230 350 C 180 340, 110 270, 130 200 Z"
-        fill={`url(#${greenInner})`}
-      />
-      {/* Left Inner Leaf Vein */}
-      <path
-        d="M165 240 C 185 270, 205 310, 215 340"
-        fill="none"
-        stroke="#A7F3D0"
-        strokeWidth="1.5"
-        opacity="0.5"
+        d="M17 261 C60 249 99 262 145 328 C88 339 43 312 17 261Z"
+        fill={`url(#${green})`}
       />
 
-      {/* RIGHT INNER LEAF */}
+      {/* Inner left lotus petal */}
       <path
-        d="M370 200 C 330 180, 280 270, 270 350 C 320 340, 390 270, 370 200 Z"
-        fill={`url(#${greenInner})`}
-      />
-      {/* Right Inner Leaf Vein */}
-      <path
-        d="M335 240 C 315 270, 295 310, 285 340"
-        fill="none"
-        stroke="#A7F3D0"
-        strokeWidth="1.5"
-        opacity="0.5"
+        d="M78 184 C135 193 166 253 174 329 C121 314 87 261 78 184Z"
+        fill={`url(#${lightGreen})`}
       />
 
-      {/* RIGHT OUTER LEAF */}
+      {/* Outer right lotus petal */}
       <path
-        d="M440 280 C 420 230, 340 270, 310 350 C 370 360, 450 330, 440 280 Z"
-        fill={`url(#${greenOuter})`}
+        d="M383 261 C340 249 301 262 255 328 C312 339 357 312 383 261Z"
+        fill={`url(#${green})`}
       />
 
-      {/* DNA HELIX: Gold Strand */}
+      {/* Inner right lotus petal */}
       <path
-        d="M250 120 C 190 160, 190 200, 250 240 C 310 280, 310 320, 250 360 C 230 375, 230 395, 250 420"
-        fill="none"
+        d="M322 184 C265 193 234 253 226 329 C279 314 313 261 322 184Z"
+        fill={`url(#${lightGreen})`}
+      />
+
+      {/* Inner leaf veins */}
+      <path
+        d="M110 227 C136 260 153 291 171 321"
+        stroke="#C0D6A0"
+        strokeWidth="2"
+        opacity=".75"
+      />
+      <path
+        d="M290 227 C264 260 247 291 229 321"
+        stroke="#C0D6A0"
+        strokeWidth="2"
+        opacity=".75"
+      />
+
+      {/* DNA strands */}
+      <path
+        d="M200 79
+           C166 119 160 144 200 185
+           C240 226 239 257 200 300
+           C181 322 184 343 200 375"
         stroke={`url(#${gold})`}
-        strokeWidth="10"
+        strokeWidth="11"
         strokeLinecap="round"
       />
 
-      {/* DNA HELIX: Green Strand */}
       <path
-        d="M250 120 C 310 160, 310 200, 250 240 C 190 280, 190 320, 250 360 C 270 375, 270 395, 250 420"
-        fill="none"
-        stroke={`url(#${greenInner})`}
-        strokeWidth="10"
+        d="M200 79
+           C234 119 240 144 200 185
+           C160 226 161 257 200 300
+           C219 322 216 343 200 375"
+        stroke={`url(#${green})`}
+        strokeWidth="11"
         strokeLinecap="round"
       />
 
-      {/* DNA LADDER RUNGS */}
-      <g stroke="#042012" strokeWidth="4" strokeLinecap="round">
-        <line x1="230" y1="160" x2="270" y2="160" />
-        <line x1="220" y1="185" x2="280" y2="185" />
-        
-        <line x1="230" y1="285" x2="270" y2="285" />
-        <line x1="220" y1="310" x2="280" y2="310" />
+      {/* DNA rungs */}
+      <g
+        stroke="#07522F"
+        strokeWidth="5"
+        strokeLinecap="round"
+      >
+        <path d="M177 132 H223" />
+        <path d="M180 148 H220" />
+        <path d="M182 219 H218" />
+        <path d="M176 236 H224" />
+        <path d="M180 253 H220" />
       </g>
+
+      {/* Finishing tip */}
+      <path
+        d="M200 364 L205 381 L200 398 L195 381Z"
+        fill={`url(#${gold})`}
+      />
     </svg>
   );
 }
