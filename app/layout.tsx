@@ -1,69 +1,71 @@
 import type { Metadata } from "next";
-import { Syne, DM_Sans, Kalam } from 'next/font/google';
-import './globals.css';
+import { Syne, DM_Sans, Kalam, Cinzel } from "next/font/google";
+import "./globals.css";
 
-import AnalyticsTracker from '../components/AnalyticsTracker';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { ThemeProvider } from '../components/ThemeProvider';
-import { AuthProvider } from '../context/AuthContext';
-import BatcaveBackground from '../components/BatcaveBackground';
+import AnalyticsTracker from "../components/AnalyticsTracker";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { ThemeProvider } from "../components/ThemeProvider";
+import { AuthProvider } from "../context/AuthContext";
+import BatcaveBackground from "../components/BatcaveBackground";
 
-import { Cinzel } from "next/font/google";
-
-export const cinzel = Cinzel({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
 export const metadata: Metadata = {
   title: "ATREYA Med",
   description: "Clinical Ayurveda & BAMS Dissection Studio",
   verification: {
-    // Paste the code from the Google "HTML Tag" option here
-    google: "google5d6579aa2a41b08f.html", 
+    google: "google5d6579aa2a41b08f.html",
   },
 };
 
-// 1. Configure the Heading Font (Syne)
-const syne = Syne({ 
-  subsets: ['latin'],
-  variable: '--font-syne',
-  display: 'swap',
+// 1. Configure the Brand Logo Font (Cinzel)
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-cinzel",
+  display: "swap",
 });
 
-// 2. Configure the Body Font (DM Sans)
-const dmSans = DM_Sans({ 
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  display: 'swap',
+// 2. Configure the Heading Font (Syne)
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
+  display: "swap",
 });
 
-// 3. Configure the Handwritten Font (Kalam)
+// 3. Configure the Body Font (DM Sans)
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+// 4. Configure the Handwritten Font (Kalam)
 const kalam = Kalam({
-  weight: ['300', '400', '700'],
-  subsets: ['latin', 'devanagari'],
-  variable: '--font-kalam',
-  display: 'swap',
+  weight: ["300", "400", "700"],
+  subsets: ["latin", "devanagari"],
+  variable: "--font-kalam",
+  display: "swap",
 });
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${syne.variable} ${dmSans.variable} ${kalam.variable} font-body antialiased`}>
-        <ThemeProvider 
-          attribute="class" 
-          defaultTheme="system" 
-          enableSystem 
+      <body
+        className={`${cinzel.variable} ${syne.variable} ${dmSans.variable} ${kalam.variable} font-body antialiased`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
-          themes={['light', 'dark', 'batman']}
+          themes={["light", "dark", "batman"]}
         >
-          <BatcaveBackground /> 
-          
+          <BatcaveBackground />
+
           <AuthProvider>
             <AnalyticsTracker />
             <Navbar />
