@@ -9,165 +9,166 @@ export default function AtreyaWordmark({
   className = "w-[155px] sm:w-[205px] h-auto",
 }: AtreyaWordmarkProps) {
   const id = useId().replace(/:/g, "");
-  const leaf = `atreya-leaf-${id}`;
+  const leafId = `atreya-leaf-${id}`;
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 720 145"
+      viewBox="0 0 680 150"
       className={className}
       role="img"
       aria-label="ATREYA"
-      fill="none"
+      preserveAspectRatio="xMidYMid meet"
     >
       <defs>
         <linearGradient
-          id={leaf}
+          id={leafId}
           x1="0%"
           y1="0%"
           x2="100%"
           y2="100%"
         >
-          <stop offset="0%" stopColor="#3D966D" />
-          <stop offset="100%" stopColor="#075234" />
+          <stop offset="0%" stopColor="#7BBE88" />
+          <stop offset="45%" stopColor="#258654" />
+          <stop offset="100%" stopColor="#075238" />
         </linearGradient>
       </defs>
 
       <g fill="currentColor">
-        {/* A — tall classical serif */}
+        {/* A */}
         <path
           fillRule="evenodd"
           d="
-            M 4 113
-            L 15 110
-            L 58 7
-            L 66 7
-            L 110 110
-            L 122 113
-            L 122 117
-            L 76 117
-            L 76 113
-            L 89 110
-            L 76 79
-            L 35 79
-            L 22 110
-            L 36 113
-            L 36 117
-            L 4 117 Z
+            M 5 113
+            L 17 110
+            L 57 12
+            H 65
+            L 106 110
+            L 118 113
+            V 118
+            H 72
+            V 113
+            L 85 110
+            L 74 81
+            H 37
+            L 25 110
+            L 39 113
+            V 118
+            H 5 Z
 
-            M 39 70
-            L 72 70
-            L 56 30 Z
+            M 41 73
+            H 71
+            L 56 35 Z
           "
         />
 
-        {/* T — flared serifs */}
+        {/* T */}
         <path
           d="
-            M 136 9
-            H 246
-            L 249 33
-            H 244
-            C 239 18 232 16 219 16
-            H 201
-            V 109
-            L 218 113
-            V 117
-            H 164
+            M 128 14
+            H 240
+            V 39
+            H 235
+            C 232 23 224 21 210 21
+            H 194
+            V 110
+            L 211 113
+            V 118
+            H 157
             V 113
-            L 181 109
-            V 16
-            H 163
-            C 150 16 143 18 138 33
-            H 133 Z
+            L 174 110
+            V 21
+            H 158
+            C 144 21 136 23 133 39
+            H 128 Z
           "
         />
 
-        {/* R — sculpted bowl and diagonal leg */}
+        {/* R */}
         <path
           fillRule="evenodd"
           d="
-            M 262 9
-            H 317
-            C 354 9 373 23 373 47
-            C 373 68 358 81 333 84
-            L 371 110
-            L 388 113
-            V 117
-            H 351
-            L 310 85
-            H 287
-            V 109
-            L 304 113
-            V 117
-            H 262
+            M 249 14
+            H 303
+            C 341 14 362 28 362 52
+            C 362 72 347 85 325 88
+            L 361 111
+            L 376 114
+            V 118
+            H 340
+            L 302 91
+            H 274
+            V 110
+            L 290 113
+            V 118
+            H 249
             V 113
-            L 269 109
-            V 17
-            L 262 13 Z
+            L 255 110
+            V 22
+            L 249 19 Z
 
-            M 287 17
-            V 77
-            H 311
-            C 340 77 352 66 352 47
-            C 352 28 339 17 311 17 Z
+            M 274 22
+            V 83
+            H 300
+            C 327 83 342 72 342 53
+            C 342 32 329 22 300 22 Z
           "
         />
 
-        {/* E — fine horizontal arms */}
+        {/* E */}
         <path
           d="
-            M 395 9
-            H 496
-            L 499 34
-            H 493
-            C 488 20 480 16 462 16
-            H 421
-            V 58
-            H 464
-            C 475 58 479 55 481 46
-            H 486
-            V 78
-            H 481
-            C 479 68 475 65 464 65
-            H 421
-            V 109
-            H 464
-            C 484 109 493 103 498 88
-            H 504
-            L 499 117
-            H 395
+            M 376 14
+            H 469
+            V 40
+            H 463
+            C 460 26 452 22 436 22
+            H 401
+            V 60
+            H 435
+            C 447 60 451 56 453 47
+            H 458
+            V 82
+            H 453
+            C 451 71 447 68 435 68
+            H 401
+            V 110
+            H 438
+            C 457 110 464 104 469 89
+            H 475
+            L 471 118
+            H 376
             V 113
-            L 403 109
-            V 17
-            L 395 13 Z
+            L 383 110
+            V 22
+            L 376 19 Z
           "
         />
 
-        {/* Y — slender classical fork */}
+        {/* Y */}
         <path
           d="
-            M 505 9
-            H 553
-            V 13
-            L 540 17
-            L 575 65
-            L 610 17
-            L 597 13
-            V 9
-            H 635
-            V 13
-            L 623 18
-            L 585 72
-            V 109
-            L 603 113
-            V 117
-            H 549
+            M 477 14
+            H 524
+            V 19
+            L 511 22
+            L 542 66
+            L 573 22
+            L 560 19
+            V 14
+            H 599
+            V 19
+            L 585 23
+            L 552 73
+            V 110
+            L 569 113
+            V 118
+            H 516
             V 113
-            L 566 109
-            V 72
-            L 525 18
-            L 505 13 Z
+            L 533 110
+            V 73
+            L 497 23
+            L 477 19 Z
           "
         />
 
@@ -175,72 +176,76 @@ export default function AtreyaWordmark({
         <path
           fillRule="evenodd"
           d="
-            M 604 113
-            L 615 110
-            L 658 7
-            L 666 7
-            L 710 110
-            L 719 113
-            V 117
-            H 676
+            M 564 113
+            L 575 110
+            L 615 12
+            H 623
+            L 665 110
+            L 677 113
+            V 118
+            H 631
             V 113
-            L 689 110
-            L 676 79
-            H 635
-            L 622 110
-            L 636 113
-            V 117
-            H 604 Z
+            L 644 110
+            L 633 81
+            H 596
+            L 584 110
+            L 598 113
+            V 118
+            H 564 Z
 
-            M 639 70
-            H 672
-            L 656 30 Z
+            M 600 73
+            H 630
+            L 615 35 Z
           "
         />
 
-        {/* R's signature sweeping terminal */}
+        {/* R's distinctive curved terminal */}
         <path
           d="
-            M 326 81
-            C 351 108 373 128 411 134
-            C 430 137 446 135 460 132
-            C 439 145 411 146 390 140
-            C 361 133 339 109 326 81 Z
+            M 310 88
+            C 332 112 355 132 388 139
+            C 404 143 421 142 435 137
+            C 419 149 394 151 376 146
+            C 347 138 323 112 310 88 Z
           "
         />
       </g>
 
-      {/* Botanical cutout — first A */}
+      {/* Gold leaf inside first A */}
       <path
         d="
-          M 37 90
-          C 47 80 56 78 69 79
-          C 62 91 52 96 37 90 Z
+          M 37 88
+          C 47 79 58 78 70 80
+          C 61 90 51 95 37 88 Z
         "
-        fill={`url(#${leaf})`}
-      />
-      <path
-        d="M 39 90 C 50 88 57 84 66 80"
-        stroke="#B4D8B4"
-        strokeWidth="1.4"
-        strokeLinecap="round"
+        fill="#D4AF37"
       />
 
-      {/* Botanical cutout — final A */}
+      {/* Green leaf inside final A */}
       <path
         d="
-          M 637 90
-          C 647 80 656 78 669 79
-          C 662 91 652 96 637 90 Z
+          M 596 88
+          C 606 79 617 78 629 80
+          C 620 90 610 95 596 88 Z
         "
-        fill={`url(#${leaf})`}
+        fill={`url(#${leafId})`}
       />
-      <path
-        d="M 639 90 C 650 88 657 84 666 80"
-        stroke="#B4D8B4"
-        strokeWidth="1.4"
+
+      {/* Leaf veins */}
+      <g
+        fill="none"
+        strokeWidth="1.5"
         strokeLinecap="round"
-      />
+      >
+        <path
+          d="M39 88 Q53 85 68 80"
+          stroke="#FFF0B8"
+        />
+        <path
+          d="M598 88 Q612 85 627 80"
+          stroke="#B8E3C2"
+        />
+      </g>
     </svg>
   );
 }
