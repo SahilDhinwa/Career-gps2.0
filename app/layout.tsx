@@ -9,6 +9,13 @@ import { ThemeProvider } from '../components/ThemeProvider';
 import { AuthProvider } from '../context/AuthContext';
 import BatcaveBackground from '../components/BatcaveBackground';
 
+import { Cinzel } from "next/font/google";
+
+export const cinzel = Cinzel({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 export const metadata: Metadata = {
   title: "ATREYA Med",
   description: "Clinical Ayurveda & BAMS Dissection Studio",
