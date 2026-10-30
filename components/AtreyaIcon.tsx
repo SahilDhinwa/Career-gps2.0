@@ -8,12 +8,16 @@ interface AtreyaIconProps {
 export default function AtreyaIcon({
   className = "w-12 h-12",
 }: AtreyaIconProps) {
-  const id = useId().replace(/:/g, "");
+  const uid = useId().replace(/:/g, "");
 
-  const gold = `atreya-gold-${id}`;
-  const goldLight = `atreya-gold-light-${id}`;
-  const green = `atreya-green-${id}`;
-  const greenLight = `atreya-green-light-${id}`;
+  const ids = {
+    gold: `gold-${uid}`,
+    goldBright: `gold-bright-${uid}`,
+    green: `green-${uid}`,
+    greenDark: `green-dark-${uid}`,
+    greenBright: `green-bright-${uid}`,
+    droplet: `droplet-${uid}`,
+  };
 
   return (
     <svg
@@ -22,174 +26,232 @@ export default function AtreyaIcon({
       className={className}
       fill="none"
       role="img"
-      aria-label="ATREYA Lotus and DNA emblem"
+      aria-label="ATREYA lotus and DNA emblem"
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>
+        {/* Metallic gold */}
         <linearGradient
-          id={gold}
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-          gradientUnits="objectBoundingBox"
+          id={ids.gold}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
         >
-          <stop offset="0" stopColor="#FFF1BE" />
-          <stop offset="0.3" stopColor="#EFC76E" />
-          <stop offset="0.65" stopColor="#D4A33B" />
-          <stop offset="1" stopColor="#A86E20" />
+          <stop offset="0%" stopColor="#A66B24" />
+          <stop offset="22%" stopColor="#E7B451" />
+          <stop offset="43%" stopColor="#FFF0B6" />
+          <stop offset="62%" stopColor="#E6AE45" />
+          <stop offset="100%" stopColor="#9F651C" />
         </linearGradient>
 
         <linearGradient
-          id={goldLight}
-          x1="0"
-          y1="0"
-          x2="0.8"
-          y2="1"
-          gradientUnits="objectBoundingBox"
+          id={ids.goldBright}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
         >
-          <stop offset="0" stopColor="#FFF5D3" />
-          <stop offset="0.45" stopColor="#E8B957" />
-          <stop offset="1" stopColor="#BD842A" />
+          <stop offset="0%" stopColor="#FFF5C9" />
+          <stop offset="38%" stopColor="#E9BC64" />
+          <stop offset="70%" stopColor="#D59A32" />
+          <stop offset="100%" stopColor="#A56B21" />
+        </linearGradient>
+
+        {/* Botanical greens */}
+        <linearGradient
+          id={ids.green}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
+        >
+          <stop offset="0%" stopColor="#408A43" />
+          <stop offset="35%" stopColor="#176B40" />
+          <stop offset="72%" stopColor="#075035" />
+          <stop offset="100%" stopColor="#002F22" />
         </linearGradient>
 
         <linearGradient
-          id={green}
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-          gradientUnits="objectBoundingBox"
+          id={ids.greenDark}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
         >
-          <stop offset="0" stopColor="#2C874D" />
-          <stop offset="0.45" stopColor="#08633D" />
-          <stop offset="1" stopColor="#003B27" />
+          <stop offset="0%" stopColor="#286F3B" />
+          <stop offset="55%" stopColor="#075137" />
+          <stop offset="100%" stopColor="#002D21" />
         </linearGradient>
 
         <linearGradient
-          id={greenLight}
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-          gradientUnits="objectBoundingBox"
+          id={ids.greenBright}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
         >
-          <stop offset="0" stopColor="#61A15C" />
-          <stop offset="0.4" stopColor="#187548" />
-          <stop offset="1" stopColor="#03452D" />
+          <stop offset="0%" stopColor="#A5B965" />
+          <stop offset="48%" stopColor="#6F994F" />
+          <stop offset="100%" stopColor="#2C7045" />
         </linearGradient>
+
+        <radialGradient
+          id={ids.droplet}
+          cx="35%"
+          cy="25%"
+          r="75%"
+        >
+          <stop offset="0%" stopColor="#FFF8D5" />
+          <stop offset="28%" stopColor="#F6D68A" />
+          <stop offset="65%" stopColor="#DDA743" />
+          <stop offset="100%" stopColor="#A66B20" />
+        </radialGradient>
       </defs>
 
-      {/* GOLDEN ARCH */}
+      {/* Symmetrical golden arch */}
       <path
-        d="M72 181 C73 109 113 59 174 38"
-        stroke={`url(#${gold})`}
+        d="M69 187 C69 115 112 65 176 42"
+        stroke={`url(#${ids.gold})`}
         strokeWidth="8"
         strokeLinecap="round"
       />
       <path
-        d="M226 38 C287 59 327 109 328 181"
-        stroke={`url(#${gold})`}
+        d="M224 42 C288 65 331 115 331 187"
+        stroke={`url(#${ids.gold})`}
         strokeWidth="8"
         strokeLinecap="round"
       />
 
-      {/* GOLDEN DROPLET */}
+      {/* Top golden flame / droplet */}
       <path
         d="
-          M200 2
-          C194 17 183 30 183 44
-          C183 58 190 69 200 69
-          C210 69 217 58 217 44
-          C217 30 206 17 200 2
+          M200 4
+          C195 20 181 36 181 49
+          C181 64 189 75 200 75
+          C211 75 219 64 219 49
+          C219 36 205 20 200 4
           Z
         "
-        fill={`url(#${goldLight})`}
+        fill={`url(#${ids.droplet})`}
       />
 
-      {/* LEFT OUTER PETAL */}
+      {/* Droplet reflection */}
+      <path
+        d="M191 37 C186 47 187 57 191 61"
+        stroke="#FFF7D3"
+        strokeWidth="3"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+
+      {/* LEFT OUTER LOTUS PETAL */}
       <path
         d="
-          M18 255
-          C65 244 105 265 149 326
-          C93 339 45 310 18 255
+          M22 260
+          C67 249 112 268 158 335
+          C100 346 51 318 22 260
           Z
         "
-        fill={`url(#${green})`}
+        fill={`url(#${ids.greenDark})`}
       />
 
-      {/* LEFT INNER PETAL */}
+      {/* RIGHT OUTER LOTUS PETAL */}
       <path
         d="
-          M79 183
-          C136 197 168 250 177 330
-          C124 315 90 264 79 183
+          M378 260
+          C333 249 288 268 242 335
+          C300 346 349 318 378 260
           Z
         "
-        fill={`url(#${greenLight})`}
+        fill={`url(#${ids.greenDark})`}
       />
 
-      {/* RIGHT INNER PETAL */}
+      {/* LEFT INNER LOTUS PETAL */}
       <path
         d="
-          M321 183
-          C264 197 232 250 223 330
-          C276 315 310 264 321 183
+          M78 184
+          C133 194 172 244 179 333
+          C126 313 88 263 78 184
           Z
         "
-        fill={`url(#${greenLight})`}
+        fill={`url(#${ids.green})`}
       />
 
-      {/* RIGHT OUTER PETAL */}
+      {/* RIGHT INNER LOTUS PETAL */}
       <path
         d="
-          M382 255
-          C335 244 295 265 251 326
-          C307 339 355 310 382 255
+          M322 184
+          C267 194 228 244 221 333
+          C274 313 312 263 322 184
           Z
         "
-        fill={`url(#${green})`}
+        fill={`url(#${ids.green})`}
       />
 
-      {/* LEAF VEINS */}
+      {/* LEFT LEAF: gold-green interior flourish */}
       <path
-        d="M105 219 C135 253 156 293 174 322"
-        stroke="#BFE3AF"
+        d="
+          M115 247
+          C139 260 161 295 177 330
+          C148 314 128 284 115 247
+          Z
+        "
+        fill={`url(#${ids.greenBright})`}
+        opacity="0.95"
+      />
+
+      {/* RIGHT LEAF: mirrored flourish */}
+      <path
+        d="
+          M285 247
+          C261 260 239 295 223 330
+          C252 314 272 284 285 247
+          Z
+        "
+        fill={`url(#${ids.greenBright})`}
+        opacity="0.95"
+      />
+
+      {/* Fine leaf vein highlights */}
+      <path
+        d="M113 242 C138 269 158 302 176 330"
+        stroke="#D9E7B0"
         strokeWidth="2"
         strokeLinecap="round"
         opacity="0.8"
       />
       <path
-        d="M295 219 C265 253 244 293 226 322"
-        stroke="#BFE3AF"
+        d="M287 242 C262 269 242 302 224 330"
+        stroke="#D9E7B0"
         strokeWidth="2"
         strokeLinecap="round"
         opacity="0.8"
       />
 
-      {/* DNA HELIX: GOLD STRAND */}
+      {/* DNA GOLD STRAND */}
       <path
         d="
-          M200 79
-          C167 116 161 144 200 184
-          C239 224 239 258 200 300
-          C182 321 185 344 200 372
+          M200 83
+          C161 117 162 150 200 184
+          C241 222 242 258 200 298
+          C181 318 186 344 200 370
         "
-        stroke={`url(#${gold})`}
+        stroke={`url(#${ids.goldBright})`}
         strokeWidth="12"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
 
-      {/* DNA HELIX: GREEN STRAND */}
+      {/* DNA GREEN STRAND */}
       <path
         d="
-          M200 79
-          C233 116 239 144 200 184
-          C161 224 161 258 200 300
-          C218 321 215 344 200 372
+          M200 83
+          C239 117 238 150 200 184
+          C159 222 158 258 200 298
+          C219 318 214 344 200 370
         "
-        stroke={`url(#${green})`}
+        stroke={`url(#${ids.green})`}
         strokeWidth="12"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -197,21 +259,40 @@ export default function AtreyaIcon({
 
       {/* DNA LADDER */}
       <g
-        stroke="#075235"
         strokeWidth="5"
         strokeLinecap="round"
       >
-        <path d="M181 130 H219" />
-        <path d="M180 148 H220" />
-        <path d="M182 218 H218" />
-        <path d="M176 236 H224" />
-        <path d="M180 254 H220" />
+        <path
+          d="M181 131 H219"
+          stroke="#237348"
+        />
+        <path
+          d="M182 150 H218"
+          stroke="#D6AC4C"
+        />
+        <path
+          d="M180 221 H220"
+          stroke="#24784C"
+        />
+        <path
+          d="M176 242 H224"
+          stroke="#D6AC4C"
+        />
+        <path
+          d="M182 261 H218"
+          stroke="#237348"
+        />
       </g>
 
-      {/* BOTTOM GOLD POINT */}
+      {/* Tapered base */}
       <path
-        d="M200 361 L206 381 L200 399 L194 381 Z"
-        fill={`url(#${goldLight})`}
+        d="
+          M200 357
+          C195 371 195 381 200 396
+          C205 381 205 371 200 357
+          Z
+        "
+        fill={`url(#${ids.goldBright})`}
       />
     </svg>
   );
