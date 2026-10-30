@@ -2,48 +2,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
   <defs>
     <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FFF1B8"/>
+      <stop offset="0" stop-color="#FFF1BC"/>
       <stop offset=".5" stop-color="#D4AF37"/>
-      <stop offset="1" stop-color="#926018"/>
+      <stop offset="1" stop-color="#99661F"/>
     </linearGradient>
     <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#9AE6A0"/>
-      <stop offset=".5" stop-color="#168A49"/>
-      <stop offset="1" stop-color="#07532E"/>
+      <stop offset="0" stop-color="#B5E890"/>
+      <stop offset=".5" stop-color="#238B4D"/>
+      <stop offset="1" stop-color="#07502D"/>
     </linearGradient>
   </defs>
 
-  <rect width="128" height="128" rx="26" fill="#0B2E1D"/>
+  <rect
+    width="128"
+    height="128"
+    rx="26"
+    fill="#082B1C"
+    stroke="#D4AF37"
+    stroke-opacity=".4"
+    stroke-width="2"
+  />
 
   <text
-    x="11"
+    x="9"
     y="101"
-    font-size="92"
-    font-weight="700"
+    font-size="90"
+    font-weight="600"
     font-family="Noto Serif Devanagari, Nirmala UI, serif"
     fill="url(#gold)"
-  >आ</text>
+  >ॐ</text>
+
+  <text
+    x="70"
+    y="100"
+    font-size="65"
+    font-weight="600"
+    font-family="Cinzel, Georgia, serif"
+    fill="url(#gold)"
+  >A</text>
 
   <path
-    d="M78 39 C83 17 105 13 117 9 C114 34 100 49 78 39Z"
+    d="M76 43 C81 21 101 15 119 11 C115 34 99 48 76 43Z"
     fill="url(#green)"
     stroke="#D4AF37"
-    stroke-width="1.5"
+    stroke-width="1.2"
   />
 
   <path
-    d="M75 52 C84 32 97 22 113 14"
+    d="M75 48 C89 34 103 23 116 14"
     fill="none"
-    stroke="#E8D78B"
-    stroke-width="2"
+    stroke="#E6E9A5"
+    stroke-width="1.8"
     stroke-linecap="round"
   />
 
   <path
-    d="M76 52 C70 62 69 70 68 78"
+    d="M75 48 C71 55 69 60 68 67"
     fill="none"
     stroke="url(#gold)"
-    stroke-width="3"
+    stroke-width="2.5"
     stroke-linecap="round"
   />
 </svg>
