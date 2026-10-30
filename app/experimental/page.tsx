@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { 
-  ArrowLeft, Beaker, LayoutGrid, Zap, Terminal, Box, Cloud, 
+  ArrowLeft, Beaker, LayoutGrid, Zap, Terminal, Box, Cloud, Activity,
   Square, Layers, Disc3, Gamepad2, BookOpen, Droplet, Target, Leaf,
   Minus, Flame, Briefcase, MousePointer2, Wand2, ArrowRight, Sparkles
 } from "lucide-react";
