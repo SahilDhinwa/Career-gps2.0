@@ -46,6 +46,14 @@ const ROTATING_PHRASES = [
 // ============================================================================
 const TEMP_DEV_LINKS = [
   {
+  title: "Doctor's Differential Diagnosis Hub",
+  hindi: "लक्षणों से रोग पहचान एवं अनावश्यक जांच से बचाव",
+  href: "/diagnosis-hub",
+  badge: "NEW CLINICAL TOOL",
+  isPrimary: true,
+},
+  
+  {
     title: "Experimental UI Designs Lab",
     hindi: "नए यूज़र इंटरफ़ेस (UI) डिज़ाइन का परीक्षण करें",
     href: "/experimental",
