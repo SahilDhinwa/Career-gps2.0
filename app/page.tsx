@@ -223,7 +223,7 @@ export default function LandingPage() {
   const handleSendFeedback = (e: React.FormEvent) => {
     e.preventDefault();
     const combinedMsg = `[ATREYA Med Student Feedback]\n• Topic: ${selectedQuickTag || "General Suggestion"}\n• Message: ${feedbackText || "Tested the new experimental UI!"}`;
-    const whatsappUrl = `https://wa.me/918769892303?text=${encodeURIComponent(combinedMsg)}`;
+    const whatsappUrl = `https://wa.me/918764948303?text=${encodeURIComponent(combinedMsg)}`;
     window.open(whatsappUrl, "_blank");
   };
 
