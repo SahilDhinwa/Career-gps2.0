@@ -18,7 +18,7 @@ export default function Footer() {
   const isBatman = mounted && theme === 'batman';
   
   // WhatsApp Configuration
-  const phoneNumber = "918769892303";
+  const phoneNumber = "918764948303";
   const defaultMessage = encodeURIComponent("Hi Sahil, I have a question regarding ATREYA Med!");
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
@@ -95,7 +95,7 @@ export default function Footer() {
                     rel="noopener noreferrer" 
                     className={`font-bold transition-colors flex items-center gap-1 group ${isBatman ? 'text-gray-100 hover:text-[#25D366]' : 'text-foreground hover:text-[#25D366]'}`}
                   >
-                    +91 8769892303 <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    +91 8764948303 <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </a>
                 </div>
               </li>
