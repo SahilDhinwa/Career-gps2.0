@@ -14,22 +14,33 @@ interface LightningBolt {
   segments: BoltSegment[];
   alpha: number;
   thickness: number;
+  isRedSurge?: boolean;
 }
 
 export default function BatcaveBackground() {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
+  // Core DOM Refs for Zero-Lag 60FPS Direct Manipulation
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const batmobileRef = useRef<HTMLDivElement | null>(null);
   const cloudsRef = useRef<HTMLDivElement | null>(null);
+  const emblemGroupRef = useRef<SVGGElement | null>(null);
+  const outerRingRef = useRef<SVGGElement | null>(null);
+  const innerRingRef = useRef<SVGGElement | null>(null);
+  const hudGridRef = useRef<SVGGElement | null>(null);
+  const depthTextRef = useRef<SVGTextElement | null>(null);
+  const percentTextRef = useRef<SVGTextElement | null>(null);
+  const progressFillRef = useRef<SVGRectElement | null>(null);
+  const scanlineRef = useRef<SVGLineElement | null>(null);
 
   useEffect(() => setMounted(true), []);
 
   const isBatman = theme === "batman" || resolvedTheme === "batman";
 
-  // ==========================================
-  // RETINA-SHARP LIGHTNING & EMBERS ENGINE
-  // ==========================================
+  // =========================================================================
+  // SCROLL-REACTIVE KINETIC LIGHTNING, EMBERS & HUD TELEMETRY ENGINE
+  // =========================================================================
   useEffect(() => {
     if (!isBatman) return;
     const canvas = canvasRef.current;
@@ -41,6 +52,16 @@ export default function BatcaveBackground() {
     let width = window.innerWidth;
     let height = window.innerHeight;
 
+    // Scroll Physics State (Tracked outside React state for 60fps smoothness)
+    let targetScrollY = window.scrollY;
+    let smoothScrollY = window.scrollY;
+    let scrollVelocity = 0;
+    let maxScrollHeight = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight
+    );
+    let lastLightningScrollY = window.scrollY;
+
     const applyCanvasSize = (w: number, h: number) => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = w;
@@ -50,11 +71,14 @@ export default function BatcaveBackground() {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      maxScrollHeight = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
     };
 
     applyCanvasSize(width, height);
 
-    // Prevent mobile URL-bar hide/show from resetting the canvas on scroll
     const handleResize = () => {
       const newW = window.innerWidth;
       const newH = window.innerHeight;
@@ -63,24 +87,34 @@ export default function BatcaveBackground() {
 
       if (widthChanged || heightChangedSignificantly) {
         applyCanvasSize(newW, newH);
+      } else {
+        maxScrollHeight = Math.max(
+          1,
+          document.documentElement.scrollHeight - window.innerHeight
+        );
       }
     };
 
-    window.addEventListener("resize", handleResize, { passive: true });
+    const handleScroll = () => {
+      targetScrollY = window.scrollY;
+    };
 
-    const numberOfParticles = width < 768 ? 30 : 65;
+    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    const numberOfParticles = width < 768 ? 35 : 75;
     const colors = [
       "rgba(255, 30, 30, 0.9)",
-      "rgba(255, 60, 20, 0.8)",
-      "rgba(200, 10, 10, 0.8)",
+      "rgba(255, 75, 25, 0.85)",
+      "rgba(210, 10, 10, 0.8)",
     ];
 
     const particlesArray = Array.from({ length: numberOfParticles }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 2 + 0.5,
-      speedX: Math.random() * 1 - 0.5,
-      speedY: Math.random() * -1.5 - 0.5,
+      size: Math.random() * 2.2 + 0.6,
+      speedX: Math.random() * 0.8 - 0.4,
+      speedY: Math.random() * -1.4 - 0.5,
       color: colors[Math.floor(Math.random() * colors.length)],
     }));
 
@@ -89,14 +123,15 @@ export default function BatcaveBackground() {
 
     const createLightningBolt = (
       startX: number,
-      startY: number
+      startY: number,
+      isRedSurge = false
     ): LightningBolt => {
       const segments: BoltSegment[] = [];
       let curX = startX;
       let curY = startY;
       const cloudDensity = Math.random();
       const thickness =
-        cloudDensity > 0.6 ? Math.random() * 4 + 2 : Math.random() * 2 + 1;
+        cloudDensity > 0.6 ? Math.random() * 3.5 + 2 : Math.random() * 2 + 1;
 
       while (curY < height) {
         const nextX = curX + (Math.random() - 0.5) * 150;
@@ -114,67 +149,195 @@ export default function BatcaveBackground() {
         curX = nextX;
         curY = nextY;
       }
-      return { segments, alpha: 1.0, thickness };
+      return { segments, alpha: 1.0, thickness, isRedSurge };
     };
 
     const animate = () => {
-      // Pause rendering if the browser tab is hidden to save battery
       if (document.hidden) {
         animationFrameId = requestAnimationFrame(animate);
         return;
       }
 
-      ctx.clearRect(0, 0, width, height);
+      // 1. CALCULATE SMOOTH LERP SCROLL & VELOCITY
+      const diff = targetScrollY - smoothScrollY;
+      smoothScrollY += diff * 0.09; // Smooth damping factor
+      scrollVelocity = diff * 0.09; // Positive = scrolling down, Negative = scrolling up
+      const absVelocity = Math.min(Math.abs(scrollVelocity), 45);
 
-      // Draw embers without GPU-blocking shadowBlur on every frame
+      // Recalculate maxScrollHeight dynamically in case page content expanded
+      const currentMax = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
+      const scrollProgress = Math.max(
+        0,
+        Math.min(1, smoothScrollY / currentMax)
+      );
+
+      // 2. APPLY SCROLL TRANSFORMATIONS TO SVG HUD & BAT EMBLEM
+      if (outerRingRef.current) {
+        const rotOuter = scrollProgress * 220;
+        outerRingRef.current.setAttribute(
+          "transform",
+          `rotate(${rotOuter.toFixed(1)} 768 415)`
+        );
+      }
+
+      if (innerRingRef.current) {
+        const rotInner = -scrollProgress * 300;
+        const ringScale = 1 + Math.min(absVelocity * 0.003, 0.08);
+        innerRingRef.current.setAttribute(
+          "transform",
+          `translate(768 415) rotate(${rotInner.toFixed(1)}) scale(${ringScale.toFixed(3)}) translate(-768 -415)`
+        );
+      }
+
+      if (emblemGroupRef.current) {
+        // Subtle parallax rise + kinetic scale pulse when scrolling fast
+        const parallaxY = Math.sin(scrollProgress * Math.PI) * -18;
+        const scaleBoost =
+          1 + scrollProgress * 0.06 + Math.min(absVelocity * 0.0025, 0.06);
+        emblemGroupRef.current.setAttribute(
+          "transform",
+          `translate(768 ${415 + parallaxY}) scale(${scaleBoost.toFixed(3)}) translate(-768 -415)`
+        );
+      }
+
+      if (hudGridRef.current) {
+        // Shift background grid vertically for subterranean descent illusion
+        const gridShiftY = (smoothScrollY * -0.12) % 80;
+        hudGridRef.current.setAttribute(
+          "transform",
+          `translate(0, ${gridShiftY.toFixed(1)})`
+        );
+      }
+
+      if (scanlineRef.current) {
+        const scanY = 120 + scrollProgress * 620;
+        scanlineRef.current.setAttribute("y1", scanY.toFixed(1));
+        scanlineRef.current.setAttribute("y2", scanY.toFixed(1));
+      }
+
+      if (depthTextRef.current) {
+        const caveDepthMeters = Math.round(120 + scrollProgress * 880);
+        depthTextRef.current.textContent = `DEPTH // -0${caveDepthMeters}M`;
+      }
+
+      if (percentTextRef.current) {
+        const pct = Math.round(scrollProgress * 100)
+          .toString()
+          .padStart(2, "0");
+        percentTextRef.current.textContent = `SYNC // ${pct}%`;
+      }
+
+      if (progressFillRef.current) {
+        const barHeight = Math.max(4, scrollProgress * 500);
+        progressFillRef.current.setAttribute("height", barHeight.toFixed(1));
+      }
+
+      // 3. DRAW KINETIC EMBERS (STREAKS REACT TO SCROLL VELOCITY)
+      ctx.clearRect(0, 0, width, height);
       ctx.shadowBlur = 0;
+
+      // Extra upward rush when scrolling down, downward push when scrolling up
+      const velocityBoostY = -scrollVelocity * 0.35;
+
       for (let i = 0; i < particlesArray.length; i++) {
         const p = particlesArray[i];
+        const effectiveVy = p.speedY + velocityBoostY;
+
         p.x += p.speedX;
-        p.y += p.speedY;
+        p.y += effectiveVy;
         p.speedX += Math.random() * 0.02 - 0.01;
-        if (p.y < -10) {
-          p.y = height + 10;
+
+        // Wrap particles smoothly around top and bottom
+        if (p.y < -25) {
+          p.y = height + 20;
+          p.x = Math.random() * width;
+        } else if (p.y > height + 25) {
+          p.y = -20;
           p.x = Math.random() * width;
         }
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
+
+        // If user is scrolling fast, draw motion-blur plasma streaks!
+        if (absVelocity > 2.5) {
+          ctx.beginPath();
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = p.size;
+          ctx.lineCap = "round";
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x - p.speedX * 2, p.y - effectiveVy * 2.4);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        }
       }
 
-      // Trigger lightning at original frequency
-      if (Math.random() < 0.003) {
-        lightningBolts.push(createLightningBolt(Math.random() * width, 0));
-        globalFlashIntensity = 1.0;
+      // 4. TRIGGER AMBIENT LIGHTNING OR SCROLL-SURGE LIGHTNING
+      const scrolledDistanceSinceStrike = Math.abs(
+        smoothScrollY - lastLightningScrollY
+      );
+      const triggerKineticStrike =
+        absVelocity > 22 && scrolledDistanceSinceStrike > 550;
+
+      if (Math.random() < 0.0028 || triggerKineticStrike) {
+        if (triggerKineticStrike) {
+          lastLightningScrollY = smoothScrollY;
+        }
+        lightningBolts.push(
+          createLightningBolt(
+            Math.random() * width,
+            0,
+            triggerKineticStrike // Red-tinted kinetic bolt when triggered by fast scroll
+          )
+        );
+        globalFlashIntensity = triggerKineticStrike ? 0.85 : 1.0;
       }
 
-      if (globalFlashIntensity > 0.01) {
+      // 5. BATMOBILE SILHOUETTE & CLOUDS ILLUMINATION
+      // Batmobile also emerges softly when user reaches bottom 20% of page
+      const bottomGarageReveal =
+        scrollProgress > 0.8 ? (scrollProgress - 0.8) * 3.2 : 0;
+
+      if (globalFlashIntensity > 0.01 || bottomGarageReveal > 0.01) {
         globalFlashIntensity *= 0.92;
-        if (batmobileRef.current)
-          batmobileRef.current.style.opacity = (
-            globalFlashIntensity * 0.8
-          ).toString();
-        if (cloudsRef.current)
+        const combinedMobileOpacity = Math.min(
+          0.9,
+          Math.max(globalFlashIntensity * 0.8, bottomGarageReveal)
+        );
+
+        if (batmobileRef.current) {
+          batmobileRef.current.style.opacity = combinedMobileOpacity.toFixed(2);
+          const liftY = Math.round(scrollProgress * -14);
+          batmobileRef.current.style.transform = `translate(-50%, ${liftY}px)`;
+        }
+        if (cloudsRef.current) {
           cloudsRef.current.style.opacity = (
             globalFlashIntensity * 0.5
-          ).toString();
+          ).toFixed(2);
+        }
       } else if (globalFlashIntensity !== 0) {
         globalFlashIntensity = 0;
         if (batmobileRef.current) batmobileRef.current.style.opacity = "0";
         if (cloudsRef.current) cloudsRef.current.style.opacity = "0";
       }
 
+      // Render active lightning bolts
       for (let i = lightningBolts.length - 1; i >= 0; i--) {
         const bolt = lightningBolts[i];
         bolt.alpha *= 0.85;
 
         ctx.save();
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(255, 255, 255, ${bolt.alpha})`;
+        ctx.strokeStyle = bolt.isRedSurge
+          ? `rgba(255, 90, 90, ${bolt.alpha})`
+          : `rgba(255, 255, 255, ${bolt.alpha})`;
         ctx.lineWidth = bolt.thickness;
         ctx.shadowBlur = 15;
-        ctx.shadowColor = "white";
+        ctx.shadowColor = bolt.isRedSurge ? "#ff1a1a" : "white";
 
         for (let j = 0; j < bolt.segments.length; j++) {
           const seg = bolt.segments[j];
@@ -194,6 +357,7 @@ export default function BatcaveBackground() {
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
   }, [isBatman]);
@@ -222,18 +386,14 @@ export default function BatcaveBackground() {
         }}
       />
 
-      {/* 2. LIVE EMBERS & WHITE LIGHTNING CANVAS */}
+      {/* 2. LIVE KINETIC EMBERS & LIGHTNING CANVAS */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 z-[1] w-full h-full opacity-100"
       />
 
-      {/* 3. RATIO-BALANCED MASTER SVG EMBLEM
-          - Mobile Portrait: scale-[1.45] zooms past empty side HUD margins so the Bat emblem fills the phone screen.
-          - Laptop/Desktop: md:scale-100 preserves the full 16:9 tactical HUD grid.
-          - transform-gpu: Isolates heavy SVG filters onto a static GPU texture so 60fps canvas repaints never lag.
-      */}
-      <div className="relative z-10 w-full h-full max-w-[1350px] px-2 flex items-center justify-center transform-gpu will-change-transform">
+      {/* 3. SCROLL-REACTIVE BATCOMPUTER HUD & PLASMA EMBLEM */}
+      <div className="relative z-10 w-full h-full max-w-[1380px] px-2 flex items-center justify-center transform-gpu will-change-transform">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1536 864"
@@ -336,57 +496,138 @@ export default function BatcaveBackground() {
             <path id="batOutline" d={batPath} />
           </defs>
 
-          {/* TACTICAL HUD GRID */}
-          <g stroke="#3d0a0a" strokeWidth="1" opacity="0.5">
-            <line
-              x1="80"
-              y1="310"
-              x2="1456"
-              y2="310"
-              strokeOpacity="0.35"
-            />
+          {/* PARALLAX TACTICAL HUD GRID (Shifts smoothly with scroll) */}
+          <g ref={hudGridRef} stroke="#4a0c0c" strokeWidth="1" opacity="0.55">
+            <line x1="80" y1="230" x2="1456" y2="230" strokeOpacity="0.25" />
+            <line x1="80" y1="310" x2="1456" y2="310" strokeOpacity="0.35" />
             <line x1="80" y1="472" x2="1456" y2="472" strokeOpacity="0.5" />
-            <line
-              x1="80"
-              y1="634"
-              x2="1456"
-              y2="634"
-              strokeOpacity="0.25"
-            />
-            <line
-              x1="142"
-              y1="120"
-              x2="142"
-              y2="740"
-              strokeOpacity="0.45"
-            />
-            <line
-              x1="285"
-              y1="180"
-              x2="285"
-              y2="680"
-              strokeOpacity="0.3"
-            />
-            <line
-              x1="1251"
-              y1="180"
-              x2="1251"
-              y2="680"
-              strokeOpacity="0.3"
-            />
-            <line
-              x1="1394"
-              y1="120"
-              x2="1394"
-              y2="740"
-              strokeOpacity="0.45"
-            />
-            <circle cx="142" cy="310" r="2" fill="#801515" />
-            <circle cx="142" cy="472" r="2.5" fill="#a31919" />
+            <line x1="80" y1="634" x2="1456" y2="634" strokeOpacity="0.25" />
+            <line x1="80" y1="714" x2="1456" y2="714" strokeOpacity="0.2" />
+            <line x1="142" y1="60" x2="142" y2="800" strokeOpacity="0.45" />
+            <line x1="285" y1="140" x2="285" y2="720" strokeOpacity="0.3" />
+            <line x1="1251" y1="140" x2="1251" y2="720" strokeOpacity="0.3" />
+            <line x1="1394" y1="60" x2="1394" y2="800" strokeOpacity="0.45" />
+            <circle cx="142" cy="310" r="2.5" fill="#991515" />
+            <circle cx="142" cy="472" r="3" fill="#cc1919" />
             <circle cx="285" cy="472" r="2" fill="#801515" />
             <circle cx="1251" cy="472" r="2" fill="#801515" />
-            <circle cx="1394" cy="310" r="2" fill="#801515" />
-            <circle cx="1394" cy="472" r="2.5" fill="#a31919" />
+            <circle cx="1394" cy="310" r="2.5" fill="#991515" />
+            <circle cx="1394" cy="472" r="3" fill="#cc1919" />
+          </g>
+
+          {/* ACTIVE HORIZONTAL LASER SCANLINE (Tracks Scroll Position) */}
+          <line
+            ref={scanlineRef}
+            x1="142"
+            y1="120"
+            x2="1394"
+            y2="120"
+            stroke="#ff1a1a"
+            strokeWidth="1"
+            strokeDasharray="12 8"
+            opacity="0.35"
+          />
+
+          {/* LEFT & RIGHT LIVE TELEMETRY SIDEBARS (Desktop/Tablet HUD) */}
+          <g fontFamily="monospace" fontSize="11" fill="#cc2929" opacity="0.75">
+            <text ref={depthTextRef} x="154" y="155" letterSpacing="2">
+              DEPTH // -0120M
+            </text>
+            <text
+              x="154"
+              y="172"
+              fontSize="9"
+              fill="#7a2020"
+              letterSpacing="1.5"
+            >
+              BATCOMPUTER // BIO-TELEMETRY LINK
+            </text>
+
+            <text
+              ref={percentTextRef}
+              x="1380"
+              y="155"
+              textAnchor="end"
+              letterSpacing="2"
+            >
+              SYNC // 00%
+            </text>
+
+            {/* Right Vertical Depth Progress Bar */}
+            <rect
+              x="1388"
+              y="180"
+              width="4"
+              height="500"
+              fill="#2a0707"
+              rx="2"
+            />
+            <rect
+              ref={progressFillRef}
+              x="1388"
+              y="180"
+              width="4"
+              height="4"
+              fill="#ff1e1e"
+              rx="2"
+              filter="url(#hudGlow)"
+            />
+          </g>
+
+          {/* SCROLL-ROTATING BATCOMPUTER TARGET RINGS (Behind Bat Emblem) */}
+          <g ref={outerRingRef}>
+            <circle
+              cx="768"
+              cy="415"
+              r="310"
+              fill="none"
+              stroke="#5c0d0d"
+              strokeWidth="1.5"
+              strokeDasharray="24 14 6 14"
+              opacity="0.6"
+            />
+            <circle
+              cx="768"
+              cy="415"
+              r="330"
+              fill="none"
+              stroke="#3d0808"
+              strokeWidth="1"
+              strokeDasharray="4 18"
+              opacity="0.5"
+            />
+          </g>
+
+          <g ref={innerRingRef}>
+            <circle
+              cx="768"
+              cy="415"
+              r="235"
+              fill="none"
+              stroke="#991414"
+              strokeWidth="2"
+              strokeDasharray="45 25 10 25"
+              opacity="0.5"
+            />
+            {/* Tactical Crosshair Ticks */}
+            <line
+              x1="768"
+              y1="165"
+              x2="768"
+              y2="185"
+              stroke="#ff2a2a"
+              strokeWidth="2"
+              opacity="0.6"
+            />
+            <line
+              x1="768"
+              y1="645"
+              x2="768"
+              y2="665"
+              stroke="#ff2a2a"
+              strokeWidth="2"
+              opacity="0.6"
+            />
           </g>
 
           {/* LOCALIZED SMOKE (Strictly Masked Behind Bat) */}
@@ -410,8 +651,8 @@ export default function BatcaveBackground() {
             />
           </g>
 
-          {/* THE BATMAN PLASMA EMBLEM */}
-          <g>
+          {/* THE BATMAN PLASMA EMBLEM (Reacts to Scroll Depth & Velocity) */}
+          <g ref={emblemGroupRef}>
             <use
               href="#batOutline"
               fill="none"
@@ -517,15 +758,15 @@ export default function BatcaveBackground() {
         </svg>
       </div>
 
-      {/* 4. SILHOUETTE BATMOBILE FLASH */}
+      {/* 4. SILHOUETTE BATMOBILE (Flashes on Lightning + Rises on Bottom Scroll) */}
       <div
         ref={batmobileRef}
-        className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 z-20 transition-opacity duration-75"
+        className="absolute bottom-[-14px] left-1/2 -translate-x-1/2 z-20 transition-opacity duration-150"
         style={{ opacity: 0 }}
       >
         <svg
           viewBox="0 0 500 150"
-          className="w-[280px] md:w-[450px] lg:w-[600px] drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+          className="w-[280px] md:w-[450px] lg:w-[600px] drop-shadow-[0_0_20px_rgba(255,30,30,0.45)]"
         >
           <path d="M 20 140 A 30 30 0 0 1 100 140 Z" fill="#020202" />
           <path d="M 400 140 A 30 30 0 0 1 480 140 Z" fill="#020202" />
@@ -538,15 +779,18 @@ export default function BatcaveBackground() {
             fill="none"
             stroke="#ffffff"
             strokeWidth="2"
-            opacity="0.6"
+            opacity="0.65"
           />
           <path
             d="M 120 70 L 150 65 L 180 40"
             fill="none"
-            stroke="#ffffff"
-            strokeWidth="1.5"
-            opacity="0.4"
+            stroke="#ff3333"
+            strokeWidth="1.8"
+            opacity="0.7"
           />
+          {/* Crimson Afterburner & Tactical Headlight Glow */}
+          <ellipse cx="462" cy="94" rx="10" ry="3.5" fill="#ff1a1a" opacity="0.85" />
+          <ellipse cx="56" cy="96" rx="8" ry="3" fill="#ff3300" opacity="0.9" />
         </svg>
       </div>
     </div>
