@@ -20,6 +20,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import Logo from "./Logo";
+import CinematicIntro from "./CinematicIntro";
 
 export default function Navbar() {
   const { user, userData, isLoading } = useAuth();
@@ -30,6 +31,7 @@ export default function Navbar() {
 
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isSwitchingToBatman, setIsSwitchingToBatman] = useState(false);
 
   const isLandingPage = pathname === "/";
 
@@ -56,7 +58,7 @@ export default function Navbar() {
       : "text-foreground/80 hover:text-primary transition-colors";
   };
 
-  // Instant mode toggle for logged-in users (Full intro only happens on Login page)
+  // Triggers the 10-second skippable Batman intro for logged-in users
   const handleBatmanToggle = () => {
     if (theme === "batman") {
       setTheme("dark");
@@ -67,9 +69,15 @@ export default function Navbar() {
         );
         return;
       }
-      setTheme("batman");
+      setIsSwitchingToBatman(true);
       setIsMobileMenuOpen(false);
     }
+  };
+
+  // Fires either when the 10-second intro completes OR when the user clicks "Skip Intro"
+  const handleBatmanIntroComplete = () => {
+    setTheme("batman");
+    setIsSwitchingToBatman(false);
   };
 
   return (
@@ -83,7 +91,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 min-h-[3.5rem] sm:min-h-[4rem] flex items-center justify-between gap-4">
         <Logo />
 
-        {/* DESKTOP NAV */}
+        {/* =========================================================
+            DESKTOP NAV (Hidden strictly on screens smaller than lg)
+            ========================================================= */}
         <div className="hidden lg:flex items-center gap-4 xl:gap-6 font-medium text-[13px] xl:text-sm">
           <Link href="/e-books" className={getLinkStyle("/e-books")}>
             E-Books
@@ -172,8 +182,19 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* RIGHT ACTIONS */}
+        {/* =========================================================
+            RIGHT ACTIONS (Skippable Intro + Mobile Menu + Auth/Theme)
+            ========================================================= */}
         <div className="flex items-center gap-3 shrink-0 z-50">
+          {mounted && isSwitchingToBatman && (
+            <CinematicIntro
+              isActive={true}
+              mode="batman"
+              onComplete={handleBatmanIntroComplete}
+            />
+          )}
+
+          {/* Desktop Theme Toggle */}
           {mounted && theme !== "batman" && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -229,6 +250,7 @@ export default function Navbar() {
             </div>
           )}
 
+          {/* Mobile Clean Framed Menu Button (Visible < lg) */}
           <button
             className="lg:hidden w-10 h-10 rounded-xl bg-surface border border-surfaceBorder flex items-center justify-center text-foreground/80 hover:text-primary hover:border-primary/40 transition-all shadow-sm focus:outline-none cursor-pointer"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -243,7 +265,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE SLIDE-DOWN DRAWER */}
+      {/* =========================================================
+          MOBILE SLIDE-DOWN DRAWER
+          ========================================================= */}
       <div
         className={`lg:hidden absolute top-full left-0 w-full bg-surface border-b border-surfaceBorder shadow-2xl overflow-y-auto transition-all duration-300 ease-in-out ${
           isMobileMenuOpen
@@ -369,6 +393,7 @@ export default function Navbar() {
             </div>
           )}
 
+          {/* Mobile Profile Link */}
           {!isLoading && user && (
             <div className="pt-6 mt-4 border-t border-surfaceBorder">
               <Link
