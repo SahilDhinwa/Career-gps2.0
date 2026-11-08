@@ -80,11 +80,12 @@ export function validateEvidenceRegistry(
     }
   }
 
-  for (const id of validIds) {
-    if (!diseaseIds.has(id)) {
-      errors.push(`Missing evidence record: ${id}`);
-    }
+  
+validDiseaseIds.forEach((id) => {
+  if (!diseaseIds.has(id)) {
+    errors.push(`Missing evidence record: ${id}`);
   }
+});
 
   return errors;
 }
