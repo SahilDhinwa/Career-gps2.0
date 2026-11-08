@@ -1,4 +1,3 @@
-
 import React, { useId } from "react";
 
 interface AtreyaIconProps {
@@ -12,12 +11,11 @@ export default function AtreyaIcon({
 
   const tealId = `atreya-teal-${id}`;
   const leafId = `atreya-leaf-${id}`;
-  const highlightId = `atreya-highlight-${id}`;
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 360 310"
+      viewBox="0 0 370 305"
       className={className}
       fill="none"
       role="img"
@@ -27,125 +25,93 @@ export default function AtreyaIcon({
       <defs>
         <linearGradient
           id={tealId}
-          x1="0"
+          x1="0.35"
           y1="0"
-          x2="1"
+          x2="0.65"
           y2="1"
-          gradientUnits="objectBoundingBox"
         >
-          <stop offset="0%" stopColor="#179B83" />
-          <stop offset="48%" stopColor="#087568" />
-          <stop offset="100%" stopColor="#00473F" />
+          <stop offset="0%" stopColor="#149680" />
+          <stop offset="48%" stopColor="#086D61" />
+          <stop offset="100%" stopColor="#023B36" />
         </linearGradient>
 
         <linearGradient
           id={leafId}
           x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-          gradientUnits="objectBoundingBox"
+          y1="0.85"
+          x2="0.95"
+          y2="0.2"
         >
-          <stop offset="0%" stopColor="#9DD55A" />
-          <stop offset="55%" stopColor="#68BE55" />
-          <stop offset="100%" stopColor="#3FA95E" />
-        </linearGradient>
-
-        <linearGradient
-          id={highlightId}
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-        >
-          <stop offset="0%" stopColor="#B7E577" />
-          <stop offset="100%" stopColor="#48A95B" />
+          <stop offset="0%" stopColor="#55AE54" />
+          <stop offset="55%" stopColor="#7BC356" />
+          <stop offset="85%" stopColor="#8BCE58" />
+          <stop offset="100%" stopColor="#6BB955" />
         </linearGradient>
       </defs>
 
-      {/* Geometric A: left structural stroke */}
+      {/* Upper body of the A */}
       <path
         d="
-          M 27 286
-          L 142 39
-          C 151 19 161 13 180 13
-          C 198 13 208 21 218 40
-          L 272 139
-          C 249 135 227 135 208 139
-          L 180 86
-          L 92 286
+          M 55.5 222
+          L 163 30.8
+          C 170.5 17.4 177.5 15 187 15
+          C 196.5 15 203.5 17.4 211 30.8
+          L 274.5 143
+          C 256 139.5 236 140 218.5 144.5
+          L 187 88
+          L 105.1 235
+          C 87 235.5 69 231 55.5 222
           Z
         "
         fill={`url(#${tealId})`}
       />
 
-      {/* Geometric A: right structural stroke */}
+      {/* Lower left terminal */}
       <path
         d="
-          M 233 150
-          C 254 146 271 147 286 154
-          L 337 286
-          H 280
-          L 244 202
-          L 226 162
+          M 42.5 245.2
+          C 56 255 72 261 89 263.8
+          L 82.8 275
+          C 76.6 286.1 68 291 56 291
+          H 17
+          L 42.5 245.2
           Z
         "
         fill={`url(#${tealId})`}
       />
 
-      {/* Inner crossbar, partially integrated with leaf */}
+      {/* Right leg */}
       <path
         d="
-          M 167 150
-          C 193 145 217 142 241 144
-          L 254 173
-          C 223 166 197 170 174 180
+          M 282.3 157
+          L 357 291
+          H 318
+          C 306 291 297.4 286.1 291.2 275
+          L 252.2 205
+          C 263.5 189 273.5 173 282.3 157
           Z
         "
         fill={`url(#${tealId})`}
       />
 
-      {/* Leaf sweeping across the A */}
+      {/* Botanical leaf and sweeping lower curve */}
       <path
         d="
-          M 25 151
-          C 1 181 4 211 26 232
-          C 52 258 91 260 131 248
-          C 183 233 213 200 241 173
-          C 258 157 275 146 298 137
-          C 249 132 210 140 176 158
-          C 141 176 122 207 89 223
-          C 60 237 34 224 26 204
-          C 17 183 22 164 25 151
+          M 79 146
+          C 45 158 18.5 181 18.5 207
+          C 18.5 239 51 266.5 98 266.5
+          C 148 266.5 198 242 235 204
+          C 250 188.5 261 167 271 150.5
+          C 242 146.5 208 149 179 164
+          C 148 180 132 203 125 233
+          C 145 215 178 191 214 178
+          C 191 195 166 223 136 238
+          C 122 245 109 246.5 96 246.5
+          C 64 246.5 34 228 34 201
+          C 34 179 52 159 79 146
           Z
         "
         fill={`url(#${leafId})`}
-      />
-
-      {/* Main botanical leaf blade */}
-      <path
-        d="
-          M 105 232
-          C 123 184 162 153 208 144
-          C 237 138 266 138 295 139
-          C 267 151 247 168 226 190
-          C 194 223 153 244 105 232
-          Z
-        "
-        fill={`url(#${highlightId})`}
-      />
-
-      {/* Fine leaf vein */}
-      <path
-        d="
-          M 106 232
-          C 151 211 181 181 225 158
-          C 246 148 267 143 291 140
-        "
-        stroke="#D5F4B4"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        opacity="0.85"
       />
     </svg>
   );
