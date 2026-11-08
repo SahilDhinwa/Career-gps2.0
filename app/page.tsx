@@ -49,10 +49,9 @@ const TEMP_DEV_LINKS = [
     isPrimary: true,
   },
   {
-    title: "Swasthavritta Ch. 1 (Notebook UI)",
-    hindi: "हस्तलिखित नोटबुक नोट्स का डेमो देखें",
-    href: "/short-notes/swasth-vritta/paper-1/chapter-1",
-    badge: "BAMS NOTES",
+    title: "Differential Diagnosis",
+    href: "/diagnosis-hub",
+    badge: "Doctor's Corner",
     isPrimary: false,
   },
   {
