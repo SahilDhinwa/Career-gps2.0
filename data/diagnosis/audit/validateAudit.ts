@@ -25,9 +25,14 @@ export function validateClinicalAudits(): string[] {
   );
 
   const auditIds = new Set<string>();
+
   const claimIds = new Set(
     EVIDENCE_CLAIMS.map((claim) => claim.id)
   );
+
+  // ============================================================
+  // VALIDATE DISEASE AUDIT RECORDS
+  // ============================================================
 
   for (const audit of DISEASE_AUDITS) {
     if (!diseaseIds.has(audit.diseaseId)) {
@@ -44,6 +49,7 @@ export function validateClinicalAudits(): string[] {
 
     auditIds.add(audit.diseaseId);
 
+    // No automatic clinical approval is permitted.
     if (audit.clinicalApproval !== false) {
       errors.push(
         `Unexpected clinical approval: ${audit.diseaseId}`
@@ -51,6 +57,10 @@ export function validateClinicalAudits(): string[] {
     }
 
     const fields = new Set<ClinicalField>();
+
+    // ==========================================================
+    // VALIDATE INDIVIDUAL CLINICAL FIELDS
+    // ==========================================================
 
     for (const field of audit.fields) {
       if (fields.has(field.field)) {
@@ -61,6 +71,7 @@ export function validateClinicalAudits(): string[] {
 
       fields.add(field.field);
 
+      // Validate manually attached evidence claim IDs.
       for (const claimId of field.evidenceClaimIds) {
         if (!claimIds.has(claimId)) {
           errors.push(
@@ -69,6 +80,10 @@ export function validateClinicalAudits(): string[] {
         }
       }
     }
+
+    // ==========================================================
+    // CHECK ALL REQUIRED CLINICAL FIELDS
+    // ==========================================================
 
     for (const requiredField of REQUIRED_FIELDS) {
       if (!fields.has(requiredField)) {
@@ -79,11 +94,20 @@ export function validateClinicalAudits(): string[] {
     }
   }
 
-  for (const diseaseId of diseaseIds) {
-    if (!auditIds.has(diseaseId)) {
-      errors.push(`Missing disease audit: ${diseaseId}`);
+  // ============================================================
+  // CHECK EVERY DISEASE HAS AN AUDIT
+  //
+  // Use Array.forEach instead of iterating a Set directly.
+  // Compatible with older TypeScript compilation targets.
+  // ============================================================
+
+  DISEASE_DATABASE.forEach((disease) => {
+    if (!auditIds.has(disease.id)) {
+      errors.push(
+        `Missing disease audit: ${disease.id}`
+      );
     }
-  }
+  });
 
   return errors;
 }
