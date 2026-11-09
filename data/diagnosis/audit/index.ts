@@ -1,6 +1,5 @@
 
 import { DISEASE_AUDITS } from "./records";
-
 import { EVIDENCE_CLAIMS } from "../evidence/claims";
 
 import type {
@@ -8,8 +7,19 @@ import type {
   DiseaseAudit,
 } from "./types";
 
+// ============================================================
+// PUBLIC EXPORTS
+// ============================================================
+
 export * from "./types";
+
 export { DISEASE_AUDITS };
+
+export { validateClinicalAudits } from "./validateAudit";
+
+// ============================================================
+// VALID CLINICAL FIELDS
+// ============================================================
 
 const VALID_FIELDS = new Set<ClinicalField>([
   "modernCorrelate",
@@ -23,6 +33,10 @@ const VALID_FIELDS = new Set<ClinicalField>([
   "firstLineChikitsa",
 ]);
 
+// ============================================================
+// GET DISEASE AUDIT WITH LINKED EVIDENCE
+// ============================================================
+
 export function getDiseaseAudit(
   diseaseId: string
 ): DiseaseAudit | null {
@@ -32,47 +46,111 @@ export function getDiseaseAudit(
 
   if (!record) return null;
 
-  return {
-    ...record,
-    fields: record.fields.map((fieldAudit) => {
-      const linkedClaims = EVIDENCE_CLAIMS.filter(
-        (claim) =>
-          claim.diseaseId === diseaseId &&
-          claim.replacesLegacyField === fieldAudit.field &&
-          VALID_FIELDS.has(fieldAudit.field)
-      );
-
+  const fields = record.fields.map((fieldAudit) => {
+    if (!VALID_FIELDS.has(fieldAudit.field)) {
       return {
         ...fieldAudit,
-        evidenceClaimIds: linkedClaims.map(
-          (claim) => claim.id
-        ),
+        evidenceClaimIds: [],
       };
-    }),
+    }
+
+    const linkedClaims = EVIDENCE_CLAIMS.filter(
+      (claim) =>
+        claim.diseaseId === diseaseId &&
+        claim.replacesLegacyField === fieldAudit.field
+    );
+
+    const evidenceClaimIds = Array.from(
+      new Set([
+        ...fieldAudit.evidenceClaimIds,
+        ...linkedClaims.map((claim) => claim.id),
+      ])
+    );
+
+    return {
+      ...fieldAudit,
+      evidenceClaimIds,
+    };
+  });
+
+  return {
+    ...record,
+    // Approval must never be inferred automatically.
+    clinicalApproval: false,
+    fields,
   };
 }
 
-export function getAuditSummary() {
-  const totalDiseases = DISEASE_AUDITS.length;
+// ============================================================
+// GET ALL DISEASE AUDITS WITH LINKED EVIDENCE
+// ============================================================
 
-  const totalFields = DISEASE_AUDITS.reduce(
+export function getAllDiseaseAudits(): DiseaseAudit[] {
+  return DISEASE_AUDITS.map((audit) => {
+    const linked = getDiseaseAudit(audit.diseaseId);
+
+    return linked ?? audit;
+  });
+}
+
+// ============================================================
+// CLINICAL AUDIT SUMMARY
+// ============================================================
+
+export interface ClinicalAuditSummary {
+  totalDiseases: number;
+  totalFields: number;
+  flaggedFields: number;
+  pendingFields: number;
+  linkedEvidenceClaims: number;
+  clinicianApproved: number;
+}
+
+export function getAuditSummary(): ClinicalAuditSummary {
+  const audits = getAllDiseaseAudits();
+
+  const totalFields = audits.reduce(
     (count, audit) => count + audit.fields.length,
     0
   );
 
-  const flaggedFields = DISEASE_AUDITS.reduce(
+  const flaggedFields = audits.reduce(
     (count, audit) =>
       count +
       audit.fields.filter(
-        (field) => field.status === "under_review"
+        (field) =>
+          field.status === "under_review" ||
+          field.status === "contradicted" ||
+          field.status === "partially_supported"
       ).length,
     0
   );
 
+  const pendingFields = audits.reduce(
+    (count, audit) =>
+      count +
+      audit.fields.filter(
+        (field) => field.status === "pending"
+      ).length,
+    0
+  );
+
+  const linkedClaimIds = new Set<string>();
+
+  audits.forEach((audit) => {
+    audit.fields.forEach((field) => {
+      field.evidenceClaimIds.forEach((claimId) => {
+        linkedClaimIds.add(claimId);
+      });
+    });
+  });
+
   return {
-    totalDiseases,
+    totalDiseases: audits.length,
     totalFields,
     flaggedFields,
+    pendingFields,
+    linkedEvidenceClaims: linkedClaimIds.size,
     clinicianApproved: 0,
   };
 }
