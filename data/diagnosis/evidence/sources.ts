@@ -46,5 +46,4 @@ export const EVIDENCE_SOURCES: EvidenceSource[] = [
   publicationYear: 2022,
   url: "https://www.nice.org.uk/guidance/ng226/chapter/Recommendations",
 },
-  
 ];
