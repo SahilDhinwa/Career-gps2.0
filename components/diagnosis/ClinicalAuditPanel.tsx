@@ -7,7 +7,7 @@ import {
   ClipboardList,
   ExternalLink,
   ShieldAlert,
-  FilePenLine,
+  FileEdit,
   BookOpen,
   CheckCircle2,
   Clock3,
