@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
   BookOpen,
+  ClipboardList,
 } from "lucide-react";
 
 import {
@@ -36,10 +37,16 @@ import {
 import { validateDiagnosisDatabase } from "../../data/diagnosis/validateDatabase";
 
 import ClinicalEvidencePanel from "../../components/diagnosis/ClinicalEvidencePanel";
+import ClinicalAuditPanel from "../../components/diagnosis/ClinicalAuditPanel";
 
 import { getDiseaseEvidence } from "../../data/diagnosis/evidence";
 
-// Clean, high-legibility geometric sans-serif matching the original design
+import {
+  getDiseaseAudit,
+  getAuditSummary,
+  validateClinicalAudits,
+} from "../../data/diagnosis/audit";
+
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
@@ -60,17 +67,26 @@ export default function SimpleClinicalDiagnosisHub() {
     useState<SystemClusterId>("all");
 
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [strictMode, setStrictMode] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [strictMode, setStrictMode] = useState(true);
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
-
-  // Independent evidence panel expansion
   const [expandedEvidenceId, setExpandedEvidenceId] =
     useState<string | null>(null);
+  const [expandedAuditId, setExpandedAuditId] =
+    useState<string | null>(null);
 
-  // Database structural validation
   const databaseIssues = useMemo(
     () => validateDiagnosisDatabase(DISEASE_DATABASE, SYMPTOM_FILTERS),
+    []
+  );
+
+  const auditValidationErrors = useMemo(
+    () => validateClinicalAudits(),
+    []
+  );
+
+  const auditSummary = useMemo(
+    () => getAuditSummary(),
     []
   );
 
@@ -92,7 +108,6 @@ export default function SimpleClinicalDiagnosisHub() {
     setSelectedFilters([]);
   };
 
-  // Group filters into symptom and bedside assessment rows
   const { symptomRow, reliefAndSignRow } = useMemo(() => {
     const relevant = SYMPTOM_FILTERS.filter(
       (f) =>
@@ -109,10 +124,8 @@ export default function SimpleClinicalDiagnosisHub() {
     };
   }, [selectedCluster]);
 
-  // Existing rule-based candidate filtering
   const filteredDiseases = useMemo(() => {
     return DISEASE_DATABASE.filter((disease) => {
-      // 1. Body area
       if (
         selectedCluster !== "all" &&
         disease.cluster !== selectedCluster
@@ -120,8 +133,7 @@ export default function SimpleClinicalDiagnosisHub() {
         return false;
       }
 
-      // 2. Search
-      if (searchQuery.trim().length > 0) {
+      if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
 
         const textPool = [
@@ -137,7 +149,6 @@ export default function SimpleClinicalDiagnosisHub() {
         if (!textPool.includes(q)) return false;
       }
 
-      // 3. Selected symptom filters
       if (selectedFilters.length === 0) return true;
 
       const matchCount = selectedFilters.filter((fid) =>
@@ -150,12 +161,11 @@ export default function SimpleClinicalDiagnosisHub() {
     });
   }, [selectedCluster, selectedFilters, searchQuery, strictMode]);
 
-  // Retain WhatsApp sharing, with clinical uncertainty made explicit
   const handleShareWhatsApp = (d: DiseaseProfile) => {
     const evidence = getDiseaseEvidence(d.id);
+    const audit = getDiseaseAudit(d.id);
 
-    const reviewStatus =
-      evidence?.review.status ?? "unverified";
+    const reviewStatus = evidence?.review.status ?? "unverified";
 
     const text = [
       "*ATREYA Clinical Reference Note*",
@@ -173,7 +183,12 @@ export default function SimpleClinicalDiagnosisHub() {
       "",
       `*Legacy Ayurvedic treatment reference (unverified):* ${d.firstLineChikitsa}`,
       "",
-      `*Profile review status:* ${reviewStatus}`,
+      `*Evidence review status:* ${reviewStatus}`,
+      `*Clinical approval:* ${
+        audit?.clinicalApproval === false
+          ? "Not approved"
+          : "Not established"
+      }`,
       "",
       "IMPORTANT: This is an unverified clinical reference, not a confirmed diagnosis, prescription, or instruction to omit tests. A qualified clinician must independently assess the patient and determine appropriate investigations and treatment. Emergency warning signs require immediate assessment.",
     ].join("\n");
@@ -189,9 +204,7 @@ export default function SimpleClinicalDiagnosisHub() {
     <div
       className={`${jakarta.className} min-h-screen bg-[#FAF8F5] dark:bg-[#0B0F0E] text-[#111827] dark:text-[#F3F4F6] pb-24 transition-colors duration-300`}
     >
-      {/* ============================================================
-          SIMPLE TOP BAR
-          ============================================================ */}
+      {/* TOP BAR */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-2 flex items-center justify-between">
         <Link
           href="/"
@@ -214,9 +227,7 @@ export default function SimpleClinicalDiagnosisHub() {
         )}
       </div>
 
-      {/* ============================================================
-          1. CENTERED EDITORIAL HEADER
-          ============================================================ */}
+      {/* HEADER */}
       <header className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 pb-8 text-center">
         <span className="inline-block px-4 py-1.5 rounded-full bg-violet-100 dark:bg-violet-950/60 border border-violet-200 dark:border-violet-800/60 text-[11px] font-bold uppercase tracking-[0.14em] text-violet-800 dark:text-violet-300 mb-5">
           CHOOSE SYMPTOMS TO NARROW DOWN
@@ -228,9 +239,7 @@ export default function SimpleClinicalDiagnosisHub() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6">
-        {/* ============================================================
-            CLINICAL SAFETY NOTICE
-            ============================================================ */}
+        {/* CLINICAL SAFETY NOTICE */}
         <section
           role="note"
           aria-label="Clinical safety information"
@@ -278,33 +287,69 @@ export default function SimpleClinicalDiagnosisHub() {
           </div>
         </section>
 
-        {/* ============================================================
-            DATABASE VALIDATION — DEVELOPMENT ONLY
-            ============================================================ */}
-        {process.env.NODE_ENV === "development" &&
-          databaseIssues.length > 0 && (
-            <section
-              role="status"
-              className="mb-6 rounded-xl border border-neutral-300 p-4 text-xs dark:border-neutral-700"
-            >
+        {/* DEVELOPMENT VALIDATION */}
+        {process.env.NODE_ENV === "development" && (
+          <>
+            {databaseIssues.length > 0 && (
+              <section
+                role="status"
+                className="mb-6 rounded-xl border border-neutral-300 p-4 text-xs dark:border-neutral-700"
+              >
+                <p className="font-bold">
+                  Database validation: {databaseIssues.length} issue(s)
+                </p>
+
+                <div className="mt-2 max-h-48 space-y-1 overflow-y-auto">
+                  {databaseIssues.map((issue, index) => (
+                    <p key={index}>
+                      {issue.severity.toUpperCase()} —{" "}
+                      {issue.location}: {issue.message}
+                    </p>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
               <p className="font-bold">
-                Database validation: {databaseIssues.length} issue(s)
+                Clinical Audit Integrity
               </p>
 
-              <div className="mt-2 max-h-48 space-y-1 overflow-y-auto">
-                {databaseIssues.map((issue, index) => (
-                  <p key={index}>
-                    {issue.severity.toUpperCase()} — {issue.location}:{" "}
-                    {issue.message}
-                  </p>
-                ))}
-              </div>
-            </section>
-          )}
+              <p className="mt-2">
+                {auditSummary.totalDiseases} disease records ·{" "}
+                {auditSummary.totalFields} audit field slots ·{" "}
+                {auditSummary.flaggedFields} preliminary concern flags
+              </p>
 
-        {/* ============================================================
-            2. TWO-BUTTON MODE SWITCHER
-            ============================================================ */}
+              <p className="mt-1">
+                Linked evidence claims:{" "}
+                {auditSummary.linkedEvidenceClaims}
+              </p>
+
+              <p className="mt-1">
+                Clinician-approved profiles:{" "}
+                {auditSummary.clinicianApproved}
+              </p>
+
+              <p className="mt-1">
+                Validation:{" "}
+                {auditValidationErrors.length === 0
+                  ? "No structural errors detected"
+                  : `${auditValidationErrors.length} structural error(s)`}
+              </p>
+
+              {auditValidationErrors.length > 0 && (
+                <div className="mt-3 space-y-1 text-red-700 dark:text-red-400">
+                  {auditValidationErrors.map((error, index) => (
+                    <p key={index}>{error}</p>
+                  ))}
+                </div>
+              )}
+            </section>
+          </>
+        )}
+
+        {/* MODE SWITCHER */}
         <div className="flex flex-wrap items-center gap-3 mb-3">
           <button
             type="button"
@@ -338,9 +383,7 @@ export default function SimpleClinicalDiagnosisHub() {
           assessment.
         </p>
 
-        {/* ============================================================
-            3. SINGLE WHITE FILTER & SEARCH BOX
-            ============================================================ */}
+        {/* FILTER AND SEARCH BOX */}
         <section className="bg-white dark:bg-[#141917] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-5 sm:p-6 shadow-xs mb-8 space-y-5">
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs sm:text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-2">
@@ -358,7 +401,7 @@ export default function SimpleClinicalDiagnosisHub() {
             )}
           </div>
 
-          {/* ROW 1: BODY AREA PILLS */}
+          {/* BODY AREA */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {SIMPLE_CLUSTERS.map((c) => {
               const active = selectedCluster === c.id;
@@ -385,7 +428,7 @@ export default function SimpleClinicalDiagnosisHub() {
             button again to remove that filter.
           </p>
 
-          {/* ROW 2: PATIENT SYMPTOM PILLS */}
+          {/* PATIENT SYMPTOMS */}
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 block mb-2">
               1. Patient Symptoms (प्रमुख लक्षण):
@@ -419,16 +462,14 @@ export default function SimpleClinicalDiagnosisHub() {
                     }`}
                   >
                     {f.label} •{" "}
-                    <span className="opacity-85">
-                      {f.hindi}
-                    </span>
+                    <span className="opacity-85">{f.hindi}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* ROW 3: RELIEF TRIGGERS & BEDSIDE SIGNS */}
+          {/* RELIEF AND BEDSIDE SIGNS */}
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 block mb-2">
               2. What Gives Relief &amp; Bedside Signs
@@ -451,16 +492,14 @@ export default function SimpleClinicalDiagnosisHub() {
                     }`}
                   >
                     {f.label} •{" "}
-                    <span className="opacity-85">
-                      {f.hindi}
-                    </span>
+                    <span className="opacity-85">{f.hindi}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* SEARCH INPUT */}
+          {/* SEARCH */}
           <div className="pt-1">
             <label
               htmlFor="diagnosis-search"
@@ -476,9 +515,7 @@ export default function SimpleClinicalDiagnosisHub() {
                 id="diagnosis-search"
                 type="text"
                 value={searchQuery}
-                onChange={(e) =>
-                  setSearchQuery(e.target.value)
-                }
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search e.g. Amavata, Sciatica, Gout, Acidity, Malaria, डकार, घुटनों में दर्द..."
                 className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 text-xs sm:text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-[#7C3AED]"
               />
@@ -497,9 +534,7 @@ export default function SimpleClinicalDiagnosisHub() {
           </div>
         </section>
 
-        {/* ============================================================
-            4. RESULTS COUNT BAR
-            ============================================================ */}
+        {/* RESULTS */}
         <div className="mb-4">
           <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-medium">
             {filteredDiseases.length}{" "}
@@ -519,14 +554,10 @@ export default function SimpleClinicalDiagnosisHub() {
           </span>
         </div>
 
-        {/* ============================================================
-            5. CLEAN 2-COLUMN WHITE CARDS GRID
-            ============================================================ */}
         {filteredDiseases.length === 0 ? (
           <div className="bg-white dark:bg-[#141917] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-8 text-center space-y-3">
             <p className="text-base font-bold text-neutral-900 dark:text-white">
-              No single disease matches all selected filters
-              together.
+              No single disease matches all selected filters together.
             </p>
 
             <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto">
@@ -563,12 +594,22 @@ export default function SimpleClinicalDiagnosisHub() {
               const isEvidenceExpanded =
                 expandedEvidenceId === disease.id;
 
+              const isAuditExpanded =
+                expandedAuditId === disease.id;
+
               const evidenceRecord =
                 getDiseaseEvidence(disease.id);
 
-              const isClinicianReviewed =
-                evidenceRecord?.review.status ===
-                "clinician_reviewed";
+              const auditRecord =
+                getDiseaseAudit(disease.id);
+
+              // Clinical approval is not inferred from a source
+              // claim or evidence review status.
+              const requiresClinicalReview =
+                !auditRecord ||
+                auditRecord.clinicalApproval !== false
+                  ? true
+                  : true;
 
               return (
                 <article
@@ -580,7 +621,7 @@ export default function SimpleClinicalDiagnosisHub() {
                   }`}
                 >
                   <div>
-                    {/* TOP METADATA ROW */}
+                    {/* METADATA */}
                     <div className="flex items-center justify-between gap-2 mb-4">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                         ⚕️ {disease.hindiName}
@@ -591,7 +632,7 @@ export default function SimpleClinicalDiagnosisHub() {
                       </span>
                     </div>
 
-                    {/* DISEASE TITLE */}
+                    {/* TITLE */}
                     <h3 className="text-lg sm:text-xl font-extrabold text-neutral-900 dark:text-white mb-1 leading-snug">
                       {disease.sanskritName}
                     </h3>
@@ -600,24 +641,23 @@ export default function SimpleClinicalDiagnosisHub() {
                       {disease.modernCorrelate}
                     </p>
 
-                    {/* CLINICAL REVIEW STATUS */}
-                    <div className="mb-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold ${
-                          isClinicianReviewed
-                            ? "bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300"
-                            : "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300"
-                        }`}
-                      >
+                    {/* REVIEW STATUS */}
+                    <div className="mb-4 flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[10px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300">
                         <ShieldAlert className="h-3 w-3" />
-
-                        {isClinicianReviewed
-                          ? "Clinician-reviewed record"
+                        {requiresClinicalReview
+                          ? "Clinical review required"
                           : "Clinical review required"}
+                      </span>
+
+                      <span className="text-[10px] font-medium text-neutral-500 dark:text-neutral-400">
+                        Evidence:{" "}
+                        {evidenceRecord?.review.status.replace(/_/g, " ") ??
+                          "missing"}
                       </span>
                     </div>
 
-                    {/* ORIGINAL CLINICAL DESCRIPTION */}
+                    {/* ORIGINAL DESCRIPTION */}
                     <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed mb-4">
                       {disease.pratyatmaLakshana}
                     </p>
@@ -628,11 +668,10 @@ export default function SimpleClinicalDiagnosisHub() {
                       {disease.knockoutClue}
                     </p>
 
-                    {/* EXPANDABLE INVESTIGATIONS & TREATMENT */}
+                    {/* LEGACY INVESTIGATIONS AND TREATMENT */}
                     {isExpanded && (
                       <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800 space-y-3 mb-5">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {/* LEGACY INVESTIGATIONS */}
                           <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
                             <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center gap-1 mb-1">
                               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -641,10 +680,7 @@ export default function SimpleClinicalDiagnosisHub() {
                             </span>
 
                             {disease.essentialTests.map((t, i) => (
-                              <div
-                                key={i}
-                                className="text-xs mt-2"
-                              >
+                              <div key={i} className="text-xs mt-2">
                                 <p className="font-bold text-neutral-900 dark:text-white">
                                   {t.name} ({t.estCost})
                                 </p>
@@ -656,7 +692,6 @@ export default function SimpleClinicalDiagnosisHub() {
                             ))}
                           </div>
 
-                          {/* LEGACY TEST-SAVING REFERENCES */}
                           <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50">
                             <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-800 dark:text-rose-300 flex items-center gap-1 mb-1">
                               <ShieldAlert className="w-3.5 h-3.5" />
@@ -665,13 +700,9 @@ export default function SimpleClinicalDiagnosisHub() {
                             </span>
 
                             {disease.avoidedTests.map((t, i) => (
-                              <div
-                                key={i}
-                                className="text-xs mt-2"
-                              >
+                              <div key={i} className="text-xs mt-2">
                                 <p className="font-bold text-neutral-900 dark:text-white">
-                                  {t.name} (Claimed savings:{" "}
-                                  {t.estSaved})
+                                  {t.name} (Claimed savings: {t.estSaved})
                                 </p>
 
                                 <p className="text-neutral-600 dark:text-neutral-400 text-[11px] mt-0.5">
@@ -682,7 +713,6 @@ export default function SimpleClinicalDiagnosisHub() {
                           </div>
                         </div>
 
-                        {/* ORIGINAL AYURVEDIC PROTOCOL */}
                         <div className="p-3.5 rounded-xl bg-neutral-100 dark:bg-neutral-900 text-xs">
                           <strong className="block text-neutral-900 dark:text-white uppercase tracking-wider mb-1">
                             Legacy Ayurvedic Protocol
@@ -695,28 +725,22 @@ export default function SimpleClinicalDiagnosisHub() {
 
                           <p className="mt-2 text-[11px] text-amber-700 dark:text-amber-400">
                             Historical database content only.
-                            Not a verified prescription or
-                            treatment recommendation.
+                            Not a verified prescription or treatment recommendation.
                           </p>
                         </div>
                       </div>
                     )}
 
-                    {/* CLINICAL VERIFICATION WARNING */}
+                    {/* VERIFICATION WARNING */}
                     <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50/70 p-2.5 text-[11px] leading-relaxed text-amber-950 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-200">
-                      <strong>
-                        Clinical verification required.
-                      </strong>{" "}
-                      This is a possible differential, not a
-                      confirmed diagnosis. Original investigation,
-                      test-saving, and treatment claims remain
-                      unverified and must not independently
-                      determine patient care.
+                      <strong>Clinical verification required.</strong>{" "}
+                      This is a possible differential, not a confirmed
+                      diagnosis. Original investigation, test-saving,
+                      and treatment claims remain unverified and must
+                      not independently determine patient care.
                     </div>
 
-                    {/* ====================================================
-                        CLINICAL EVIDENCE & REFERENCES — NEW
-                        ==================================================== */}
+                    {/* CLINICAL EVIDENCE */}
                     <div className="mb-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
                       <button
                         type="button"
@@ -724,9 +748,7 @@ export default function SimpleClinicalDiagnosisHub() {
                         aria-controls={`evidence-${disease.id}`}
                         onClick={() =>
                           setExpandedEvidenceId((current) =>
-                            current === disease.id
-                              ? null
-                              : disease.id
+                            current === disease.id ? null : disease.id
                           )
                         }
                         className="flex w-full items-center justify-between gap-3 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 text-left text-xs font-bold text-violet-900 transition-colors hover:bg-violet-100 dark:border-violet-900 dark:bg-violet-950/30 dark:text-violet-300 dark:hover:bg-violet-950/50"
@@ -748,23 +770,56 @@ export default function SimpleClinicalDiagnosisHub() {
                           id={`evidence-${disease.id}`}
                           className="mt-4"
                         >
-                          <ClinicalEvidencePanel
-                            diseaseId={disease.id}
-                          />
+                          <ClinicalEvidencePanel diseaseId={disease.id} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* CLINICAL FIELD AUDIT */}
+                    <div className="mb-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+                      <button
+                        type="button"
+                        aria-expanded={isAuditExpanded}
+                        aria-controls={`audit-${disease.id}`}
+                        onClick={() =>
+                          setExpandedAuditId((current) =>
+                            current === disease.id ? null : disease.id
+                          )
+                        }
+                        className="flex w-full items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-xs font-bold text-amber-950 transition-colors hover:bg-amber-100 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-300"
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          <ClipboardList className="h-4 w-4" />
+                          Clinical Field Audit
+                        </span>
+
+                        {isAuditExpanded ? (
+                          <ChevronUp className="h-4 w-4 shrink-0" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 shrink-0" />
+                        )}
+                      </button>
+
+                      {isAuditExpanded && (
+                        <div
+                          id={`audit-${disease.id}`}
+                          className="mt-4"
+                        >
+                          <ClinicalAuditPanel disease={disease} />
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* ====================================================
-                      BOTTOM ACTION BAR
-                      ==================================================== */}
+                  {/* BOTTOM ACTIONS */}
                   <div className="pt-2 flex items-center justify-between gap-2">
                     <button
                       type="button"
                       onClick={() =>
                         setExpandedCardId(
-                          isExpanded ? null : disease.id
+                          expandedCardId === disease.id
+                            ? null
+                            : disease.id
                         )
                       }
                       className="px-3.5 py-1.5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[10px] font-extrabold uppercase tracking-wider inline-flex items-center gap-1 cursor-pointer hover:opacity-90"
@@ -784,9 +839,7 @@ export default function SimpleClinicalDiagnosisHub() {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        handleShareWhatsApp(disease)
-                      }
+                      onClick={() => handleShareWhatsApp(disease)}
                       className="text-xs font-bold text-neutral-800 dark:text-neutral-200 hover:text-[#7C3AED] inline-flex items-center gap-1 cursor-pointer"
                     >
                       <span>Share OPD Note</span>
