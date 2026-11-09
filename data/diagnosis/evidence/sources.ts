@@ -36,4 +36,15 @@ export const EVIDENCE_SOURCES: EvidenceSource[] = [
     publisher: "World Health Organization",
     url: "https://icd.who.int/en",
   },
+  
+{
+  id: "nice-ng226",
+  title: "Osteoarthritis in over 16s: diagnosis and management",
+  type: "clinical_guideline",
+  publisher: "NICE",
+  identifier: "NG226",
+  publicationYear: 2022,
+  url: "https://www.nice.org.uk/guidance/ng226/chapter/Recommendations",
+},
+  
 ];
