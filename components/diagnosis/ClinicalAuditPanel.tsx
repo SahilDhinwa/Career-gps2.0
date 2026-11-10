@@ -1,22 +1,29 @@
 
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import {
   AlertTriangle,
   ClipboardList,
   ExternalLink,
   ShieldAlert,
-  FileEdit,
+  Pencil,
   BookOpen,
-  CheckCircle2,
   Clock3,
 } from "lucide-react";
 
-import type { DiseaseProfile } from "../../data/diagnosisDatabase";
-import type { ClinicalField } from "../../data/diagnosis/audit";
+import type {
+  DiseaseProfile,
+} from "../../data/diagnosisDatabase";
 
-import { getDiseaseAudit } from "../../data/diagnosis/audit";
+import type {
+  ClinicalField,
+} from "../../data/diagnosis/audit";
+
+import {
+  getDiseaseAudit,
+} from "../../data/diagnosis/audit";
 
 import {
   getDiseaseCorrections,
@@ -27,9 +34,17 @@ import {
   EVIDENCE_SOURCES,
 } from "../../data/diagnosis/evidence";
 
+// ============================================================
+// TYPES
+// ============================================================
+
 interface ClinicalAuditPanelProps {
   disease: DiseaseProfile;
 }
+
+// ============================================================
+// FIELD LABELS
+// ============================================================
 
 const FIELD_LABELS: Record<ClinicalField, string> = {
   modernCorrelate: "Modern Clinical Correlation",
@@ -43,30 +58,49 @@ const FIELD_LABELS: Record<ClinicalField, string> = {
   firstLineChikitsa: "Ayurvedic Treatment",
 };
 
+// ============================================================
+// FORMAT ORIGINAL DATABASE CONTENT
+// ============================================================
+
 function formatLegacyValue(
   disease: DiseaseProfile,
   field: ClinicalField
 ): string {
+  if (field === "doshaDushya") {
+    return "Not present in the original disease profile.";
+  }
+
   if (field === "matchingFilterIds") {
-    return disease.matchingFilterIds.join(", ") || "None";
+    return (
+      disease.matchingFilterIds.join(", ") ||
+      "None recorded"
+    );
   }
 
   if (field === "essentialTests") {
+    if (disease.essentialTests.length === 0) {
+      return "No investigations recorded.";
+    }
+
     return disease.essentialTests
       .map(
         (test) =>
           `${test.name} (${test.estCost}): ${test.reason}`
       )
-      .join("\n");
+      .join("\n\n");
   }
 
   if (field === "avoidedTests") {
+    if (disease.avoidedTests.length === 0) {
+      return "No test-omission claims recorded.";
+    }
+
     return disease.avoidedTests
       .map(
         (test) =>
           `${test.name} (claimed savings: ${test.estSaved}): ${test.whyUnnecessary}`
       )
-      .join("\n");
+      .join("\n\n");
   }
 
   const value = disease[field];
@@ -76,12 +110,18 @@ function formatLegacyValue(
     : "Unavailable";
 }
 
+// ============================================================
+// EVIDENCE REFERENCES
+// ============================================================
+
 function EvidenceReferences({
   claimIds,
 }: {
   claimIds: string[];
 }) {
-  const uniqueClaimIds = Array.from(new Set(claimIds));
+  const uniqueClaimIds = Array.from(
+    new Set(claimIds)
+  );
 
   if (uniqueClaimIds.length === 0) {
     return (
@@ -128,56 +168,65 @@ function EvidenceReferences({
               {claim.review.status.replace(/_/g, " ")}
             </p>
 
-            {claim.citations.map((citation, index) => {
-              const source = EVIDENCE_SOURCES.find(
-                (item) => item.id === citation.sourceId
-              );
+            {claim.citations.map(
+              (citation, index) => {
+                const source =
+                  EVIDENCE_SOURCES.find(
+                    (item) =>
+                      item.id === citation.sourceId
+                  );
 
-              return (
-                <div
-                  key={`${citation.sourceId}-${index}`}
-                  className="mt-2 text-[11px]"
-                >
-                  {source ? (
-                    <>
-                      <p className="font-semibold text-neutral-700 dark:text-neutral-300">
-                        {source.title}
-                        {" · "}
-                        {citation.locator}
-                      </p>
-
-                      {citation.note && (
-                        <p className="mt-1 text-neutral-500 dark:text-neutral-400">
-                          {citation.note}
+                return (
+                  <div
+                    key={`${citation.sourceId}-${index}`}
+                    className="mt-2 text-[11px]"
+                  >
+                    {source ? (
+                      <>
+                        <p className="font-semibold text-neutral-700 dark:text-neutral-300">
+                          {source.title}
+                          {" · "}
+                          {citation.locator}
                         </p>
-                      )}
 
-                      {source.url && (
-                        <a
-                          href={source.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-1 inline-flex items-center gap-1 font-bold text-violet-700 hover:underline dark:text-violet-400"
-                        >
-                          Open original source
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      )}
-                    </>
-                  ) : (
-                    <p className="text-red-700 dark:text-red-400">
-                      Missing source: {citation.sourceId}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+                        {citation.note && (
+                          <p className="mt-1 text-neutral-500 dark:text-neutral-400">
+                            {citation.note}
+                          </p>
+                        )}
+
+                        {source.url && (
+                          <a
+                            href={source.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 inline-flex items-center gap-1 font-bold text-violet-700 hover:underline dark:text-violet-400"
+                          >
+                            Open original source
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-red-700 dark:text-red-400">
+                        Missing source:{" "}
+                        {citation.sourceId}
+                      </p>
+                    )}
+                  </div>
+                );
+              }
+            )}
           </div>
         );
       })}
     </div>
   );
 }
+
+// ============================================================
+// MAIN CLINICAL AUDIT PANEL
+// ============================================================
 
 export default function ClinicalAuditPanel({
   disease,
@@ -192,20 +241,32 @@ export default function ClinicalAuditPanel({
     [disease.id]
   );
 
+  // ----------------------------------------------------------
+  // MISSING AUDIT
+  // ----------------------------------------------------------
+
   if (!audit) {
     return (
       <div
         role="alert"
         className="rounded-xl border border-red-300 bg-red-50 p-4 text-xs text-red-900 dark:border-red-900 dark:bg-red-950/20 dark:text-red-300"
       >
-        Clinical audit record missing. This disease profile
-        must not be treated as reviewed.
+        Clinical audit record missing.
+        This disease profile must not be
+        treated as reviewed.
       </div>
     );
   }
 
+  // ----------------------------------------------------------
+  // SUMMARY
+  // ----------------------------------------------------------
+
   const flaggedCount = audit.fields.filter(
-    (field) => field.status === "under_review"
+    (field) =>
+      field.status === "under_review" ||
+      field.status === "contradicted" ||
+      field.status === "partially_supported"
   ).length;
 
   return (
@@ -213,6 +274,10 @@ export default function ClinicalAuditPanel({
       aria-label={`Clinical audit for ${disease.sanskritName}`}
       className="space-y-4"
     >
+      {/* ======================================================
+          HEADER
+          ====================================================== */}
+
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h4 className="flex items-center gap-2 text-sm font-extrabold text-neutral-900 dark:text-white">
           <ClipboardList className="h-4 w-4 text-violet-600" />
@@ -224,82 +289,108 @@ export default function ClinicalAuditPanel({
         </span>
       </div>
 
-      {/* AUDIT SUMMARY */}
+      {/* ======================================================
+          AUDIT SUMMARY
+          ====================================================== */}
+
       <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/20">
         <div className="flex items-start gap-2">
           <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
 
           <div className="space-y-1">
             <p className="text-xs font-bold text-amber-950 dark:text-amber-200">
-              Preliminary audit — not clinical validation
+              Preliminary Audit — Not Clinical Validation
             </p>
 
             <p className="text-[11px] leading-relaxed text-amber-900 dark:text-amber-300">
-              {audit.fields.length} clinical fields registered.
-              {" "}
-              {flaggedCount} field(s) flagged for investigation.
-              {" "}
-              {corrections.length} proposed correction(s).
-              Unflagged fields are also unverified.
+              {audit.fields.length} clinical fields
+              registered.{" "}
+              {flaggedCount} field(s) flagged
+              for investigation.{" "}
+              {corrections.length} proposed
+              correction(s). Unflagged fields
+              remain unverified.
             </p>
           </div>
         </div>
       </div>
 
-      {/* CORRECTION STATUS */}
+      {/* ======================================================
+          CORRECTION STATUS
+          ====================================================== */}
+
       {corrections.length > 0 && (
         <div className="rounded-xl border border-violet-200 bg-violet-50 p-3 dark:border-violet-900 dark:bg-violet-950/20">
           <div className="flex items-center gap-2">
-            <FilePenLine className="h-4 w-4 text-violet-700 dark:text-violet-400" />
+            <Pencil className="h-4 w-4 text-violet-700 dark:text-violet-400" />
 
             <p className="text-xs font-bold text-violet-900 dark:text-violet-300">
-              {corrections.length} evidence-linked draft correction(s)
+              {corrections.length} evidence-linked
+              draft correction(s)
             </p>
           </div>
 
           <p className="mt-1 text-[11px] leading-relaxed text-violet-800 dark:text-violet-300">
-            Proposed wording is shown for reviewer comparison.
-            It does not replace the original database or authorize
-            clinical use.
+            Proposed wording is displayed
+            for reviewer comparison only.
+            It does not replace the original
+            database or authorize clinical use.
           </p>
         </div>
       )}
 
-      {/* FIELD-BY-FIELD AUDIT */}
+      {/* ======================================================
+          FIELD-BY-FIELD AUDIT
+          ====================================================== */}
+
       <div className="space-y-3">
         {audit.fields.map((fieldAudit) => {
-          const fieldCorrections = corrections.filter(
-            (correction) =>
-              correction.field === fieldAudit.field
-          );
+          const fieldCorrections =
+            corrections.filter(
+              (correction) =>
+                correction.field ===
+                fieldAudit.field
+            );
 
           const linkedClaimIds = [
             ...fieldAudit.evidenceClaimIds,
             ...fieldCorrections.flatMap(
-              (correction) => correction.evidenceClaimIds
+              (correction) =>
+                correction.evidenceClaimIds
             ),
           ];
+
+          const uniqueClaimCount =
+            new Set(linkedClaimIds).size;
 
           return (
             <details
               key={fieldAudit.field}
               className="overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
             >
+              {/* FIELD HEADER */}
+
               <summary className="cursor-pointer p-3.5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs font-bold text-neutral-900 dark:text-white">
-                    {FIELD_LABELS[fieldAudit.field]}
+                    {FIELD_LABELS[
+                      fieldAudit.field
+                    ]}
                   </span>
 
                   <span className="flex flex-wrap items-center gap-2">
                     {fieldCorrections.length > 0 && (
                       <span className="rounded-md bg-violet-100 px-2 py-1 text-[10px] font-bold text-violet-800 dark:bg-violet-950 dark:text-violet-300">
-                        {fieldCorrections.length} draft correction(s)
+                        {fieldCorrections.length}
+                        {" draft correction(s)"}
                       </span>
                     )}
 
                     <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400">
-                      {fieldAudit.status.replace(/_/g, " ")}
+                      {fieldAudit.status.replace(
+                        /_/g,
+                        " "
+                      )}
                       {" · "}
                       {fieldAudit.priority}
                     </span>
@@ -307,11 +398,15 @@ export default function ClinicalAuditPanel({
                 </div>
               </summary>
 
+              {/* FIELD CONTENT */}
+
               <div className="space-y-4 border-t border-neutral-200 p-3.5 dark:border-neutral-800">
-                {/* ORIGINAL CONTENT */}
+
+                {/* ORIGINAL DATABASE CONTENT */}
+
                 <div>
                   <p className="mb-2 text-[10px] font-extrabold uppercase tracking-wide text-neutral-500">
-                    Original database content — unverified
+                    Original Database Content — Unverified
                   </p>
 
                   <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-950">
@@ -325,11 +420,12 @@ export default function ClinicalAuditPanel({
                 </div>
 
                 {/* SAFETY CONCERN */}
+
                 {fieldAudit.concern && (
                   <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 dark:border-rose-900 dark:bg-rose-950/20">
                     <p className="mb-1 flex items-center gap-1.5 text-[11px] font-bold text-rose-900 dark:text-rose-300">
                       <AlertTriangle className="h-3.5 w-3.5" />
-                      Safety or evidence concern
+                      Safety or Evidence Concern
                     </p>
 
                     <p className="text-xs leading-relaxed text-rose-800 dark:text-rose-300">
@@ -338,11 +434,13 @@ export default function ClinicalAuditPanel({
                   </div>
                 )}
 
-                {/* EXISTING AUDIT PROPOSED CORRECTION */}
+                {/* EXISTING AUDIT PROPOSAL */}
+
                 {fieldAudit.proposedCorrection && (
                   <div className="rounded-lg border border-violet-200 bg-violet-50 p-3 dark:border-violet-900 dark:bg-violet-950/20">
                     <p className="mb-1 text-[11px] font-bold text-violet-900 dark:text-violet-300">
-                      Existing audit proposal — awaiting review
+                      Existing Audit Proposal —
+                      Awaiting Review
                     </p>
 
                     <p className="text-xs leading-relaxed text-violet-800 dark:text-violet-300">
@@ -351,83 +449,122 @@ export default function ClinicalAuditPanel({
                   </div>
                 )}
 
-                {/* STRUCTURED CORRECTIONS */}
-                {fieldCorrections.map((correction) => (
-                  <div
-                    key={correction.id}
-                    className="overflow-hidden rounded-xl border border-violet-300 dark:border-violet-800"
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2 bg-violet-100 px-3 py-2 dark:bg-violet-950/50">
-                      <p className="flex items-center gap-1.5 text-[11px] font-bold text-violet-950 dark:text-violet-200">
-                        <FilePenLine className="h-3.5 w-3.5" />
-                        Proposed Clinical Correction
-                      </p>
+                {/* ==========================================
+                    STRUCTURED PHASE 5 CORRECTIONS
+                    ========================================== */}
 
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-violet-800 dark:text-violet-300">
-                        <Clock3 className="h-3 w-3" />
-                        {correction.status.replace(/_/g, " ")}
-                      </span>
-                    </div>
+                {fieldCorrections.map(
+                  (correction) => (
+                    <div
+                      key={correction.id}
+                      className="overflow-hidden rounded-xl border border-violet-300 dark:border-violet-800"
+                    >
+                      {/* CORRECTION HEADER */}
 
-                    <div className="space-y-3 p-3">
-                      <div>
-                        <p className="mb-1 text-[10px] font-extrabold uppercase tracking-wide text-violet-700 dark:text-violet-400">
-                          Proposed wording — not approved
+                      <div className="flex flex-wrap items-center justify-between gap-2 bg-violet-100 px-3 py-2 dark:bg-violet-950/50">
+                        <p className="flex items-center gap-1.5 text-[11px] font-bold text-violet-950 dark:text-violet-200">
+                          <Pencil className="h-3.5 w-3.5" />
+                          Proposed Clinical Correction
                         </p>
 
-                        <p className="whitespace-pre-wrap text-xs leading-relaxed text-neutral-800 dark:text-neutral-200">
-                          {correction.proposedText}
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="mb-1 text-[11px] font-bold text-neutral-800 dark:text-neutral-200">
-                          Reason for correction
-                        </p>
-
-                        <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
-                          {correction.rationale}
-                        </p>
-                      </div>
-
-                      <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/20">
-                        <p className="mb-1 flex items-center gap-1.5 text-[11px] font-bold text-amber-950 dark:text-amber-300">
-                          <ShieldAlert className="h-3.5 w-3.5" />
-                          Clinical safety considerations
-                        </p>
-
-                        <p className="text-xs leading-relaxed text-amber-900 dark:text-amber-300">
-                          {correction.safetyNotes}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-neutral-200 pt-2 dark:border-neutral-800">
-                        <span className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400">
-                          Priority: {correction.priority}
-                        </span>
-
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 dark:text-amber-400">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-violet-800 dark:text-violet-300">
                           <Clock3 className="h-3 w-3" />
-                          Clinician approval pending
+
+                          {correction.status.replace(
+                            /_/g,
+                            " "
+                          )}
                         </span>
                       </div>
 
-                      {correction.reviewNotes && (
-                        <p className="text-[11px] text-neutral-600 dark:text-neutral-400">
-                          Review notes: {correction.reviewNotes}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                      {/* CORRECTION BODY */}
 
-                {/* LINKED EVIDENCE */}
+                      <div className="space-y-3 p-3">
+                        <div>
+                          <p className="mb-1 text-[10px] font-extrabold uppercase tracking-wide text-violet-700 dark:text-violet-400">
+                            Proposed Wording — Not Approved
+                          </p>
+
+                          <p className="whitespace-pre-wrap text-xs leading-relaxed text-neutral-800 dark:text-neutral-200">
+                            {correction.proposedText}
+                          </p>
+                        </div>
+
+                        {/* RATIONALE */}
+
+                        <div>
+                          <p className="mb-1 text-[11px] font-bold text-neutral-800 dark:text-neutral-200">
+                            Reason for Correction
+                          </p>
+
+                          <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                            {correction.rationale}
+                          </p>
+                        </div>
+
+                        {/* SAFETY NOTES */}
+
+                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/20">
+                          <p className="mb-1 flex items-center gap-1.5 text-[11px] font-bold text-amber-950 dark:text-amber-300">
+                            <ShieldAlert className="h-3.5 w-3.5" />
+                            Clinical Safety Considerations
+                          </p>
+
+                          <p className="text-xs leading-relaxed text-amber-900 dark:text-amber-300">
+                            {correction.safetyNotes}
+                          </p>
+                        </div>
+
+                        {/* REVIEW METADATA */}
+
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-neutral-200 pt-2 dark:border-neutral-800">
+                          <span className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400">
+                            Priority:{" "}
+                            {correction.priority}
+                          </span>
+
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 dark:text-amber-400">
+                            <Clock3 className="h-3 w-3" />
+                            Clinician Approval Pending
+                          </span>
+                        </div>
+
+                        {correction.reviewer && (
+                          <p className="text-[11px] text-neutral-600 dark:text-neutral-400">
+                            Reviewer:{" "}
+                            {correction.reviewer}
+                          </p>
+                        )}
+
+                        {correction.reviewedAt && (
+                          <p className="text-[11px] text-neutral-600 dark:text-neutral-400">
+                            Reviewed at:{" "}
+                            {correction.reviewedAt}
+                          </p>
+                        )}
+
+                        {correction.reviewNotes && (
+                          <p className="text-[11px] text-neutral-600 dark:text-neutral-400">
+                            Review notes:{" "}
+                            {correction.reviewNotes}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )
+                )}
+
+                {/* ==========================================
+                    LINKED EVIDENCE
+                    ========================================== */}
+
                 <div className="border-t border-neutral-200 pt-3 dark:border-neutral-800">
                   <p className="mb-2 flex items-center gap-1.5 text-[11px] font-bold text-neutral-800 dark:text-neutral-200">
                     <BookOpen className="h-3.5 w-3.5" />
+
                     Linked Evidence
                     {" ("}
-                    {new Set(linkedClaimIds).size}
+                    {uniqueClaimCount}
                     {")"}
                   </p>
 
@@ -441,14 +578,23 @@ export default function ClinicalAuditPanel({
         })}
       </div>
 
-      {/* FINAL SAFETY FOOTER */}
+      {/* ======================================================
+          SAFETY FOOTER
+          ====================================================== */}
+
       <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-800 dark:bg-neutral-950">
         <p className="flex items-start gap-2 text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-400">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-neutral-500" />
-          This audit records evidence and proposed corrections
-          for professional review. No clinical approval,
-          diagnostic confirmation, test-omission authorization,
-          or treatment authorization is implied.
+          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+
+          This audit records original database
+          content, supporting evidence,
+          safety concerns, and proposed
+          corrections for professional review.
+
+          No clinical approval, diagnostic
+          confirmation, test-omission
+          authorization, or treatment
+          authorization is implied.
         </p>
       </div>
     </section>
