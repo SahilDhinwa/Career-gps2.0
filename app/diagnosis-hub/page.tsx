@@ -1186,7 +1186,9 @@ export default function SimpleClinicalDiagnosisHub() {
 
                       {/* ORIGINAL EXTERNAL SOURCE */}
 
-                      {disease.sourceUrl && (
+                      {"sourceUrl" in disease &&
+  typeof disease.sourceUrl === "string" &&
+  disease.sourceUrl.length > 0 && (
                         <a
                           href={disease.sourceUrl}
                           target="_blank"
