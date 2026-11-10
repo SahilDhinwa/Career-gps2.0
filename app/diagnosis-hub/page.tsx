@@ -60,6 +60,8 @@ import ClinicalAuditPanel from "../../components/diagnosis/ClinicalAuditPanel";
 import ClinicalSafetyGatePanel from "../../components/diagnosis/ClinicalSafetyGatePanel";
 
 import ClinicalResearchPanel from "../../components/diagnosis/ClinicalResearchPanel";
+
+import ResearchFindingsPanel from "../../components/diagnosis/ResearchFindingsPanel";
 // ============================================================
 // FONT
 // ============================================================
