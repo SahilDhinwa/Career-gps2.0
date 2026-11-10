@@ -1149,6 +1149,9 @@ export default function SimpleClinicalDiagnosisHub() {
                           <div className="mt-4">
   <ClinicalSafetyGatePanel diseaseId={disease.id} />
 </div>
+                          <div className="mt-4">
+  <ClinicalResearchPanel diseaseId={disease.id} />
+</div>
                         </div>
                       )}
                     </div>
