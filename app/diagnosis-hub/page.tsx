@@ -53,6 +53,15 @@ import {
   validateClinicalCorrections,
 } from "../../data/diagnosis/corrections";
 
+import {
+  getResearchSummary,
+  validateDiseaseResearch,
+} from "../../data/diagnosis/research";
+
+import {
+  RESEARCH_FINDINGS,
+} from "../../data/diagnosis/research/verifiedFindings";
+
 import ClinicalEvidencePanel from "../../components/diagnosis/ClinicalEvidencePanel";
 
 import ClinicalAuditPanel from "../../components/diagnosis/ClinicalAuditPanel";
@@ -62,6 +71,7 @@ import ClinicalSafetyGatePanel from "../../components/diagnosis/ClinicalSafetyGa
 import ClinicalResearchPanel from "../../components/diagnosis/ClinicalResearchPanel";
 
 import ResearchFindingsPanel from "../../components/diagnosis/ResearchFindingsPanel";
+
 // ============================================================
 // FONT
 // ============================================================
@@ -96,6 +106,45 @@ const SIMPLE_CLUSTERS: {
     label: "FEVER / JWARA (बुखार)",
   },
 ];
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function getDiseaseResourceUrl(
+  disease: DiseaseProfile
+): string | null {
+  if (!("sourceUrl" in disease)) {
+    return null;
+  }
+
+  const value = disease.sourceUrl;
+
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  try {
+    const url = new URL(trimmed);
+
+    if (
+      url.protocol !== "https:" &&
+      url.protocol !== "http:"
+    ) {
+      return null;
+    }
+
+    return url.href;
+  } catch {
+    return null;
+  }
+}
 
 // ============================================================
 // MAIN COMPONENT
@@ -164,14 +213,57 @@ export default function SimpleClinicalDiagnosisHub() {
     []
   );
 
+  const researchValidationErrors = useMemo(
+    () => validateDiseaseResearch(),
+    []
+  );
+
+  const researchSummary = useMemo(
+    () => getResearchSummary(),
+    []
+  );
+
+  const researchFindingsSummary = useMemo(() => {
+    const diseaseIds = new Set(
+      RESEARCH_FINDINGS.map(
+        (finding) => finding.diseaseId
+      )
+    );
+
+    return {
+      totalFindings: RESEARCH_FINDINGS.length,
+      diseasesCovered: diseaseIds.size,
+      modernGuidelineFindings:
+        RESEARCH_FINDINGS.filter(
+          (finding) =>
+            finding.tradition === "modern_clinical" &&
+            finding.status === "guideline_checked"
+        ).length,
+      classicalPassagesPending:
+        RESEARCH_FINDINGS.filter(
+          (finding) =>
+            finding.tradition === "classical_ayurveda" &&
+            finding.status === "text_located_review_pending"
+        ).length,
+    };
+  }, []);
+
   // ----------------------------------------------------------
   // FILTER HANDLERS
   // ----------------------------------------------------------
 
+  const resetExpandedPanels = () => {
+    setExpandedCardId(null);
+    setExpandedEvidenceId(null);
+    setExpandedAuditId(null);
+  };
+
   const toggleFilter = (id: string) => {
     setSelectedFilters((previous) =>
       previous.includes(id)
-        ? previous.filter((item) => item !== id)
+        ? previous.filter(
+            (item) => item !== id
+          )
         : [...previous, id]
     );
   };
@@ -179,6 +271,15 @@ export default function SimpleClinicalDiagnosisHub() {
   const clearAll = () => {
     setSelectedFilters([]);
     setSearchQuery("");
+    resetExpandedPanels();
+  };
+
+  const resetEntireSearch = () => {
+    setSelectedCluster("all");
+    setSelectedFilters([]);
+    setSearchQuery("");
+    setStrictMode(true);
+    resetExpandedPanels();
   };
 
   const handleClusterSelect = (
@@ -186,6 +287,7 @@ export default function SimpleClinicalDiagnosisHub() {
   ) => {
     setSelectedCluster(id);
     setSelectedFilters([]);
+    resetExpandedPanels();
   };
 
   // ----------------------------------------------------------
@@ -222,54 +324,61 @@ export default function SimpleClinicalDiagnosisHub() {
   // ----------------------------------------------------------
 
   const filteredDiseases = useMemo(() => {
-    return DISEASE_DATABASE.filter((disease) => {
-      // Body area matching
-      if (
-        selectedCluster !== "all" &&
-        disease.cluster !== selectedCluster
-      ) {
-        return false;
-      }
+    const query = searchQuery
+      .trim()
+      .toLowerCase();
 
-      // Text search
-      const query = searchQuery
-        .trim()
-        .toLowerCase();
+    return DISEASE_DATABASE.filter(
+      (disease) => {
+        // BODY AREA MATCH
 
-      if (query.length > 0) {
-        const searchableText = [
-          disease.sanskritName,
-          disease.hindiName,
-          disease.modernCorrelate,
-          disease.pratyatmaLakshana,
-          disease.knockoutClue,
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        if (!searchableText.includes(query)) {
+        if (
+          selectedCluster !== "all" &&
+          disease.cluster !== selectedCluster
+        ) {
           return false;
         }
+
+        // TEXT SEARCH
+
+        if (query.length > 0) {
+          const searchableText = [
+            disease.sanskritName,
+            disease.hindiName,
+            disease.modernCorrelate,
+            disease.pratyatmaLakshana,
+            disease.knockoutClue,
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          if (!searchableText.includes(query)) {
+            return false;
+          }
+        }
+
+        // NO SYMPTOMS SELECTED
+
+        if (selectedFilters.length === 0) {
+          return true;
+        }
+
+        // SYMPTOM MATCHING
+
+        const matchingCount =
+          selectedFilters.filter(
+            (filterId) =>
+              disease.matchingFilterIds.includes(
+                filterId
+              )
+          ).length;
+
+        return strictMode
+          ? matchingCount ===
+              selectedFilters.length
+          : matchingCount > 0;
       }
-
-      // No symptoms selected
-      if (selectedFilters.length === 0) {
-        return true;
-      }
-
-      const matchingCount =
-        selectedFilters.filter((filterId) =>
-          disease.matchingFilterIds.includes(
-            filterId
-          )
-        ).length;
-
-      // Strict: all selected symptoms
-      // Broad: at least one selected symptom
-      return strictMode
-        ? matchingCount === selectedFilters.length
-        : matchingCount > 0;
-    });
+    );
   }, [
     selectedCluster,
     selectedFilters,
@@ -279,9 +388,6 @@ export default function SimpleClinicalDiagnosisHub() {
 
   // ----------------------------------------------------------
   // WHATSAPP SHARING
-  //
-  // Share the reference note without presenting unreviewed
-  // test-omission or treatment instructions as advice.
   // ----------------------------------------------------------
 
   const handleShareWhatsApp = (
@@ -298,7 +404,7 @@ export default function SimpleClinicalDiagnosisHub() {
       "*ATREYA Clinical Reference Note*",
       "",
       `*Possible differential:* ${disease.sanskritName}`,
-      `*Modern clinical correlation:* ${disease.modernCorrelate}`,
+      `*Modern clinical correlation (unverified):* ${disease.modernCorrelate}`,
       "",
       `*Original clinical description (unverified):* ${disease.pratyatmaLakshana}`,
       "",
@@ -343,11 +449,13 @@ export default function SimpleClinicalDiagnosisHub() {
           Back to Home
         </Link>
 
-        {(selectedFilters.length > 0 ||
-          searchQuery.trim() !== "") && (
+        {(selectedCluster !== "all" ||
+          selectedFilters.length > 0 ||
+          searchQuery.trim() !== "" ||
+          !strictMode) && (
           <button
             type="button"
-            onClick={clearAll}
+            onClick={resetEntireSearch}
             className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-bold text-violet-700 hover:underline dark:text-violet-400"
           >
             <RotateCcw className="h-3.5 w-3.5" />
@@ -371,7 +479,6 @@ export default function SimpleClinicalDiagnosisHub() {
       </header>
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6">
-
         {/* ====================================================
             CLINICAL SAFETY NOTICE
             ==================================================== */}
@@ -552,6 +659,75 @@ export default function SimpleClinicalDiagnosisHub() {
                 </div>
               )}
             </section>
+
+            {/* RESEARCH VALIDATION */}
+
+            <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
+              <p className="font-bold">
+                Clinical Research Registry
+              </p>
+
+              <p className="mt-2">
+                {researchSummary.diseasesCovered}
+                {" diseases covered · "}
+                {researchSummary.classicalPassagesVerified}
+                {" classical passages verified"}
+              </p>
+
+              <p className="mt-1">
+                Clinically approved:{" "}
+                {researchSummary.clinicalApprovals}
+                {" · "}
+                Established equivalences:{" "}
+                {researchSummary.establishedEquivalences}
+              </p>
+
+              <p className="mt-1">
+                Validation:{" "}
+                {researchValidationErrors.length === 0
+                  ? "No structural errors detected"
+                  : `${researchValidationErrors.length} structural error(s)`}
+              </p>
+
+              {researchValidationErrors.length > 0 && (
+                <div className="mt-3 max-h-48 space-y-1 overflow-y-auto text-red-700 dark:text-red-400">
+                  {researchValidationErrors.map(
+                    (error, index) => (
+                      <p key={index}>{error}</p>
+                    )
+                  )}
+                </div>
+              )}
+            </section>
+
+            {/* VERIFIED FINDINGS REGISTRY */}
+
+            <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
+              <p className="font-bold">
+                Source-Linked Research Findings
+              </p>
+
+              <p className="mt-2">
+                {researchFindingsSummary.totalFindings}
+                {" findings · "}
+                {researchFindingsSummary.diseasesCovered}
+                {" diseases covered"}
+              </p>
+
+              <p className="mt-1">
+                Modern guideline findings checked:{" "}
+                {researchFindingsSummary.modernGuidelineFindings}
+              </p>
+
+              <p className="mt-1">
+                Classical passages awaiting verification:{" "}
+                {researchFindingsSummary.classicalPassagesPending}
+              </p>
+
+              <p className="mt-1 text-amber-700 dark:text-amber-400">
+                These counts do not represent clinical approval.
+              </p>
+            </section>
           </>
         )}
 
@@ -580,7 +756,7 @@ export default function SimpleClinicalDiagnosisHub() {
             className={`cursor-pointer rounded-xl border px-5 py-2.5 text-xs font-bold transition-all sm:text-sm ${
               !strictMode
                 ? "border-neutral-900 bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                : "border-neutral-300 bg-white text-neutral-800 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
+                : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
             }`}
           >
             Broad Match (Matches Any Symptom)
@@ -599,7 +775,6 @@ export default function SimpleClinicalDiagnosisHub() {
             ==================================================== */}
 
         <section className="mb-8 space-y-5 rounded-2xl border border-neutral-200/90 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-[#141917] sm:p-6">
-
           <div className="flex items-center justify-between gap-2">
             <p className="flex items-center gap-2 text-xs font-bold text-neutral-800 dark:text-neutral-200 sm:text-sm">
               <Filter className="h-4 w-4 shrink-0 text-violet-600 dark:text-violet-400" />
@@ -851,7 +1026,6 @@ export default function SimpleClinicalDiagnosisHub() {
             </div>
           </div>
         ) : (
-
           /* ==================================================
               DISEASE CARDS
               ================================================== */
@@ -876,6 +1050,9 @@ export default function SimpleClinicalDiagnosisHub() {
                 evidenceRecord?.review.status ??
                 "unverified";
 
+              const sourceUrl =
+                getDiseaseResourceUrl(disease);
+
               return (
                 <article
                   key={disease.id}
@@ -886,7 +1063,6 @@ export default function SimpleClinicalDiagnosisHub() {
                   }`}
                 >
                   <div>
-
                     {/* DISEASE METADATA */}
 
                     <div className="mb-4 flex items-center justify-between gap-2">
@@ -958,7 +1134,6 @@ export default function SimpleClinicalDiagnosisHub() {
                         </div>
 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-
                           {/* INVESTIGATION REFERENCES */}
 
                           <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3.5 dark:border-neutral-800 dark:bg-neutral-900">
@@ -1063,12 +1238,8 @@ export default function SimpleClinicalDiagnosisHub() {
                     <div className="mb-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
                       <button
                         type="button"
-                        aria-expanded={
-                          isEvidenceExpanded
-                        }
-                        aria-controls={
-                          `evidence-${disease.id}`
-                        }
+                        aria-expanded={isEvidenceExpanded}
+                        aria-controls={`evidence-${disease.id}`}
                         onClick={() =>
                           setExpandedEvidenceId(
                             (current) =>
@@ -1105,18 +1276,17 @@ export default function SimpleClinicalDiagnosisHub() {
 
                     {/* ==========================================
                         CLINICAL FIELD AUDIT
-                        INCLUDES PHASE 5 CORRECTIONS
+                        + CORRECTIONS
+                        + SAFETY GATE
+                        + RESEARCH REGISTRY
+                        + VERIFIED FINDINGS
                         ========================================== */}
 
                     <div className="mb-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
                       <button
                         type="button"
-                        aria-expanded={
-                          isAuditExpanded
-                        }
-                        aria-controls={
-                          `audit-${disease.id}`
-                        }
+                        aria-expanded={isAuditExpanded}
+                        aria-controls={`audit-${disease.id}`}
                         onClick={() =>
                           setExpandedAuditId(
                             (current) =>
@@ -1129,8 +1299,7 @@ export default function SimpleClinicalDiagnosisHub() {
                       >
                         <span className="inline-flex items-center gap-2">
                           <ClipboardList className="h-4 w-4" />
-                          Clinical Field Audit
-                          & Proposed Corrections
+                          Clinical Audit, Corrections & Research
                         </span>
 
                         {isAuditExpanded ? (
@@ -1143,17 +1312,23 @@ export default function SimpleClinicalDiagnosisHub() {
                       {isAuditExpanded && (
                         <div
                           id={`audit-${disease.id}`}
-                          className="mt-4"
+                          className="mt-4 space-y-4"
                         >
                           <ClinicalAuditPanel
                             disease={disease}
                           />
-                          <div className="mt-4">
-  <ClinicalSafetyGatePanel diseaseId={disease.id} />
-</div>
-                          <div className="mt-4">
-  <ClinicalResearchPanel diseaseId={disease.id} />
-</div>
+
+                          <ClinicalSafetyGatePanel
+                            diseaseId={disease.id}
+                          />
+
+                          <ClinicalResearchPanel
+                            diseaseId={disease.id}
+                          />
+
+                          <ResearchFindingsPanel
+                            diseaseId={disease.id}
+                          />
                         </div>
                       )}
                     </div>
@@ -1167,9 +1342,7 @@ export default function SimpleClinicalDiagnosisHub() {
                     <button
                       type="button"
                       aria-expanded={isExpanded}
-                      aria-controls={
-                        `legacy-${disease.id}`
-                      }
+                      aria-controls={`legacy-${disease.id}`}
                       onClick={() =>
                         setExpandedCardId(
                           (current) =>
@@ -1194,14 +1367,11 @@ export default function SimpleClinicalDiagnosisHub() {
                     </button>
 
                     <div className="flex flex-wrap items-center gap-3">
-
                       {/* ORIGINAL EXTERNAL SOURCE */}
 
-                      {"sourceUrl" in disease &&
-  typeof disease.sourceUrl === "string" &&
-  disease.sourceUrl.length > 0 && (
+                      {sourceUrl && (
                         <a
-                          href={disease.sourceUrl}
+                          href={sourceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-xs font-bold text-violet-700 hover:underline dark:text-violet-400"
@@ -1216,9 +1386,7 @@ export default function SimpleClinicalDiagnosisHub() {
                       <button
                         type="button"
                         onClick={() =>
-                          handleShareWhatsApp(
-                            disease
-                          )
+                          handleShareWhatsApp(disease)
                         }
                         className="inline-flex cursor-pointer items-center gap-1 text-xs font-bold text-neutral-800 hover:text-[#7C3AED] dark:text-neutral-200"
                       >
