@@ -4,15 +4,31 @@ import { CLINICAL_CORRECTIONS } from "./records";
 import type { ClinicalCorrection } from "./types";
 
 export * from "./types";
+
 export { CLINICAL_CORRECTIONS };
 
-export { validateClinicalCorrections } from "./validateCorrections";
+export {
+  validateClinicalCorrections,
+} from "./validateCorrections";
+
+export {
+  evaluateCorrectionSafety,
+  getAllCorrectionSafetyResults,
+  getCorrectionSafetySummary,
+} from "./safetyGate";
+
+export type {
+  SafetyGateIssue,
+  SafetyGateSeverity,
+  CorrectionSafetyResult,
+} from "./safetyGate";
 
 export function getDiseaseCorrections(
   diseaseId: string
 ): ClinicalCorrection[] {
   return CLINICAL_CORRECTIONS.filter(
-    (correction) => correction.diseaseId === diseaseId
+    (correction) =>
+      correction.diseaseId === diseaseId
   );
 }
 
@@ -28,26 +44,37 @@ export function getFieldCorrections(
 }
 
 export function getCorrectionSummary() {
-  const diseases = new Set(
+  const diseaseIds = new Set(
     CLINICAL_CORRECTIONS.map(
       (correction) => correction.diseaseId
     )
   );
 
   return {
-    totalCorrections: CLINICAL_CORRECTIONS.length,
-    diseasesCovered: diseases.size,
-    drafts: CLINICAL_CORRECTIONS.filter(
-      (correction) => correction.status === "draft"
-    ).length,
-    awaitingEvidence: CLINICAL_CORRECTIONS.filter(
-      (correction) =>
-        correction.status === "awaiting_evidence"
-    ).length,
-    underClinicalReview: CLINICAL_CORRECTIONS.filter(
-      (correction) =>
-        correction.status === "under_clinical_review"
-    ).length,
+    totalCorrections:
+      CLINICAL_CORRECTIONS.length,
+
+    diseasesCovered:
+      diseaseIds.size,
+
+    drafts:
+      CLINICAL_CORRECTIONS.filter(
+        (correction) =>
+          correction.status === "draft"
+      ).length,
+
+    awaitingEvidence:
+      CLINICAL_CORRECTIONS.filter(
+        (correction) =>
+          correction.status === "awaiting_evidence"
+      ).length,
+
+    underClinicalReview:
+      CLINICAL_CORRECTIONS.filter(
+        (correction) =>
+          correction.status === "under_clinical_review"
+      ).length,
+
     approved: 0,
   };
 }
