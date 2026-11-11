@@ -8,6 +8,10 @@ import {
 } from "lucide-react";
 
 import {
+  getClassicalVerification,
+} from "../../data/diagnosis/research/classicalVerification";
+
+import {
   getResearchFindings,
 } from "../../data/diagnosis/research/verifiedFindings";
 
