@@ -23,6 +23,8 @@ export default function ResearchFindingsPanel({
   diseaseId,
 }: Props) {
   const findings = getResearchFindings(diseaseId);
+  const classicalRecords =
+  getClassicalVerification(diseaseId);
 
   if (findings.length === 0) {
     return null;
