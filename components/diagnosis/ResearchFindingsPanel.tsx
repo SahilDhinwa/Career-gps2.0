@@ -29,6 +29,12 @@ export default function ResearchFindingsPanel({
   if (findings.length === 0) {
     return null;
   }
+  if (
+  findings.length === 0 &&
+  classicalRecords.length === 0
+) {
+  return null;
+  }
 
   return (
     <section className="space-y-3 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
