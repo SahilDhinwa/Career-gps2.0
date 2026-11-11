@@ -78,6 +78,10 @@ import {
   validateClassicalVerifications,
 } from "../../data/diagnosis/research/classicalVerification";
 
+import type {
+  PublicDiseaseProfile,
+} from "../../data/diagnosis/publicDatabase";
+
 import ClinicalEvidencePanel from "../../components/diagnosis/ClinicalEvidencePanel";
 import ClinicalAuditPanel from "../../components/diagnosis/ClinicalAuditPanel";
 import ClinicalSafetyGatePanel from "../../components/diagnosis/ClinicalSafetyGatePanel";
