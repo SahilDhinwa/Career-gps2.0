@@ -62,16 +62,6 @@ import {
   RESEARCH_FINDINGS,
 } from "../../data/diagnosis/research/verifiedFindings";
 
-import ClinicalEvidencePanel from "../../components/diagnosis/ClinicalEvidencePanel";
-
-import ClinicalAuditPanel from "../../components/diagnosis/ClinicalAuditPanel";
-
-import ClinicalSafetyGatePanel from "../../components/diagnosis/ClinicalSafetyGatePanel";
-
-import ClinicalResearchPanel from "../../components/diagnosis/ClinicalResearchPanel";
-
-import ResearchFindingsPanel from "../../components/diagnosis/ResearchFindingsPanel";
-
 import {
   validateResearchFindings,
 } from "../../data/diagnosis/research/validateFindings";
@@ -88,6 +78,12 @@ import {
   validateClassicalVerifications,
 } from "../../data/diagnosis/research/classicalVerification";
 
+import ClinicalEvidencePanel from "../../components/diagnosis/ClinicalEvidencePanel";
+import ClinicalAuditPanel from "../../components/diagnosis/ClinicalAuditPanel";
+import ClinicalSafetyGatePanel from "../../components/diagnosis/ClinicalSafetyGatePanel";
+import ClinicalResearchPanel from "../../components/diagnosis/ClinicalResearchPanel";
+import ResearchFindingsPanel from "../../components/diagnosis/ResearchFindingsPanel";
+
 // ============================================================
 // FONT
 // ============================================================
@@ -96,6 +92,27 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
+
+// ============================================================
+// ENVIRONMENT SAFETY
+// ============================================================
+
+// Development-only visibility is not authentication.
+//
+// In production, legacy investigations, test-omission
+// claims, treatment protocols, and internal audit panels
+// are not rendered by this component.
+//
+// Production authorization must be implemented separately
+// before exposing reviewer-only content.
+//
+// IMPORTANT:
+// Client-side rendering restrictions do not guarantee that
+// sensitive data is absent from the JavaScript bundle.
+// Do not treat this as server-side access control.
+
+const IS_DEVELOPMENT =
+  process.env.NODE_ENV === "development";
 
 // ============================================================
 // BODY AREA FILTERS
@@ -197,49 +214,89 @@ export default function SimpleClinicalDiagnosisHub() {
     useState<string | null>(null);
 
   // ----------------------------------------------------------
-  // DEVELOPMENT VALIDATION
+  // DATABASE VALIDATION
   // ----------------------------------------------------------
 
   const databaseIssues = useMemo(
     () =>
-      validateDiagnosisDatabase(
-        DISEASE_DATABASE,
-        SYMPTOM_FILTERS
-      ),
+      IS_DEVELOPMENT
+        ? validateDiagnosisDatabase(
+            DISEASE_DATABASE,
+            SYMPTOM_FILTERS
+          )
+        : [],
     []
   );
 
+  // ----------------------------------------------------------
+  // AUDIT VALIDATION
+  // ----------------------------------------------------------
+
   const auditValidationErrors = useMemo(
-    () => validateClinicalAudits(),
+    () =>
+      IS_DEVELOPMENT
+        ? validateClinicalAudits()
+        : [],
     []
   );
 
   const auditSummary = useMemo(
-    () => getAuditSummary(),
+    () =>
+      IS_DEVELOPMENT
+        ? getAuditSummary()
+        : null,
     []
   );
 
+  // ----------------------------------------------------------
+  // CORRECTIONS VALIDATION
+  // ----------------------------------------------------------
+
   const correctionValidationErrors = useMemo(
-    () => validateClinicalCorrections(),
+    () =>
+      IS_DEVELOPMENT
+        ? validateClinicalCorrections()
+        : [],
     []
   );
 
   const correctionSummary = useMemo(
-    () => getCorrectionSummary(),
+    () =>
+      IS_DEVELOPMENT
+        ? getCorrectionSummary()
+        : null,
     []
   );
 
+  // ----------------------------------------------------------
+  // RESEARCH VALIDATION
+  // ----------------------------------------------------------
+
   const researchValidationErrors = useMemo(
-    () => validateDiseaseResearch(),
+    () =>
+      IS_DEVELOPMENT
+        ? validateDiseaseResearch()
+        : [],
     []
   );
 
   const researchSummary = useMemo(
-    () => getResearchSummary(),
+    () =>
+      IS_DEVELOPMENT
+        ? getResearchSummary()
+        : null,
     []
   );
 
+  // ----------------------------------------------------------
+  // SOURCE-LINKED RESEARCH SUMMARY
+  // ----------------------------------------------------------
+
   const researchFindingsSummary = useMemo(() => {
+    if (!IS_DEVELOPMENT) {
+      return null;
+    }
+
     const diseaseIds = new Set(
       RESEARCH_FINDINGS.map(
         (finding) => finding.diseaseId
@@ -249,20 +306,43 @@ export default function SimpleClinicalDiagnosisHub() {
     return {
       totalFindings: RESEARCH_FINDINGS.length,
       diseasesCovered: diseaseIds.size,
+
       modernGuidelineFindings:
         RESEARCH_FINDINGS.filter(
           (finding) =>
-            finding.tradition === "modern_clinical" &&
-            finding.status === "guideline_checked"
+            finding.tradition ===
+              "modern_clinical" &&
+            finding.status ===
+              "guideline_checked"
         ).length,
+
       classicalPassagesPending:
         RESEARCH_FINDINGS.filter(
           (finding) =>
-            finding.tradition === "classical_ayurveda" &&
-            finding.status === "text_located_review_pending"
+            finding.tradition ===
+              "classical_ayurveda" &&
+            finding.status ===
+              "text_located_review_pending"
         ).length,
     };
   }, []);
+
+  // ----------------------------------------------------------
+  // ADDITIONAL RESEARCH VALIDATION
+  // ----------------------------------------------------------
+
+  const additionalResearchErrors = useMemo(
+    () =>
+      IS_DEVELOPMENT
+        ? [
+            ...validateResearchFindings(),
+            ...validateClassicalVerifications(),
+            ...validateEditionComparisons(),
+            ...validatePrimaryTextInspections(),
+          ]
+        : [],
+    []
+  );
 
   // ----------------------------------------------------------
   // FILTER HANDLERS
@@ -282,6 +362,8 @@ export default function SimpleClinicalDiagnosisHub() {
           )
         : [...previous, id]
     );
+
+    resetExpandedPanels();
   };
 
   const clearAll = () => {
@@ -368,7 +450,9 @@ export default function SimpleClinicalDiagnosisHub() {
             .join(" ")
             .toLowerCase();
 
-          if (!searchableText.includes(query)) {
+          if (
+            !searchableText.includes(query)
+          ) {
             return false;
           }
         }
@@ -414,24 +498,27 @@ export default function SimpleClinicalDiagnosisHub() {
     );
 
     const reviewStatus =
-      evidence?.review.status ?? "unverified";
+      evidence?.review.status ??
+      "unverified";
 
     const message = [
-      "*ATREYA Clinical Reference Note*",
+      "*ATREYA Educational Clinical Reference*",
       "",
-      `*Possible differential:* ${disease.sanskritName}`,
-      `*Modern clinical correlation (unverified):* ${disease.modernCorrelate}`,
+      `*Classical condition:* ${disease.sanskritName}`,
+      `*Proposed modern correlation (unverified):* ${disease.modernCorrelate}`,
       "",
-      `*Original clinical description (unverified):* ${disease.pratyatmaLakshana}`,
+      `*Original description (unverified):* ${disease.pratyatmaLakshana}`,
       "",
       `*Evidence review status:* ${reviewStatus}`,
       "*Clinical approval:* Not approved",
       "",
       "This is an educational differential-diagnosis reference, not a confirmed diagnosis.",
       "",
-      "The original investigation, test-omission and treatment claims remain under review and are intentionally excluded from this shared note.",
+      "Classical Ayurvedic conditions must not automatically be treated as equivalent to modern medical diagnoses.",
       "",
-      "A qualified clinician must independently assess the patient and determine appropriate investigations and treatment. Emergency warning signs require immediate assessment.",
+      "Investigation, test-omission, and treatment claims are excluded from this shared note.",
+      "",
+      "Clinical assessment, testing, and treatment decisions must be made by qualified healthcare professionals. Emergency warning signs require immediate assessment.",
     ].join("\n");
 
     const url =
@@ -486,12 +573,21 @@ export default function SimpleClinicalDiagnosisHub() {
 
       <header className="mx-auto max-w-3xl px-4 pb-8 pt-6 text-center sm:px-6">
         <span className="mb-5 inline-block rounded-full border border-violet-200 bg-violet-100 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-violet-800 dark:border-violet-800/60 dark:bg-violet-950/60 dark:text-violet-300">
-          CHOOSE SYMPTOMS TO NARROW DOWN
+          EDUCATIONAL CLINICAL REFERENCE
         </span>
 
         <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-neutral-900 dark:text-white sm:text-5xl">
-          Symptom-by-symptom diagnosis or cost-saving test check.
+          Ayurvedic Clinical Reference &amp;
+          Differential Diagnosis Explorer.
         </h1>
+
+        <p className="mx-auto mt-4 max-w-2xl text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 sm:text-sm">
+          Explore classical Ayurvedic conditions,
+          symptom descriptions, and proposed modern
+          clinical differentials. Results are
+          educational and require independent
+          clinical verification.
+        </p>
       </header>
 
       <main className="mx-auto max-w-5xl px-4 sm:px-6">
@@ -552,7 +648,7 @@ export default function SimpleClinicalDiagnosisHub() {
             DEVELOPMENT DIAGNOSTICS
             ==================================================== */}
 
-        {process.env.NODE_ENV === "development" && (
+        {IS_DEVELOPMENT && (
           <>
             {/* DATABASE VALIDATION */}
 
@@ -583,165 +679,220 @@ export default function SimpleClinicalDiagnosisHub() {
 
             {/* AUDIT VALIDATION */}
 
-            <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
-              <p className="font-bold">
-                Clinical Audit Integrity
-              </p>
+            {auditSummary && (
+              <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
+                <p className="font-bold">
+                  Clinical Audit Integrity
+                </p>
 
-              <p className="mt-2">
-                {auditSummary.totalDiseases} disease records
-                {" · "}
-                {auditSummary.totalFields} audit field slots
-                {" · "}
-                {auditSummary.flaggedFields} preliminary concern flags
-              </p>
+                <p className="mt-2">
+                  {auditSummary.totalDiseases}
+                  {" disease records · "}
+                  {auditSummary.totalFields}
+                  {" audit field slots · "}
+                  {auditSummary.flaggedFields}
+                  {" preliminary concern flags"}
+                </p>
 
-              <p className="mt-1">
-                Pending fields:{" "}
-                {auditSummary.pendingFields}
-              </p>
+                <p className="mt-1">
+                  Pending fields:{" "}
+                  {auditSummary.pendingFields}
+                </p>
 
-              <p className="mt-1">
-                Linked evidence claims:{" "}
-                {auditSummary.linkedEvidenceClaims}
-              </p>
+                <p className="mt-1">
+                  Linked evidence claims:{" "}
+                  {auditSummary.linkedEvidenceClaims}
+                </p>
 
-              <p className="mt-1">
-                Clinician-approved profiles:{" "}
-                {auditSummary.clinicianApproved}
-              </p>
+                <p className="mt-1">
+                  Clinician-approved profiles:{" "}
+                  {auditSummary.clinicianApproved}
+                </p>
 
-              <p className="mt-1">
-                Validation:{" "}
-                {auditValidationErrors.length === 0
-                  ? "No structural errors detected"
-                  : `${auditValidationErrors.length} structural error(s)`}
-              </p>
+                <p className="mt-1">
+                  Validation:{" "}
+                  {auditValidationErrors.length === 0
+                    ? "No structural errors detected"
+                    : `${auditValidationErrors.length} structural error(s)`}
+                </p>
 
-              {auditValidationErrors.length > 0 && (
-                <div className="mt-3 max-h-48 space-y-1 overflow-y-auto text-red-700 dark:text-red-400">
-                  {auditValidationErrors.map(
-                    (error, index) => (
-                      <p key={index}>{error}</p>
-                    )
-                  )}
-                </div>
-              )}
-            </section>
+                {auditValidationErrors.length > 0 && (
+                  <div className="mt-3 max-h-48 space-y-1 overflow-y-auto text-red-700 dark:text-red-400">
+                    {auditValidationErrors.map(
+                      (error, index) => (
+                        <p key={index}>
+                          {error}
+                        </p>
+                      )
+                    )}
+                  </div>
+                )}
+              </section>
+            )}
 
             {/* CORRECTIONS VALIDATION */}
 
-            <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
-              <p className="font-bold">
-                Clinical Corrections Registry
-              </p>
+            {correctionSummary && (
+              <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
+                <p className="font-bold">
+                  Clinical Corrections Registry
+                </p>
 
-              <p className="mt-2">
-                {correctionSummary.totalCorrections}
-                {" proposed corrections · "}
-                {correctionSummary.diseasesCovered}
-                {" diseases covered"}
-              </p>
+                <p className="mt-2">
+                  {correctionSummary.totalCorrections}
+                  {" proposed corrections · "}
+                  {correctionSummary.diseasesCovered}
+                  {" diseases covered"}
+                </p>
 
-              <p className="mt-1">
-                Drafts: {correctionSummary.drafts}
-                {" · "}
-                Awaiting evidence:{" "}
-                {correctionSummary.awaitingEvidence}
-                {" · "}
-                Under clinical review:{" "}
-                {correctionSummary.underClinicalReview}
-              </p>
+                <p className="mt-1">
+                  Drafts:{" "}
+                  {correctionSummary.drafts}
+                  {" · "}
+                  Awaiting evidence:{" "}
+                  {correctionSummary.awaitingEvidence}
+                  {" · "}
+                  Under clinical review:{" "}
+                  {correctionSummary.underClinicalReview}
+                </p>
 
-              <p className="mt-1">
-                Approved corrections:{" "}
-                {correctionSummary.approved}
-              </p>
+                <p className="mt-1">
+                  Approved corrections:{" "}
+                  {correctionSummary.approved}
+                </p>
 
-              <p className="mt-1">
-                Validation:{" "}
-                {correctionValidationErrors.length === 0
-                  ? "No structural errors detected"
-                  : `${correctionValidationErrors.length} structural error(s)`}
-              </p>
+                <p className="mt-1">
+                  Validation:{" "}
+                  {correctionValidationErrors.length === 0
+                    ? "No structural errors detected"
+                    : `${correctionValidationErrors.length} structural error(s)`}
+                </p>
 
-              {correctionValidationErrors.length > 0 && (
-                <div className="mt-3 max-h-48 space-y-1 overflow-y-auto text-red-700 dark:text-red-400">
-                  {correctionValidationErrors.map(
-                    (error, index) => (
-                      <p key={index}>{error}</p>
-                    )
-                  )}
-                </div>
-              )}
-            </section>
+                {correctionValidationErrors.length > 0 && (
+                  <div className="mt-3 max-h-48 space-y-1 overflow-y-auto text-red-700 dark:text-red-400">
+                    {correctionValidationErrors.map(
+                      (error, index) => (
+                        <p key={index}>
+                          {error}
+                        </p>
+                      )
+                    )}
+                  </div>
+                )}
+              </section>
+            )}
 
             {/* RESEARCH VALIDATION */}
 
+            {researchSummary && (
+              <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
+                <p className="font-bold">
+                  Clinical Research Registry
+                </p>
+
+                <p className="mt-2">
+                  {researchSummary.diseasesCovered}
+                  {" diseases covered · "}
+                  {researchSummary.classicalPassagesVerified}
+                  {" classical passages verified"}
+                </p>
+
+                <p className="mt-1">
+                  Clinically approved:{" "}
+                  {researchSummary.clinicalApprovals}
+                  {" · "}
+                  Established equivalences:{" "}
+                  {researchSummary.establishedEquivalences}
+                </p>
+
+                <p className="mt-1">
+                  Validation:{" "}
+                  {researchValidationErrors.length === 0
+                    ? "No structural errors detected"
+                    : `${researchValidationErrors.length} structural error(s)`}
+                </p>
+
+                {researchValidationErrors.length > 0 && (
+                  <div className="mt-3 max-h-48 space-y-1 overflow-y-auto text-red-700 dark:text-red-400">
+                    {researchValidationErrors.map(
+                      (error, index) => (
+                        <p key={index}>
+                          {error}
+                        </p>
+                      )
+                    )}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* SOURCE-LINKED RESEARCH SUMMARY */}
+
+            {researchFindingsSummary && (
+              <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
+                <p className="font-bold">
+                  Source-Linked Research Findings
+                </p>
+
+                <p className="mt-2">
+                  {researchFindingsSummary.totalFindings}
+                  {" findings · "}
+                  {researchFindingsSummary.diseasesCovered}
+                  {" diseases covered"}
+                </p>
+
+                <p className="mt-1">
+                  Modern guideline findings checked:{" "}
+                  {researchFindingsSummary.modernGuidelineFindings}
+                </p>
+
+                <p className="mt-1">
+                  Classical passages awaiting verification:{" "}
+                  {researchFindingsSummary.classicalPassagesPending}
+                </p>
+
+                <p className="mt-1 text-amber-700 dark:text-amber-400">
+                  These counts do not represent
+                  clinical approval.
+                </p>
+              </section>
+            )}
+
+            {/* ADDITIONAL RESEARCH VALIDATORS */}
+
             <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
               <p className="font-bold">
-                Clinical Research Registry
+                Classical Research Integrity
               </p>
 
               <p className="mt-2">
-                {researchSummary.diseasesCovered}
-                {" diseases covered · "}
-                {researchSummary.classicalPassagesVerified}
-                {" classical passages verified"}
+                Research findings, classical verification,
+                edition comparisons, and primary-text
+                inspections.
               </p>
 
-              <p className="mt-1">
-                Clinically approved:{" "}
-                {researchSummary.clinicalApprovals}
-                {" · "}
-                Established equivalences:{" "}
-                {researchSummary.establishedEquivalences}
-              </p>
-
-              <p className="mt-1">
-                Validation:{" "}
-                {researchValidationErrors.length === 0
+              <p className="mt-2">
+                {additionalResearchErrors.length === 0
                   ? "No structural errors detected"
-                  : `${researchValidationErrors.length} structural error(s)`}
+                  : `${additionalResearchErrors.length} structural error(s)`}
               </p>
 
-              {researchValidationErrors.length > 0 && (
+              {additionalResearchErrors.length > 0 && (
                 <div className="mt-3 max-h-48 space-y-1 overflow-y-auto text-red-700 dark:text-red-400">
-                  {researchValidationErrors.map(
+                  {additionalResearchErrors.map(
                     (error, index) => (
-                      <p key={index}>{error}</p>
+                      <p key={index}>
+                        {error}
+                      </p>
                     )
                   )}
                 </div>
               )}
-            </section>
 
-            {/* VERIFIED FINDINGS REGISTRY */}
-
-            <section className="mb-6 rounded-xl border border-neutral-300 bg-white p-4 text-xs dark:border-neutral-700 dark:bg-neutral-900">
-              <p className="font-bold">
-                Source-Linked Research Findings
-              </p>
-
-              <p className="mt-2">
-                {researchFindingsSummary.totalFindings}
-                {" findings · "}
-                {researchFindingsSummary.diseasesCovered}
-                {" diseases covered"}
-              </p>
-
-              <p className="mt-1">
-                Modern guideline findings checked:{" "}
-                {researchFindingsSummary.modernGuidelineFindings}
-              </p>
-
-              <p className="mt-1">
-                Classical passages awaiting verification:{" "}
-                {researchFindingsSummary.classicalPassagesPending}
-              </p>
-
-              <p className="mt-1 text-amber-700 dark:text-amber-400">
-                These counts do not represent clinical approval.
+              <p className="mt-2 text-amber-700 dark:text-amber-400">
+                Structural validation does not
+                establish textual accuracy,
+                clinical equivalence, or approval.
               </p>
             </section>
           </>
@@ -754,7 +905,10 @@ export default function SimpleClinicalDiagnosisHub() {
         <div className="mb-3 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => setStrictMode(true)}
+            onClick={() => {
+              setStrictMode(true);
+              resetExpandedPanels();
+            }}
             aria-pressed={strictMode}
             className={`cursor-pointer rounded-xl border px-5 py-2.5 text-xs font-bold transition-all sm:text-sm ${
               strictMode
@@ -767,7 +921,10 @@ export default function SimpleClinicalDiagnosisHub() {
 
           <button
             type="button"
-            onClick={() => setStrictMode(false)}
+            onClick={() => {
+              setStrictMode(false);
+              resetExpandedPanels();
+            }}
             aria-pressed={!strictMode}
             className={`cursor-pointer rounded-xl border px-5 py-2.5 text-xs font-bold transition-all sm:text-sm ${
               !strictMode
@@ -780,10 +937,10 @@ export default function SimpleClinicalDiagnosisHub() {
         </div>
 
         <p className="mb-6 text-xs text-neutral-600 dark:text-neutral-400 sm:text-sm">
-          Tap a body area and patient symptoms below.
-          Each selected symptom narrows the database
-          candidate list. Investigation decisions require
-          independent clinical assessment.
+          Select a body area and symptoms to explore
+          possible database matches. Strict and broad
+          modes are simple matching rules, not
+          validated clinical diagnostic algorithms.
         </p>
 
         {/* ====================================================
@@ -836,9 +993,9 @@ export default function SimpleClinicalDiagnosisHub() {
           </div>
 
           <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-            Tap the patient&apos;s symptoms below.
-            Tap a purple button again to remove
-            that filter.
+            Select symptoms to narrow the reference
+            database. Tap a selected filter again
+            to remove it.
           </p>
 
           {/* SYMPTOM PILLS */}
@@ -851,9 +1008,10 @@ export default function SimpleClinicalDiagnosisHub() {
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() =>
-                  setSelectedFilters([])
-                }
+                onClick={() => {
+                  setSelectedFilters([]);
+                  resetExpandedPanels();
+                }}
                 aria-pressed={
                   selectedFilters.length === 0
                 }
@@ -955,11 +1113,10 @@ export default function SimpleClinicalDiagnosisHub() {
                 id="diagnosis-search"
                 type="text"
                 value={searchQuery}
-                onChange={(event) =>
-                  setSearchQuery(
-                    event.target.value
-                  )
-                }
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
+                  resetExpandedPanels();
+                }}
                 placeholder="Search e.g. Amavata, Sciatica, Gout, Acidity, Malaria, डकार, घुटनों में दर्द..."
                 className="w-full rounded-xl border border-neutral-300 bg-white py-2.5 pl-10 pr-9 text-xs text-neutral-900 placeholder:text-neutral-400 focus:border-[#7C3AED] focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white sm:text-sm"
               />
@@ -967,9 +1124,10 @@ export default function SimpleClinicalDiagnosisHub() {
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() =>
-                    setSearchQuery("")
-                  }
+                  onClick={() => {
+                    setSearchQuery("");
+                    resetExpandedPanels();
+                  }}
                   aria-label="Clear search"
                   className="absolute right-3 cursor-pointer text-neutral-400 hover:text-neutral-700"
                 >
@@ -1010,23 +1168,23 @@ export default function SimpleClinicalDiagnosisHub() {
         {filteredDiseases.length === 0 ? (
           <div className="space-y-3 rounded-2xl border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-[#141917]">
             <p className="text-base font-bold text-neutral-900 dark:text-white">
-              No single disease matches all selected
-              filters together.
+              No database candidate matches
+              the current selection.
             </p>
 
             <p className="mx-auto max-w-md text-xs text-neutral-500 sm:text-sm">
-              Switch to &ldquo;Broad Match&rdquo;
-              to see partial matches, or remove
-              one symptom pill. No match does
-              not exclude disease.
+              Try Broad Match or remove a filter.
+              No match does not exclude any
+              medical condition.
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() =>
-                  setStrictMode(false)
-                }
+                onClick={() => {
+                  setStrictMode(false);
+                  resetExpandedPanels();
+                }}
                 className="cursor-pointer rounded-lg bg-[#7C3AED] px-4 py-2 text-xs font-bold text-white"
               >
                 Switch to Broad Match
@@ -1098,6 +1256,8 @@ export default function SimpleClinicalDiagnosisHub() {
                     </h3>
 
                     <p className="mb-3 text-xs font-bold text-neutral-500 dark:text-neutral-400">
+                      Proposed modern correlation
+                      (unverified):{" "}
                       {disease.modernCorrelate}
                     </p>
 
@@ -1121,32 +1281,38 @@ export default function SimpleClinicalDiagnosisHub() {
                     {/* ORIGINAL DESCRIPTION */}
 
                     <p className="mb-4 text-xs leading-relaxed text-neutral-600 dark:text-neutral-300 sm:text-sm">
+                      Original description
+                      (unverified):{" "}
                       {disease.pratyatmaLakshana}
                     </p>
 
                     {/* ORIGINAL BEDSIDE CLUE */}
 
                     <p className="mb-5 text-xs italic leading-relaxed text-[#6D28D9] dark:text-violet-400 sm:text-sm">
-                      Legacy bedside clue (unverified):{" "}
+                      Legacy bedside clue
+                      (unverified):{" "}
                       {disease.knockoutClue}
                     </p>
 
                     {/* ==========================================
                         LEGACY TESTS AND CARE
+                        DEVELOPMENT ONLY
                         ========================================== */}
 
-                    {isExpanded && (
+                    {IS_DEVELOPMENT && isExpanded && (
                       <div
                         id={`legacy-${disease.id}`}
                         className="mb-5 mt-4 space-y-3 border-t border-neutral-200 pt-4 dark:border-neutral-800"
                       >
                         <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-950 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-300">
                           <strong>
-                            Unverified historical database content.
+                            Development-only unverified
+                            database content.
                           </strong>{" "}
-                          Do not use these entries to
-                          prescribe treatment, confirm
-                          a diagnosis, or omit investigations.
+                          These entries must not be
+                          used to prescribe treatment,
+                          confirm diagnoses, or omit
+                          investigations.
                         </div>
 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1155,8 +1321,8 @@ export default function SimpleClinicalDiagnosisHub() {
                           <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3.5 dark:border-neutral-800 dark:bg-neutral-900">
                             <span className="mb-1 flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
                               <CheckCircle2 className="h-3.5 w-3.5" />
-                              Legacy Investigation References
-                              (Unverified)
+                              Legacy Investigation
+                              References (Unverified)
                             </span>
 
                             {disease.essentialTests.map(
@@ -1185,8 +1351,8 @@ export default function SimpleClinicalDiagnosisHub() {
                           <div className="rounded-xl border border-rose-200 bg-rose-50 p-3.5 dark:border-rose-800/50 dark:bg-rose-950/20">
                             <span className="mb-1 flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-rose-800 dark:text-rose-300">
                               <ShieldAlert className="h-3.5 w-3.5" />
-                              Legacy Test-Omission Claims
-                              (Unverified)
+                              Legacy Test-Omission
+                              Claims (Unverified)
                             </span>
 
                             {disease.avoidedTests.map(
@@ -1223,9 +1389,10 @@ export default function SimpleClinicalDiagnosisHub() {
                           </span>
 
                           <p className="mt-2 text-[11px] text-amber-700 dark:text-amber-400">
-                            Historical database content only.
-                            Not a verified prescription
-                            or treatment recommendation.
+                            Historical database content
+                            only. Not a verified
+                            prescription or treatment
+                            recommendation.
                           </p>
                         </div>
                       </div>
@@ -1239,12 +1406,13 @@ export default function SimpleClinicalDiagnosisHub() {
                       <strong>
                         Clinical verification required.
                       </strong>{" "}
-                      This is a possible differential,
-                      not a confirmed diagnosis.
-                      Original investigation, test-saving,
-                      and treatment claims remain unverified
-                      and must not independently determine
-                      patient care.
+                      This is an educational database
+                      match, not a confirmed diagnosis.
+                      Classical and modern conditions
+                      must not be assumed equivalent.
+                      Investigation and treatment
+                      decisions require qualified
+                      clinical assessment.
                     </div>
 
                     {/* ==========================================
@@ -1291,63 +1459,63 @@ export default function SimpleClinicalDiagnosisHub() {
                     </div>
 
                     {/* ==========================================
-                        CLINICAL FIELD AUDIT
-                        + CORRECTIONS
-                        + SAFETY GATE
-                        + RESEARCH REGISTRY
-                        + VERIFIED FINDINGS
+                        INTERNAL CLINICAL AUDIT
+                        DEVELOPMENT ONLY
                         ========================================== */}
 
-                    <div className="mb-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                      <button
-                        type="button"
-                        aria-expanded={isAuditExpanded}
-                        aria-controls={`audit-${disease.id}`}
-                        onClick={() =>
-                          setExpandedAuditId(
-                            (current) =>
-                              current === disease.id
-                                ? null
-                                : disease.id
-                          )
-                        }
-                        className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-xs font-bold text-amber-950 transition-colors hover:bg-amber-100 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-300"
-                      >
-                        <span className="inline-flex items-center gap-2">
-                          <ClipboardList className="h-4 w-4" />
-                          Clinical Audit, Corrections & Research
-                        </span>
-
-                        {isAuditExpanded ? (
-                          <ChevronUp className="h-4 w-4 shrink-0" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4 shrink-0" />
-                        )}
-                      </button>
-
-                      {isAuditExpanded && (
-                        <div
-                          id={`audit-${disease.id}`}
-                          className="mt-4 space-y-4"
+                    {IS_DEVELOPMENT && (
+                      <div className="mb-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+                        <button
+                          type="button"
+                          aria-expanded={isAuditExpanded}
+                          aria-controls={`audit-${disease.id}`}
+                          onClick={() =>
+                            setExpandedAuditId(
+                              (current) =>
+                                current === disease.id
+                                  ? null
+                                  : disease.id
+                            )
+                          }
+                          className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-xs font-bold text-amber-950 transition-colors hover:bg-amber-100 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-300"
                         >
-                          <ClinicalAuditPanel
-                            disease={disease}
-                          />
+                          <span className="inline-flex items-center gap-2">
+                            <ClipboardList className="h-4 w-4" />
+                            Clinical Audit, Corrections
+                            & Research
+                          </span>
 
-                          <ClinicalSafetyGatePanel
-                            diseaseId={disease.id}
-                          />
+                          {isAuditExpanded ? (
+                            <ChevronUp className="h-4 w-4 shrink-0" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 shrink-0" />
+                          )}
+                        </button>
 
-                          <ClinicalResearchPanel
-                            diseaseId={disease.id}
-                          />
+                        {isAuditExpanded && (
+                          <div
+                            id={`audit-${disease.id}`}
+                            className="mt-4 space-y-4"
+                          >
+                            <ClinicalAuditPanel
+                              disease={disease}
+                            />
 
-                          <ResearchFindingsPanel
-                            diseaseId={disease.id}
-                          />
-                        </div>
-                      )}
-                    </div>
+                            <ClinicalSafetyGatePanel
+                              diseaseId={disease.id}
+                            />
+
+                            <ClinicalResearchPanel
+                              diseaseId={disease.id}
+                            />
+
+                            <ResearchFindingsPanel
+                              diseaseId={disease.id}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* ==========================================
@@ -1355,32 +1523,36 @@ export default function SimpleClinicalDiagnosisHub() {
                       ========================================== */}
 
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <button
-                      type="button"
-                      aria-expanded={isExpanded}
-                      aria-controls={`legacy-${disease.id}`}
-                      onClick={() =>
-                        setExpandedCardId(
-                          (current) =>
-                            current === disease.id
-                              ? null
-                              : disease.id
-                        )
-                      }
-                      className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-neutral-900 px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-white hover:opacity-90 dark:bg-white dark:text-neutral-900"
-                    >
-                      <span>
-                        {isExpanded
-                          ? "HIDE TESTS & CARE"
-                          : "VIEW LEGACY TESTS & CARE"}
-                      </span>
+                    {/* DEVELOPMENT-ONLY LEGACY BUTTON */}
 
-                      {isExpanded ? (
-                        <ChevronUp className="h-3 w-3" />
-                      ) : (
-                        <ChevronDown className="h-3 w-3" />
-                      )}
-                    </button>
+                    {IS_DEVELOPMENT && (
+                      <button
+                        type="button"
+                        aria-expanded={isExpanded}
+                        aria-controls={`legacy-${disease.id}`}
+                        onClick={() =>
+                          setExpandedCardId(
+                            (current) =>
+                              current === disease.id
+                                ? null
+                                : disease.id
+                          )
+                        }
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-neutral-900 px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-white hover:opacity-90 dark:bg-white dark:text-neutral-900"
+                      >
+                        <span>
+                          {isExpanded
+                            ? "HIDE LEGACY TESTS & CARE"
+                            : "VIEW LEGACY TESTS & CARE"}
+                        </span>
+
+                        {isExpanded ? (
+                          <ChevronUp className="h-3 w-3" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3" />
+                        )}
+                      </button>
+                    )}
 
                     <div className="flex flex-wrap items-center gap-3">
                       {/* ORIGINAL EXTERNAL SOURCE */}
@@ -1406,7 +1578,7 @@ export default function SimpleClinicalDiagnosisHub() {
                         }
                         className="inline-flex cursor-pointer items-center gap-1 text-xs font-bold text-neutral-800 hover:text-[#7C3AED] dark:text-neutral-200"
                       >
-                        Share OPD Note
+                        Share Educational Note
                         <ExternalLink className="h-3.5 w-3.5" />
                       </button>
                     </div>
