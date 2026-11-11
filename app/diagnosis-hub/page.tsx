@@ -72,6 +72,22 @@ import ClinicalResearchPanel from "../../components/diagnosis/ClinicalResearchPa
 
 import ResearchFindingsPanel from "../../components/diagnosis/ResearchFindingsPanel";
 
+import {
+  validateResearchFindings,
+} from "../../data/diagnosis/research/validateFindings";
+
+import {
+  validateEditionComparisons,
+} from "../../data/diagnosis/research/editionComparison";
+
+import {
+  validatePrimaryTextInspections,
+} from "../../data/diagnosis/research/primaryTextInspection";
+
+import {
+  validateClassicalVerifications,
+} from "../../data/diagnosis/research/classicalVerification";
+
 // ============================================================
 // FONT
 // ============================================================
