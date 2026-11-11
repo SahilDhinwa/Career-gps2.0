@@ -247,7 +247,7 @@ export default function LandingPage() {
     const combinedMsg = `[ATREYA Med Student Feedback]\n• Topic: ${
       selectedQuickTag || "General Suggestion"
     }\n• Message: ${feedbackText || "Tested the new experimental UI!"}`;
-    const whatsappUrl = `https://wa.me/918769892303?text=${encodeURIComponent(
+    const whatsappUrl = `https://wa.me/918764948303?text=${encodeURIComponent(
       combinedMsg
     )}`;
     window.open(whatsappUrl, "_blank");
