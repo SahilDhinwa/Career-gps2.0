@@ -90,6 +90,59 @@ export default function ResearchFindingsPanel({
         Research findings are not clinician-approved
         diagnostic or treatment recommendations.
       </p>
+      {classicalRecords.map((record) => (
+  <div
+    key={record.id}
+    className="rounded-xl border border-amber-200 p-4 dark:border-amber-900"
+  >
+    <h5 className="text-sm font-bold">
+      Classical Text Verification
+    </h5>
+
+    <p className="mt-2 text-xs">
+      {record.work} — {record.chapter},
+      Verse {record.verse}
+    </p>
+
+    {record.sanskrit && (
+      <p
+        lang="sa"
+        className="mt-3 text-sm leading-relaxed"
+      >
+        {record.sanskrit}
+      </p>
+    )}
+
+    <p className="mt-3 text-xs leading-relaxed">
+      {record.workingTranslation}
+    </p>
+
+    <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+      Status: {record.status.replace(/_/g, " ")}
+    </p>
+
+    <p className="mt-2 text-xs">
+      Edition: {record.edition}
+    </p>
+
+    <div className="mt-3 space-y-1">
+      {record.outstandingChecks.map((check) => (
+        <p key={check} className="text-xs">
+          Pending: {check}
+        </p>
+      ))}
+    </div>
+
+    <a
+      href={record.sourceUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-3 inline-block text-xs font-bold text-violet-700 dark:text-violet-400"
+    >
+      Examine source
+    </a>
+  </div>
+))}
     </section>
   );
 }
