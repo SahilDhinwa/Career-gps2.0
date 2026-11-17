@@ -9,10 +9,13 @@ import {
   useState,
 } from "react";
 
-import type { FormEvent } from "react";
-import type { User as FirebaseUser } from "firebase/auth";
-import { createServerSession } from
-  "../../../lib/auth/createServerSession";
+import type {
+  FormEvent,
+} from "react";
+
+import type {
+  User as FirebaseUser,
+} from "firebase/auth";
 
 import {
   createUserWithEmailAndPassword,
@@ -32,11 +35,15 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
+
 import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useTheme } from "next-themes";
+
+import {
+  useTheme,
+} from "next-themes";
 
 import {
   auth,
@@ -48,14 +55,34 @@ import {
   getSafeRedirect,
 } from "../../../lib/auth/account";
 
+import {
+  createServerSession,
+} from "../../../lib/auth/createServerSession";
+
 import CinematicIntro from "../../../components/CinematicIntro";
 
 const INTRO_DURATION = 10000;
 
+function getAuthErrorCode(error: unknown): string {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof error.code === "string"
+  ) {
+    return error.code;
+  }
+
+  return "";
+}
+
 function SignupForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const { setTheme } = useTheme();
+
+  const {
+    setTheme,
+  } = useTheme();
 
   const redirectUrl = getSafeRedirect(
     params.get("redirect")
@@ -64,12 +91,21 @@ function SignupForm() {
   const isBatmanMode =
     params.get("mode") === "batman";
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
+
   const [isLoading, setIsLoading] =
     useState(false);
+
   const [showIntro, setShowIntro] =
     useState(false);
 
@@ -84,31 +120,57 @@ function SignupForm() {
       user: FirebaseUser,
       preferredName?: string
     ) => {
-      if (finishingRef.current) return;
+      if (finishingRef.current) {
+        return;
+      }
 
       finishingRef.current = true;
 
       setIsLoading(true);
       setError("");
-      setShowIntro(true);
-
-      if (isBatmanMode) {
-        setTheme("batman");
-      }
 
       const started = Date.now();
 
+      try {
+        // Establish server authentication first.
+        await createServerSession(user);
+      } catch (sessionError) {
+        console.error(
+          "Server session creation failed:",
+          sessionError
+        );
+
+        finishingRef.current = false;
+        setShowIntro(false);
+        setIsLoading(false);
+
+        setError(
+          "Secure session could not be established. Please sign in again."
+        );
+
+        return;
+      }
+
+      // Preserve existing Firestore scholar profile.
       try {
         await ensureScholarProfile(
           user,
           preferredName
         );
-      } catch (err) {
+      } catch (profileError) {
         console.warn(
           "Scholar profile synchronization pending.",
-          err
+          profileError
         );
       }
+
+      // Preserve Batman mode.
+      if (isBatmanMode) {
+        setTheme("batman");
+      }
+
+      // Start intro only after authentication.
+      setShowIntro(true);
 
       const remaining = Math.max(
         0,
@@ -119,29 +181,46 @@ function SignupForm() {
         router.replace(redirectUrl);
       }, remaining);
     },
-    [isBatmanMode, redirectUrl, router, setTheme]
+    [
+      isBatmanMode,
+      redirectUrl,
+      router,
+      setTheme,
+    ]
   );
 
+  // Handle Google redirect return.
   useEffect(() => {
     let active = true;
 
     getRedirectResult(auth)
       .then(async (result) => {
-        if (active && result?.user) {
+        if (
+          active &&
+          result?.user
+        ) {
           await completeSignup(result.user);
         }
       })
-      .catch((err) => {
-        if (!active) return;
+      .catch((redirectError) => {
+        if (!active) {
+          return;
+        }
 
         console.error(
-          "Signup redirect:",
-          err
+          "Signup redirect authentication:",
+          redirectError
         );
 
+        const code =
+          getAuthErrorCode(redirectError);
+
         setError(
-          "Google authentication could not be completed."
+          code === "auth/unauthorized-domain"
+            ? "This domain must be authorized in Firebase Authentication."
+            : "Google authentication could not be completed."
         );
+
         setIsLoading(false);
       });
 
@@ -150,6 +229,7 @@ function SignupForm() {
     };
   }, [completeSignup]);
 
+  // Cleanup pending redirect timer.
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -163,10 +243,21 @@ function SignupForm() {
   ) => {
     event.preventDefault();
 
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
 
     setIsLoading(true);
     setError("");
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
+      setError("Please enter your full name.");
+      setIsLoading(false);
+      return;
+    }
 
     if (password.length < 6) {
       setError(
@@ -180,35 +271,36 @@ function SignupForm() {
       const result =
         await createUserWithEmailAndPassword(
           auth,
-          email.trim(),
+          trimmedEmail,
           password
         );
 
       try {
         await updateProfile(result.user, {
-          displayName: name.trim(),
+          displayName: trimmedName,
         });
       } catch (profileError) {
         console.warn(
-          "Display name update pending.",
+          "Firebase display name update pending.",
           profileError
         );
       }
 
       await completeSignup(
         result.user,
-        name.trim()
+        trimmedName
       );
-    } catch (err: unknown) {
+    } catch (signupError) {
+      console.error(
+        "Email signup:",
+        signupError
+      );
+
       const code =
-        typeof err === "object" &&
-        err !== null &&
-        "code" in err &&
-        typeof err.code === "string"
-          ? err.code
-          : "";
+        getAuthErrorCode(signupError);
 
       setShowIntro(false);
+      setIsLoading(false);
 
       setError(
         code === "auth/email-already-in-use"
@@ -217,32 +309,28 @@ function SignupForm() {
             ? "Choose a stronger password."
             : "Account creation failed. Please try again."
       );
-
-      setIsLoading(false);
     }
   };
 
   const handleGoogleSignup = async () => {
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
 
     setIsLoading(true);
     setError("");
 
     try {
-      const result = await signInWithPopup(
-        auth,
-        googleProvider
-      );
+      const result =
+        await signInWithPopup(
+          auth,
+          googleProvider
+        );
 
       await completeSignup(result.user);
-    } catch (err: unknown) {
+    } catch (googleError) {
       const code =
-        typeof err === "object" &&
-        err !== null &&
-        "code" in err &&
-        typeof err.code === "string"
-          ? err.code
-          : "";
+        getAuthErrorCode(googleError);
 
       if (
         code === "auth/popup-blocked" ||
@@ -254,19 +342,28 @@ function SignupForm() {
             auth,
             googleProvider
           );
+
           return;
         } catch (redirectError) {
           console.error(
-            "Google signup redirect:",
+            "Google signup redirect fallback:",
             redirectError
           );
+
+          setError(
+            "Google redirect could not be started."
+          );
+
+          setIsLoading(false);
+
+          return;
         }
-      } else {
-        console.error(
-          "Google signup:",
-          err
-        );
       }
+
+      console.error(
+        "Google signup:",
+        googleError
+      );
 
       setError(
         code === "auth/unauthorized-domain"
@@ -287,8 +384,10 @@ function SignupForm() {
     )}${isBatmanMode ? "&mode=batman" : ""}`;
 
   return (
-    <div className="relative z-10 w-full max-w-md rounded-2xl border border-surfaceBorder bg-surface p-6 shadow-xl sm:p-8">
-      <div className="mb-8 text-center">
+    <div className="relative z-10 w-full max-w-md rounded-2xl border border-surfaceBorder bg-surface p-6 shadow-xl transition-colors duration-300 sm:p-8">
+      {/* BRAND HEADER */}
+
+      <div className="mb-8 select-none text-center">
         <span className="mb-4 inline-block rounded-full border border-primary/30 px-4 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-primary">
           ATREYA MED • Scholar Registration
         </span>
@@ -297,25 +396,31 @@ function SignupForm() {
           Join ATREYA MED
         </h1>
 
-        <p className="text-sm text-foreground/60">
+        <p className="text-sm font-medium text-foreground/60">
           Create your account and begin your
           Ayurveda learning journey.
         </p>
       </div>
 
+      {/* ERROR MESSAGE */}
+
       {error && (
         <div
           role="alert"
-          className="mb-6 rounded-lg border border-red-900/50 bg-red-950/20 p-3 text-center text-sm text-red-500"
+          className="mb-6 rounded-lg border border-red-900/50 bg-red-950/20 p-3 text-center text-sm font-medium text-red-500"
         >
           {error}
         </div>
       )}
 
+      {/* EMAIL SIGNUP */}
+
       <form
         onSubmit={handleEmailSignup}
         className="mb-6 space-y-4"
       >
+        {/* FULL NAME */}
+
         <div className="relative">
           <UserRound
             aria-hidden="true"
@@ -327,14 +432,16 @@ function SignupForm() {
             required
             autoComplete="name"
             aria-label="Full name"
+            placeholder="Full Name"
             value={name}
             onChange={(event) =>
               setName(event.target.value)
             }
-            placeholder="Full Name"
-            className="w-full rounded-lg border border-surfaceBorder bg-background py-3 pl-11 pr-4 text-foreground outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full rounded-lg border border-surfaceBorder bg-background py-3 pl-11 pr-4 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
+
+        {/* EMAIL */}
 
         <div className="relative">
           <Mail
@@ -347,14 +454,16 @@ function SignupForm() {
             required
             autoComplete="email"
             aria-label="Email address"
+            placeholder="Email Address"
             value={email}
             onChange={(event) =>
               setEmail(event.target.value)
             }
-            placeholder="Email Address"
-            className="w-full rounded-lg border border-surfaceBorder bg-background py-3 pl-11 pr-4 text-foreground outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full rounded-lg border border-surfaceBorder bg-background py-3 pl-11 pr-4 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
+
+        {/* PASSWORD */}
 
         <div className="relative">
           <Lock
@@ -368,19 +477,21 @@ function SignupForm() {
             minLength={6}
             autoComplete="new-password"
             aria-label="Password"
+            placeholder="Password (minimum 6 characters)"
             value={password}
             onChange={(event) =>
               setPassword(event.target.value)
             }
-            placeholder="Password (minimum 6 characters)"
-            className="w-full rounded-lg border border-surfaceBorder bg-background py-3 pl-11 pr-4 text-foreground outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full rounded-lg border border-surfaceBorder bg-background py-3 pl-11 pr-4 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
+
+        {/* SUBMIT */}
 
         <button
           type="submit"
           disabled={isLoading}
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-bold text-white transition hover:bg-primaryHover disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-bold text-white transition-all hover:bg-primaryHover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? (
             <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -393,25 +504,33 @@ function SignupForm() {
         </button>
       </form>
 
+      {/* DIVIDER */}
+
       <div className="mb-6 flex items-center gap-4">
         <div className="h-px flex-1 bg-surfaceBorder" />
-        <span className="text-xs font-bold uppercase text-foreground/40">
+
+        <span className="text-xs font-bold uppercase tracking-widest text-foreground/40">
           Or
         </span>
+
         <div className="h-px flex-1 bg-surfaceBorder" />
       </div>
+
+      {/* GOOGLE SIGNUP */}
 
       <button
         type="button"
         onClick={handleGoogleSignup}
         disabled={isLoading}
-        className="mb-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-surfaceBorder bg-surface px-4 py-3 font-bold text-foreground transition hover:bg-background disabled:opacity-60"
+        className="mb-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-surfaceBorder bg-surface px-4 py-3 font-bold text-foreground transition-all hover:bg-background disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Chrome className="h-5 w-5 text-blue-500" />
         Continue with Google
       </button>
 
-      <p className="text-center text-sm text-foreground/60">
+      {/* LOGIN LINK */}
+
+      <p className="text-center text-sm font-medium text-foreground/60">
         Already an ATREYA scholar?{" "}
         <Link
           href={loginHref}
@@ -421,15 +540,21 @@ function SignupForm() {
         </Link>
       </p>
 
-      <div className="mt-8 flex items-center justify-center gap-2 border-t border-surfaceBorder pt-6 text-xs text-foreground/50">
+      {/* SECURITY FOOTER */}
+
+      <div className="mt-8 flex items-center justify-center gap-2 border-t border-surfaceBorder pt-6 text-xs font-medium text-foreground/50">
         <ShieldCheck className="h-4 w-4" />
         Authentication powered by Firebase
       </div>
 
+      {/* CINEMATIC INTRO */}
+
       <CinematicIntro
         isActive={showIntro}
         mode={
-          isBatmanMode ? "batman" : "standard"
+          isBatmanMode
+            ? "batman"
+            : "standard"
         }
       />
     </div>
@@ -438,12 +563,16 @@ function SignupForm() {
 
 export default function SignupPage() {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-6">
-      <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] translate-y-1/3 -translate-x-1/3 rounded-full bg-primary/5 blur-3xl" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-6 transition-colors duration-300">
+      <div className="pointer-events-none absolute right-0 top-0 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary/5 blur-3xl" />
+
+      <div className="pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] -translate-x-1/3 translate-y-1/3 rounded-full bg-primary/5 blur-3xl" />
 
       <Suspense
         fallback={
-          <div className="relative z-10 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="relative z-10 flex w-full max-w-md justify-center rounded-2xl border border-surfaceBorder bg-surface p-8 py-20 shadow-xl">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          </div>
         }
       >
         <SignupForm />
