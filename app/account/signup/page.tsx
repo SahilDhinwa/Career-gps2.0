@@ -11,6 +11,8 @@ import {
 
 import type { FormEvent } from "react";
 import type { User as FirebaseUser } from "firebase/auth";
+import { createServerSession } from
+  "../../../lib/auth/createServerSession";
 
 import {
   createUserWithEmailAndPassword,
