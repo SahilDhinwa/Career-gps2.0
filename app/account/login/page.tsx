@@ -11,6 +11,8 @@ import {
 
 import type { FormEvent } from "react";
 import type { User } from "firebase/auth";
+import { createServerSession } from
+  "../../../lib/auth/createServerSession";
 
 import {
   getRedirectResult,
