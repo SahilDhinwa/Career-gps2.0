@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../../lib/firebase"; 
 import { doc, setDoc } from "firebase/firestore";
-import { signOut } from "firebase/auth";
+import { logout } from "../../lib/auth/logout";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes"; 
 import { useAuth } from "../../context/AuthContext";
