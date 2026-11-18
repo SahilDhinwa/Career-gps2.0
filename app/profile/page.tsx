@@ -101,15 +101,29 @@ export default function UserProfile() {
     }
   }, [user, userData, isLoading, router]);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setTheme('dark'); 
-      router.push("/");
-    } catch (error) {
-      console.error("Failed to log out", error);
-    }
-  };
+  
+const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+const handleLogout = async () => {
+  if (isLoggingOut) return;
+
+  setIsLoggingOut(true);
+
+  try {
+    await logout();
+
+    setTheme("dark");
+
+    router.replace("/account/login");
+    router.refresh();
+  } catch (error) {
+    console.error("Secure logout failed:", error);
+    alert("Unable to complete logout. Please try again.");
+  } finally {
+    setIsLoggingOut(false);
+  }
+};
+
 
   // 🦇 BULLETPROOF IMAGE UPLOADER
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
