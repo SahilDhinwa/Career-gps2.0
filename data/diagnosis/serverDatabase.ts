@@ -10,6 +10,8 @@ import {
   toPublicDisease,
 } from "./publicDatabase";
 
+import { requireReviewer } from "../../lib/auth/reviewer";
+
 export function getPublicDiagnosisData() {
   return {
     diseases: DISEASE_DATABASE.map(toPublicDisease),
@@ -24,6 +26,11 @@ export function getPublicDiagnosisData() {
   };
 }
 
-export function getReviewerDiseaseData() {
-  return DISEASE_DATABASE;
+export async function getReviewerDiseaseData() {
+  await requireReviewer();
+
+  return DISEASE_DATABASE.map((disease) => ({
+    ...disease,
+    matchingFilterIds: [...disease.matchingFilterIds],
+  }));
 }
