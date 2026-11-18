@@ -8,51 +8,69 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const reviewer = await requireReviewer();
+  try {
+    await requireReviewer();
 
-  if (!reviewer) {
+    const diseaseId =
+      request.nextUrl.searchParams.get("diseaseId");
+
+    if (!diseaseId) {
+      return NextResponse.json(
+        { error: "Disease ID is required." },
+        {
+          status: 400,
+          headers: { "Cache-Control": "no-store" },
+        }
+      );
+    }
+
+    const disease = DISEASE_DATABASE.find(
+      (entry) => entry.id === diseaseId
+    );
+
+    if (!disease) {
+      return NextResponse.json(
+        { error: "Disease not found." },
+        {
+          status: 404,
+          headers: { "Cache-Control": "no-store" },
+        }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Reviewer access required" },
       {
-        status: 403,
+        reviewerOnly: true,
+        clinicalApproval: false,
+        warning:
+          "Legacy research material. Not approved for clinical decision-making.",
+        disease,
+      },
+      {
         headers: {
-          "Cache-Control": "no-store",
+          "Cache-Control": "private, no-store",
+          "X-Content-Type-Options": "nosniff",
         },
       }
     );
-  }
+  } catch (error) {
+    const status =
+      error instanceof Error &&
+      error.message === "FORBIDDEN"
+        ? 403
+        : 401;
 
-  const diseaseId =
-    request.nextUrl.searchParams.get("diseaseId");
-
-  if (!diseaseId) {
     return NextResponse.json(
-      { error: "Disease ID required" },
-      { status: 400 }
-    );
-  }
-
-  const disease = DISEASE_DATABASE.find(
-    (item) => item.id === diseaseId
-  );
-
-  if (!disease) {
-    return NextResponse.json(
-      { error: "Record not found" },
-      { status: 404 }
-    );
-  }
-
-  return NextResponse.json(
-    {
-      disease,
-      clinicalApproval: false,
-      reviewerOnly: true,
-    },
-    {
-      headers: {
-        "Cache-Control": "private, no-store",
+      {
+        error:
+          status === 403
+            ? "Reviewer access required."
+            : "Authentication required.",
       },
-    }
-  );
+      {
+        status,
+        headers: { "Cache-Control": "no-store" },
+      }
+    );
+  }
 }
