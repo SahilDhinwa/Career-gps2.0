@@ -9,10 +9,6 @@ export interface PublicDiseaseProfile {
   cluster: SystemClusterId;
   hindiName: string;
   sanskritName: string;
-  modernCorrelate: string;
-  icdCode: string;
-  pratyatmaLakshana: string;
-  knockoutClue: string;
   matchingFilterIds: string[];
 }
 
@@ -24,10 +20,6 @@ export function toPublicDisease(
     cluster: disease.cluster,
     hindiName: disease.hindiName,
     sanskritName: disease.sanskritName,
-    modernCorrelate: disease.modernCorrelate,
-    icdCode: disease.icdCode,
-    pratyatmaLakshana: disease.pratyatmaLakshana,
-    knockoutClue: disease.knockoutClue,
     matchingFilterIds: [...disease.matchingFilterIds],
   };
 }
