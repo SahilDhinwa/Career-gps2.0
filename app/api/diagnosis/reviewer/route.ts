@@ -1,30 +1,38 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { requireReviewer } from "../../../../lib/auth/reviewer";
-import { DISEASE_DATABASE } from "../../../../data/diagnosisDatabase";
+import {
+  getReviewerDiseaseData,
+} from "../../../../data/diagnosis/serverDatabase";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const SECURITY_HEADERS = {
+  "Cache-Control": "private, no-store",
+  "X-Content-Type-Options": "nosniff",
+};
+
 export async function GET(request: NextRequest) {
   try {
-    await requireReviewer();
+    // Authorization is enforced inside this function.
+    const diseases = await getReviewerDiseaseData();
 
-    const diseaseId =
-      request.nextUrl.searchParams.get("diseaseId");
+    const diseaseId = request.nextUrl.searchParams
+      .get("diseaseId")
+      ?.trim();
 
     if (!diseaseId) {
       return NextResponse.json(
         { error: "Disease ID is required." },
         {
           status: 400,
-          headers: { "Cache-Control": "no-store" },
+          headers: SECURITY_HEADERS,
         }
       );
     }
 
-    const disease = DISEASE_DATABASE.find(
+    const disease = diseases.find(
       (entry) => entry.id === diseaseId
     );
 
@@ -33,7 +41,7 @@ export async function GET(request: NextRequest) {
         { error: "Disease not found." },
         {
           status: 404,
-          headers: { "Cache-Control": "no-store" },
+          headers: SECURITY_HEADERS,
         }
       );
     }
@@ -47,29 +55,47 @@ export async function GET(request: NextRequest) {
         disease,
       },
       {
-        headers: {
-          "Cache-Control": "private, no-store",
-          "X-Content-Type-Options": "nosniff",
-        },
+        status: 200,
+        headers: SECURITY_HEADERS,
       }
     );
   } catch (error) {
-    const status =
+    if (
+      error instanceof Error &&
+      error.message === "UNAUTHORIZED"
+    ) {
+      return NextResponse.json(
+        { error: "Authentication required." },
+        {
+          status: 401,
+          headers: SECURITY_HEADERS,
+        }
+      );
+    }
+
+    if (
       error instanceof Error &&
       error.message === "FORBIDDEN"
-        ? 403
-        : 401;
+    ) {
+      return NextResponse.json(
+        { error: "Reviewer access required." },
+        {
+          status: 403,
+          headers: SECURITY_HEADERS,
+        }
+      );
+    }
+
+    console.error(
+      "Reviewer API failed:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
 
     return NextResponse.json(
+      { error: "Internal server error." },
       {
-        error:
-          status === 403
-            ? "Reviewer access required."
-            : "Authentication required.",
-      },
-      {
-        status,
-        headers: { "Cache-Control": "no-store" },
+        status: 500,
+        headers: SECURITY_HEADERS,
       }
     );
   }
