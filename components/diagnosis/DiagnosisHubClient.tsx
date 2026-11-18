@@ -217,27 +217,23 @@ export default function DiagnosisHubClient({
   }, [diseases, selectedCluster, selectedFilters, searchQuery, strictMode]);
 
   const handleShareWhatsApp = (disease: PublicDiseaseProfile) => {
-    const message = [
-      "*ATREYA Educational Clinical Reference*",
-      "",
-      `*Classical condition:* ${disease.sanskritName}`,
-      `*Proposed modern correlation (unverified):* ${disease.modernCorrelate}`,
-      "",
-      `*Original description (unverified):* ${disease.pratyatmaLakshana}`,
-      "",
-      "*Clinical approval:* Not approved",
-      "",
-      "This is an educational reference, not a confirmed diagnosis.",
-      "Classical Ayurvedic conditions are not automatically equivalent to modern diagnoses.",
-      "Investigation, test-omission, and treatment claims are excluded.",
-      "Clinical assessment and treatment decisions require qualified healthcare professionals. Emergency warning signs require immediate assessment.",
-    ].join("\n");
-    window.open(
-      `https://wa.me/?text=${encodeURIComponent(message)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
-  };
+  const message = [
+    "*ATREYA MED — Educational Reference*",
+    "",
+    `*Classical condition:* ${disease.sanskritName}`,
+    `*Hindi name:* ${disease.hindiName}`,
+    "",
+    "This is an educational database entry.",
+    "It is not a confirmed diagnosis or treatment recommendation.",
+    "Clinical verification is required.",
+  ].join("\n");
+
+  window.open(
+    `https://wa.me/?text=${encodeURIComponent(message)}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
+};
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] pb-24 text-[#111827] transition-colors duration-300 dark:bg-[#0B0F0E] dark:text-[#F3F4F6]">
