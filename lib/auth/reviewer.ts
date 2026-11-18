@@ -4,30 +4,38 @@ import "server-only";
 import { cookies } from "next/headers";
 import { getAdminAuth } from "../firebase-admin";
 
-export async function requireReviewer() {
+export type VerifiedReviewer = {
+  uid: string;
+  email: string | null;
+};
+
+export async function requireReviewer(): Promise<VerifiedReviewer> {
   const cookieStore = await cookies();
 
-  const session = cookieStore.get(
-    "atreya_session"
-  )?.value;
+  const sessionCookie =
+    cookieStore.get("atreya_session")?.value;
 
-  if (!session) {
-    return null;
+  if (!sessionCookie) {
+    throw new Error("UNAUTHORIZED");
   }
+
+  let decoded;
 
   try {
-    const decoded =
-      await getAdminAuth().verifySessionCookie(
-        session,
-        true
-      );
-
-    if (decoded.reviewer !== true) {
-      return null;
-    }
-
-    return decoded;
+    decoded = await getAdminAuth().verifySessionCookie(
+      sessionCookie,
+      true
+    );
   } catch {
-    return null;
+    throw new Error("UNAUTHORIZED");
   }
+
+  if (decoded.reviewer !== true) {
+    throw new Error("FORBIDDEN");
+  }
+
+  return {
+    uid: decoded.uid,
+    email: decoded.email ?? null,
+  };
 }
