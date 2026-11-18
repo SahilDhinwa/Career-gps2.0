@@ -201,9 +201,6 @@ export default function DiagnosisHubClient({
         const searchableText = [
           disease.sanskritName,
           disease.hindiName,
-          disease.modernCorrelate,
-          disease.pratyatmaLakshana,
-          disease.knockoutClue,
         ]
           .join(" ")
           .toLowerCase();
