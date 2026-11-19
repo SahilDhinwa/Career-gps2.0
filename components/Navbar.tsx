@@ -219,10 +219,10 @@ export default function Navbar() {
                 <div className="w-full h-full rounded-[10px] bg-surface flex items-center justify-center border border-background overflow-hidden">
                   {userData?.photoURL || user.photoURL ? (
                     <img
-                      src={userData?.photoURL || user.photoURL}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
+  src={userData?.photoURL || user.photoURL || undefined}
+  alt="Profile"
+  className="w-full h-full object-cover"
+/>
                   ) : (
                     <UserIcon className="w-4 h-4 text-foreground/70" />
                   )}
