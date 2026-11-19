@@ -1,5 +1,6 @@
 
 import type { User } from "firebase/auth";
+
 import {
   doc,
   getDoc,
@@ -11,7 +12,9 @@ import { db } from "../firebase";
 export function getSafeRedirect(
   requested: string | null
 ): string {
-  if (!requested) return "/profile";
+  if (!requested) {
+    return "/profile";
+  }
 
   const value = requested.trim();
 
@@ -30,7 +33,8 @@ export function getSafeRedirect(
     if (
       !decoded.startsWith("/") ||
       decoded.startsWith("//") ||
-      decoded.includes("\\")
+      decoded.includes("\\") ||
+      /[\u0000-\u001F\u007F]/.test(decoded)
     ) {
       return "/profile";
     }
@@ -56,10 +60,17 @@ export async function ensureScholarProfile(
   user: User,
   preferredName?: string
 ): Promise<void> {
-  const reference = doc(db, "users", user.uid);
+  const reference = doc(
+    db,
+    "users",
+    user.uid
+  );
+
   const snapshot = await getDoc(reference);
 
-  if (snapshot.exists()) return;
+  if (snapshot.exists()) {
+    return;
+  }
 
   await setDoc(reference, {
     uid: user.uid,
@@ -69,7 +80,6 @@ export async function ensureScholarProfile(
       user.displayName ||
       "ATREYA Scholar",
     createdAt: new Date().toISOString(),
-    isPremium: false,
     roadmapProgress: {},
     checklistProgress: {},
   });
