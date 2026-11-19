@@ -3,22 +3,30 @@ import "server-only";
 
 import {
   cert,
-  getApp,
   getApps,
   initializeApp,
+  type App,
 } from "firebase-admin/app";
 
 import { getAuth } from "firebase-admin/auth";
 
+import {
+  getFirestore,
+  type Firestore,
+} from "firebase-admin/firestore";
+
 const APP_NAME = "atreya-med-admin";
 
-function getAdminApp() {
+// Your existing named Firestore database.
+const DATABASE_ID = "default";
+
+function getAdminApp(): App {
   const existing = getApps().find(
     (app) => app.name === APP_NAME
   );
 
   if (existing) {
-    return getApp(APP_NAME);
+    return existing;
   }
 
   const projectId =
@@ -51,4 +59,11 @@ function getAdminApp() {
 
 export function getAdminAuth() {
   return getAuth(getAdminApp());
+}
+
+export function getAdminDb(): Firestore {
+  return getFirestore(
+    getAdminApp(),
+    DATABASE_ID
+  );
 }
