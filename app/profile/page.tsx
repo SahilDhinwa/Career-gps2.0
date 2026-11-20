@@ -7,28 +7,30 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
-
-import { doc, setDoc, deleteField, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-
 import {
-  User as UserIcon,
-  LogOut,
-  Crown,
-  ShieldCheck,
   Activity,
-  ChevronRight,
+  ArrowUpRight,
   BookOpen,
-  MapPin,
+  Brain,
   Camera,
-  ListChecks,
-  Trash2,
-  Sun,
-  Moon,
-  Terminal,
+  ChevronRight,
+  ClipboardList,
+  Crown,
+  FlaskConical,
+  GraduationCap,
+  LibraryBig,
   Lock,
+  LogOut,
+  Moon,
+  ShieldCheck,
+  Stethoscope,
+  Sun,
+  Terminal,
   Unlock,
+  UserRound,
   Crosshair,
 } from "lucide-react";
 
@@ -46,98 +48,114 @@ const ALLOWED_IMAGE_TYPES = new Set([
   "image/webp",
 ]);
 
-const OPERATIVE_SILHOUETTES = [
+const LEARNING_MODULES = [
   {
-    id: "apex-bat",
-    name: "Apex Knight",
-    role: "Tier IV // Root Clearance",
-    directive:
-      "Full Batcomputer command & global scholarship vault mastery.",
-    actionLabel: "Launch Batcomputer / Vault",
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
-      <defs>
-        <filter id="rimGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.2" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <clipPath id="apexClip">
-          <path d="M 14 106 C 16 83, 27 73, 45 66 L 47 56 C 42 49, 41 37, 43 24 L 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9 L 77 24 C 79 37, 78 49, 73 56 L 75 66 C 93 73, 104 83, 106 106 Z"/>
-        </clipPath>
-        <linearGradient id="shoulderLit" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#ff6b6b" stop-opacity="0.55"/>
-          <stop offset="45%" stop-color="#991b1b" stop-opacity="0.2"/>
-          <stop offset="100%" stop-color="#050506" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <path d="M 14 106 C 16 83, 27 73, 45 66 L 47 56 C 42 49, 41 37, 43 24 L 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9 L 77 24 C 79 37, 78 49, 73 56 L 75 66 C 93 73, 104 83, 106 106 Z" fill="#070405"/>
-      <g clip-path="url(#apexClip)">
-        <path d="M 14 106 C 16 83, 27 73, 45 66 L 55 85 L 14 106 Z" fill="url(#shoulderLit)"/>
-        <path d="M 20 88 L 36 74 M 18 96 L 40 80 M 26 102 L 44 88" stroke="#f87171" stroke-width="1.4" opacity="0.45" stroke-linecap="round"/>
-        <path d="M 54 84 L 66 80 L 74 84 L 84 79 L 94 85 M 48 91 L 61 87 L 71 91 L 85 86 L 99 93 M 42 98 L 57 94 L 69 99 L 82 94 L 98 101 M 62 74 L 75 72 L 88 76" stroke="#dc2626" stroke-width="1.5" opacity="0.55" fill="none" stroke-linejoin="round"/>
-      </g>
-      <path d="M 14.5 105 C 16.5 83, 27 73, 45 66 L 47 56 C 42 49, 41 37, 43 24 L 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9 L 77 24 C 79 37, 78 49, 73 56 L 75 66 C 93 73, 103.5 83, 105.5 105" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" filter="url(#rimGlow)"/>
-      <path d="M 16 98 C 20 82, 29 74, 45 66 M 44 9 L 50 22 C 56 20.5, 64 20.5, 70 22 L 76 9" fill="none" stroke="#fecaca" stroke-width="0.9" opacity="0.8"/>
-    </svg>`,
+    id: "bams",
+    title: "BAMS Learning Hub",
+    description:
+      "Explore your Ayurveda learning environment, academic resources, and subject materials.",
+    href: "/bams-hub",
+    icon: GraduationCap,
+    tag: "ACADEMIC",
   },
   {
-    id: "shadow-robin",
-    name: "Night Operative",
-    role: "Tier III // Tactical Ops",
-    directive:
-      "BAMS 2nd Prof Hub, Charaka Samhita MCQs & Checklist mastery.",
-    actionLabel: "Enter BAMS Hub",
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
-      <path d="M 24 106 C 27 87, 34 75, 44 68 L 28 73 L 39 59 L 46 56 C 44 46, 46 31, 50 18 L 78 20 L 80 29 L 77 36 L 82 43 L 78 46 L 80 50 L 77 54 L 79 59 L 70 63 L 66 70 C 78 76, 86 88, 89 106 Z" fill="#030304"/>
-      <path d="M 52 18.5 L 76 20" stroke="#e4e4e7" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
-      <path d="M 50 20.5 L 77 22" stroke="#71717a" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
-    </svg>`,
+    id: "diagnosis",
+    title: "Clinical Diagnosis Hub",
+    description:
+      "Study differential diagnosis, classical lakshana, and clinical reasoning.",
+    href: "/diagnosis-hub",
+    icon: Stethoscope,
+    tag: "CLINICAL",
   },
   {
-    id: "dark-knight",
-    name: "Gotham Vigilante",
-    role: "Tier II // Field Agent",
-    directive:
-      "Active global scholarship roadmaps & milestone execution.",
-    actionLabel: "Deploy Pathways",
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
-      <path d="M 16 106 C 19 85, 30 75, 45 68 L 40 63 L 47 58 C 43 51, 42 38, 44 25 L 45 10 L 51 24 C 56 23, 64 23, 69 24 L 75 10 L 76 25 C 78 38, 77 51, 73 58 L 75 68 C 90 74, 99 84, 102 106 Z" fill="#030304"/>
-    </svg>`,
+    id: "science",
+    title: "Science Vault",
+    description:
+      "Explore scientific concepts and the research-oriented side of Ayurveda.",
+    href: "/atreya/science-vault",
+    icon: FlaskConical,
+    tag: "RESEARCH",
   },
   {
-    id: "recruit-wayne",
-    name: "Initiate",
-    role: "Tier I // Recon",
-    directive:
-      "Identity verified. Base clearance for scholarship discovery.",
-    actionLabel: "Explore Scholarships",
-    svgString: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110">
-      <path d="M 16 106 C 20 84, 31 75, 47 68 L 48 57 C 45 55, 43 52, 44 47 C 41 46, 41 39, 44 38 C 44 24, 51 17, 60 17 C 69 17, 76 24, 76 38 C 79 39, 79 46, 76 47 C 77 52, 75 55, 72 57 L 73 68 C 89 75, 100 84, 104 106 Z" fill="#030304"/>
-    </svg>`,
+    id: "daily-regimen",
+    title: "Daily Regimen",
+    description:
+      "Explore Dinacharya and its classical foundations.",
+    href: "/atreya/daily-regimen",
+    icon: BookOpen,
+    tag: "AYURVEDA",
   },
 ] as const;
 
-function formatRoadmapName(value: string): string {
-  return value.replace(/-/g, " ");
-}
+const RESOURCE_MODULES = [
+  {
+    title: "Study Resources",
+    description:
+      "Browse educational materials available in the BAMS Hub.",
+    href: "/bams-hub",
+    icon: LibraryBig,
+  },
+  {
+    title: "Clinical Learning",
+    description:
+      "Access the differential diagnosis learning interface.",
+    href: "/diagnosis-hub",
+    icon: ClipboardList,
+  },
+  {
+    title: "Gut–Brain Pharmacology",
+    description:
+      "Explore the relationship between traditional knowledge and modern science.",
+    href: "/atreya/gut-brain-pharmacology",
+    icon: Brain,
+  },
+] as const;
 
-function getStageNumber(value: unknown): number {
-  const parsed = Number(value);
-
-  if (!Number.isFinite(parsed)) {
-    return 0;
-  }
-
-  return Math.max(0, Math.min(parsed, 10));
-}
+const OPERATIVES = [
+  {
+    id: "apex",
+    name: "Apex Knight",
+    role: "TIER IV // COMMAND",
+    directive:
+      "Administrator command or premium ATREYA learning vault.",
+    actionLabel: "ACCESS COMMAND",
+    icon: Terminal,
+  },
+  {
+    id: "clinical",
+    name: "Clinical Operative",
+    role: "TIER III // CLINICAL",
+    directive:
+      "Clinical reasoning, differential diagnosis and diagnostic learning.",
+    actionLabel: "OPEN DIAGNOSIS",
+    icon: Stethoscope,
+  },
+  {
+    id: "scholar",
+    name: "Ayurveda Scholar",
+    role: "TIER II // ACADEMIC",
+    directive:
+      "BAMS academic learning and educational exploration.",
+    actionLabel: "ENTER BAMS HUB",
+    icon: GraduationCap,
+  },
+  {
+    id: "research",
+    name: "Research Initiate",
+    role: "TIER I // DISCOVERY",
+    directive:
+      "Explore scientific knowledge and interdisciplinary learning.",
+    actionLabel: "EXPLORE SCIENCE",
+    icon: FlaskConical,
+  },
+] as const;
 
 function getImageDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const image = new Image();
     const objectUrl = URL.createObjectURL(file);
 
-    const cleanup = () => {
-      URL.revokeObjectURL(objectUrl);
-    };
+    const cleanup = () => URL.revokeObjectURL(objectUrl);
 
     image.onerror = () => {
       cleanup();
@@ -206,89 +224,19 @@ export default function UserProfile() {
     refreshUserData,
   } = useAuth();
 
- const [mounted, setMounted] = useState(false);
-
-const [isVerifiedAdmin, setIsVerifiedAdmin] =
-  useState(false);
-
-useEffect(() => {
-  if (!user || isLoading) {
-    setIsVerifiedAdmin(false);
-    return;
-  }
-
-  const controller = new AbortController();
-
-  const verifyAdmin = async () => {
-    setIsVerifiedAdmin(false);
-
-    try {
-      const response = await fetch(
-        "/api/admin/session",
-        {
-          method: "GET",
-          credentials: "same-origin",
-          cache: "no-store",
-          signal: controller.signal,
-        }
-      );
-
-      if (!response.ok) {
-        return;
-      }
-
-      const result: unknown = await response.json();
-
-      if (
-        !controller.signal.aborted &&
-        result !== null &&
-        typeof result === "object" &&
-        "authenticated" in result &&
-        "admin" in result &&
-        result.authenticated === true &&
-        result.admin === true
-      ) {
-        setIsVerifiedAdmin(true);
-      }
-    } catch (error) {
-      if (!controller.signal.aborted) {
-        console.error(
-          "Administrator verification failed:",
-          error
-        );
-      }
-    }
-  };
-
-  void verifyAdmin();
-
-  return () => {
-    controller.abort();
-  };
-}, [user?.uid, isLoading]);
-  
-  const [checklistData, setChecklistData] = useState<
-    Record<string, string[]>
-  >({});
-
-  const [profilePic, setProfilePic] = useState<
-    string | null
-  >(null);
-
-  const [selectedOperative, setSelectedOperative] =
-    useState<string>("apex-bat");
-
+  const [mounted, setMounted] = useState(false);
+  const [isVerifiedAdmin, setIsVerifiedAdmin] =
+    useState(false);
+  const [profilePic, setProfilePic] =
+    useState<string | null>(null);
   const [isUploading, setIsUploading] =
     useState(false);
-
   const [isLoggingOut, setIsLoggingOut] =
     useState(false);
+  const [selectedOperative, setSelectedOperative] =
+    useState("apex");
 
-  const [isRemovingItem, setIsRemovingItem] =
-    useState<string | null>(null);
-
-  const fileInputRef =
-    useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -296,48 +244,88 @@ useEffect(() => {
 
   useEffect(() => {
     if (!isLoading && !user && !isLoggingOut) {
-      router.replace("/account/login?redirect=%2Fprofile");
+      router.replace(
+        "/account/login?redirect=%2Fprofile"
+      );
     }
   }, [isLoading, user, isLoggingOut, router]);
 
   useEffect(() => {
     if (!user) {
       setProfilePic(null);
-      setChecklistData({});
       return;
     }
 
     setProfilePic(
       userData?.photoURL || user.photoURL || null
     );
-
-    setChecklistData(
-      userData?.checklistProgress || {}
-    );
   }, [user, userData]);
+
+  useEffect(() => {
+    if (!user || isLoading) {
+      setIsVerifiedAdmin(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const verifyAdmin = async () => {
+      setIsVerifiedAdmin(false);
+
+      try {
+        const response = await fetch(
+          "/api/admin/session",
+          {
+            credentials: "same-origin",
+            cache: "no-store",
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) return;
+
+        const result: unknown = await response.json();
+
+        if (
+          !controller.signal.aborted &&
+          result !== null &&
+          typeof result === "object" &&
+          "authenticated" in result &&
+          "admin" in result &&
+          result.authenticated === true &&
+          result.admin === true
+        ) {
+          setIsVerifiedAdmin(true);
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error(
+            "Admin verification failed:",
+            error
+          );
+        }
+      }
+    };
+
+    void verifyAdmin();
+
+    return () => controller.abort();
+  }, [user?.uid, isLoading]);
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
 
     setIsLoggingOut(true);
+    setIsVerifiedAdmin(false);
 
     try {
       await logout();
-
       setTheme("dark");
-
       router.replace("/account/login");
       router.refresh();
     } catch (error) {
-      console.error(
-        "Secure logout failed:",
-        error
-      );
-
-      alert(
-        "Unable to complete logout. Please try again."
-      );
-
+      console.error("Logout failed:", error);
+      alert("Unable to sign out. Please try again.");
       setIsLoggingOut(false);
     }
   };
@@ -346,24 +334,17 @@ useEffect(() => {
     event: ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-
     event.target.value = "";
 
-    if (!file || !user || isUploading) {
-      return;
-    }
+    if (!file || !user || isUploading) return;
 
     if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-      alert(
-        "Please select a JPEG, PNG, or WebP image."
-      );
+      alert("Select a JPEG, PNG, or WebP image.");
       return;
     }
 
     if (file.size > MAX_IMAGE_SIZE) {
-      alert(
-        "Please upload an image smaller than 2 MB."
-      );
+      alert("Image must be smaller than 2 MB.");
       return;
     }
 
@@ -373,41 +354,24 @@ useEffect(() => {
       const compressedBase64 =
         await getImageDataUrl(file);
 
-      // Firestore document limit is 1 MiB.
-      // Reject unusually large encoded images.
       if (compressedBase64.length > 700000) {
-        throw new Error(
-          "Compressed image is too large."
-        );
+        throw new Error("Compressed image is too large.");
       }
 
-      const userRef = doc(
-        db,
-        "users",
-        user.uid
-      );
-
       await setDoc(
-        userRef,
-        {
-          photoURL: compressedBase64,
-        },
+        doc(db, "users", user.uid),
+        { photoURL: compressedBase64 },
         { merge: true }
       );
 
       setProfilePic(compressedBase64);
 
-      // Preserve the existing local cache format.
       try {
-        const cacheKey =
-          `veblen_cache_${user.uid}`;
-
-        const cached =
-          localStorage.getItem(cacheKey);
+        const cacheKey = `veblen_cache_${user.uid}`;
+        const cached = localStorage.getItem(cacheKey);
 
         if (cached) {
-          const parsed: unknown =
-            JSON.parse(cached);
+          const parsed: unknown = JSON.parse(cached);
 
           if (
             parsed &&
@@ -423,283 +387,83 @@ useEffect(() => {
             );
           }
         }
-      } catch (cacheError) {
-        console.warn(
-          "Profile cache update skipped:",
-          cacheError
-        );
+      } catch (error) {
+        console.warn("Cache update skipped:", error);
       }
 
       try {
         await refreshUserData?.();
-      } catch (refreshError) {
-        console.warn(
-          "Profile refresh pending:",
-          refreshError
-        );
+      } catch (error) {
+        console.warn("Profile refresh pending:", error);
       }
     } catch (error) {
-      console.error(
-        "Profile image upload failed:",
-        error
-      );
-
-      alert(
-        "Unable to save the profile picture. Please try again."
-      );
+      console.error("Image upload failed:", error);
+      alert("Unable to save the profile picture.");
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleRemoveChecklistItem = async (
-    roadmapId: string,
-    itemToRemove: string
-  ) => {
-    if (!user || isRemovingItem) {
-      return;
-    }
+  const isBatman = mounted && theme === "batman";
 
-    const operationKey =
-      `${roadmapId}:${itemToRemove}`;
+  const activeOperative =
+    OPERATIVES.find(
+      (item) => item.id === selectedOperative
+    ) || OPERATIVES[0];
 
-    setIsRemovingItem(operationKey);
+  const apexUnlocked = isVerifiedAdmin || isPremium;
 
-    const previousData = checklistData;
+  const activeRoute =
+    selectedOperative === "apex"
+      ? isVerifiedAdmin
+        ? "/admin"
+        : "/dashboard/vault"
+      : selectedOperative === "clinical"
+        ? "/diagnosis-hub"
+        : selectedOperative === "scholar"
+          ? "/bams-hub"
+          : "/atreya/science-vault";
 
-    const currentList =
-      checklistData[roadmapId] || [];
-
-    const updatedList =
-      currentList.filter(
-        (item) => item !== itemToRemove
-      );
-
-    setChecklistData((previous) => ({
-      ...previous,
-      [roadmapId]: updatedList,
-    }));
-
-    try {
-      const userRef = doc(
-        db,
-        "users",
-        user.uid
-      );
-
-      // Preserve the existing nested checklist
-      // schema without overwriting other roadmaps.
-      await updateDoc(
-        userRef,
-        `checklistProgress.${roadmapId}`,
-        updatedList
-      );
-
-      try {
-        await refreshUserData?.();
-      } catch (refreshError) {
-        console.warn(
-          "Checklist refresh pending:",
-          refreshError
-        );
-      }
-    } catch (error) {
-      console.error(
-        "Checklist update failed:",
-        error
-      );
-
-      setChecklistData(previousData);
-
-      alert(
-        "Unable to update the checklist."
-      );
-    } finally {
-      setIsRemovingItem(null);
-    }
-  };
+  const activeUnlocked =
+    selectedOperative !== "apex" || apexUnlocked;
 
   if (isLoading || (!user && !isLoggingOut)) {
     return (
-      <div
-        className={`relative min-h-screen overflow-hidden ${
-          theme === "batman"
-            ? "bg-transparent"
-            : "bg-background"
-        }`}
-      >
-        <div className="mx-auto max-w-5xl px-6 py-12 md:py-16">
-          <div className="mb-8 flex animate-pulse flex-col items-center gap-6 rounded-sm border border-surfaceBorder bg-surface/40 p-6 md:flex-row md:p-12">
-            <div className="h-28 w-28 shrink-0 rounded-full bg-surfaceBorder/50" />
-
-            <div className="w-full flex-1 space-y-4">
-              <div className="h-8 w-3/4 rounded-sm bg-surfaceBorder/50" />
-              <div className="h-4 w-1/2 rounded-sm bg-surfaceBorder/50" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div className="space-y-8 lg:col-span-2">
-              <div className="h-64 animate-pulse rounded-sm bg-surface/40" />
-              <div className="h-64 animate-pulse rounded-sm bg-surface/40" />
-            </div>
-
-            <div className="h-96 animate-pulse rounded-sm bg-surface/40" />
-          </div>
+      <main className="min-h-screen bg-background px-6 py-16">
+        <div className="mx-auto max-w-5xl animate-pulse space-y-8">
+          <div className="h-48 rounded-sm bg-surface/70" />
+          <div className="h-80 rounded-sm bg-surface/70" />
         </div>
-      </div>
+      </main>
     );
   }
 
-  const roadmapProgress =
-    userData?.roadmapProgress || {};
-
-  const activeRoadmapCount =
-    Object.keys(roadmapProgress).length;
-
-  const totalCheckedTasks =
-    Object.values(checklistData).reduce(
-      (total, items) =>
-        total + items.length,
-      0
-    );
-
- // Verified through the protected administrator API.
-// Firestore profile roles do not grant admin access.
-const isAdmin = isVerifiedAdmin;
-
-  const getOperativeTelemetry = (
-    id: string
-  ) => {
-    switch (id) {
-      case "apex-bat":
-        return {
-          barWidth:
-            isAdmin || isPremium
-              ? 100
-              : Math.min(
-                  25 +
-                    activeRoadmapCount * 20 +
-                    totalCheckedTasks * 5,
-                  95
-                ),
-          unlocked:
-            isAdmin || isPremium,
-          metricText: isAdmin
-            ? "ROOT OVERRIDE: ACTIVE"
-            : isPremium
-              ? "VIP CLEARANCE: ACTIVE"
-              : "REQUIRES PREMIUM OR ROOT",
-          targetRoute: isAdmin
-            ? "/admin"
-            : "/dashboard/vault",
-        };
-
-      case "shadow-robin":
-        return {
-          barWidth: Math.min(
-            totalCheckedTasks * 15,
-            100
-          ),
-          unlocked: true,
-          metricText:
-            `${totalCheckedTasks} TACTICAL TASKS LOGGED`,
-          targetRoute: "/bams-hub",
-        };
-
-      case "dark-knight":
-        return {
-          barWidth: Math.min(
-            activeRoadmapCount * 35,
-            100
-          ),
-          unlocked: true,
-          metricText:
-            `${activeRoadmapCount} ACTIVE ROADMAPS DEPLOYED`,
-          targetRoute: "/pathways",
-        };
-
-      default:
-        return {
-          barWidth: 12,
-          unlocked: true,
-          metricText:
-            "BASE RECONNAISSANCE ONLINE",
-          targetRoute: "/scholarships",
-        };
-    }
-  };
-
-  const activeOp =
-    OPERATIVE_SILHOUETTES.find(
-      (operative) =>
-        operative.id === selectedOperative
-    ) || OPERATIVE_SILHOUETTES[0];
-
-  const activeTelemetry =
-    getOperativeTelemetry(activeOp.id);
-
   return (
-    <div
-      className={`relative min-h-screen overflow-hidden transition-colors duration-300 ${
-        theme === "batman"
-          ? "bg-transparent"
-          : "bg-background"
+    <main
+      className={`relative min-h-screen overflow-hidden ${
+        isBatman ? "bg-transparent" : "bg-background"
       }`}
     >
       <style>{`
-        .honeycomb-bg {
+        .atreya-profile-pattern {
           position: fixed;
           inset: 0;
           z-index: 0;
           pointer-events: none;
-          background-color: var(--background);
-        }
-
-        .honeycomb-pattern {
-          position: absolute;
-          inset: 0;
           background-image:
-            url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.15'/%3E%3C/svg%3E");
-          background-size: 80px;
-        }
-
-        .dark .honeycomb-pattern {
-          background-image:
-            url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.08'/%3E%3C/svg%3E");
-        }
-
-        .honey-glow-1 {
-          position: absolute;
-          top: -10%;
-          left: -10%;
-          width: 50vw;
-          height: 50vw;
-          background: radial-gradient(circle, rgba(180,83,9,0.08), transparent 70%);
-        }
-
-        .honey-glow-2 {
-          position: absolute;
-          bottom: -10%;
-          right: -10%;
-          width: 60vw;
-          height: 60vw;
-          background: radial-gradient(circle, rgba(212,175,55,0.06), transparent 70%);
+            radial-gradient(circle at 15% 15%, rgba(180,83,9,.08), transparent 35%),
+            radial-gradient(circle at 85% 85%, rgba(212,175,55,.07), transparent 40%);
         }
       `}</style>
 
-      {theme !== "batman" && (
-        <div className="honeycomb-bg">
-          <div className="honeycomb-pattern" />
-          <div className="honey-glow-1" />
-          <div className="honey-glow-2" />
-        </div>
+      {!isBatman && (
+        <div className="atreya-profile-pattern" />
       )}
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 py-12 md:py-16">
         {/* PROFILE HEADER */}
-        <div className="mb-8 flex flex-col items-center justify-between gap-8 rounded-sm border border-amber-900/10 bg-surface/80 p-6 shadow-xl backdrop-blur-md transition-colors duration-300 dark:border-amber-500/10 md:flex-row md:p-12">
-          <div className="flex w-full flex-col items-center gap-6 text-center md:w-auto md:flex-row md:text-left">
+        <section className="mb-8 flex flex-col items-center justify-between gap-8 rounded-sm border border-surfaceBorder bg-surface/80 p-6 shadow-xl backdrop-blur-md md:flex-row md:p-10">
+          <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
             <div className="relative">
               <button
                 type="button"
@@ -708,7 +472,7 @@ const isAdmin = isVerifiedAdmin;
                   fileInputRef.current?.click()
                 }
                 aria-label="Change profile picture"
-                className="group relative flex h-28 w-28 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border-4 border-surface bg-background shadow-xl disabled:cursor-wait md:h-24 md:w-24"
+                className="group relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-surface bg-background shadow-xl disabled:opacity-50"
               >
                 {profilePic ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
@@ -718,15 +482,11 @@ const isAdmin = isVerifiedAdmin;
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <UserIcon className="h-12 w-12 text-foreground/20" />
+                  <UserRound className="h-12 w-12 text-foreground/30" />
                 )}
 
-                <div className="absolute inset-0 hidden flex-col items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 md:flex">
-                  {isUploading ? (
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  ) : (
-                    <Camera className="h-6 w-6 text-white" />
-                  )}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Camera className="h-6 w-6 text-white" />
                 </div>
               </button>
 
@@ -737,13 +497,9 @@ const isAdmin = isVerifiedAdmin;
                   fileInputRef.current?.click()
                 }
                 aria-label="Upload profile picture"
-                className="absolute bottom-1 right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface bg-primary shadow-md disabled:opacity-50 md:hidden"
+                className="absolute bottom-0 right-0 rounded-full bg-primary p-2 text-white shadow-md"
               >
-                {isUploading ? (
-                  <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                ) : (
-                  <Camera className="h-4 w-4 text-white" />
-                )}
+                <Camera size={15} />
               </button>
 
               <input
@@ -756,39 +512,44 @@ const isAdmin = isVerifiedAdmin;
             </div>
 
             <div>
-              <h1 className="mb-1 font-heading text-3xl font-bold text-foreground">
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-primary">
+                ATREYA MED SCHOLAR PROFILE
+              </p>
+
+              <h1 className="font-heading text-3xl font-bold text-foreground">
                 {userData?.displayName ||
                   user?.displayName ||
-                  "Scholarship Applicant"}
+                  "ATREYA Scholar"}
               </h1>
 
-              <p className="mb-3 break-all font-medium text-foreground/70">
+              <p className="mt-2 break-all text-sm text-foreground/60">
                 {user?.email}
               </p>
 
-              {isPremium ? (
-                <span className="inline-flex items-center gap-1.5 rounded-sm border border-warning/30 bg-warning/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-warning">
-                  <Crown className="h-3.5 w-3.5" />
-                  Premium Member
+              <div className="mt-4 flex flex-wrap justify-center gap-2 md:justify-start">
+                <span className="inline-flex items-center gap-2 rounded-sm border border-surfaceBorder bg-background/50 px-3 py-1.5 text-xs font-bold text-foreground/70">
+                  <ShieldCheck size={14} />
+                  Scholar Account
                 </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-sm border border-surfaceBorder bg-surfaceBorder/50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground/60">
-                  Free Tier
-                </span>
-              )}
+
+                {isPremium && (
+                  <span className="inline-flex items-center gap-2 rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-500">
+                    <Crown size={14} />
+                    Premium
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex w-full shrink-0 flex-col gap-3 md:w-auto">
-            {isAdmin && (
+          <div className="flex w-full flex-col gap-3 md:w-auto">
+            {isVerifiedAdmin && (
               <button
                 type="button"
-                onClick={() =>
-                  router.push("/admin")
-                }
-                className="flex w-full items-center justify-center gap-2 rounded-sm border border-red-900/40 bg-red-950/20 px-6 py-3.5 font-bold text-red-500 transition-colors hover:bg-red-900/40 hover:text-white md:w-auto md:py-3"
+                onClick={() => router.push("/admin")}
+                className="flex items-center justify-center gap-2 rounded-sm border border-red-900/50 bg-red-950/30 px-5 py-3 font-bold text-red-500 hover:bg-red-900/40"
               >
-                <Terminal className="h-5 w-5 md:h-4 md:w-4" />
+                <Terminal size={17} />
                 Batcomputer
               </button>
             )}
@@ -798,393 +559,278 @@ const isAdmin = isVerifiedAdmin;
                 type="button"
                 onClick={() =>
                   setTheme(
-                    theme === "dark"
-                      ? "light"
-                      : "dark"
+                    theme === "dark" ? "light" : "dark"
                   )
                 }
-                className="flex w-full items-center justify-center gap-2 rounded-sm border border-surfaceBorder bg-surface/80 px-6 py-3.5 font-bold text-foreground transition-colors hover:bg-foreground/5 md:w-auto md:py-3"
+                className="flex items-center justify-center gap-2 rounded-sm border border-surfaceBorder bg-background/40 px-5 py-3 font-bold text-foreground hover:bg-foreground/5"
               >
                 {theme === "dark" ? (
-                  <Sun className="h-5 w-5 text-warning md:h-4 md:w-4" />
+                  <Sun size={17} />
                 ) : (
-                  <Moon className="h-5 w-5 text-primary md:h-4 md:w-4" />
+                  <Moon size={17} />
                 )}
-
                 {theme === "dark"
                   ? "Light Mode"
                   : "Dark Mode"}
               </button>
             )}
 
-            {!isPremium && (
-              <div className="w-full">
-                <PremiumPaymentButton />
-              </div>
-            )}
+            {!isPremium && <PremiumPaymentButton />}
 
             <button
               type="button"
-              onClick={handleLogout}
               disabled={isLoggingOut}
-              className="flex w-full items-center justify-center gap-2 rounded-sm border border-surfaceBorder bg-surface/80 px-6 py-3.5 font-bold text-foreground transition-colors hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto md:py-3"
+              onClick={handleLogout}
+              className="flex items-center justify-center gap-2 rounded-sm border border-surfaceBorder bg-background/40 px-5 py-3 font-bold text-foreground hover:border-red-500/30 hover:text-red-500 disabled:opacity-50"
             >
-              <LogOut className="h-5 w-5 md:h-4 md:w-4" />
+              <LogOut size={17} />
               {isLoggingOut
                 ? "Signing Out..."
                 : "Sign Out"}
             </button>
           </div>
-        </div>
+        </section>
 
         {/* BATMAN OPERATIVE MATRIX */}
-        {mounted && theme === "batman" && (
-          <div className="mb-8 rounded-sm border border-white/5 border-l-4 border-l-[#e04848] bg-[#1c1d22]/95 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.95)] md:p-7">
-            <div className="grid grid-cols-4 gap-3 pb-5 pt-1 sm:gap-6 md:gap-10">
-              {OPERATIVE_SILHOUETTES.map(
-                (operative) => {
-                  const selected =
-                    selectedOperative ===
-                    operative.id;
-
-                  const telemetry =
-                    getOperativeTelemetry(
-                      operative.id
-                    );
-
-                  return (
-                    <button
-                      key={operative.id}
-                      type="button"
-                      onClick={() =>
-                        setSelectedOperative(
-                          operative.id
-                        )
-                      }
-                      aria-pressed={selected}
-                      aria-label={
-                        operative.name
-                      }
-                      className={`group flex cursor-pointer flex-col items-center rounded-sm p-2 transition-all duration-300 ${
-                        selected
-                          ? "bg-white/[0.03]"
-                          : "hover:bg-white/[0.015]"
-                      }`}
-                    >
-                      <div
-                        className={`relative mb-3 flex h-16 w-16 items-end justify-center transition-transform duration-300 sm:h-24 sm:w-24 md:h-24 md:w-28 ${
-                          selected
-                            ? "scale-105"
-                            : "opacity-85 group-hover:scale-105 group-hover:opacity-100"
-                        }`}
-                      >
-                        <div
-                          className="h-full w-full"
-                          dangerouslySetInnerHTML={{
-                            __html:
-                              operative.svgString,
-                          }}
-                        />
-                      </div>
-
-                      <div className="h-2 w-full max-w-[92px] overflow-hidden rounded-full bg-[#0a0a0c] sm:h-2.5">
-                        <div
-                          className="h-full rounded-full bg-[#d94646] shadow-[0_0_8px_rgba(217,70,70,0.55)] transition-all duration-700"
-                          style={{
-                            width:
-                              `${telemetry.barWidth}%`,
-                          }}
-                        />
-                      </div>
-                    </button>
-                  );
-                }
-              )}
+        {isBatman && (
+          <section className="mb-8 rounded-sm border border-white/10 border-l-4 border-l-red-500 bg-[#1c1d22]/95 p-6 shadow-2xl">
+            <div className="mb-6 flex items-center gap-2 font-mono text-xs font-bold tracking-[0.2em] text-red-400">
+              <Crosshair size={16} />
+              ATREYA OPERATIVE MATRIX
             </div>
 
-            <div className="flex flex-col justify-between gap-4 border-t border-white/5 pt-4 sm:flex-row sm:items-center">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2.5">
-                  <Crosshair className="h-4 w-4 shrink-0 text-[#e04848]" />
+            <div className="grid grid-cols-4 gap-3">
+              {OPERATIVES.map((operative) => {
+                const Icon = operative.icon;
+                const selected =
+                  selectedOperative === operative.id;
 
-                  <span className="font-mono text-xs font-bold uppercase tracking-widest text-white">
-                    {activeOp.name}
-                  </span>
+                return (
+                  <button
+                    key={operative.id}
+                    type="button"
+                    aria-pressed={selected}
+                    aria-label={operative.name}
+                    onClick={() =>
+                      setSelectedOperative(operative.id)
+                    }
+                    className={`flex flex-col items-center gap-3 rounded-sm border p-3 transition ${
+                      selected
+                        ? "border-red-500/40 bg-red-500/10"
+                        : "border-white/5 bg-black/20 hover:border-white/20"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-8 w-8 sm:h-12 sm:w-12 ${
+                        selected
+                          ? "text-red-400"
+                          : "text-zinc-500"
+                      }`}
+                    />
 
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-[#e04848]">
-                    [{activeOp.role}]
-                  </span>
-                </div>
+                    <div className="h-1.5 w-full rounded-full bg-black">
+                      <div
+                        className="h-full rounded-full bg-red-500"
+                        style={{
+                          width:
+                            operative.id === "apex"
+                              ? apexUnlocked
+                                ? "100%"
+                                : "20%"
+                              : "100%",
+                        }}
+                      />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
 
-                <p className="text-xs font-medium text-gray-400">
-                  {activeOp.directive}
+            <div className="mt-6 flex flex-col justify-between gap-4 border-t border-white/10 pt-5 sm:flex-row sm:items-center">
+              <div>
+                <h2 className="font-mono text-sm font-bold uppercase text-white">
+                  {activeOperative.name}
+                </h2>
+
+                <p className="mt-1 font-mono text-xs text-red-400">
+                  {activeOperative.role}
+                </p>
+
+                <p className="mt-2 text-xs text-zinc-400">
+                  {activeOperative.directive}
                 </p>
               </div>
 
-              <div className="flex shrink-0 items-center gap-3">
-                <span className="hidden items-center gap-1.5 rounded-sm border border-white/5 bg-black/40 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-gray-400 md:inline-flex">
-                  {activeTelemetry.unlocked ? (
-                    <Unlock className="h-3 w-3 text-[#e04848]" />
-                  ) : (
-                    <Lock className="h-3 w-3 text-gray-500" />
-                  )}
-
-                  {activeTelemetry.metricText}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => {
-  if (!activeTelemetry.unlocked) {
-    return;
-  }
-
-  router.push(activeTelemetry.targetRoute);
-}}
-disabled={!activeTelemetry.unlocked}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-sm border border-[#e04848]/40 bg-[#e04848]/15 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-[#e04848] transition-all hover:bg-[#e04848] hover:text-white sm:w-auto"
-                >
-                  {activeOp.actionLabel}
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
+              <button
+                type="button"
+                disabled={!activeUnlocked}
+                onClick={() => router.push(activeRoute)}
+                className="flex items-center justify-center gap-2 rounded-sm border border-red-500/40 bg-red-500/10 px-4 py-3 font-mono text-xs font-bold text-red-400 hover:bg-red-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {activeUnlocked ? (
+                  <Unlock size={15} />
+                ) : (
+                  <Lock size={15} />
+                )}
+                {activeOperative.actionLabel}
+                <ChevronRight size={15} />
+              </button>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* ROADMAPS AND CHECKLISTS */}
+        {/* ATREYA LEARNING DASHBOARD */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="space-y-8 lg:col-span-2">
             <section className="rounded-sm border border-surfaceBorder bg-surface/80 p-6 shadow-lg backdrop-blur-md md:p-8">
               <div className="mb-6 flex items-center gap-3">
                 <Activity className="h-6 w-6 text-primary" />
-                <h2 className="font-heading text-2xl font-bold text-foreground">
-                  Active Roadmaps
-                </h2>
+                <div>
+                  <h2 className="font-heading text-2xl font-bold text-foreground">
+                    My Learning Dashboard
+                  </h2>
+                  <p className="mt-1 text-sm text-foreground/60">
+                    Your ATREYA MED learning environment.
+                  </p>
+                </div>
               </div>
 
-              {Object.keys(roadmapProgress).length >
-              0 ? (
-                <div className="space-y-4">
-                  {Object.entries(
-                    roadmapProgress
-                  ).map(([id, stage]) => {
-                    const stageNumber =
-                      getStageNumber(stage);
+              <div className="grid gap-4 sm:grid-cols-2">
+                {LEARNING_MODULES.map((module) => {
+                  const Icon = module.icon;
 
-                    return (
-                      <div
-                        key={id}
-                        className="group rounded-sm border border-surfaceBorder bg-background/50 p-5 shadow-sm transition-colors hover:border-primary/30"
-                      >
-                        <div className="mb-3 flex items-center justify-between gap-3">
-                          <h3 className="flex items-center gap-2 font-bold capitalize text-foreground">
-                            <MapPin className="h-4 w-4 text-primary" />
-                            {formatRoadmapName(id)}
-                          </h3>
-
-                          <span className="rounded-sm border border-surfaceBorder bg-foreground/5 px-2 py-1 text-xs font-bold text-foreground/70">
-                            Stage {stageNumber}
-                          </span>
-                        </div>
-
-                        <div className="mb-4 h-2 w-full overflow-hidden rounded-full border border-surfaceBorder/50 bg-surfaceBorder">
-                          <div
-                            className="h-full bg-primary transition-all duration-500"
-                            style={{
-                              width:
-                                `${stageNumber * 10}%`,
-                            }}
-                          />
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            router.push(
-                              `/roadmap/${encodeURIComponent(id)}`
-                            )
-                          }
-                          className="flex items-center gap-1 text-sm font-bold text-primary transition-colors group-hover:text-primaryHover"
-                        >
-                          Resume Journey
-                          <ChevronRight className="h-4 w-4" />
-                        </button>
+                  return (
+                    <button
+                      key={module.id}
+                      type="button"
+                      onClick={() =>
+                        router.push(module.href)
+                      }
+                      className="group rounded-sm border border-surfaceBorder bg-background/50 p-5 text-left transition hover:border-primary/40 hover:bg-primary/5"
+                    >
+                      <div className="mb-4 flex items-center justify-between">
+                        <Icon className="h-7 w-7 text-primary" />
+                        <ArrowUpRight
+                          size={17}
+                          className="text-foreground/40 transition group-hover:text-primary"
+                        />
                       </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="rounded-sm border border-surfaceBorder bg-background/50 py-10 text-center shadow-inner">
-                  <MapPin className="mx-auto mb-3 h-8 w-8 text-foreground/20" />
 
-                  <p className="mb-4 font-medium text-foreground/60">
-                    You haven&apos;t started any application roadmaps yet.
-                  </p>
+                      <p className="text-[10px] font-bold tracking-widest text-primary">
+                        {module.tag}
+                      </p>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      router.push(
-                        "/scholarships"
-                      )
-                    }
-                    className="inline-block rounded-sm bg-primary px-6 py-3 font-bold text-white transition-colors hover:bg-primaryHover"
-                  >
-                    Explore Scholarships
-                  </button>
-                </div>
-              )}
+                      <h3 className="mt-2 font-bold text-foreground">
+                        {module.title}
+                      </h3>
+
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                        {module.description}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
             </section>
 
+            {/* ORIGINAL ATREYA PROJECT ASSETS */}
             <section className="rounded-sm border border-surfaceBorder bg-surface/80 p-6 shadow-lg backdrop-blur-md md:p-8">
               <div className="mb-6 flex items-center gap-3">
-                <ListChecks className="h-6 w-6 text-primary" />
-                <h2 className="font-heading text-2xl font-bold text-foreground">
-                  Checklist Command Center
-                </h2>
-              </div>
-
-              {Object.values(
-                checklistData
-              ).some(
-                (items) => items.length > 0
-              ) ? (
-                <div className="space-y-6">
-                  {Object.entries(
-                    checklistData
-                  ).map(
-                    ([roadmapId, items]) => {
-                      if (
-                        items.length === 0
-                      ) {
-                        return null;
-                      }
-
-                      return (
-                        <div
-                          key={roadmapId}
-                          className="rounded-sm border border-surfaceBorder bg-background/50 p-4 shadow-sm"
-                        >
-                          <h4 className="mb-4 border-b border-surfaceBorder pb-2 text-sm font-bold uppercase tracking-wider text-foreground">
-                            {formatRoadmapName(
-                              roadmapId
-                            )}
-                          </h4>
-
-                          <ul className="space-y-2">
-                            {items.map(
-                              (
-                                item,
-                                index
-                              ) => {
-                                const key =
-                                  `${roadmapId}:${item}`;
-
-                                return (
-                                  <li
-                                    key={`${item}-${index}`}
-                                    className="group flex items-start justify-between gap-4 rounded-sm border border-transparent p-3 transition-colors hover:border-surfaceBorder/50 hover:bg-surfaceBorder/30"
-                                  >
-                                    <span className="flex-1 text-sm font-medium text-foreground/80 md:text-base">
-                                      {item}
-                                    </span>
-
-                                    <button
-                                      type="button"
-                                      disabled={
-                                        isRemovingItem !==
-                                        null
-                                      }
-                                      onClick={() =>
-                                        handleRemoveChecklistItem(
-                                          roadmapId,
-                                          item
-                                        )
-                                      }
-                                      aria-label={`Remove ${item}`}
-                                      className="p-1 text-foreground/40 transition-colors hover:text-red-500 disabled:opacity-40"
-                                    >
-                                      {isRemovingItem ===
-                                      key ? (
-                                        <span className="block h-4 w-4 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
-                                      ) : (
-                                        <Trash2 className="h-5 w-5 md:h-4 md:w-4" />
-                                      )}
-                                    </button>
-                                  </li>
-                                );
-                              }
-                            )}
-                          </ul>
-                        </div>
-                      );
-                    }
-                  )}
-                </div>
-              ) : (
-                <div className="rounded-sm border border-surfaceBorder bg-background/50 py-10 text-center shadow-inner">
-                  <ListChecks className="mx-auto mb-3 h-8 w-8 text-foreground/20" />
-
-                  <p className="font-medium text-foreground/60">
-                    Your checked tasks will appear here.
+                <LibraryBig className="h-6 w-6 text-primary" />
+                <div>
+                  <h2 className="font-heading text-2xl font-bold text-foreground">
+                    ATREYA Project Assets
+                  </h2>
+                  <p className="mt-1 text-sm text-foreground/60">
+                    Educational resources and clinical learning tools.
                   </p>
                 </div>
-              )}
+              </div>
+
+              <div className="space-y-3">
+                {RESOURCE_MODULES.map((resource) => {
+                  const Icon = resource.icon;
+
+                  return (
+                    <button
+                      key={resource.title}
+                      type="button"
+                      onClick={() =>
+                        router.push(resource.href)
+                      }
+                      className="group flex w-full items-center gap-4 rounded-sm border border-surfaceBorder bg-background/50 p-4 text-left transition hover:border-primary/40"
+                    >
+                      <div className="rounded-sm bg-primary/10 p-3 text-primary">
+                        <Icon size={22} />
+                      </div>
+
+                      <div className="flex-1">
+                        <h3 className="font-bold text-foreground">
+                          {resource.title}
+                        </h3>
+
+                        <p className="mt-1 text-xs leading-relaxed text-foreground/60">
+                          {resource.description}
+                        </p>
+                      </div>
+
+                      <ChevronRight
+                        size={18}
+                        className="text-foreground/40 group-hover:text-primary"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             </section>
           </div>
 
           {/* SIDEBAR */}
-          <div className="space-y-8">
-            <section className="group relative overflow-hidden rounded-sm border border-amber-800/30 bg-gradient-to-br from-amber-900 to-black p-8 shadow-2xl dark:from-black dark:to-amber-950">
-              <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 -translate-y-1/2 translate-x-1/2 rounded-full bg-warning/20 blur-3xl" />
-
-              <div className="relative z-10 mb-4 flex items-center gap-3">
-                <BookOpen className="h-6 w-6 text-warning" />
+          <aside className="space-y-8">
+            <section className="relative overflow-hidden rounded-sm border border-amber-800/30 bg-gradient-to-br from-amber-900 to-black p-8 shadow-2xl dark:from-black dark:to-amber-950">
+              <div className="relative z-10">
+                <LibraryBig className="mb-4 h-7 w-7 text-amber-400" />
 
                 <h2 className="font-heading text-2xl font-bold text-white">
-                  Career Assets
+                  ATREYA Resource Vault
                 </h2>
+
+                <p className="mt-4 text-sm leading-relaxed text-zinc-300">
+                  Discover BAMS educational materials,
+                  clinical resources, and Ayurveda
+                  learning content.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    router.push("/bams-hub")
+                  }
+                  className="mt-7 flex w-full items-center justify-between rounded-sm border border-white/20 bg-white/10 px-4 py-4 font-bold text-white hover:bg-white/20"
+                >
+                  Explore Resources
+                  <ChevronRight size={18} />
+                </button>
               </div>
-
-              <p className="relative z-10 mb-8 text-sm font-medium leading-relaxed text-gray-300">
-                Access your premium guides,
-                including{" "}
-                <span className="font-bold text-white">
-                  &quot;The Unspoken Aura&quot;
-                </span>{" "}
-                by Sahil Dhinwa.
-              </p>
-
-              <button
-                type="button"
-                onClick={() =>
-                  router.push("/e-books")
-                }
-                className="relative z-10 flex w-full items-center justify-between rounded-sm border border-white/20 bg-white/10 px-4 py-4 font-bold text-white shadow-lg transition-all hover:bg-white/20 group-hover:border-warning/50"
-              >
-                Open Library
-                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </button>
             </section>
 
             <section className="rounded-sm border border-surfaceBorder bg-surface/80 p-8 text-center shadow-lg backdrop-blur-md">
-              <ShieldCheck className="mx-auto mb-4 h-10 w-10 text-success opacity-80" />
+              <ShieldCheck className="mx-auto mb-4 h-10 w-10 text-success" />
 
-              <h3 className="mb-2 font-heading text-xl font-bold text-foreground">
-                Secure Account
+              <h3 className="font-heading text-xl font-bold text-foreground">
+                Secure Scholar Account
               </h3>
 
-              <p className="text-sm font-medium leading-relaxed text-foreground/60">
-                Your account uses Firebase
-                authentication. Your profile
-                and application progress are
-                stored in the cloud.
+              <p className="mt-3 text-sm leading-relaxed text-foreground/60">
+                Your ATREYA MED account is protected
+                through Firebase Authentication.
+                Administrator access is verified
+                separately by the server.
               </p>
             </section>
-          </div>
+          </aside>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
