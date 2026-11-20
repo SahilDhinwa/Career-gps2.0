@@ -1,7 +1,13 @@
 
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -16,7 +22,6 @@ import {
   Film,
   Loader2,
   LockKeyhole,
-  LogOut,
   RefreshCw,
   Search,
   Shield,
@@ -25,6 +30,7 @@ import {
   Upload,
   Users,
   X,
+  type LucideIcon,
 } from "lucide-react";
 
 type Tab = "users" | "analytics" | "cms";
@@ -120,7 +126,7 @@ function Panel({
   children,
   className = "",
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }) {
   return (
@@ -137,10 +143,7 @@ function SectionHeading({
   title,
   subtitle,
 }: {
-  icon: React.ComponentType<{
-    className?: string;
-    size?: number;
-  }>;
+  icon: LucideIcon;
   title: string;
   subtitle: string;
 }) {
@@ -166,7 +169,9 @@ function Spinner() {
   return (
     <div className="flex min-h-48 items-center justify-center gap-3 text-emerald-400">
       <Loader2 className="animate-spin" size={22} />
-      <span className="text-sm">Loading secure data...</span>
+      <span className="text-sm">
+        Loading secure data...
+      </span>
     </div>
   );
 }
@@ -178,30 +183,28 @@ export default function AdminPage() {
   const [checking, setChecking] = useState(true);
   const [accessError, setAccessError] = useState("");
 
-  const [notice, setNotice] = useState<Notice | null>(
-    null
-  );
+  const [notice, setNotice] =
+    useState<Notice | null>(null);
 
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const [usersLoading, setUsersLoading] = useState(false);
-  const [usersLoaded, setUsersLoaded] = useState(false);
+  const [users, setUsers] =
+    useState<AdminUser[]>([]);
+  const [usersLoading, setUsersLoading] =
+    useState(false);
+  const [usersLoaded, setUsersLoaded] =
+    useState(false);
   const [usersError, setUsersError] = useState("");
   const [search, setSearch] = useState("");
 
-  const [cursor, setCursor] = useState<string | null>(
-    null
-  );
-  const [nextCursor, setNextCursor] = useState<
-    string | null
-  >(null);
-  const [cursorHistory, setCursorHistory] = useState<
-    Array<string | null>
-  >([]);
+  const [cursor, setCursor] =
+    useState<string | null>(null);
+  const [nextCursor, setNextCursor] =
+    useState<string | null>(null);
+  const [cursorHistory, setCursorHistory] =
+    useState<Array<string | null>>([]);
   const [page, setPage] = useState(1);
 
-  const [updatingUser, setUpdatingUser] = useState<
-    string | null
-  >(null);
+  const [updatingUser, setUpdatingUser] =
+    useState<string | null>(null);
 
   const [analytics, setAnalytics] =
     useState<AnalyticsResponse | null>(null);
@@ -218,7 +221,8 @@ export default function AdminPage() {
   const [cmsUrl, setCmsUrl] = useState("");
   const [cmsDocType, setCmsDocType] =
     useState<DocumentType>("notes");
-  const [publishing, setPublishing] = useState(false);
+  const [publishing, setPublishing] =
+    useState(false);
 
   const verifyAccess = useCallback(async () => {
     setChecking(true);
@@ -277,6 +281,7 @@ export default function AdminPage() {
             ? result.users
             : []
         );
+
         setNextCursor(result.nextCursor ?? null);
         setUsersLoaded(true);
       } catch (error) {
@@ -335,9 +340,7 @@ export default function AdminPage() {
     loadAnalytics,
   ]);
 
-  async function changePremium(
-    user: AdminUser
-  ) {
+  async function changePremium(user: AdminUser) {
     if (updatingUser) return;
 
     const newValue = !Boolean(user.isPremium);
@@ -365,14 +368,18 @@ export default function AdminPage() {
       setUsers((current) =>
         current.map((entry) =>
           entry.id === user.id
-            ? { ...entry, isPremium: newValue }
+            ? {
+                ...entry,
+                isPremium: newValue,
+              }
             : entry
         )
       );
 
       setNotice({
         type: "success",
-        message: "Premium access updated successfully.",
+        message:
+          "Premium access updated successfully.",
       });
     } catch (error) {
       setNotice({
@@ -388,7 +395,7 @@ export default function AdminPage() {
   }
 
   async function publishContent(
-    event: React.FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
@@ -481,7 +488,9 @@ export default function AdminPage() {
     ]
       .filter(Boolean)
       .some((value) =>
-        String(value).toLowerCase().includes(query)
+        String(value)
+          .toLowerCase()
+          .includes(query)
       );
   });
 
@@ -499,7 +508,9 @@ export default function AdminPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#030807] text-emerald-400">
         <div className="text-center">
-          <Shield className="mx-auto mb-5 h-12 w-12 animate-pulse" />
+          <Shield
+            className="mx-auto mb-5 h-12 w-12 animate-pulse"
+          />
           <p className="font-mono text-sm tracking-[0.2em]">
             VERIFYING ADMIN CLEARANCE
           </p>
@@ -526,7 +537,9 @@ export default function AdminPage() {
           <div className="mt-6 flex justify-center gap-3">
             <button
               type="button"
-              onClick={() => void verifyAccess()}
+              onClick={() =>
+                void verifyAccess()
+              }
               className={buttonClass}
             >
               <RefreshCw size={16} />
@@ -711,14 +724,18 @@ export default function AdminPage() {
 
               <button
                 type="button"
-                onClick={() => void loadUsers(cursor)}
+                onClick={() =>
+                  void loadUsers(cursor)
+                }
                 disabled={usersLoading}
                 className={buttonClass}
               >
                 <RefreshCw
                   size={16}
                   className={
-                    usersLoading ? "animate-spin" : ""
+                    usersLoading
+                      ? "animate-spin"
+                      : ""
                   }
                 />
                 Refresh
@@ -767,7 +784,8 @@ export default function AdminPage() {
                             </p>
 
                             <p className="mt-1 text-xs text-zinc-500">
-                              {user.email || "No email"}
+                              {user.email ||
+                                "No email"}
                             </p>
 
                             <p className="mt-1 font-mono text-[10px] text-zinc-600">
@@ -777,7 +795,8 @@ export default function AdminPage() {
 
                           <td className="px-4 py-4">
                             <span className="rounded-md border border-zinc-700 px-2 py-1 text-xs text-zinc-300">
-                              {user.role || "scholar"}
+                              {user.role ||
+                                "scholar"}
                             </span>
                           </td>
 
@@ -799,14 +818,16 @@ export default function AdminPage() {
                               type="button"
                               disabled={
                                 updatingUser !== null ||
-                                user.role === "admin"
+                                user.role ===
+                                  "admin"
                               }
                               onClick={() =>
                                 void changePremium(user)
                               }
                               className={`${buttonClass} whitespace-nowrap`}
                             >
-                              {updatingUser === user.id ? (
+                              {updatingUser ===
+                              user.id ? (
                                 <Loader2
                                   size={15}
                                   className="animate-spin"
@@ -834,8 +855,8 @@ export default function AdminPage() {
 
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                   <p className="text-xs text-zinc-500">
-                    Page {page} · Up to {PAGE_SIZE} accounts
-                    per page
+                    Page {page} · Up to{" "}
+                    {PAGE_SIZE} accounts per page
                   </p>
 
                   <div className="flex gap-2">
@@ -856,7 +877,8 @@ export default function AdminPage() {
                       type="button"
                       onClick={goNext}
                       disabled={
-                        !nextCursor || usersLoading
+                        !nextCursor ||
+                        usersLoading
                       }
                       className={buttonClass}
                     >
@@ -881,7 +903,9 @@ export default function AdminPage() {
             <div className="mb-5 flex justify-end">
               <button
                 type="button"
-                onClick={() => void loadAnalytics()}
+                onClick={() =>
+                  void loadAnalytics()
+                }
                 disabled={analyticsLoading}
                 className={buttonClass}
               >
@@ -975,7 +999,9 @@ export default function AdminPage() {
                             </td>
 
                             <td className="px-4 py-4 text-xs text-zinc-400">
-                              {formatDate(visitor.time)}
+                              {formatDate(
+                                visitor.time
+                              )}
                             </td>
                           </tr>
                         )
@@ -991,10 +1017,10 @@ export default function AdminPage() {
                 </div>
 
                 <p className="mt-4 text-xs text-zinc-500">
-                  Unique IPs are an approximation, not a
-                  count of unique people. Recent records
-                  are limited to the latest 100 returned
-                  by the API.
+                  Unique IPs are an approximation,
+                  not a count of unique people.
+                  Recent records are limited to
+                  the latest 100 returned by the API.
                 </p>
               </>
             ) : null}
@@ -1012,7 +1038,9 @@ export default function AdminPage() {
             <div className="mb-6 grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setCmsKind("video")}
+                onClick={() =>
+                  setCmsKind("video")
+                }
                 className={`flex items-center justify-center gap-2 rounded-xl border p-4 text-sm transition ${
                   cmsKind === "video"
                     ? "border-emerald-500 bg-emerald-950/50 text-emerald-300"
@@ -1025,7 +1053,9 @@ export default function AdminPage() {
 
               <button
                 type="button"
-                onClick={() => setCmsKind("document")}
+                onClick={() =>
+                  setCmsKind("document")
+                }
                 className={`flex items-center justify-center gap-2 rounded-xl border p-4 text-sm transition ${
                   cmsKind === "document"
                     ? "border-emerald-500 bg-emerald-950/50 text-emerald-300"
@@ -1058,7 +1088,9 @@ export default function AdminPage() {
                   maxLength={160}
                   value={cmsTitle}
                   onChange={(event) =>
-                    setCmsTitle(event.target.value)
+                    setCmsTitle(
+                      event.target.value
+                    )
                   }
                   placeholder={
                     cmsKind === "video"
@@ -1086,7 +1118,9 @@ export default function AdminPage() {
                   maxLength={2048}
                   value={cmsUrl}
                   onChange={(event) =>
-                    setCmsUrl(event.target.value)
+                    setCmsUrl(
+                      event.target.value
+                    )
                   }
                   placeholder="https://..."
                   className={inputClass}
@@ -1153,10 +1187,11 @@ export default function AdminPage() {
               </div>
 
               <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-                Only authenticated administrators can
-                publish. Content is saved to the existing
-                bams_reels or bams_assets collections
-                through the server API.
+                Only authenticated administrators
+                can publish. Content is saved to
+                the existing bams_reels or
+                bams_assets collections through
+                the server API.
               </p>
             </div>
           </Panel>
