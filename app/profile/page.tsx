@@ -206,8 +206,67 @@ export default function UserProfile() {
     refreshUserData,
   } = useAuth();
 
-  const [mounted, setMounted] = useState(false);
+ const [mounted, setMounted] = useState(false);
 
+const [isVerifiedAdmin, setIsVerifiedAdmin] =
+  useState(false);
+
+useEffect(() => {
+  if (!user || isLoading) {
+    setIsVerifiedAdmin(false);
+    return;
+  }
+
+  const controller = new AbortController();
+
+  const verifyAdmin = async () => {
+    setIsVerifiedAdmin(false);
+
+    try {
+      const response = await fetch(
+        "/api/admin/session",
+        {
+          method: "GET",
+          credentials: "same-origin",
+          cache: "no-store",
+          signal: controller.signal,
+        }
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const result: unknown = await response.json();
+
+      if (
+        !controller.signal.aborted &&
+        result !== null &&
+        typeof result === "object" &&
+        "authenticated" in result &&
+        "admin" in result &&
+        result.authenticated === true &&
+        result.admin === true
+      ) {
+        setIsVerifiedAdmin(true);
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        console.error(
+          "Administrator verification failed:",
+          error
+        );
+      }
+    }
+  };
+
+  void verifyAdmin();
+
+  return () => {
+    controller.abort();
+  };
+}, [user?.uid, isLoading]);
+  
   const [checklistData, setChecklistData] = useState<
     Record<string, string[]>
   >({});
@@ -505,10 +564,9 @@ export default function UserProfile() {
       0
     );
 
-  // UI-only role indicator.
-  // Server-side admin authorization is mandatory.
-  const isAdmin =
-    userData?.role === "admin";
+ // Verified through the protected administrator API.
+// Firestore profile roles do not grant admin access.
+const isAdmin = isVerifiedAdmin;
 
   const getOperativeTelemetry = (
     id: string
@@ -876,11 +934,14 @@ export default function UserProfile() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    router.push(
-                      activeTelemetry.targetRoute
-                    )
-                  }
+                  onClick={() => {
+  if (!activeTelemetry.unlocked) {
+    return;
+  }
+
+  router.push(activeTelemetry.targetRoute);
+}}
+disabled={!activeTelemetry.unlocked}
                   className="flex w-full items-center justify-center gap-1.5 rounded-sm border border-[#e04848]/40 bg-[#e04848]/15 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-[#e04848] transition-all hover:bg-[#e04848] hover:text-white sm:w-auto"
                 >
                   {activeOp.actionLabel}
