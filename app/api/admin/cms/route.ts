@@ -1,39 +1,36 @@
 
+import "server-only";
+
 import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
+
 import {
   AdminAuthError,
   requireAdmin,
 } from "../../../../lib/auth/admin";
+
 import { getAdminDb } from "../../../../lib/firebase-admin";
+
+import {
+  CMS_COLLECTIONS,
+  CMS_AUDIT_COLLECTION,
+  CMS_SUBMISSIONS_COLLECTION,
+  allowedCMSFields,
+  hasOnlyCMSFields,
+  isCMSDocumentId,
+  isCMSDocumentType,
+  isBamsProf,
+  isCMSKind,
+  validateCMSContent,
+  type CMSKind,
+} from "../../../../lib/cms/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Kind = "video" | "document";
-type Prof = "prof-1" | "prof-2" | "prof-3";
-type DocumentType = "past_paper" | "notes" | "template";
-
 const HEADERS = {
   "Cache-Control": "private, no-store",
   "X-Content-Type-Options": "nosniff",
-};
-
-const PROFS: Prof[] = [
-  "prof-1",
-  "prof-2",
-  "prof-3",
-];
-
-const DOC_TYPES: DocumentType[] = [
-  "past_paper",
-  "notes",
-  "template",
-];
-
-const COLLECTIONS: Record<Kind, string> = {
-  video: "bams_reels",
-  document: "bams_assets",
 };
 
 function respond(data: unknown, status = 200) {
@@ -41,110 +38,6 @@ function respond(data: unknown, status = 200) {
     status,
     headers: HEADERS,
   });
-}
-
-function isKind(value: unknown): value is Kind {
-  return value === "video" || value === "document";
-}
-
-function isProf(value: unknown): value is Prof {
-  return PROFS.some((prof) => prof === value);
-}
-
-function isDocumentType(
-  value: unknown
-): value is DocumentType {
-  return DOC_TYPES.some((type) => type === value);
-}
-
-function isDocumentId(value: unknown): value is string {
-  return (
-    typeof value === "string" &&
-    /^[A-Za-z0-9_-]{1,128}$/.test(value)
-  );
-}
-
-function validURL(
-  value: unknown,
-  kind: Kind
-): value is string {
-  if (
-    typeof value !== "string" ||
-    value.length === 0 ||
-    value.length > 2048
-  ) {
-    return false;
-  }
-
-  try {
-    const url = new URL(value);
-
-    if (
-      url.protocol !== "https:" ||
-      url.username ||
-      url.password ||
-      url.port
-    ) {
-      return false;
-    }
-
-    const host = url.hostname.toLowerCase();
-
-    if (kind === "video") {
-      const idPattern = /^[a-zA-Z0-9_-]{11}$/;
-
-      if (host === "youtu.be") {
-        return idPattern.test(
-          url.pathname.slice(1)
-        );
-      }
-
-      if (
-        ![
-          "youtube.com",
-          "www.youtube.com",
-          "youtube-nocookie.com",
-          "www.youtube-nocookie.com",
-        ].includes(host)
-      ) {
-        return false;
-      }
-
-      if (url.pathname === "/watch") {
-        return idPattern.test(
-          url.searchParams.get("v") ?? ""
-        );
-      }
-
-      return /^\/(?:embed|shorts|live)\/[a-zA-Z0-9_-]{11}\/?$/.test(
-        url.pathname
-      );
-    }
-
-    if (host === "drive.google.com") {
-      return /^\/file\/d\/[a-zA-Z0-9_-]+\/?(?:view|preview)?\/?$/.test(
-        url.pathname
-      );
-    }
-
-    if (host === "docs.google.com") {
-      return /^\/(?:document|spreadsheets|presentation)\/d\/[a-zA-Z0-9_-]+(?:\/.*)?$/.test(
-        url.pathname
-      );
-    }
-
-    if (host === "firebasestorage.googleapis.com") {
-      return url.pathname.startsWith("/v0/b/");
-    }
-
-    if (host === "storage.googleapis.com") {
-      return url.pathname.length > 2;
-    }
-
-    return false;
-  } catch {
-    return false;
-  }
 }
 
 function checkOrigin(request: NextRequest) {
@@ -205,70 +98,6 @@ async function parseBody(request: NextRequest) {
   };
 }
 
-function validateContent(
-  data: Record<string, unknown>,
-  kind: Kind
-) {
-  const title =
-    typeof data.title === "string"
-      ? data.title.trim()
-      : "";
-
-  const url =
-    typeof data.url === "string"
-      ? data.url.trim()
-      : "";
-
-  if (
-    title.length < 3 ||
-    title.length > 160 ||
-    !validURL(url, kind)
-  ) {
-    return {
-      error: "Invalid content details.",
-    } as const;
-  }
-
-  if (kind === "video") {
-    if (!isProf(data.prof)) {
-      return {
-        error: "Invalid professional year.",
-      } as const;
-    }
-
-    return {
-      content: {
-        title,
-        url,
-        prof: data.prof,
-      },
-    };
-  }
-
-  if (!isDocumentType(data.type)) {
-    return {
-      error: "Invalid document category.",
-    } as const;
-  }
-
-  return {
-    content: {
-      title,
-      url,
-      type: data.type,
-    },
-  };
-}
-
-function hasOnlyFields(
-  data: Record<string, unknown>,
-  allowed: string[]
-) {
-  return Object.keys(data).every((key) =>
-    allowed.includes(key)
-  );
-}
-
 function handleError(
   error: unknown,
   operation: string
@@ -291,9 +120,9 @@ function handleError(
   );
 }
 
-// --------------------------------------------------
-// GET: List existing content
-// --------------------------------------------------
+// ------------------------------------------
+// GET: Published content library
+// ------------------------------------------
 
 export async function GET() {
   try {
@@ -303,13 +132,13 @@ export async function GET() {
 
     const [videos, documents] = await Promise.all([
       db
-        .collection(COLLECTIONS.video)
+        .collection(CMS_COLLECTIONS.video)
         .orderBy("createdAt", "desc")
         .limit(50)
         .get(),
 
       db
-        .collection(COLLECTIONS.document)
+        .collection(CMS_COLLECTIONS.document)
         .orderBy("createdAt", "desc")
         .limit(50)
         .get(),
@@ -317,7 +146,7 @@ export async function GET() {
 
     function serialize(
       snapshot: typeof videos,
-      kind: Kind
+      kind: CMSKind
     ) {
       return snapshot.docs.map((doc) => {
         const data = doc.data();
@@ -346,12 +175,12 @@ export async function GET() {
               ? data.url
               : "",
           prof:
-            kind === "video" && isProf(data.prof)
+            kind === "video" && isBamsProf(data.prof)
               ? data.prof
               : null,
           type:
             kind === "document" &&
-            isDocumentType(data.type)
+            isCMSDocumentType(data.type)
               ? data.type
               : null,
           createdAt,
@@ -371,9 +200,9 @@ export async function GET() {
   }
 }
 
-// --------------------------------------------------
-// POST: Publish new content
-// --------------------------------------------------
+// ------------------------------------------
+// POST: Existing admin publishing
+// ------------------------------------------
 
 export async function POST(request: NextRequest) {
   try {
@@ -397,7 +226,7 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
-    if (!isKind(data.kind)) {
+    if (!isCMSKind(data.kind)) {
       return respond(
         { error: "Invalid content kind." },
         400
@@ -406,46 +235,52 @@ export async function POST(request: NextRequest) {
 
     const kind = data.kind;
 
-    const allowed =
-      kind === "video"
-        ? ["kind", "title", "url", "prof"]
-        : ["kind", "title", "url", "type"];
-
-    if (!hasOnlyFields(data, allowed)) {
+    if (
+      !hasOnlyCMSFields(
+        data,
+        allowedCMSFields(kind, "create")
+      )
+    ) {
       return respond(
         { error: "Unexpected content fields." },
         400
       );
     }
 
-    const validated = validateContent(
+    const validated = validateCMSContent(
       data,
       kind
     );
 
-    if ("error" in validated) {
+    if (!validated.success) {
       return respond(
         { error: validated.error },
         400
       );
     }
 
-    const collectionName = COLLECTIONS[kind];
+    const collectionName =
+      CMS_COLLECTIONS[kind];
 
     const db = getAdminDb();
+
     const contentRef = db
       .collection(collectionName)
       .doc();
 
     const auditRef = db
-      .collection("admin_audit_logs")
+      .collection(CMS_AUDIT_COLLECTION)
       .doc();
 
     const batch = db.batch();
 
     batch.create(contentRef, {
       ...validated.content,
+      status: "published",
       createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+      publishedAt: FieldValue.serverTimestamp(),
+      publishedBy: admin.uid,
     });
 
     batch.create(auditRef, {
@@ -471,9 +306,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// --------------------------------------------------
-// PATCH: Edit existing content
-// --------------------------------------------------
+// ------------------------------------------
+// PATCH: Submit changes for review
+// ------------------------------------------
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -498,8 +333,8 @@ export async function PATCH(request: NextRequest) {
     const data = parsed.data;
 
     if (
-      !isKind(data.kind) ||
-      !isDocumentId(data.id)
+      !isCMSKind(data.kind) ||
+      !isCMSDocumentId(data.id)
     ) {
       return respond(
         { error: "Invalid content identifier." },
@@ -510,98 +345,95 @@ export async function PATCH(request: NextRequest) {
     const kind = data.kind;
     const id = data.id;
 
-    const allowed =
-      kind === "video"
-        ? ["id", "kind", "title", "url", "prof"]
-        : ["id", "kind", "title", "url", "type"];
-
-    if (!hasOnlyFields(data, allowed)) {
+    if (
+      !hasOnlyCMSFields(
+        data,
+        allowedCMSFields(kind, "update")
+      )
+    ) {
       return respond(
         { error: "Unexpected content fields." },
         400
       );
     }
 
-    const validated = validateContent(
+    const validated = validateCMSContent(
       data,
       kind
     );
 
-    if ("error" in validated) {
+    if (!validated.success) {
       return respond(
         { error: validated.error },
         400
       );
     }
 
-    const collectionName = COLLECTIONS[kind];
     const db = getAdminDb();
+
+    const collectionName =
+      CMS_COLLECTIONS[kind];
 
     const contentRef = db
       .collection(collectionName)
       .doc(id);
 
-    const auditRef = db
-      .collection("admin_audit_logs")
+    const submissionRef = db
+      .collection(CMS_SUBMISSIONS_COLLECTION)
       .doc();
 
-    let found = false;
+    const auditRef = db
+      .collection(CMS_AUDIT_COLLECTION)
+      .doc();
 
-    await db.runTransaction(async (transaction) => {
-      const existing = await transaction.get(
-        contentRef
-      );
+    const existing = await contentRef.get();
 
-      if (!existing.exists) {
-        return;
-      }
-
-      found = true;
-
-      const previous = existing.data() ?? {};
-
-      transaction.update(contentRef, {
-        ...validated.content,
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-
-      transaction.create(auditRef, {
-        action: "cms_content_updated",
-        actorUid: admin.uid,
-        collection: collectionName,
-        documentId: id,
-        before: {
-          title: previous.title ?? null,
-          url: previous.url ?? null,
-          prof: previous.prof ?? null,
-          type: previous.type ?? null,
-        },
-        after: validated.content,
-        createdAt: FieldValue.serverTimestamp(),
-      });
-    });
-
-    if (!found) {
+    if (!existing.exists) {
       return respond(
         { error: "Content not found." },
         404
       );
     }
 
+    const batch = db.batch();
+
+    batch.create(submissionRef, {
+      kind,
+      operation: "update",
+      targetId: id,
+      status: "review",
+      content: validated.content,
+      submittedBy: admin.uid,
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    batch.create(auditRef, {
+      action: "cms_review_requested",
+      actorUid: admin.uid,
+      collection: collectionName,
+      documentId: id,
+      submissionId: submissionRef.id,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+
+    await batch.commit();
+
     return respond({
       success: true,
       id,
-      collection: collectionName,
-      message: "Content updated successfully.",
+      submissionId: submissionRef.id,
+      status: "review",
+      message: "Changes submitted for review.",
     });
   } catch (error) {
-    return handleError(error, "updating");
+    return handleError(error, "submitting changes");
   }
 }
 
-// --------------------------------------------------
-// DELETE: Remove existing content
-// --------------------------------------------------
+// ------------------------------------------
+// DELETE: Existing admin deletion
+// ------------------------------------------
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -626,9 +458,9 @@ export async function DELETE(request: NextRequest) {
     const data = parsed.data;
 
     if (
-      !isKind(data.kind) ||
-      !isDocumentId(data.id) ||
-      !hasOnlyFields(data, ["id", "kind"])
+      !isCMSKind(data.kind) ||
+      !isCMSDocumentId(data.id) ||
+      !hasOnlyCMSFields(data, ["id", "kind"])
     ) {
       return respond(
         { error: "Invalid deletion request." },
@@ -638,7 +470,9 @@ export async function DELETE(request: NextRequest) {
 
     const kind = data.kind;
     const id = data.id;
-    const collectionName = COLLECTIONS[kind];
+
+    const collectionName =
+      CMS_COLLECTIONS[kind];
 
     const db = getAdminDb();
 
@@ -647,15 +481,14 @@ export async function DELETE(request: NextRequest) {
       .doc(id);
 
     const auditRef = db
-      .collection("admin_audit_logs")
+      .collection(CMS_AUDIT_COLLECTION)
       .doc();
 
     let found = false;
 
     await db.runTransaction(async (transaction) => {
-      const existing = await transaction.get(
-        contentRef
-      );
+      const existing =
+        await transaction.get(contentRef);
 
       if (!existing.exists) {
         return;
