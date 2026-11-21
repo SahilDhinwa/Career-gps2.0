@@ -29,6 +29,10 @@ import {
   type CMSKind,
 } from "../../../../lib/cms/validation";
 
+import {
+  encodeCMSVersion,
+} from "../../../../lib/cms/version";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -58,22 +62,20 @@ async function parseBody(request: NextRequest) {
     .get("content-type")
     ?.toLowerCase();
 
-  if (
-    !contentType?.startsWith("application/json")
-  ) {
+  if (!contentType?.startsWith("application/json")) {
     return {
       error: "JSON required.",
       status: 415,
     } as const;
   }
 
-  const length = request.headers.get(
-    "content-length"
-  );
+  const length =
+    request.headers.get("content-length");
 
   if (
     length !== null &&
-    Number(length) > MAX_BODY_BYTES
+    (!/^\d+$/.test(length) ||
+      Number(length) > MAX_BODY_BYTES)
   ) {
     return {
       error: "Request too large.",
@@ -260,7 +262,7 @@ export async function POST() {
 }
 
 // ------------------------------------------
-// PATCH: SUBMIT PUBLISHED EDIT FOR REVIEW
+// PATCH: SUBMIT EDIT FOR REVIEW
 // ------------------------------------------
 
 export async function PATCH(request: NextRequest) {
@@ -323,7 +325,9 @@ export async function PATCH(request: NextRequest) {
     }
 
     const db = getAdminDb();
-    const collectionName = CMS_COLLECTIONS[kind];
+
+    const collectionName =
+      CMS_COLLECTIONS[kind];
 
     const contentRef = db
       .collection(collectionName)
@@ -358,9 +362,7 @@ export async function PATCH(request: NextRequest) {
         }
 
         const targetVersion =
-          existing.updateTime
-            .toDate()
-            .toISOString();
+          encodeCMSVersion(existing.updateTime);
 
         const now = FieldValue.serverTimestamp();
 
@@ -493,9 +495,7 @@ export async function DELETE(request: NextRequest) {
         const previous = existing.data() ?? {};
 
         const targetVersion =
-          existing.updateTime
-            .toDate()
-            .toISOString();
+          encodeCMSVersion(existing.updateTime);
 
         const now = FieldValue.serverTimestamp();
 
@@ -509,8 +509,14 @@ export async function DELETE(request: NextRequest) {
             title: previous.title ?? null,
             url: previous.url ?? null,
             ...(kind === "video"
-              ? { prof: previous.prof ?? null }
-              : { type: previous.type ?? null }),
+              ? {
+                  prof:
+                    previous.prof ?? null,
+                }
+              : {
+                  type:
+                    previous.type ?? null,
+                }),
           },
           submittedBy: admin.uid,
           reviewedBy: null,
@@ -520,7 +526,8 @@ export async function DELETE(request: NextRequest) {
         });
 
         transaction.create(auditRef, {
-          action: "cms_deletion_review_requested",
+          action:
+            "cms_deletion_review_requested",
           actorUid: admin.uid,
           collection: collectionName,
           documentId: id,
