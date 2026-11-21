@@ -195,10 +195,10 @@ export async function GET() {
         .get(),
     ]);
 
-    function serialize(
-      snapshot: typeof videos,
-      kind: CMSKind
-    ) {
+    const serialize = (
+  snapshot: typeof videos,
+  kind: CMSKind
+) => {
       return snapshot.docs.map((doc) => {
         const data = doc.data();
 
