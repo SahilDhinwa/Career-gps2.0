@@ -8,8 +8,7 @@ import {
 
 import {
   FieldValue,
-  Timestamp,
-  type DocumentData,
+  type DocumentSnapshot,
 } from "firebase-admin/firestore";
 
 import {
@@ -31,11 +30,11 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Action = "submit" | "approve" | "reject";
-
 type Context = {
   params: Promise<{ id: string }>;
 };
+
+type ReviewAction = "submit" | "approve" | "reject";
 
 const HEADERS = {
   "Cache-Control": "private, no-store",
@@ -49,22 +48,6 @@ function respond(data: unknown, status = 200) {
   });
 }
 
-function errorResponse(error: unknown) {
-  if (error instanceof AdminAuthError) {
-    return respond(
-      { error: error.message },
-      error.status
-    );
-  }
-
-  console.error("CMS review action failed:", error);
-
-  return respond(
-    { error: "CMS review action failed." },
-    500
-  );
-}
-
 function isRecord(
   value: unknown
 ): value is Record<string, unknown> {
@@ -75,21 +58,20 @@ function isRecord(
   );
 }
 
-function sameOrigin(request: NextRequest) {
-  const origin = request.headers.get("origin");
-
+function checkOrigin(request: NextRequest) {
   return (
-    typeof origin === "string" &&
-    origin === request.nextUrl.origin
+    request.headers.get("origin") ===
+    request.nextUrl.origin
   );
 }
 
-async function readBody(request: NextRequest) {
+async function parseBody(request: NextRequest) {
+  const contentType = request.headers
+    .get("content-type")
+    ?.toLowerCase();
+
   if (
-    !request.headers
-      .get("content-type")
-      ?.toLowerCase()
-      .startsWith("application/json")
+    !contentType?.startsWith("application/json")
   ) {
     return {
       error: "JSON required.",
@@ -97,9 +79,22 @@ async function readBody(request: NextRequest) {
     } as const;
   }
 
+  const length = request.headers.get(
+    "content-length"
+  );
+
+  if (length && Number(length) > 2048) {
+    return {
+      error: "Request too large.",
+      status: 413,
+    } as const;
+  }
+
   const raw = await request.text();
 
-  if (raw.length > 2048) {
+  if (
+    new TextEncoder().encode(raw).length > 2048
+  ) {
     return {
       error: "Request too large.",
       status: 413,
@@ -127,22 +122,28 @@ async function readBody(request: NextRequest) {
   return { data };
 }
 
-function contentVersion(
-  data: DocumentData
+function versionOf(
+  snapshot: DocumentSnapshot
 ): string | null {
-  const updatedAt = data.updatedAt;
+  return snapshot.updateTime
+    ? snapshot.updateTime.toDate().toISOString()
+    : null;
+}
 
-  if (updatedAt instanceof Timestamp) {
-    return updatedAt.toDate().toISOString();
+function handleError(error: unknown) {
+  if (error instanceof AdminAuthError) {
+    return respond(
+      { error: error.message },
+      error.status
+    );
   }
 
-  const createdAt = data.createdAt;
+  console.error("CMS review action failed:", error);
 
-  if (createdAt instanceof Timestamp) {
-    return createdAt.toDate().toISOString();
-  }
-
-  return null;
+  return respond(
+    { error: "CMS review action failed." },
+    500
+  );
 }
 
 export async function PATCH(
@@ -152,7 +153,7 @@ export async function PATCH(
   try {
     const admin = await requireAdmin();
 
-    if (!sameOrigin(request)) {
+    if (!checkOrigin(request)) {
       return respond(
         { error: "Invalid request origin." },
         403
@@ -168,7 +169,7 @@ export async function PATCH(
       );
     }
 
-    const parsed = await readBody(request);
+    const parsed = await parseBody(request);
 
     if ("error" in parsed) {
       return respond(
@@ -177,7 +178,7 @@ export async function PATCH(
       );
     }
 
-    const { data } = parsed;
+    const data = parsed.data;
 
     if (
       data.action !== "submit" &&
@@ -190,7 +191,7 @@ export async function PATCH(
       );
     }
 
-    const action = data.action as Action;
+    const action: ReviewAction = data.action;
 
     const allowed =
       action === "reject"
@@ -237,27 +238,26 @@ export async function PATCH(
       .collection(CMS_AUDIT_COLLECTION)
       .doc();
 
-    const outcome = await db.runTransaction(
+    const result = await db.runTransaction(
       async (transaction) => {
-        const submissionSnapshot =
+        const snapshot =
           await transaction.get(submissionRef);
 
-        if (!submissionSnapshot.exists) {
+        if (!snapshot.exists) {
           return {
-            status: 404,
+            httpStatus: 404,
             error: "Submission not found.",
           };
         }
 
-        const submission =
-          submissionSnapshot.data() ?? {};
+        const submission = snapshot.data() ?? {};
 
         if (
           !isCMSKind(submission.kind) ||
           !isRecord(submission.content)
         ) {
           return {
-            status: 409,
+            httpStatus: 409,
             error: "Invalid stored submission.",
           };
         }
@@ -269,17 +269,15 @@ export async function PATCH(
 
         if (!validated.success) {
           return {
-            status: 409,
+            httpStatus: 409,
             error: validated.error,
           };
         }
 
-        const currentStatus = submission.status;
-
         if (action === "submit") {
-          if (currentStatus !== "draft") {
+          if (submission.status !== "draft") {
             return {
-              status: 409,
+              httpStatus: 409,
               error:
                 "Only drafts can be submitted for review.",
             };
@@ -298,22 +296,30 @@ export async function PATCH(
           });
 
           return {
-            status: 200,
+            httpStatus: 200,
             success: true,
             submissionStatus: "review",
             message: "Submitted for review.",
           };
         }
 
-        if (currentStatus !== "review") {
+        if (submission.status !== "review") {
           return {
-            status: 409,
+            httpStatus: 409,
             error:
               "Only pending submissions can be reviewed.",
           };
         }
 
         if (action === "reject") {
+          if (submission.submittedBy === admin.uid) {
+            return {
+              httpStatus: 403,
+              error:
+                "You cannot review your own submission.",
+            };
+          }
+
           transaction.update(submissionRef, {
             status: "rejected",
             reviewNote,
@@ -331,7 +337,7 @@ export async function PATCH(
           });
 
           return {
-            status: 200,
+            httpStatus: 200,
             success: true,
             submissionStatus: "rejected",
             message: "Submission rejected.",
@@ -340,10 +346,15 @@ export async function PATCH(
 
         // APPROVE
 
-        const kind = submission.kind;
-        const collectionName =
-          CMS_COLLECTIONS[kind];
+        if (submission.submittedBy === admin.uid) {
+          return {
+            httpStatus: 403,
+            error:
+              "You cannot approve your own submission.",
+          };
+        }
 
+        const kind = submission.kind;
         const operation = submission.operation;
 
         if (
@@ -351,65 +362,60 @@ export async function PATCH(
           operation !== "update"
         ) {
           return {
-            status: 409,
+            httpStatus: 409,
             error: "Invalid submission operation.",
           };
         }
 
-        // Prevent self-approval.
-        if (submission.submittedBy === admin.uid) {
-          return {
-            status: 403,
-            error:
-              "You cannot approve your own submission.",
-          };
-        }
+        const collectionName =
+          CMS_COLLECTIONS[kind];
 
-        const targetRef =
-          operation === "update"
-            ? db.collection(collectionName).doc(
-                String(submission.targetId ?? "")
-              )
-            : db.collection(collectionName).doc();
-
-        let existingData: DocumentData | null = null;
+        let targetId: string;
 
         if (operation === "update") {
           if (
             !isCMSDocumentId(submission.targetId)
           ) {
             return {
-              status: 409,
+              httpStatus: 409,
               error: "Invalid target ID.",
             };
           }
 
+          targetId = submission.targetId;
+        } else {
+          targetId = db
+            .collection(collectionName)
+            .doc().id;
+        }
+
+        const targetRef = db
+          .collection(collectionName)
+          .doc(targetId);
+
+        if (operation === "update") {
           const targetSnapshot =
             await transaction.get(targetRef);
 
           if (!targetSnapshot.exists) {
             return {
-              status: 404,
+              httpStatus: 404,
               error: "Target content not found.",
             };
           }
 
-          existingData = targetSnapshot.data() ?? {};
-
-          // A submitted revision must match the
-          // version captured when it was created.
           const expectedVersion =
             submission.targetVersion;
 
           if (
             typeof expectedVersion !== "string" ||
             expectedVersion !==
-              contentVersion(existingData)
+              versionOf(targetSnapshot)
           ) {
             return {
-              status: 409,
+              httpStatus: 409,
               error:
-                "Published content has changed. Submit a fresh revision.",
+                "Published content changed. Submit a fresh revision.",
             };
           }
         }
@@ -437,7 +443,7 @@ export async function PATCH(
 
         transaction.update(submissionRef, {
           status: "approved",
-          targetId: targetRef.id,
+          targetId,
           reviewedBy: admin.uid,
           reviewedAt: now,
           updatedAt: now,
@@ -448,25 +454,26 @@ export async function PATCH(
           actorUid: admin.uid,
           submissionId: id,
           collection: collectionName,
-          documentId: targetRef.id,
+          documentId: targetId,
           operation,
           createdAt: now,
         });
 
         return {
-          status: 200,
+          httpStatus: 200,
           success: true,
           submissionStatus: "approved",
-          publishedId: targetRef.id,
-          message: "Content approved and published.",
+          publishedId: targetId,
+          message:
+            "Content approved and published.",
         };
       }
     );
 
-    const { status, ...body } = outcome;
+    const { httpStatus, ...body } = result;
 
-    return respond(body, status);
+    return respond(body, httpStatus);
   } catch (error) {
-    return errorResponse(error);
+    return handleError(error);
   }
 }
