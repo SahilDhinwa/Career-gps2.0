@@ -228,7 +228,7 @@ export default function CMSContentLibrary({
 
       setNotice({
         type: "success",
-        message: "Content updated successfully.",
+        message: "Changes submitted for review. Published content remains unchanged.",
       });
     } catch (error) {
       setNotice({
