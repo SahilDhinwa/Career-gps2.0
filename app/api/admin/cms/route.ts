@@ -1,21 +1,13 @@
 
-import {
-  NextRequest,
-  NextResponse,
-} from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { FieldValue } from "firebase-admin/firestore";
 
 import {
   AdminAuthError,
   requireAdmin,
 } from "../../../../lib/auth/admin";
 
-import {
-  getAdminDb,
-} from "../../../../lib/firebase-admin";
-
-import {
-  FieldValue,
-} from "firebase-admin/firestore";
+import { getAdminDb } from "../../../../lib/firebase-admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,10 +23,7 @@ const ALLOWED_DOC_TYPES = [
   "template",
 ];
 
-function respond(
-  data: unknown,
-  status = 200
-) {
+function respond(data: unknown, status = 200) {
   return NextResponse.json(data, {
     status,
     headers: HEADERS,
@@ -47,6 +36,7 @@ function validURL(
 ): value is string {
   if (
     typeof value !== "string" ||
+    value.length === 0 ||
     value.length > 2048
   ) {
     return false;
@@ -55,40 +45,81 @@ function validURL(
   try {
     const parsed = new URL(value);
 
-    if (parsed.protocol !== "https:") {
+    if (
+      parsed.protocol !== "https:" ||
+      parsed.username ||
+      parsed.password ||
+      parsed.port
+    ) {
       return false;
     }
 
+    const host = parsed.hostname.toLowerCase();
+
     if (kind === "video") {
-      return [
-        "youtube.com",
-        "www.youtube.com",
-        "youtube-nocookie.com",
-        "www.youtube-nocookie.com",
-        "youtu.be",
-      ].includes(parsed.hostname);
+      const videoId = /^[a-zA-Z0-9_-]{11}$/;
+
+      if (host === "youtu.be") {
+        return videoId.test(parsed.pathname.slice(1));
+      }
+
+      if (
+        host === "youtube.com" ||
+        host === "www.youtube.com" ||
+        host === "youtube-nocookie.com" ||
+        host === "www.youtube-nocookie.com"
+      ) {
+        if (parsed.pathname === "/watch") {
+          return videoId.test(
+            parsed.searchParams.get("v") ?? ""
+          );
+        }
+
+        const match = parsed.pathname.match(
+          /^\/(?:embed|shorts|live)\/([a-zA-Z0-9_-]{11})\/?$/
+        );
+
+        return Boolean(match);
+      }
+
+      return false;
     }
 
-    return [
-      "drive.google.com",
-      "docs.google.com",
-      "firebasestorage.googleapis.com",
-      "storage.googleapis.com",
-    ].includes(parsed.hostname);
+    if (
+      host === "drive.google.com" ||
+      host === "docs.google.com"
+    ) {
+      return (
+        /^\/file\/d\/[a-zA-Z0-9_-]+\/(?:view|preview)?\/?$/.test(
+          parsed.pathname
+        ) ||
+        /^\/(?:document|spreadsheets|presentation)\/d\/[a-zA-Z0-9_-]+(?:\/.*)?$/.test(
+          parsed.pathname
+        )
+      );
+    }
+
+    if (host === "firebasestorage.googleapis.com") {
+      return parsed.pathname.startsWith("/v0/b/");
+    }
+
+    if (host === "storage.googleapis.com") {
+      return parsed.pathname.length > 2;
+    }
+
+    return false;
   } catch {
     return false;
   }
 }
 
-export async function POST(
-  request: NextRequest
-) {
+export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin();
 
     if (
-      request.headers.get("origin") !==
-      request.nextUrl.origin
+      !request.headers.get("origin") ||
+      request.headers.get("origin") !== request.nextUrl.origin
     ) {
       return respond(
         { error: "Invalid request origin." },
@@ -102,19 +133,13 @@ export async function POST(
         ?.toLowerCase()
         .startsWith("application/json")
     ) {
-      return respond(
-        { error: "JSON required." },
-        415
-      );
+      return respond({ error: "JSON required." }, 415);
     }
 
     const raw = await request.text();
 
     if (raw.length > 4096) {
-      return respond(
-        { error: "Request too large." },
-        413
-      );
+      return respond({ error: "Request too large." }, 413);
     }
 
     let payload: unknown;
@@ -122,10 +147,7 @@ export async function POST(
     try {
       payload = JSON.parse(raw);
     } catch {
-      return respond(
-        { error: "Invalid JSON." },
-        400
-      );
+      return respond({ error: "Invalid JSON." }, 400);
     }
 
     if (
@@ -133,16 +155,32 @@ export async function POST(
       typeof payload !== "object" ||
       Array.isArray(payload)
     ) {
+      return respond({ error: "Invalid request." }, 400);
+    }
+
+    const data = payload as Record<string, unknown>;
+
+    const kind = data.kind;
+
+    if (kind !== "video" && kind !== "document") {
+      return respond({ error: "Invalid content kind." }, 400);
+    }
+
+    const allowedFields =
+      kind === "video"
+        ? ["kind", "title", "url"]
+        : ["kind", "title", "url", "type"];
+
+    if (
+      Object.keys(data).some(
+        (key) => !allowedFields.includes(key)
+      )
+    ) {
       return respond(
-        { error: "Invalid request." },
+        { error: "Unexpected content fields." },
         400
       );
     }
-
-    const data =
-      payload as Record<string, unknown>;
-
-    const kind = data.kind;
 
     const title =
       typeof data.title === "string"
@@ -155,8 +193,6 @@ export async function POST(
         : "";
 
     if (
-      (kind !== "video" &&
-        kind !== "document") ||
       title.length < 3 ||
       title.length > 160 ||
       !validURL(url, kind)
@@ -169,9 +205,7 @@ export async function POST(
 
     if (
       kind === "document" &&
-      !ALLOWED_DOC_TYPES.includes(
-        String(data.type)
-      )
+      !ALLOWED_DOC_TYPES.includes(String(data.type))
     ) {
       return respond(
         { error: "Invalid document category." },
@@ -180,38 +214,40 @@ export async function POST(
     }
 
     const collectionName =
-      kind === "video"
-        ? "bams_reels"
-        : "bams_assets";
+      kind === "video" ? "bams_reels" : "bams_assets";
+
+    const database = getAdminDb();
+    const contentRef = database.collection(collectionName).doc();
+    const auditRef = database.collection("admin_audit_logs").doc();
 
     const content: Record<string, unknown> = {
       title,
       url,
-      createdAt:
-        FieldValue.serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     };
 
     if (kind === "document") {
       content.type = data.type;
     }
 
-    const reference = await getAdminDb()
-      .collection(collectionName)
-      .add(content);
+    const batch = database.batch();
 
-    console.info(
-      "Admin CMS content created:",
-      {
-        adminUid: admin.uid,
-        collection: collectionName,
-        documentId: reference.id,
-      }
-    );
+    batch.create(contentRef, content);
+
+    batch.create(auditRef, {
+      action: "cms_content_created",
+      actorUid: admin.uid,
+      collection: collectionName,
+      documentId: contentRef.id,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+
+    await batch.commit();
 
     return respond(
       {
         success: true,
-        id: reference.id,
+        id: contentRef.id,
         collection: collectionName,
       },
       201
@@ -224,10 +260,7 @@ export async function POST(
       );
     }
 
-    console.error(
-      "Admin CMS publishing failed:",
-      error
-    );
+    console.error("Admin CMS publishing failed:", error);
 
     return respond(
       { error: "Publishing failed." },
