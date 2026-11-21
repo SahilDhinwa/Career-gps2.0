@@ -14,7 +14,9 @@ import {
 } from "../../../../../lib/auth/admin";
 
 import { getAdminDb } from "../../../../../lib/firebase-admin";
-
+import {
+  encodeCMSVersion,
+} from "../../../../../lib/cms/version";
 import {
   CMS_AUDIT_COLLECTION,
   CMS_COLLECTIONS,
@@ -376,9 +378,8 @@ export async function POST(request: NextRequest) {
               error: "Target version unavailable.",
             };
           }
-
-          targetVersion =
-            target.updateTime.toDate().toISOString();
+targetVersion =
+  encodeCMSVersion(target.updateTime);
         }
 
         const now = FieldValue.serverTimestamp();
