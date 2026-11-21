@@ -10,12 +10,14 @@ import {
 import {
   CheckCircle2,
   Clock3,
+  ExternalLink,
   FileText,
   Film,
   Loader2,
   RefreshCw,
   Send,
   ShieldCheck,
+  Trash2,
   XCircle,
 } from "lucide-react";
 
@@ -25,17 +27,19 @@ type SubmissionStatus =
   | "approved"
   | "rejected";
 
+type Operation = "create" | "update" | "delete";
+
 type Submission = {
   id: string;
   kind: "video" | "document";
-  operation: "create" | "update";
+  operation: Operation;
   targetId: string | null;
   status: SubmissionStatus;
   content: {
-    title: string;
-    url: string;
-    prof?: string;
-    type?: string;
+    title: string | null;
+    url: string | null;
+    prof?: string | null;
+    type?: string | null;
   };
   submittedBy: string | null;
   reviewedBy: string | null;
@@ -54,9 +58,12 @@ type Notice = {
 };
 
 const buttonClass =
-  "inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-700/60 bg-emerald-950/60 px-3 py-2 text-xs font-medium text-emerald-300 transition hover:bg-emerald-900/60 disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-700/60 bg-emerald-950/60 px-3 py-2 text-xs font-medium text-emerald-300 transition hover:bg-emerald-900/60 disabled:cursor-not-allowed disabled:opacity-40";
 
-function getError(value: unknown, fallback: string) {
+function getError(
+  value: unknown,
+  fallback: string
+): string {
   if (
     value &&
     typeof value === "object" &&
@@ -73,7 +80,7 @@ async function request(
   url: string,
   method: "GET" | "PATCH",
   body?: Record<string, string>
-) {
+): Promise<unknown> {
   const response = await fetch(url, {
     method,
     credentials: "same-origin",
@@ -90,11 +97,64 @@ async function request(
 
   if (!response.ok) {
     throw new Error(
-      getError(result, `Request failed (${response.status}).`)
+      getError(
+        result,
+        `Request failed (${response.status}).`
+      )
     );
   }
 
   return result;
+}
+
+function operationLabel(
+  operation: Operation
+): string {
+  switch (operation) {
+    case "create":
+      return "New Publication";
+    case "update":
+      return "Content Revision";
+    case "delete":
+      return "Content Removal";
+  }
+}
+
+function approvalMessage(
+  item: Submission
+): string {
+  const title =
+    item.content.title || "Untitled resource";
+
+  if (item.operation === "delete") {
+    return (
+      `Approve permanent removal of "${title}"?\n\n` +
+      "This will delete the published resource.\n\n" +
+      "This action cannot be undone through the CMS."
+    );
+  }
+
+  if (item.operation === "update") {
+    return (
+      `Approve changes to "${title}"?\n\n` +
+      "The existing published resource will be updated."
+    );
+  }
+
+  return (
+    `Approve publication of "${title}"?\n\n` +
+    "The resource will become publicly available."
+  );
+}
+
+function formatDate(value: string | null) {
+  if (!value) return "Unknown";
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime())
+    ? "Unknown"
+    : date.toLocaleString();
 }
 
 export default function CMSReviewQueue({
@@ -104,12 +164,21 @@ export default function CMSReviewQueue({
   refreshKey?: number;
   onPublished?: () => void;
 }) {
-  const [items, setItems] = useState<Submission[]>([]);
+  const [items, setItems] =
+    useState<Submission[]>([]);
+
   const [loading, setLoading] = useState(true);
-  const [busyId, setBusyId] = useState<string | null>(null);
-  const [notice, setNotice] = useState<Notice | null>(null);
+
+  const [busyId, setBusyId] =
+    useState<string | null>(null);
+
+  const [notice, setNotice] =
+    useState<Notice | null>(null);
+
   const [filter, setFilter] =
-    useState<SubmissionStatus | "all">("review");
+    useState<SubmissionStatus | "all">(
+      "review"
+    );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -124,7 +193,9 @@ export default function CMSReviewQueue({
         !result.success ||
         !Array.isArray(result.submissions)
       ) {
-        throw new Error("Invalid submission response.");
+        throw new Error(
+          "Invalid submission response."
+        );
       }
 
       setItems(result.submissions);
@@ -171,6 +242,7 @@ export default function CMSReviewQueue({
           message:
             "Rejection reason must contain 3–1000 characters.",
         });
+
         return;
       }
     }
@@ -178,7 +250,7 @@ export default function CMSReviewQueue({
     if (
       action === "approve" &&
       !window.confirm(
-        `Approve and publish "${item.content.title}"?`
+        approvalMessage(item)
       )
     ) {
       return;
@@ -196,14 +268,25 @@ export default function CMSReviewQueue({
         action === "reject"
           ? { action, reviewNote }
           : { action }
-      )) as { message?: string };
+      )) as {
+        success?: boolean;
+        message?: string;
+      };
+
+      if (!result.success) {
+        throw new Error(
+          "Review action was not confirmed."
+        );
+      }
+
+      await load();
 
       setNotice({
         type: "success",
-        message: result.message ?? "Action completed.",
+        message:
+          result.message ??
+          "Review action completed.",
       });
-
-      await load();
 
       if (action === "approve") {
         onPublished?.();
@@ -222,11 +305,19 @@ export default function CMSReviewQueue({
   }
 
   const filtered = items.filter(
-    (item) => filter === "all" || item.status === filter
+    (item) =>
+      filter === "all" ||
+      item.status === filter
   );
 
   const pendingCount = items.filter(
     (item) => item.status === "review"
+  ).length;
+
+  const deletionCount = items.filter(
+    (item) =>
+      item.status === "review" &&
+      item.operation === "delete"
   ).length;
 
   return (
@@ -238,6 +329,7 @@ export default function CMSReviewQueue({
               size={20}
               className="text-emerald-400"
             />
+
             <h2 className="text-xl font-semibold">
               CMS Review Queue
             </h2>
@@ -246,6 +338,10 @@ export default function CMSReviewQueue({
           <p className="mt-2 text-sm text-zinc-400">
             {pendingCount} pending review
             {pendingCount === 1 ? "" : "s"}
+            {deletionCount > 0 &&
+              ` · ${deletionCount} removal request${
+                deletionCount === 1 ? "" : "s"
+              }`}
           </p>
         </div>
 
@@ -253,9 +349,16 @@ export default function CMSReviewQueue({
           type="button"
           className={buttonClass}
           onClick={() => void load()}
-          disabled={loading || busyId !== null}
+          disabled={
+            loading || busyId !== null
+          }
         >
-          <RefreshCw size={14} />
+          <RefreshCw
+            size={14}
+            className={
+              loading ? "animate-spin" : ""
+            }
+          />
           Refresh
         </button>
       </div>
@@ -273,14 +376,18 @@ export default function CMSReviewQueue({
           <button
             key={value}
             type="button"
-            onClick={() => setFilter(value)}
+            onClick={() =>
+              setFilter(value)
+            }
             className={`rounded-lg border px-3 py-2 text-xs capitalize ${
               filter === value
                 ? "border-emerald-500 bg-emerald-950 text-emerald-300"
                 : "border-zinc-800 text-zinc-400"
             }`}
           >
-            {value === "review" ? "Pending" : value}
+            {value === "review"
+              ? "Pending"
+              : value}
           </button>
         ))}
       </div>
@@ -300,7 +407,10 @@ export default function CMSReviewQueue({
 
       {loading ? (
         <div className="flex items-center gap-2 py-10 text-zinc-400">
-          <Loader2 className="animate-spin" size={18} />
+          <Loader2
+            className="animate-spin"
+            size={18}
+          />
           Loading submissions...
         </div>
       ) : filtered.length === 0 ? (
@@ -309,109 +419,219 @@ export default function CMSReviewQueue({
         </p>
       ) : (
         <div className="mt-5 space-y-4">
-          {filtered.map((item) => (
-            <article
-              key={item.id}
-              className="rounded-2xl border border-emerald-900/40 bg-black/30 p-5"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="flex min-w-0 items-start gap-3">
-                  {item.kind === "video" ? (
-                    <Film
-                      size={20}
-                      className="mt-1 shrink-0 text-emerald-400"
-                    />
-                  ) : (
-                    <FileText
-                      size={20}
-                      className="mt-1 shrink-0 text-emerald-400"
-                    />
-                  )}
+          {filtered.map((item) => {
+            const isDeletion =
+              item.operation === "delete";
 
-                  <div className="min-w-0">
-                    <h3 className="break-words font-semibold">
-                      {item.content.title}
-                    </h3>
-
-                    <p className="mt-1 text-xs capitalize text-zinc-400">
-                      {item.operation} · {item.kind} ·{" "}
-                      {item.status}
-                    </p>
-
-                    <p className="mt-2 break-all text-xs text-zinc-500">
-                      {item.content.url}
-                    </p>
-
-                    {item.reviewNote && (
-                      <p className="mt-3 text-sm text-amber-300">
-                        Review note: {item.reviewNote}
-                      </p>
+            return (
+              <article
+                key={item.id}
+                className={`rounded-2xl border bg-black/30 p-5 ${
+                  isDeletion
+                    ? "border-red-900/60"
+                    : "border-emerald-900/40"
+                }`}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    {isDeletion ? (
+                      <Trash2
+                        size={20}
+                        className="mt-1 shrink-0 text-red-400"
+                      />
+                    ) : item.kind === "video" ? (
+                      <Film
+                        size={20}
+                        className="mt-1 shrink-0 text-emerald-400"
+                      />
+                    ) : (
+                      <FileText
+                        size={20}
+                        className="mt-1 shrink-0 text-emerald-400"
+                      />
                     )}
+
+                    <div className="min-w-0">
+                      <p
+                        className={`mb-2 text-xs font-semibold uppercase tracking-wide ${
+                          isDeletion
+                            ? "text-red-400"
+                            : "text-emerald-400"
+                        }`}
+                      >
+                        {operationLabel(
+                          item.operation
+                        )}
+                      </p>
+
+                      <h3 className="break-words font-semibold">
+                        {item.content.title ||
+                          "Untitled resource"}
+                      </h3>
+
+                      <p className="mt-1 text-xs capitalize text-zinc-400">
+                        {item.kind} ·{" "}
+                        {item.status}
+                      </p>
+
+                      {item.content.url && (
+                        <a
+                          href={item.content.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-flex max-w-full items-center gap-1 break-all text-xs text-emerald-400 hover:underline"
+                        >
+                          View Resource
+                          <ExternalLink
+                            size={13}
+                          />
+                        </a>
+                      )}
+
+                      <p className="mt-3 text-xs text-zinc-500">
+                        Submitted:{" "}
+                        {formatDate(
+                          item.createdAt
+                        )}
+                      </p>
+
+                      {item.submittedBy && (
+                        <p className="mt-1 break-all text-xs text-zinc-500">
+                          Submitted by:{" "}
+                          {item.submittedBy}
+                        </p>
+                      )}
+
+                      {item.targetId && (
+                        <p className="mt-1 break-all text-xs text-zinc-600">
+                          Target ID:{" "}
+                          {item.targetId}
+                        </p>
+                      )}
+
+                      {item.reviewNote && (
+                        <p className="mt-3 text-sm text-amber-300">
+                          Review note:{" "}
+                          {item.reviewNote}
+                        </p>
+                      )}
+
+                      {isDeletion &&
+                        item.status ===
+                          "review" && (
+                          <p className="mt-3 text-xs text-red-300">
+                            Approval will
+                            permanently remove
+                            this published
+                            resource.
+                          </p>
+                        )}
+                    </div>
                   </div>
+
+                  {item.status === "review" ? (
+                    <Clock3
+                      size={18}
+                      className="text-amber-400"
+                    />
+                  ) : item.status ===
+                    "approved" ? (
+                    <CheckCircle2
+                      size={18}
+                      className="text-emerald-400"
+                    />
+                  ) : item.status ===
+                    "rejected" ? (
+                    <XCircle
+                      size={18}
+                      className="text-red-400"
+                    />
+                  ) : null}
                 </div>
 
-                {item.status === "review" ? (
-                  <Clock3
-                    size={18}
-                    className="text-amber-400"
-                  />
-                ) : item.status === "approved" ? (
-                  <CheckCircle2
-                    size={18}
-                    className="text-emerald-400"
-                  />
-                ) : item.status === "rejected" ? (
-                  <XCircle
-                    size={18}
-                    className="text-red-400"
-                  />
-                ) : null}
-              </div>
-
-              {(item.status === "review" ||
-                item.status === "draft") && (
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {item.status === "draft" ? (
-                    <button
-                      type="button"
-                      className={buttonClass}
-                      disabled={busyId !== null}
-                      onClick={() => void act(item, "submit")}
-                    >
-                      <Send size={14} />
-                      Submit for Review
-                    </button>
-                  ) : (
-                    <>
+                {(item.status === "review" ||
+                  item.status === "draft") && (
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {item.status ===
+                    "draft" ? (
                       <button
                         type="button"
                         className={buttonClass}
-                        disabled={busyId !== null}
+                        disabled={
+                          busyId !== null
+                        }
                         onClick={() =>
-                          void act(item, "approve")
+                          void act(
+                            item,
+                            "submit"
+                          )
                         }
                       >
-                        <CheckCircle2 size={14} />
-                        Approve & Publish
+                        <Send size={14} />
+                        Submit for Review
                       </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className={
+                            isDeletion
+                              ? "inline-flex items-center gap-2 rounded-xl border border-red-800 bg-red-950/40 px-3 py-2 text-xs text-red-300 transition hover:bg-red-950/70 disabled:opacity-40"
+                              : buttonClass
+                          }
+                          disabled={
+                            busyId !== null
+                          }
+                          onClick={() =>
+                            void act(
+                              item,
+                              "approve"
+                            )
+                          }
+                        >
+                          {isDeletion ? (
+                            <Trash2
+                              size={14}
+                            />
+                          ) : (
+                            <CheckCircle2
+                              size={14}
+                            />
+                          )}
 
-                      <button
-                        type="button"
-                        className="rounded-xl border border-red-900/60 px-3 py-2 text-xs text-red-300 disabled:opacity-40"
-                        disabled={busyId !== null}
-                        onClick={() =>
-                          void act(item, "reject")
-                        }
-                      >
-                        <XCircle size={14} />
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-            </article>
-          ))}
+                          {isDeletion
+                            ? "Approve Removal"
+                            : item.operation ===
+                                "update"
+                              ? "Approve Changes"
+                              : "Approve & Publish"}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-2 rounded-xl border border-red-900/60 px-3 py-2 text-xs text-red-300 disabled:opacity-40"
+                          disabled={
+                            busyId !== null
+                          }
+                          onClick={() =>
+                            void act(
+                              item,
+                              "reject"
+                            )
+                          }
+                        >
+                          <XCircle
+                            size={14}
+                          />
+                          Reject
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
       )}
     </section>
