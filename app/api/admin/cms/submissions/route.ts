@@ -17,8 +17,8 @@ import { getAdminDb } from "../../../../../lib/firebase-admin";
 
 import {
   CMS_AUDIT_COLLECTION,
+  CMS_COLLECTIONS,
   CMS_SUBMISSIONS_COLLECTION,
-  hasOnlyCMSFields,
   isCMSDocumentId,
   isCMSKind,
   validateCMSContent,
@@ -31,6 +31,9 @@ const HEADERS = {
   "Cache-Control": "private, no-store",
   "X-Content-Type-Options": "nosniff",
 };
+
+type SubmissionStatus = "draft" | "review";
+type SubmissionOperation = "create" | "update";
 
 function respond(data: unknown, status = 200) {
   return NextResponse.json(data, {
@@ -47,7 +50,7 @@ function handleError(error: unknown) {
     );
   }
 
-  console.error("CMS submissions error:", error);
+  console.error("CMS submissions failed:", error);
 
   return respond(
     { error: "CMS submissions request failed." },
@@ -55,12 +58,22 @@ function handleError(error: unknown) {
   );
 }
 
-function checkOrigin(request: NextRequest) {
+function sameOrigin(request: NextRequest) {
   const origin = request.headers.get("origin");
 
   return (
     typeof origin === "string" &&
     origin === request.nextUrl.origin
+  );
+}
+
+function isRecord(
+  value: unknown
+): value is Record<string, unknown> {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
   );
 }
 
@@ -77,9 +90,25 @@ async function parseBody(request: NextRequest) {
     } as const;
   }
 
+  const lengthHeader = request.headers.get(
+    "content-length"
+  );
+
+  if (
+    lengthHeader &&
+    Number(lengthHeader) > 4096
+  ) {
+    return {
+      error: "Request too large.",
+      status: 413,
+    } as const;
+  }
+
   const raw = await request.text();
 
-  if (raw.length > 4096) {
+  if (
+    new TextEncoder().encode(raw).length > 4096
+  ) {
     return {
       error: "Request too large.",
       status: 413,
@@ -97,25 +126,32 @@ async function parseBody(request: NextRequest) {
     } as const;
   }
 
-  if (
-    !data ||
-    typeof data !== "object" ||
-    Array.isArray(data)
-  ) {
+  if (!isRecord(data)) {
     return {
       error: "Invalid request body.",
       status: 400,
     } as const;
   }
 
-  return {
-    data: data as Record<string, unknown>,
-  };
+  return { data };
 }
 
-// -------------------------------------------
+function dateToISO(value: unknown): string | null {
+  if (
+    value &&
+    typeof value === "object" &&
+    "toDate" in value &&
+    typeof value.toDate === "function"
+  ) {
+    return value.toDate().toISOString();
+  }
+
+  return null;
+}
+
+// ------------------------------------------
 // GET: Private submission queue
-// -------------------------------------------
+// ------------------------------------------
 
 export async function GET() {
   try {
@@ -132,32 +168,20 @@ export async function GET() {
     const submissions = snapshot.docs.map((doc) => {
       const data = doc.data();
 
-      function date(value: unknown) {
-        if (
-          value &&
-          typeof value === "object" &&
-          "toDate" in value &&
-          typeof value.toDate === "function"
-        ) {
-          return value.toDate().toISOString();
-        }
-
-        return null;
-      }
-
       return {
         id: doc.id,
         kind: data.kind ?? null,
         operation: data.operation ?? null,
         targetId: data.targetId ?? null,
+        targetVersion: data.targetVersion ?? null,
         status: data.status ?? null,
         content: data.content ?? null,
         submittedBy: data.submittedBy ?? null,
         reviewedBy: data.reviewedBy ?? null,
         reviewNote: data.reviewNote ?? null,
-        createdAt: date(data.createdAt),
-        updatedAt: date(data.updatedAt),
-        reviewedAt: date(data.reviewedAt),
+        createdAt: dateToISO(data.createdAt),
+        updatedAt: dateToISO(data.updatedAt),
+        reviewedAt: dateToISO(data.reviewedAt),
       };
     });
 
@@ -171,15 +195,15 @@ export async function GET() {
   }
 }
 
-// -------------------------------------------
-// POST: Create draft or review request
-// -------------------------------------------
+// ------------------------------------------
+// POST: Create private draft/review request
+// ------------------------------------------
 
 export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin();
 
-    if (!checkOrigin(request)) {
+    if (!sameOrigin(request)) {
       return respond(
         { error: "Invalid request origin." },
         403
@@ -204,45 +228,63 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const allowed = [
-      "kind",
-      "title",
-      "url",
-      "prof",
-      "type",
-      "status",
-      "operation",
-      "targetId",
-    ];
+    const kind = data.kind;
 
-    if (!hasOnlyCMSFields(data, allowed)) {
+    const allowed =
+      kind === "video"
+        ? [
+            "kind",
+            "title",
+            "url",
+            "prof",
+            "status",
+            "operation",
+            "targetId",
+          ]
+        : [
+            "kind",
+            "title",
+            "url",
+            "type",
+            "status",
+            "operation",
+            "targetId",
+          ];
+
+    if (
+      Object.keys(data).some(
+        (key) => !allowed.includes(key)
+      )
+    ) {
       return respond(
-        { error: "Unexpected fields." },
+        { error: "Unexpected request fields." },
         400
       );
     }
 
-    const kind = data.kind;
+    const status: SubmissionStatus =
+      data.status === "draft"
+        ? "draft"
+        : data.status === "review"
+          ? "review"
+          : ("" as SubmissionStatus);
 
-    if (
-      data.status !== "draft" &&
-      data.status !== "review"
-    ) {
+    if (!status) {
       return respond(
         { error: "Invalid submission status." },
         400
       );
     }
 
-    const operation =
-      data.operation === undefined
+    const operation: SubmissionOperation =
+      data.operation === undefined ||
+      data.operation === "create"
         ? "create"
-        : data.operation;
+        : data.operation === "update"
+          ? "update"
+          : ("" as SubmissionOperation);
 
-    if (
-      operation !== "create" &&
-      operation !== "update"
-    ) {
+    if (!operation) {
       return respond(
         { error: "Invalid operation." },
         400
@@ -254,7 +296,7 @@ export async function POST(request: NextRequest) {
       !isCMSDocumentId(data.targetId)
     ) {
       return respond(
-        { error: "Invalid target identifier." },
+        { error: "Invalid target ID." },
         400
       );
     }
@@ -264,27 +306,7 @@ export async function POST(request: NextRequest) {
       data.targetId !== undefined
     ) {
       return respond(
-        { error: "Unexpected target identifier." },
-        400
-      );
-    }
-
-    if (
-      kind === "video" &&
-      data.type !== undefined
-    ) {
-      return respond(
-        { error: "Unexpected document category." },
-        400
-      );
-    }
-
-    if (
-      kind === "document" &&
-      data.prof !== undefined
-    ) {
-      return respond(
-        { error: "Unexpected professional year." },
+        { error: "Unexpected target ID." },
         400
       );
     }
@@ -311,50 +333,86 @@ export async function POST(request: NextRequest) {
       .collection(CMS_AUDIT_COLLECTION)
       .doc();
 
-    const batch = db.batch();
+    const targetRef =
+      operation === "update"
+        ? db
+            .collection(CMS_COLLECTIONS[kind])
+            .doc(data.targetId as string)
+        : null;
 
-    batch.create(submissionRef, {
-      kind,
-      operation,
-      targetId:
-        operation === "update"
-          ? data.targetId
-          : null,
-      status: data.status,
-      content: validated.content,
-      submittedBy: admin.uid,
-      reviewedBy: null,
-      reviewNote: null,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    const outcome = await db.runTransaction(
+      async (transaction) => {
+        let targetVersion: string | null = null;
 
-    batch.create(auditRef, {
-      action:
-        data.status === "draft"
-          ? "cms_draft_created"
-          : "cms_review_requested",
-      actorUid: admin.uid,
-      submissionId: submissionRef.id,
-      kind,
-      operation,
-      createdAt: FieldValue.serverTimestamp(),
-    });
+        if (targetRef) {
+          const target =
+            await transaction.get(targetRef);
 
-    await batch.commit();
+          if (!target.exists) {
+            return {
+              status: 404,
+              error: "Target content not found.",
+            };
+          }
 
-    return respond(
-      {
-        success: true,
-        id: submissionRef.id,
-        status: data.status,
-        message:
-          data.status === "draft"
-            ? "Draft saved successfully."
-            : "Submitted for review.",
-      },
-      201
+          if (!target.updateTime) {
+            return {
+              status: 409,
+              error: "Target version unavailable.",
+            };
+          }
+
+          targetVersion =
+            target.updateTime.toDate().toISOString();
+        }
+
+        const now = FieldValue.serverTimestamp();
+
+        transaction.create(submissionRef, {
+          kind,
+          operation,
+          targetId:
+            operation === "update"
+              ? data.targetId
+              : null,
+          targetVersion,
+          status,
+          content: validated.content,
+          submittedBy: admin.uid,
+          reviewedBy: null,
+          reviewNote: null,
+          createdAt: now,
+          updatedAt: now,
+        });
+
+        transaction.create(auditRef, {
+          action:
+            status === "draft"
+              ? "cms_draft_created"
+              : "cms_review_requested",
+          actorUid: admin.uid,
+          submissionId: submissionRef.id,
+          kind,
+          operation,
+          createdAt: now,
+        });
+
+        return {
+          status: 201,
+          success: true,
+          id: submissionRef.id,
+          submissionStatus: status,
+          message:
+            status === "draft"
+              ? "Draft saved successfully."
+              : "Submitted for review.",
+        };
+      }
     );
+
+    const { status: httpStatus, ...body } = outcome;
+
+    return respond(body, httpStatus);
   } catch (error) {
     return handleError(error);
   }
