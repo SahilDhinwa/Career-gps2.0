@@ -6,10 +6,7 @@ import {
   NextResponse,
 } from "next/server";
 
-import {
-  FieldValue,
-  type DocumentSnapshot,
-} from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore";
 
 import {
   AdminAuthError,
@@ -28,6 +25,9 @@ import {
   isCMSKind,
   validateCMSContent,
 } from "../../../../../../lib/cms/validation";
+import {
+  matchesCMSVersion,
+} from "../../../../../../lib/cms/version";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
