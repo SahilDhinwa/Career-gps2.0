@@ -65,6 +65,11 @@ type AnalyticsResponse = {
 
 type CMSKind = "video" | "document";
 
+type BamsProf =
+  | "prof-1"
+  | "prof-2"
+  | "prof-3";
+
 type DocumentType =
   | "past_paper"
   | "notes"
@@ -76,6 +81,24 @@ type Notice = {
 };
 
 const PAGE_SIZE = 50;
+
+const PROF_OPTIONS: {
+  value: BamsProf;
+  label: string;
+}[] = [
+  {
+    value: "prof-1",
+    label: "BAMS 1st Professional",
+  },
+  {
+    value: "prof-2",
+    label: "BAMS 2nd Professional",
+  },
+  {
+    value: "prof-3",
+    label: "BAMS 3rd / Final Professional",
+  },
+];
 
 async function apiRequest<T>(
   url: string,
@@ -179,9 +202,12 @@ function Spinner() {
 export default function AdminPage() {
   const [tab, setTab] = useState<Tab>("users");
 
-  const [authorized, setAuthorized] = useState(false);
-  const [checking, setChecking] = useState(true);
-  const [accessError, setAccessError] = useState("");
+  const [authorized, setAuthorized] =
+    useState(false);
+  const [checking, setChecking] =
+    useState(true);
+  const [accessError, setAccessError] =
+    useState("");
 
   const [notice, setNotice] =
     useState<Notice | null>(null);
@@ -192,8 +218,10 @@ export default function AdminPage() {
     useState(false);
   const [usersLoaded, setUsersLoaded] =
     useState(false);
-  const [usersError, setUsersError] = useState("");
-  const [search, setSearch] = useState("");
+  const [usersError, setUsersError] =
+    useState("");
+  const [search, setSearch] =
+    useState("");
 
   const [cursor, setCursor] =
     useState<string | null>(null);
@@ -217,8 +245,14 @@ export default function AdminPage() {
 
   const [cmsKind, setCmsKind] =
     useState<CMSKind>("video");
-  const [cmsTitle, setCmsTitle] = useState("");
-  const [cmsUrl, setCmsUrl] = useState("");
+
+  const [cmsProf, setCmsProf] =
+    useState<BamsProf>("prof-2");
+
+  const [cmsTitle, setCmsTitle] =
+    useState("");
+  const [cmsUrl, setCmsUrl] =
+    useState("");
   const [cmsDocType, setCmsDocType] =
     useState<DocumentType>("notes");
   const [publishing, setPublishing] =
@@ -234,7 +268,10 @@ export default function AdminPage() {
         admin: boolean;
       }>("/api/admin/session");
 
-      if (!result.authenticated || !result.admin) {
+      if (
+        !result.authenticated ||
+        !result.admin
+      ) {
         throw new Error(
           "Administrator authorization required."
         );
@@ -282,7 +319,9 @@ export default function AdminPage() {
             : []
         );
 
-        setNextCursor(result.nextCursor ?? null);
+        setNextCursor(
+          result.nextCursor ?? null
+        );
         setUsersLoaded(true);
       } catch (error) {
         setUsersError(
@@ -323,11 +362,17 @@ export default function AdminPage() {
   useEffect(() => {
     if (!authorized) return;
 
-    if (tab === "users" && !usersLoaded) {
+    if (
+      tab === "users" &&
+      !usersLoaded
+    ) {
       void loadUsers(cursor);
     }
 
-    if (tab === "analytics" && !analyticsLoaded) {
+    if (
+      tab === "analytics" &&
+      !analyticsLoaded
+    ) {
       void loadAnalytics();
     }
   }, [
@@ -340,14 +385,19 @@ export default function AdminPage() {
     loadAnalytics,
   ]);
 
-  async function changePremium(user: AdminUser) {
+  async function changePremium(
+    user: AdminUser
+  ) {
     if (updatingUser) return;
 
-    const newValue = !Boolean(user.isPremium);
+    const newValue =
+      !Boolean(user.isPremium);
 
     const confirmed = window.confirm(
       `${newValue ? "Activate" : "Deactivate"} premium access for ${
-        user.email || user.displayName || user.id
+        user.email ||
+        user.displayName ||
+        user.id
       }?`
     );
 
@@ -357,13 +407,16 @@ export default function AdminPage() {
     setNotice(null);
 
     try {
-      await apiRequest("/api/admin/users", {
-        method: "PATCH",
-        body: JSON.stringify({
-          userId: user.id,
-          isPremium: newValue,
-        }),
-      });
+      await apiRequest(
+        "/api/admin/users",
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            userId: user.id,
+            isPremium: newValue,
+          }),
+        }
+      );
 
       setUsers((current) =>
         current.map((entry) =>
@@ -411,6 +464,7 @@ export default function AdminPage() {
               kind: "video",
               title: cmsTitle.trim(),
               url: cmsUrl.trim(),
+              prof: cmsProf,
             }
           : {
               kind: "document",
@@ -419,18 +473,29 @@ export default function AdminPage() {
               type: cmsDocType,
             };
 
-      await apiRequest("/api/admin/cms", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      await apiRequest(
+        "/api/admin/cms",
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+        }
+      );
 
       setCmsTitle("");
       setCmsUrl("");
 
+      const destination =
+        PROF_OPTIONS.find(
+          (item) =>
+            item.value === cmsProf
+        )?.label ?? cmsProf;
+
       setNotice({
         type: "success",
         message:
-          "Content published successfully.",
+          cmsKind === "video"
+            ? `Reel published successfully for ${destination}.`
+            : "Study asset published successfully.",
       });
     } catch (error) {
       setNotice({
@@ -446,7 +511,12 @@ export default function AdminPage() {
   }
 
   function goNext() {
-    if (!nextCursor || usersLoading) return;
+    if (
+      !nextCursor ||
+      usersLoading
+    ) {
+      return;
+    }
 
     setCursorHistory((history) => [
       ...history,
@@ -454,45 +524,60 @@ export default function AdminPage() {
     ]);
 
     setCursor(nextCursor);
-    setPage((value) => value + 1);
+    setPage(
+      (value) => value + 1
+    );
+
     void loadUsers(nextCursor);
   }
 
   function goPrevious() {
-    if (!cursorHistory.length || usersLoading) {
+    if (
+      !cursorHistory.length ||
+      usersLoading
+    ) {
       return;
     }
 
     const previous =
-      cursorHistory[cursorHistory.length - 1];
+      cursorHistory[
+        cursorHistory.length - 1
+      ];
 
     setCursorHistory((history) =>
       history.slice(0, -1)
     );
 
     setCursor(previous);
-    setPage((value) => Math.max(1, value - 1));
+    setPage(
+      (value) =>
+        Math.max(1, value - 1)
+    );
+
     void loadUsers(previous);
   }
 
-  const filteredUsers = users.filter((user) => {
-    const query = search.trim().toLowerCase();
+  const filteredUsers = users.filter(
+    (user) => {
+      const query =
+        search.trim().toLowerCase();
 
-    if (!query) return true;
+      if (!query) return true;
 
-    return [
-      user.displayName,
-      user.email,
-      user.id,
-      user.role,
-    ]
-      .filter(Boolean)
-      .some((value) =>
-        String(value)
-          .toLowerCase()
-          .includes(query)
-      );
-  });
+      return [
+        user.displayName,
+        user.email,
+        user.id,
+        user.role,
+      ]
+        .filter(Boolean)
+        .some((value) =>
+          String(value)
+            .toLowerCase()
+            .includes(query)
+        );
+    }
+  );
 
   const premiumCount = users.filter(
     (user) => user.isPremium
@@ -508,9 +593,8 @@ export default function AdminPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#030807] text-emerald-400">
         <div className="text-center">
-          <Shield
-            className="mx-auto mb-5 h-12 w-12 animate-pulse"
-          />
+          <Shield className="mx-auto mb-5 h-12 w-12 animate-pulse" />
+
           <p className="font-mono text-sm tracking-[0.2em]">
             VERIFYING ADMIN CLEARANCE
           </p>
@@ -624,7 +708,8 @@ export default function AdminPage() {
             ] as const
           ).map((item) => {
             const Icon = item.icon;
-            const active = tab === item.id;
+            const active =
+              tab === item.id;
 
             return (
               <button
@@ -668,7 +753,9 @@ export default function AdminPage() {
 
             <button
               type="button"
-              onClick={() => setNotice(null)}
+              onClick={() =>
+                setNotice(null)
+              }
               aria-label="Dismiss notification"
             >
               <X size={17} />
@@ -748,7 +835,8 @@ export default function AdminPage() {
               </p>
             )}
 
-            {usersLoading && !usersLoaded ? (
+            {usersLoading &&
+            !usersLoaded ? (
               <Spinner />
             ) : (
               <>
@@ -772,77 +860,82 @@ export default function AdminPage() {
                     </thead>
 
                     <tbody>
-                      {filteredUsers.map((user) => (
-                        <tr
-                          key={user.id}
-                          className="border-t border-zinc-800/80"
-                        >
-                          <td className="px-4 py-4">
-                            <p className="font-medium text-white">
-                              {user.displayName ||
-                                "ATREYA Scholar"}
-                            </p>
+                      {filteredUsers.map(
+                        (user) => (
+                          <tr
+                            key={user.id}
+                            className="border-t border-zinc-800/80"
+                          >
+                            <td className="px-4 py-4">
+                              <p className="font-medium text-white">
+                                {user.displayName ||
+                                  "ATREYA Scholar"}
+                              </p>
 
-                            <p className="mt-1 text-xs text-zinc-500">
-                              {user.email ||
-                                "No email"}
-                            </p>
+                              <p className="mt-1 text-xs text-zinc-500">
+                                {user.email ||
+                                  "No email"}
+                              </p>
 
-                            <p className="mt-1 font-mono text-[10px] text-zinc-600">
-                              {user.id}
-                            </p>
-                          </td>
+                              <p className="mt-1 font-mono text-[10px] text-zinc-600">
+                                {user.id}
+                              </p>
+                            </td>
 
-                          <td className="px-4 py-4">
-                            <span className="rounded-md border border-zinc-700 px-2 py-1 text-xs text-zinc-300">
-                              {user.role ||
-                                "scholar"}
-                            </span>
-                          </td>
-
-                          <td className="px-4 py-4">
-                            {user.isPremium ? (
-                              <span className="inline-flex items-center gap-1 text-amber-400">
-                                <Crown size={15} />
-                                Premium
+                            <td className="px-4 py-4">
+                              <span className="rounded-md border border-zinc-700 px-2 py-1 text-xs text-zinc-300">
+                                {user.role ||
+                                  "scholar"}
                               </span>
-                            ) : (
-                              <span className="text-zinc-500">
-                                Standard
-                              </span>
-                            )}
-                          </td>
+                            </td>
 
-                          <td className="px-4 py-4 text-right">
-                            <button
-                              type="button"
-                              disabled={
-                                updatingUser !== null ||
-                                user.role ===
-                                  "admin"
-                              }
-                              onClick={() =>
-                                void changePremium(user)
-                              }
-                              className={`${buttonClass} whitespace-nowrap`}
-                            >
-                              {updatingUser ===
-                              user.id ? (
-                                <Loader2
-                                  size={15}
-                                  className="animate-spin"
-                                />
+                            <td className="px-4 py-4">
+                              {user.isPremium ? (
+                                <span className="inline-flex items-center gap-1 text-amber-400">
+                                  <Crown size={15} />
+                                  Premium
+                                </span>
                               ) : (
-                                <Crown size={15} />
+                                <span className="text-zinc-500">
+                                  Standard
+                                </span>
                               )}
+                            </td>
 
-                              {user.isPremium
-                                ? "Revoke Premium"
-                                : "Grant Premium"}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                            <td className="px-4 py-4 text-right">
+                              <button
+                                type="button"
+                                disabled={
+                                  updatingUser !==
+                                    null ||
+                                  user.role ===
+                                    "admin"
+                                }
+                                onClick={() =>
+                                  void changePremium(
+                                    user
+                                  )
+                                }
+                                className={`${buttonClass} whitespace-nowrap`}
+                              >
+                                {updatingUser ===
+                                user.id ? (
+                                  <Loader2
+                                    size={15}
+                                    className="animate-spin"
+                                  />
+                                ) : (
+                                  <Crown size={15} />
+                                )}
+
+                                {user.isPremium
+                                  ? "Revoke Premium"
+                                  : "Grant Premium"}
+                              </button>
+                            </td>
+                          </tr>
+                        )
+                      )}
                     </tbody>
                   </table>
 
@@ -927,7 +1020,8 @@ export default function AdminPage() {
               </p>
             )}
 
-            {analyticsLoading && !analytics ? (
+            {analyticsLoading &&
+            !analytics ? (
               <Spinner />
             ) : analytics ? (
               <>
@@ -1041,6 +1135,9 @@ export default function AdminPage() {
                 onClick={() =>
                   setCmsKind("video")
                 }
+                aria-pressed={
+                  cmsKind === "video"
+                }
                 className={`flex items-center justify-center gap-2 rounded-xl border p-4 text-sm transition ${
                   cmsKind === "video"
                     ? "border-emerald-500 bg-emerald-950/50 text-emerald-300"
@@ -1055,6 +1152,9 @@ export default function AdminPage() {
                 type="button"
                 onClick={() =>
                   setCmsKind("document")
+                }
+                aria-pressed={
+                  cmsKind === "document"
                 }
                 className={`flex items-center justify-center gap-2 rounded-xl border p-4 text-sm transition ${
                   cmsKind === "document"
@@ -1073,6 +1173,46 @@ export default function AdminPage() {
               }
               className="mx-auto max-w-2xl space-y-5"
             >
+              {cmsKind === "video" && (
+                <div>
+                  <label
+                    htmlFor="cms-prof"
+                    className="mb-2 block text-sm text-zinc-300"
+                  >
+                    BAMS Professional Year
+                  </label>
+
+                  <select
+                    id="cms-prof"
+                    required
+                    value={cmsProf}
+                    onChange={(event) =>
+                      setCmsProf(
+                        event.target.value as BamsProf
+                      )
+                    }
+                    className={inputClass}
+                  >
+                    {PROF_OPTIONS.map(
+                      (option) => (
+                        <option
+                          key={option.value}
+                          value={option.value}
+                        >
+                          {option.label}
+                        </option>
+                      )
+                    )}
+                  </select>
+
+                  <p className="mt-2 text-xs text-zinc-500">
+                    The reel will appear only in
+                    the selected professional
+                    dashboard.
+                  </p>
+                </div>
+              )}
+
               <div>
                 <label
                   htmlFor="cms-title"
@@ -1122,7 +1262,11 @@ export default function AdminPage() {
                       event.target.value
                     )
                   }
-                  placeholder="https://..."
+                  placeholder={
+                    cmsKind === "video"
+                      ? "https://www.youtube.com/watch?v=..."
+                      : "https://..."
+                  }
                   className={inputClass}
                 />
               </div>
@@ -1141,8 +1285,7 @@ export default function AdminPage() {
                     value={cmsDocType}
                     onChange={(event) =>
                       setCmsDocType(
-                        event.target
-                          .value as DocumentType
+                        event.target.value as DocumentType
                       )
                     }
                     className={inputClass}
@@ -1150,9 +1293,11 @@ export default function AdminPage() {
                     <option value="notes">
                       Study Notes
                     </option>
+
                     <option value="past_paper">
                       Past Paper
                     </option>
+
                     <option value="template">
                       Template
                     </option>
@@ -1176,7 +1321,9 @@ export default function AdminPage() {
 
                 {publishing
                   ? "PUBLISHING..."
-                  : "PUBLISH CONTENT"}
+                  : cmsKind === "video"
+                  ? "PUBLISH REEL"
+                  : "PUBLISH STUDY ASSET"}
               </button>
             </form>
 
@@ -1187,11 +1334,21 @@ export default function AdminPage() {
               </div>
 
               <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-                Only authenticated administrators
-                can publish. Content is saved to
-                the existing bams_reels or
-                bams_assets collections through
-                the server API.
+                Administrator authentication is
+                verified by the server API.
+                Video reels are assigned to
+                their selected BAMS professional
+                year and saved to bams_reels.
+                Study assets are saved to
+                bams_assets.
+              </p>
+
+              <p className="mt-3 text-xs leading-relaxed text-amber-500/80">
+                Published content is publicly
+                readable under the current
+                Firestore rules. Clinical
+                review and draft approval
+                controls are not yet enabled.
               </p>
             </div>
           </Panel>
