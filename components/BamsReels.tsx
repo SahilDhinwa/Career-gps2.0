@@ -77,7 +77,8 @@ export default function BamsReels({ prof }: Props) {
       try {
         const reelsQuery = query(
           collection(db, "bams_reels"),
-          where("prof", "==", prof)
+          where("prof", "==", prof),
+          where("status", "==", "published")
         );
 
         const snapshot = await getDocs(reelsQuery);
