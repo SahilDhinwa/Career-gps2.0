@@ -37,6 +37,8 @@ const HEADERS = {
   "X-Content-Type-Options": "nosniff",
 };
 
+const MAX_BODY_BYTES = 4096;
+
 function respond(data: unknown, status = 200) {
   return NextResponse.json(data, {
     status,
@@ -44,7 +46,7 @@ function respond(data: unknown, status = 200) {
   });
 }
 
-function checkOrigin(request: NextRequest) {
+function checkOrigin(request: NextRequest): boolean {
   return (
     request.headers.get("origin") ===
     request.nextUrl.origin
@@ -69,17 +71,30 @@ async function parseBody(request: NextRequest) {
     "content-length"
   );
 
-  if (length && Number(length) > 4096) {
+  if (
+    length !== null &&
+    Number(length) > MAX_BODY_BYTES
+  ) {
     return {
       error: "Request too large.",
       status: 413,
     } as const;
   }
 
-  const raw = await request.text();
+  let raw: string;
+
+  try {
+    raw = await request.text();
+  } catch {
+    return {
+      error: "Unable to read request body.",
+      status: 400,
+    } as const;
+  }
 
   if (
-    new TextEncoder().encode(raw).length > 4096
+    new TextEncoder().encode(raw).length >
+    MAX_BODY_BYTES
   ) {
     return {
       error: "Request too large.",
@@ -143,14 +158,19 @@ function dateToISO(value: unknown): string | null {
     "toDate" in value &&
     typeof value.toDate === "function"
   ) {
-    return value.toDate().toISOString();
+    const date = value.toDate();
+
+    return date instanceof Date &&
+      !Number.isNaN(date.getTime())
+      ? date.toISOString()
+      : null;
   }
 
   return null;
 }
 
 // ------------------------------------------
-// GET: Published content library
+// GET: PUBLISHED CONTENT LIBRARY
 // ------------------------------------------
 
 export async function GET() {
@@ -219,107 +239,20 @@ export async function GET() {
 }
 
 // ------------------------------------------
-// POST: Existing administrator publishing
+// POST: DIRECT PUBLISHING DISABLED
 // ------------------------------------------
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    const admin = await requireAdmin();
-
-    if (!checkOrigin(request)) {
-      return respond(
-        { error: "Invalid request origin." },
-        403
-      );
-    }
-
-    const parsed = await parseBody(request);
-
-    if ("error" in parsed) {
-      return respond(
-        { error: parsed.error },
-        parsed.status
-      );
-    }
-
-    const data = parsed.data;
-
-    if (!isCMSKind(data.kind)) {
-      return respond(
-        { error: "Invalid content kind." },
-        400
-      );
-    }
-
-    const kind = data.kind;
-
-    if (
-      !hasOnlyCMSFields(
-        data,
-        allowedCMSFields(kind, "create")
-      )
-    ) {
-      return respond(
-        { error: "Unexpected content fields." },
-        400
-      );
-    }
-
-    const validated = validateCMSContent(
-      data,
-      kind
-    );
-
-    if (!validated.success) {
-      return respond(
-        { error: validated.error },
-        400
-      );
-    }
-
-    const collectionName =
-      CMS_COLLECTIONS[kind];
-
-    const db = getAdminDb();
-
-    const contentRef = db
-      .collection(collectionName)
-      .doc();
-
-    const auditRef = db
-      .collection(CMS_AUDIT_COLLECTION)
-      .doc();
-
-    const now = FieldValue.serverTimestamp();
-
-    const batch = db.batch();
-
-    batch.create(contentRef, {
-      ...validated.content,
-      status: "published",
-      createdAt: now,
-      updatedAt: now,
-      publishedAt: now,
-      publishedBy: admin.uid,
-    });
-
-    batch.create(auditRef, {
-      action: "cms_content_created",
-      actorUid: admin.uid,
-      collection: collectionName,
-      documentId: contentRef.id,
-      createdAt: now,
-    });
-
-    await batch.commit();
+    await requireAdmin();
 
     return respond(
       {
-        success: true,
-        id: contentRef.id,
-        collection: collectionName,
+        success: false,
+        error:
+          "Direct publishing is disabled. Submit content through /api/admin/cms/submissions for review.",
       },
-      201
+      403
     );
   } catch (error) {
     return handleError(error, "publishing");
@@ -327,7 +260,7 @@ export async function POST(request: NextRequest) {
 }
 
 // ------------------------------------------
-// PATCH: Request review of published edit
+// PATCH: SUBMIT PUBLISHED EDIT FOR REVIEW
 // ------------------------------------------
 
 export async function PATCH(request: NextRequest) {
@@ -390,9 +323,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const db = getAdminDb();
-
-    const collectionName =
-      CMS_COLLECTIONS[kind];
+    const collectionName = CMS_COLLECTIONS[kind];
 
     const contentRef = db
       .collection(collectionName)
@@ -480,7 +411,7 @@ export async function PATCH(request: NextRequest) {
 }
 
 // ------------------------------------------
-// DELETE: Existing administrator deletion
+// DELETE: SUBMIT REMOVAL FOR REVIEW
 // ------------------------------------------
 
 export async function DELETE(request: NextRequest) {
@@ -531,6 +462,10 @@ export async function DELETE(request: NextRequest) {
       .collection(collectionName)
       .doc(id);
 
+    const submissionRef = db
+      .collection(CMS_SUBMISSIONS_COLLECTION)
+      .doc();
+
     const auditRef = db
       .collection(CMS_AUDIT_COLLECTION)
       .doc();
@@ -547,23 +482,49 @@ export async function DELETE(request: NextRequest) {
           };
         }
 
+        if (!existing.updateTime) {
+          return {
+            httpStatus: 409,
+            error:
+              "Content version unavailable.",
+          };
+        }
+
         const previous = existing.data() ?? {};
+
+        const targetVersion =
+          existing.updateTime
+            .toDate()
+            .toISOString();
 
         const now = FieldValue.serverTimestamp();
 
-        transaction.delete(contentRef);
+        transaction.create(submissionRef, {
+          kind,
+          operation: "delete",
+          targetId: id,
+          targetVersion,
+          status: "review",
+          content: {
+            title: previous.title ?? null,
+            url: previous.url ?? null,
+            ...(kind === "video"
+              ? { prof: previous.prof ?? null }
+              : { type: previous.type ?? null }),
+          },
+          submittedBy: admin.uid,
+          reviewedBy: null,
+          reviewNote: null,
+          createdAt: now,
+          updatedAt: now,
+        });
 
         transaction.create(auditRef, {
-          action: "cms_content_deleted",
+          action: "cms_deletion_review_requested",
           actorUid: admin.uid,
           collection: collectionName,
           documentId: id,
-          deletedContent: {
-            title: previous.title ?? null,
-            url: previous.url ?? null,
-            prof: previous.prof ?? null,
-            type: previous.type ?? null,
-          },
+          submissionId: submissionRef.id,
           createdAt: now,
         });
 
@@ -571,9 +532,10 @@ export async function DELETE(request: NextRequest) {
           httpStatus: 200,
           success: true,
           id,
-          collection: collectionName,
+          submissionId: submissionRef.id,
+          status: "review",
           message:
-            "Content deleted successfully.",
+            "Deletion submitted for review. Published content remains available until approval.",
         };
       }
     );
@@ -582,6 +544,9 @@ export async function DELETE(request: NextRequest) {
 
     return respond(body, httpStatus);
   } catch (error) {
-    return handleError(error, "deleting");
+    return handleError(
+      error,
+      "submitting deletion"
+    );
   }
 }
