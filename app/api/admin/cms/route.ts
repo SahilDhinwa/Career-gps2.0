@@ -1,27 +1,25 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
-
 import {
   AdminAuthError,
   requireAdmin,
 } from "../../../../lib/auth/admin";
-
 import { getAdminDb } from "../../../../lib/firebase-admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+type Prof = "prof-1" | "prof-2" | "prof-3";
+type Kind = "video" | "document";
 
 const HEADERS = {
   "Cache-Control": "private, no-store",
   "X-Content-Type-Options": "nosniff",
 };
 
-const ALLOWED_DOC_TYPES = [
-  "past_paper",
-  "notes",
-  "template",
-];
+const DOC_TYPES = ["past_paper", "notes", "template"];
+const PROFS: Prof[] = ["prof-1", "prof-2", "prof-3"];
 
 function respond(data: unknown, status = 200) {
   return NextResponse.json(data, {
@@ -30,10 +28,7 @@ function respond(data: unknown, status = 200) {
   });
 }
 
-function validURL(
-  value: unknown,
-  kind: "video" | "document"
-): value is string {
+function validURL(value: unknown, kind: Kind): value is string {
   if (
     typeof value !== "string" ||
     value.length === 0 ||
@@ -43,68 +38,64 @@ function validURL(
   }
 
   try {
-    const parsed = new URL(value);
+    const url = new URL(value);
 
     if (
-      parsed.protocol !== "https:" ||
-      parsed.username ||
-      parsed.password ||
-      parsed.port
+      url.protocol !== "https:" ||
+      url.username ||
+      url.password ||
+      url.port
     ) {
       return false;
     }
 
-    const host = parsed.hostname.toLowerCase();
+    const host = url.hostname.toLowerCase();
 
     if (kind === "video") {
-      const videoId = /^[a-zA-Z0-9_-]{11}$/;
+      const idPattern = /^[a-zA-Z0-9_-]{11}$/;
 
       if (host === "youtu.be") {
-        return videoId.test(parsed.pathname.slice(1));
+        return idPattern.test(url.pathname.slice(1));
       }
 
       if (
-        host === "youtube.com" ||
-        host === "www.youtube.com" ||
-        host === "youtube-nocookie.com" ||
-        host === "www.youtube-nocookie.com"
+        ![
+          "youtube.com",
+          "www.youtube.com",
+          "youtube-nocookie.com",
+          "www.youtube-nocookie.com",
+        ].includes(host)
       ) {
-        if (parsed.pathname === "/watch") {
-          return videoId.test(
-            parsed.searchParams.get("v") ?? ""
-          );
-        }
-
-        const match = parsed.pathname.match(
-          /^\/(?:embed|shorts|live)\/([a-zA-Z0-9_-]{11})\/?$/
-        );
-
-        return Boolean(match);
+        return false;
       }
 
-      return false;
+      if (url.pathname === "/watch") {
+        return idPattern.test(url.searchParams.get("v") ?? "");
+      }
+
+      return /^\/(?:embed|shorts|live)\/[a-zA-Z0-9_-]{11}\/?$/.test(
+        url.pathname
+      );
     }
 
-    if (
-      host === "drive.google.com" ||
-      host === "docs.google.com"
-    ) {
-      return (
-        /^\/file\/d\/[a-zA-Z0-9_-]+\/(?:view|preview)?\/?$/.test(
-          parsed.pathname
-        ) ||
-        /^\/(?:document|spreadsheets|presentation)\/d\/[a-zA-Z0-9_-]+(?:\/.*)?$/.test(
-          parsed.pathname
-        )
+    if (host === "drive.google.com") {
+      return /^\/file\/d\/[a-zA-Z0-9_-]+\/?(?:view|preview)?\/?$/.test(
+        url.pathname
+      );
+    }
+
+    if (host === "docs.google.com") {
+      return /^\/(?:document|spreadsheets|presentation)\/d\/[a-zA-Z0-9_-]+(?:\/.*)?$/.test(
+        url.pathname
       );
     }
 
     if (host === "firebasestorage.googleapis.com") {
-      return parsed.pathname.startsWith("/v0/b/");
+      return url.pathname.startsWith("/v0/b/");
     }
 
     if (host === "storage.googleapis.com") {
-      return parsed.pathname.length > 2;
+      return url.pathname.length > 2;
     }
 
     return false;
@@ -117,14 +108,10 @@ export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin();
 
-    if (
-      !request.headers.get("origin") ||
-      request.headers.get("origin") !== request.nextUrl.origin
-    ) {
-      return respond(
-        { error: "Invalid request origin." },
-        403
-      );
+    const origin = request.headers.get("origin");
+
+    if (!origin || origin !== request.nextUrl.origin) {
+      return respond({ error: "Invalid request origin." }, 403);
     }
 
     if (
@@ -159,7 +146,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = payload as Record<string, unknown>;
-
     const kind = data.kind;
 
     if (kind !== "video" && kind !== "document") {
@@ -168,7 +154,7 @@ export async function POST(request: NextRequest) {
 
     const allowedFields =
       kind === "video"
-        ? ["kind", "title", "url"]
+        ? ["kind", "title", "url", "prof"]
         : ["kind", "title", "url", "type"];
 
     if (
@@ -204,8 +190,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (
+      kind === "video" &&
+      !PROFS.includes(data.prof as Prof)
+    ) {
+      return respond(
+        { error: "Invalid professional year." },
+        400
+      );
+    }
+
+    if (
       kind === "document" &&
-      !ALLOWED_DOC_TYPES.includes(String(data.type))
+      !DOC_TYPES.includes(String(data.type))
     ) {
       return respond(
         { error: "Invalid document category." },
@@ -216,9 +212,9 @@ export async function POST(request: NextRequest) {
     const collectionName =
       kind === "video" ? "bams_reels" : "bams_assets";
 
-    const database = getAdminDb();
-    const contentRef = database.collection(collectionName).doc();
-    const auditRef = database.collection("admin_audit_logs").doc();
+    const db = getAdminDb();
+    const contentRef = db.collection(collectionName).doc();
+    const auditRef = db.collection("admin_audit_logs").doc();
 
     const content: Record<string, unknown> = {
       title,
@@ -226,11 +222,13 @@ export async function POST(request: NextRequest) {
       createdAt: FieldValue.serverTimestamp(),
     };
 
-    if (kind === "document") {
+    if (kind === "video") {
+      content.prof = data.prof;
+    } else {
       content.type = data.type;
     }
 
-    const batch = database.batch();
+    const batch = db.batch();
 
     batch.create(contentRef, content);
 
@@ -262,9 +260,6 @@ export async function POST(request: NextRequest) {
 
     console.error("Admin CMS publishing failed:", error);
 
-    return respond(
-      { error: "Publishing failed." },
-      500
-    );
+    return respond({ error: "Publishing failed." }, 500);
   }
 }
