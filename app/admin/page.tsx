@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import Link from "next/link";
+import CMSContentLibrary from "@/components/admin/CMSContentLibrary";
 import {
   Activity,
   AlertTriangle,
@@ -180,6 +181,7 @@ function SectionHeading({
         <h2 className="text-lg font-bold tracking-wide text-white">
           {title}
         </h2>
+
         <p className="mt-1 text-sm text-zinc-400">
           {subtitle}
         </p>
@@ -191,7 +193,11 @@ function SectionHeading({
 function Spinner() {
   return (
     <div className="flex min-h-48 items-center justify-center gap-3 text-emerald-400">
-      <Loader2 className="animate-spin" size={22} />
+      <Loader2
+        className="animate-spin"
+        size={22}
+      />
+
       <span className="text-sm">
         Loading secure data...
       </span>
@@ -204,44 +210,69 @@ export default function AdminPage() {
 
   const [authorized, setAuthorized] =
     useState(false);
+
   const [checking, setChecking] =
     useState(true);
+
   const [accessError, setAccessError] =
     useState("");
 
   const [notice, setNotice] =
     useState<Notice | null>(null);
 
+  // ------------------------------------------
+  // USER MANAGEMENT
+  // ------------------------------------------
+
   const [users, setUsers] =
     useState<AdminUser[]>([]);
+
   const [usersLoading, setUsersLoading] =
     useState(false);
+
   const [usersLoaded, setUsersLoaded] =
     useState(false);
+
   const [usersError, setUsersError] =
     useState("");
+
   const [search, setSearch] =
     useState("");
 
   const [cursor, setCursor] =
     useState<string | null>(null);
+
   const [nextCursor, setNextCursor] =
     useState<string | null>(null);
+
   const [cursorHistory, setCursorHistory] =
     useState<Array<string | null>>([]);
-  const [page, setPage] = useState(1);
+
+  const [page, setPage] =
+    useState(1);
 
   const [updatingUser, setUpdatingUser] =
     useState<string | null>(null);
 
+  // ------------------------------------------
+  // ANALYTICS
+  // ------------------------------------------
+
   const [analytics, setAnalytics] =
     useState<AnalyticsResponse | null>(null);
+
   const [analyticsLoading, setAnalyticsLoading] =
     useState(false);
+
   const [analyticsLoaded, setAnalyticsLoaded] =
     useState(false);
+
   const [analyticsError, setAnalyticsError] =
     useState("");
+
+  // ------------------------------------------
+  // CMS PUBLISHING
+  // ------------------------------------------
 
   const [cmsKind, setCmsKind] =
     useState<CMSKind>("video");
@@ -251,12 +282,23 @@ export default function AdminPage() {
 
   const [cmsTitle, setCmsTitle] =
     useState("");
+
   const [cmsUrl, setCmsUrl] =
     useState("");
+
   const [cmsDocType, setCmsDocType] =
     useState<DocumentType>("notes");
+
   const [publishing, setPublishing] =
     useState(false);
+
+  // Refresh Content Library after publishing.
+  const [cmsRefreshKey, setCmsRefreshKey] =
+    useState(0);
+
+  // ------------------------------------------
+  // ADMINISTRATOR VERIFICATION
+  // ------------------------------------------
 
   const verifyAccess = useCallback(async () => {
     setChecking(true);
@@ -280,6 +322,7 @@ export default function AdminPage() {
       setAuthorized(true);
     } catch (error) {
       setAuthorized(false);
+
       setAccessError(
         error instanceof Error
           ? error.message
@@ -293,6 +336,10 @@ export default function AdminPage() {
   useEffect(() => {
     void verifyAccess();
   }, [verifyAccess]);
+
+  // ------------------------------------------
+  // LOAD USERS
+  // ------------------------------------------
 
   const loadUsers = useCallback(
     async (selectedCursor: string | null) => {
@@ -322,6 +369,7 @@ export default function AdminPage() {
         setNextCursor(
           result.nextCursor ?? null
         );
+
         setUsersLoaded(true);
       } catch (error) {
         setUsersError(
@@ -335,6 +383,10 @@ export default function AdminPage() {
     },
     []
   );
+
+  // ------------------------------------------
+  // LOAD ANALYTICS
+  // ------------------------------------------
 
   const loadAnalytics = useCallback(async () => {
     setAnalyticsLoading(true);
@@ -358,6 +410,10 @@ export default function AdminPage() {
       setAnalyticsLoading(false);
     }
   }, []);
+
+  // ------------------------------------------
+  // LAZY DATA LOADING
+  // ------------------------------------------
 
   useEffect(() => {
     if (!authorized) return;
@@ -384,6 +440,10 @@ export default function AdminPage() {
     loadUsers,
     loadAnalytics,
   ]);
+
+  // ------------------------------------------
+  // UPDATE PREMIUM
+  // ------------------------------------------
 
   async function changePremium(
     user: AdminUser
@@ -447,6 +507,10 @@ export default function AdminPage() {
     }
   }
 
+  // ------------------------------------------
+  // PUBLISH CMS CONTENT
+  // ------------------------------------------
+
   async function publishContent(
     event: FormEvent<HTMLFormElement>
   ) {
@@ -481,6 +545,11 @@ export default function AdminPage() {
         }
       );
 
+      // Reload the published content library.
+      setCmsRefreshKey(
+        (value) => value + 1
+      );
+
       setCmsTitle("");
       setCmsUrl("");
 
@@ -510,6 +579,10 @@ export default function AdminPage() {
     }
   }
 
+  // ------------------------------------------
+  // USER PAGINATION
+  // ------------------------------------------
+
   function goNext() {
     if (
       !nextCursor ||
@@ -524,6 +597,7 @@ export default function AdminPage() {
     ]);
 
     setCursor(nextCursor);
+
     setPage(
       (value) => value + 1
     );
@@ -549,6 +623,7 @@ export default function AdminPage() {
     );
 
     setCursor(previous);
+
     setPage(
       (value) =>
         Math.max(1, value - 1)
@@ -556,6 +631,10 @@ export default function AdminPage() {
 
     void loadUsers(previous);
   }
+
+  // ------------------------------------------
+  // DERIVED USER DATA
+  // ------------------------------------------
 
   const filteredUsers = users.filter(
     (user) => {
@@ -583,11 +662,19 @@ export default function AdminPage() {
     (user) => user.isPremium
   ).length;
 
+  // ------------------------------------------
+  // SHARED STYLES
+  // ------------------------------------------
+
   const inputClass =
     "w-full rounded-xl border border-emerald-900/60 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-emerald-500";
 
   const buttonClass =
     "inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-700/60 bg-emerald-950/60 px-4 py-2.5 text-sm font-medium text-emerald-300 transition hover:bg-emerald-900/60 disabled:cursor-not-allowed disabled:opacity-40";
+
+  // ------------------------------------------
+  // VERIFYING SCREEN
+  // ------------------------------------------
 
   if (checking) {
     return (
@@ -602,6 +689,10 @@ export default function AdminPage() {
       </main>
     );
   }
+
+  // ------------------------------------------
+  // ACCESS DENIED SCREEN
+  // ------------------------------------------
 
   if (!authorized) {
     return (
@@ -641,6 +732,10 @@ export default function AdminPage() {
       </main>
     );
   }
+
+  // ------------------------------------------
+  // BATCOMPUTER MAIN INTERFACE
+  // ------------------------------------------
 
   return (
     <main className="min-h-screen bg-[#030807] text-zinc-200">
@@ -683,6 +778,8 @@ export default function AdminPage() {
             Back to Profile
           </Link>
         </header>
+
+        {/* MAIN NAVIGATION */}
 
         <nav
           aria-label="Admin sections"
@@ -733,6 +830,8 @@ export default function AdminPage() {
           })}
         </nav>
 
+        {/* GLOBAL NOTIFICATION */}
+
         {notice && (
           <div
             role="status"
@@ -748,6 +847,7 @@ export default function AdminPage() {
               ) : (
                 <AlertTriangle size={18} />
               )}
+
               {notice.message}
             </div>
 
@@ -763,6 +863,8 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* USER PROTOCOLS */}
+
         {tab === "users" && (
           <Panel>
             <SectionHeading
@@ -776,6 +878,7 @@ export default function AdminPage() {
                 <p className="text-xs text-zinc-500">
                   Accounts on current page
                 </p>
+
                 <p className="mt-2 text-2xl font-bold text-white">
                   {users.length}
                 </p>
@@ -785,6 +888,7 @@ export default function AdminPage() {
                 <p className="text-xs text-zinc-500">
                   Premium on current page
                 </p>
+
                 <p className="mt-2 flex items-center gap-2 text-2xl font-bold text-amber-400">
                   <Crown size={20} />
                   {premiumCount}
@@ -847,12 +951,15 @@ export default function AdminPage() {
                         <th className="px-4 py-4">
                           Scholar
                         </th>
+
                         <th className="px-4 py-4">
                           Role
                         </th>
+
                         <th className="px-4 py-4">
                           Access
                         </th>
+
                         <th className="px-4 py-4 text-right">
                           Action
                         </th>
@@ -985,6 +1092,8 @@ export default function AdminPage() {
           </Panel>
         )}
 
+        {/* ANALYTICS NODE */}
+
         {tab === "analytics" && (
           <Panel>
             <SectionHeading
@@ -1030,6 +1139,7 @@ export default function AdminPage() {
                     <p className="text-xs text-zinc-500">
                       Recorded Views
                     </p>
+
                     <p className="mt-3 text-3xl font-bold text-emerald-400">
                       {analytics.totalViews.toLocaleString()}
                     </p>
@@ -1039,6 +1149,7 @@ export default function AdminPage() {
                     <p className="text-xs text-zinc-500">
                       Unique IPs
                     </p>
+
                     <p className="mt-3 text-3xl font-bold text-white">
                       {analytics.uniqueIPs.toLocaleString()}
                     </p>
@@ -1048,6 +1159,7 @@ export default function AdminPage() {
                     <p className="text-xs text-zinc-500">
                       Recent Records
                     </p>
+
                     <p className="mt-3 text-3xl font-bold text-white">
                       {analytics.recent.length}
                     </p>
@@ -1061,12 +1173,15 @@ export default function AdminPage() {
                         <th className="px-4 py-4">
                           Visitor
                         </th>
+
                         <th className="px-4 py-4">
                           IP Address
                         </th>
+
                         <th className="px-4 py-4">
                           Visits
                         </th>
+
                         <th className="px-4 py-4">
                           Last Recorded
                         </th>
@@ -1121,12 +1236,14 @@ export default function AdminPage() {
           </Panel>
         )}
 
+        {/* MAINFRAME CMS */}
+
         {tab === "cms" && (
           <Panel>
             <SectionHeading
               icon={Database}
               title="Mainframe CMS"
-              subtitle="Publish educational videos and study resources through the protected administrator API."
+              subtitle="Publish and manage educational videos and study resources through protected administrator APIs."
             />
 
             <div className="mb-6 grid grid-cols-2 gap-3">
@@ -1327,10 +1444,18 @@ export default function AdminPage() {
               </button>
             </form>
 
+            {/* CONTENT LIBRARY: VIEW / EDIT / DELETE */}
+
+            <CMSContentLibrary
+              refreshKey={cmsRefreshKey}
+            />
+
+            {/* CMS SECURITY INFORMATION */}
+
             <div className="mt-8 rounded-xl border border-emerald-900/40 bg-black/30 p-4">
               <div className="flex items-center gap-2 text-sm text-emerald-400">
                 <ShieldCheck size={17} />
-                Secure Publishing Active
+                Secure Content Management Active
               </div>
 
               <p className="mt-2 text-xs leading-relaxed text-zinc-500">
@@ -1340,7 +1465,10 @@ export default function AdminPage() {
                 their selected BAMS professional
                 year and saved to bams_reels.
                 Study assets are saved to
-                bams_assets.
+                bams_assets. Content can be
+                edited or deleted through
+                protected administrator
+                endpoints with audit logging.
               </p>
 
               <p className="mt-3 text-xs leading-relaxed text-amber-500/80">
@@ -1353,6 +1481,8 @@ export default function AdminPage() {
             </div>
           </Panel>
         )}
+
+        {/* FOOTER */}
 
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-emerald-900/30 pt-5 font-mono text-[10px] tracking-wider text-zinc-600">
           <span>
