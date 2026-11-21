@@ -228,8 +228,7 @@ export default function BAMSProf3Dashboard() {
           
         </div>
 
-        <BamsReels />
-
+        <BamsReels prof="prof-3" />
       </div>
     </div>
   );
