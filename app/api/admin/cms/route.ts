@@ -1,7 +1,11 @@
 
 import "server-only";
 
-import { NextRequest, NextResponse } from "next/server";
+import {
+  NextRequest,
+  NextResponse,
+} from "next/server";
+
 import { FieldValue } from "firebase-admin/firestore";
 
 import {
@@ -12,14 +16,14 @@ import {
 import { getAdminDb } from "../../../../lib/firebase-admin";
 
 import {
-  CMS_COLLECTIONS,
   CMS_AUDIT_COLLECTION,
+  CMS_COLLECTIONS,
   CMS_SUBMISSIONS_COLLECTION,
   allowedCMSFields,
   hasOnlyCMSFields,
+  isBamsProf,
   isCMSDocumentId,
   isCMSDocumentType,
-  isBamsProf,
   isCMSKind,
   validateCMSContent,
   type CMSKind,
@@ -41,20 +45,19 @@ function respond(data: unknown, status = 200) {
 }
 
 function checkOrigin(request: NextRequest) {
-  const origin = request.headers.get("origin");
-
   return (
-    typeof origin === "string" &&
-    origin === request.nextUrl.origin
+    request.headers.get("origin") ===
+    request.nextUrl.origin
   );
 }
 
 async function parseBody(request: NextRequest) {
+  const contentType = request.headers
+    .get("content-type")
+    ?.toLowerCase();
+
   if (
-    !request.headers
-      .get("content-type")
-      ?.toLowerCase()
-      .startsWith("application/json")
+    !contentType?.startsWith("application/json")
   ) {
     return {
       error: "JSON required.",
@@ -62,19 +65,32 @@ async function parseBody(request: NextRequest) {
     } as const;
   }
 
-  const raw = await request.text();
+  const length = request.headers.get(
+    "content-length"
+  );
 
-  if (raw.length > 4096) {
+  if (length && Number(length) > 4096) {
     return {
       error: "Request too large.",
       status: 413,
     } as const;
   }
 
-  let payload: unknown;
+  const raw = await request.text();
+
+  if (
+    new TextEncoder().encode(raw).length > 4096
+  ) {
+    return {
+      error: "Request too large.",
+      status: 413,
+    } as const;
+  }
+
+  let data: unknown;
 
   try {
-    payload = JSON.parse(raw);
+    data = JSON.parse(raw);
   } catch {
     return {
       error: "Invalid JSON.",
@@ -83,18 +99,18 @@ async function parseBody(request: NextRequest) {
   }
 
   if (
-    !payload ||
-    typeof payload !== "object" ||
-    Array.isArray(payload)
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data)
   ) {
     return {
-      error: "Invalid request.",
+      error: "Invalid request body.",
       status: 400,
     } as const;
   }
 
   return {
-    data: payload as Record<string, unknown>,
+    data: data as Record<string, unknown>,
   };
 }
 
@@ -118,6 +134,19 @@ function handleError(
     { error: `CMS ${operation} failed.` },
     500
   );
+}
+
+function dateToISO(value: unknown): string | null {
+  if (
+    value &&
+    typeof value === "object" &&
+    "toDate" in value &&
+    typeof value.toDate === "function"
+  ) {
+    return value.toDate().toISOString();
+  }
+
+  return null;
 }
 
 // ------------------------------------------
@@ -151,18 +180,6 @@ export async function GET() {
       return snapshot.docs.map((doc) => {
         const data = doc.data();
 
-        const createdAt =
-          data.createdAt &&
-          typeof data.createdAt.toDate === "function"
-            ? data.createdAt.toDate().toISOString()
-            : null;
-
-        const updatedAt =
-          data.updatedAt &&
-          typeof data.updatedAt.toDate === "function"
-            ? data.updatedAt.toDate().toISOString()
-            : null;
-
         return {
           id: doc.id,
           kind,
@@ -175,7 +192,8 @@ export async function GET() {
               ? data.url
               : "",
           prof:
-            kind === "video" && isBamsProf(data.prof)
+            kind === "video" &&
+            isBamsProf(data.prof)
               ? data.prof
               : null,
           type:
@@ -183,8 +201,8 @@ export async function GET() {
             isCMSDocumentType(data.type)
               ? data.type
               : null,
-          createdAt,
-          updatedAt,
+          createdAt: dateToISO(data.createdAt),
+          updatedAt: dateToISO(data.updatedAt),
         };
       });
     }
@@ -201,7 +219,7 @@ export async function GET() {
 }
 
 // ------------------------------------------
-// POST: Existing admin publishing
+// POST: Existing administrator publishing
 // ------------------------------------------
 
 export async function POST(request: NextRequest) {
@@ -272,14 +290,16 @@ export async function POST(request: NextRequest) {
       .collection(CMS_AUDIT_COLLECTION)
       .doc();
 
+    const now = FieldValue.serverTimestamp();
+
     const batch = db.batch();
 
     batch.create(contentRef, {
       ...validated.content,
       status: "published",
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-      publishedAt: FieldValue.serverTimestamp(),
+      createdAt: now,
+      updatedAt: now,
+      publishedAt: now,
       publishedBy: admin.uid,
     });
 
@@ -288,7 +308,7 @@ export async function POST(request: NextRequest) {
       actorUid: admin.uid,
       collection: collectionName,
       documentId: contentRef.id,
-      createdAt: FieldValue.serverTimestamp(),
+      createdAt: now,
     });
 
     await batch.commit();
@@ -307,7 +327,7 @@ export async function POST(request: NextRequest) {
 }
 
 // ------------------------------------------
-// PATCH: Submit changes for review
+// PATCH: Request review of published edit
 // ------------------------------------------
 
 export async function PATCH(request: NextRequest) {
@@ -386,53 +406,81 @@ export async function PATCH(request: NextRequest) {
       .collection(CMS_AUDIT_COLLECTION)
       .doc();
 
-    const existing = await contentRef.get();
+    const outcome = await db.runTransaction(
+      async (transaction) => {
+        const existing =
+          await transaction.get(contentRef);
 
-    if (!existing.exists) {
-      return respond(
-        { error: "Content not found." },
-        404
-      );
-    }
+        if (!existing.exists) {
+          return {
+            httpStatus: 404,
+            error: "Content not found.",
+          };
+        }
 
-    const batch = db.batch();
+        if (!existing.updateTime) {
+          return {
+            httpStatus: 409,
+            error:
+              "Content version unavailable.",
+          };
+        }
 
-    batch.create(submissionRef, {
-      kind,
-      operation: "update",
-      targetId: id,
-      status: "review",
-      content: validated.content,
-      submittedBy: admin.uid,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+        const targetVersion =
+          existing.updateTime
+            .toDate()
+            .toISOString();
 
-    batch.create(auditRef, {
-      action: "cms_review_requested",
-      actorUid: admin.uid,
-      collection: collectionName,
-      documentId: id,
-      submissionId: submissionRef.id,
-      createdAt: FieldValue.serverTimestamp(),
-    });
+        const now = FieldValue.serverTimestamp();
 
-    await batch.commit();
+        transaction.create(submissionRef, {
+          kind,
+          operation: "update",
+          targetId: id,
+          targetVersion,
+          status: "review",
+          content: validated.content,
+          submittedBy: admin.uid,
+          reviewedBy: null,
+          reviewNote: null,
+          createdAt: now,
+          updatedAt: now,
+        });
 
-    return respond({
-      success: true,
-      id,
-      submissionId: submissionRef.id,
-      status: "review",
-      message: "Changes submitted for review.",
-    });
+        transaction.create(auditRef, {
+          action: "cms_review_requested",
+          actorUid: admin.uid,
+          collection: collectionName,
+          documentId: id,
+          submissionId: submissionRef.id,
+          createdAt: now,
+        });
+
+        return {
+          httpStatus: 200,
+          success: true,
+          id,
+          submissionId: submissionRef.id,
+          status: "review",
+          message:
+            "Changes submitted for review.",
+        };
+      }
+    );
+
+    const { httpStatus, ...body } = outcome;
+
+    return respond(body, httpStatus);
   } catch (error) {
-    return handleError(error, "submitting changes");
+    return handleError(
+      error,
+      "submitting changes"
+    );
   }
 }
 
 // ------------------------------------------
-// DELETE: Existing admin deletion
+// DELETE: Existing administrator deletion
 // ------------------------------------------
 
 export async function DELETE(request: NextRequest) {
@@ -460,7 +508,10 @@ export async function DELETE(request: NextRequest) {
     if (
       !isCMSKind(data.kind) ||
       !isCMSDocumentId(data.id) ||
-      !hasOnlyCMSFields(data, ["id", "kind"])
+      !hasOnlyCMSFields(
+        data,
+        ["id", "kind"]
+      )
     ) {
       return respond(
         { error: "Invalid deletion request." },
@@ -484,50 +535,52 @@ export async function DELETE(request: NextRequest) {
       .collection(CMS_AUDIT_COLLECTION)
       .doc();
 
-    let found = false;
+    const outcome = await db.runTransaction(
+      async (transaction) => {
+        const existing =
+          await transaction.get(contentRef);
 
-    await db.runTransaction(async (transaction) => {
-      const existing =
-        await transaction.get(contentRef);
+        if (!existing.exists) {
+          return {
+            httpStatus: 404,
+            error: "Content not found.",
+          };
+        }
 
-      if (!existing.exists) {
-        return;
+        const previous = existing.data() ?? {};
+
+        const now = FieldValue.serverTimestamp();
+
+        transaction.delete(contentRef);
+
+        transaction.create(auditRef, {
+          action: "cms_content_deleted",
+          actorUid: admin.uid,
+          collection: collectionName,
+          documentId: id,
+          deletedContent: {
+            title: previous.title ?? null,
+            url: previous.url ?? null,
+            prof: previous.prof ?? null,
+            type: previous.type ?? null,
+          },
+          createdAt: now,
+        });
+
+        return {
+          httpStatus: 200,
+          success: true,
+          id,
+          collection: collectionName,
+          message:
+            "Content deleted successfully.",
+        };
       }
+    );
 
-      found = true;
+    const { httpStatus, ...body } = outcome;
 
-      const previous = existing.data() ?? {};
-
-      transaction.delete(contentRef);
-
-      transaction.create(auditRef, {
-        action: "cms_content_deleted",
-        actorUid: admin.uid,
-        collection: collectionName,
-        documentId: id,
-        deletedContent: {
-          title: previous.title ?? null,
-          url: previous.url ?? null,
-          prof: previous.prof ?? null,
-          type: previous.type ?? null,
-        },
-        createdAt: FieldValue.serverTimestamp(),
-      });
-    });
-
-    if (!found) {
-      return respond(
-        { error: "Content not found." },
-        404
-      );
-    }
-
-    return respond({
-      success: true,
-      id,
-      collection: collectionName,
-      message: "Content deleted successfully.",
-    });
+    return respond(body, httpStatus);
   } catch (error) {
     return handleError(error, "deleting");
   }
