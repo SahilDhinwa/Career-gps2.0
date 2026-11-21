@@ -32,6 +32,8 @@ const HEADERS = {
   "X-Content-Type-Options": "nosniff",
 };
 
+const MAX_BODY_BYTES = 4096;
+
 type SubmissionStatus = "draft" | "review";
 type SubmissionOperation = "create" | "update";
 
@@ -58,12 +60,10 @@ function handleError(error: unknown) {
   );
 }
 
-function sameOrigin(request: NextRequest) {
-  const origin = request.headers.get("origin");
-
+function sameOrigin(request: NextRequest): boolean {
   return (
-    typeof origin === "string" &&
-    origin === request.nextUrl.origin
+    request.headers.get("origin") ===
+    request.nextUrl.origin
   );
 }
 
@@ -78,25 +78,24 @@ function isRecord(
 }
 
 async function parseBody(request: NextRequest) {
-  if (
-    !request.headers
-      .get("content-type")
-      ?.toLowerCase()
-      .startsWith("application/json")
-  ) {
+  const contentType = request.headers
+    .get("content-type")
+    ?.toLowerCase();
+
+  if (!contentType?.startsWith("application/json")) {
     return {
       error: "JSON required.",
       status: 415,
     } as const;
   }
 
-  const lengthHeader = request.headers.get(
-    "content-length"
-  );
+  const lengthHeader =
+    request.headers.get("content-length");
 
   if (
-    lengthHeader &&
-    Number(lengthHeader) > 4096
+    lengthHeader !== null &&
+    (!/^\d+$/.test(lengthHeader) ||
+      Number(lengthHeader) > MAX_BODY_BYTES)
   ) {
     return {
       error: "Request too large.",
@@ -104,10 +103,20 @@ async function parseBody(request: NextRequest) {
     } as const;
   }
 
-  const raw = await request.text();
+  let raw: string;
+
+  try {
+    raw = await request.text();
+  } catch {
+    return {
+      error: "Unable to read request body.",
+      status: 400,
+    } as const;
+  }
 
   if (
-    new TextEncoder().encode(raw).length > 4096
+    new TextEncoder().encode(raw).length >
+    MAX_BODY_BYTES
   ) {
     return {
       error: "Request too large.",
@@ -143,14 +152,21 @@ function dateToISO(value: unknown): string | null {
     "toDate" in value &&
     typeof value.toDate === "function"
   ) {
-    return value.toDate().toISOString();
+    const date = value.toDate();
+
+    if (
+      date instanceof Date &&
+      !Number.isNaN(date.getTime())
+    ) {
+      return date.toISOString();
+    }
   }
 
   return null;
 }
 
 // ------------------------------------------
-// GET: Private submission queue
+// GET: PRIVATE CMS SUBMISSION QUEUE
 // ------------------------------------------
 
 export async function GET() {
@@ -196,7 +212,7 @@ export async function GET() {
 }
 
 // ------------------------------------------
-// POST: Create private draft/review request
+// POST: CREATE DRAFT OR REVIEW REQUEST
 // ------------------------------------------
 
 export async function POST(request: NextRequest) {
@@ -262,34 +278,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const status: SubmissionStatus =
-      data.status === "draft"
-        ? "draft"
-        : data.status === "review"
-          ? "review"
-          : ("" as SubmissionStatus);
-
-    if (!status) {
+    if (
+      data.status !== "draft" &&
+      data.status !== "review"
+    ) {
       return respond(
         { error: "Invalid submission status." },
         400
       );
     }
 
-    const operation: SubmissionOperation =
-      data.operation === undefined ||
-      data.operation === "create"
-        ? "create"
-        : data.operation === "update"
-          ? "update"
-          : ("" as SubmissionOperation);
+    const status: SubmissionStatus = data.status;
 
-    if (!operation) {
+    if (
+      data.operation !== undefined &&
+      data.operation !== "create" &&
+      data.operation !== "update"
+    ) {
       return respond(
         { error: "Invalid operation." },
         400
       );
     }
+
+    const operation: SubmissionOperation =
+      data.operation === "update"
+        ? "update"
+        : "create";
 
     if (
       operation === "update" &&
@@ -350,14 +365,14 @@ export async function POST(request: NextRequest) {
 
           if (!target.exists) {
             return {
-              status: 404,
+              httpStatus: 404,
               error: "Target content not found.",
             };
           }
 
           if (!target.updateTime) {
             return {
-              status: 409,
+              httpStatus: 409,
               error: "Target version unavailable.",
             };
           }
@@ -398,7 +413,7 @@ export async function POST(request: NextRequest) {
         });
 
         return {
-          status: 201,
+          httpStatus: 201,
           success: true,
           id: submissionRef.id,
           submissionStatus: status,
@@ -410,7 +425,7 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    const { status: httpStatus, ...body } = outcome;
+    const { httpStatus, ...body } = outcome;
 
     return respond(body, httpStatus);
   } catch (error) {
