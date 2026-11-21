@@ -16,6 +16,8 @@ import {
   requireAdmin,
 } from "../../../../../../lib/auth/admin";
 
+import { requireCMSReviewer } from "../../../../../../lib/auth/cms-reviewer";
+
 import { getAdminDb } from "../../../../../../lib/firebase-admin";
 
 import {
@@ -26,8 +28,6 @@ import {
   isCMSKind,
   validateCMSContent,
 } from "../../../../../../lib/cms/validation";
-
-import { requireCMSReviewer } from "../../../../../../lib/auth/cms-reviewer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,6 +42,8 @@ const HEADERS = {
   "Cache-Control": "private, no-store",
   "X-Content-Type-Options": "nosniff",
 };
+
+const MAX_BODY_BYTES = 2048;
 
 function respond(data: unknown, status = 200) {
   return NextResponse.json(data, {
@@ -60,7 +62,7 @@ function isRecord(
   );
 }
 
-function checkOrigin(request: NextRequest) {
+function checkOrigin(request: NextRequest): boolean {
   return (
     request.headers.get("origin") ===
     request.nextUrl.origin
@@ -72,30 +74,39 @@ async function parseBody(request: NextRequest) {
     .get("content-type")
     ?.toLowerCase();
 
-  if (
-    !contentType?.startsWith("application/json")
-  ) {
+  if (!contentType?.startsWith("application/json")) {
     return {
       error: "JSON required.",
       status: 415,
     } as const;
   }
 
-  const length = request.headers.get(
-    "content-length"
-  );
+  const length = request.headers.get("content-length");
 
-  if (length && Number(length) > 2048) {
+  if (
+    length !== null &&
+    Number(length) > MAX_BODY_BYTES
+  ) {
     return {
       error: "Request too large.",
       status: 413,
     } as const;
   }
 
-  const raw = await request.text();
+  let raw: string;
+
+  try {
+    raw = await request.text();
+  } catch {
+    return {
+      error: "Unable to read request body.",
+      status: 400,
+    } as const;
+  }
 
   if (
-    new TextEncoder().encode(raw).length > 2048
+    new TextEncoder().encode(raw).length >
+    MAX_BODY_BYTES
   ) {
     return {
       error: "Request too large.",
@@ -127,9 +138,13 @@ async function parseBody(request: NextRequest) {
 function versionOf(
   snapshot: DocumentSnapshot
 ): string | null {
-  return snapshot.updateTime
-    ? snapshot.updateTime.toDate().toISOString()
-    : null;
+  const timestamp = snapshot.updateTime;
+
+  if (!timestamp) return null;
+
+  // Match the version format currently stored
+  // by the CMS PATCH and DELETE endpoints.
+  return timestamp.toDate().toISOString();
 }
 
 function handleError(error: unknown) {
@@ -153,15 +168,9 @@ export async function PATCH(
   context: Context
 ) {
   try {
-const admin = await requireAdmin();
+    // Authenticate first.
+    const admin = await requireAdmin();
 
-    if (
-  data.action === "approve" ||
-  data.action === "reject"
-) {
-  await requireCMSReviewer();
-    }
-    
     if (!checkOrigin(request)) {
       return respond(
         { error: "Invalid request origin." },
@@ -237,6 +246,22 @@ const admin = await requireAdmin();
       );
     }
 
+    // Only authorized reviewers can approve/reject.
+    // Ordinary administrators may submit drafts.
+    if (
+      action === "approve" ||
+      action === "reject"
+    ) {
+      const reviewer = await requireCMSReviewer();
+
+      if (reviewer.uid !== admin.uid) {
+        return respond(
+          { error: "Reviewer identity mismatch." },
+          403
+        );
+      }
+    }
+
     const db = getAdminDb();
 
     const submissionRef = db
@@ -271,17 +296,46 @@ const admin = await requireAdmin();
           };
         }
 
-        const validated = validateCMSContent(
-          submission.content,
-          submission.kind
-        );
+        const kind = submission.kind;
+        const operation = submission.operation;
 
-        if (!validated.success) {
+        if (
+          operation !== "create" &&
+          operation !== "update" &&
+          operation !== "delete"
+        ) {
           return {
             httpStatus: 409,
-            error: validated.error,
+            error: "Invalid submission operation.",
           };
         }
+
+        // Deletion submissions contain a snapshot
+        // of existing content, not new content to
+        // publish. Validate only create/update here.
+        let validatedContent:
+          | Record<string, unknown>
+          | null = null;
+
+        if (operation !== "delete") {
+          const validated = validateCMSContent(
+            submission.content,
+            kind
+          );
+
+          if (!validated.success) {
+            return {
+              httpStatus: 409,
+              error: validated.error,
+            };
+          }
+
+          validatedContent = validated.content;
+        }
+
+        // --------------------------------------
+        // SUBMIT DRAFT
+        // --------------------------------------
 
         if (action === "submit") {
           if (submission.status !== "draft") {
@@ -292,16 +346,29 @@ const admin = await requireAdmin();
             };
           }
 
+          // Only the original submitter may submit
+          // their draft to the review queue.
+          if (submission.submittedBy !== admin.uid) {
+            return {
+              httpStatus: 403,
+              error:
+                "You cannot submit another user's draft.",
+            };
+          }
+
+          const now = FieldValue.serverTimestamp();
+
           transaction.update(submissionRef, {
             status: "review",
-            updatedAt: FieldValue.serverTimestamp(),
+            updatedAt: now,
           });
 
           transaction.create(auditRef, {
             action: "cms_review_requested",
             actorUid: admin.uid,
             submissionId: id,
-            createdAt: FieldValue.serverTimestamp(),
+            operation,
+            createdAt: now,
           });
 
           return {
@@ -312,6 +379,10 @@ const admin = await requireAdmin();
           };
         }
 
+        // --------------------------------------
+        // REVIEW VALIDATION
+        // --------------------------------------
+
         if (submission.status !== "review") {
           return {
             httpStatus: 409,
@@ -320,29 +391,47 @@ const admin = await requireAdmin();
           };
         }
 
+        if (
+          typeof submission.submittedBy !== "string" ||
+          submission.submittedBy.length === 0
+        ) {
+          return {
+            httpStatus: 409,
+            error: "Submission owner is missing.",
+          };
+        }
+
+        // Separation of duties.
+        if (submission.submittedBy === admin.uid) {
+          return {
+            httpStatus: 403,
+            error:
+              "You cannot review your own submission.",
+          };
+        }
+
+        // --------------------------------------
+        // REJECT
+        // --------------------------------------
+
         if (action === "reject") {
-          if (submission.submittedBy === admin.uid) {
-            return {
-              httpStatus: 403,
-              error:
-                "You cannot review your own submission.",
-            };
-          }
+          const now = FieldValue.serverTimestamp();
 
           transaction.update(submissionRef, {
             status: "rejected",
             reviewNote,
             reviewedBy: admin.uid,
-            reviewedAt: FieldValue.serverTimestamp(),
-            updatedAt: FieldValue.serverTimestamp(),
+            reviewedAt: now,
+            updatedAt: now,
           });
 
           transaction.create(auditRef, {
             action: "cms_submission_rejected",
             actorUid: admin.uid,
             submissionId: id,
+            operation,
             reviewNote,
-            createdAt: FieldValue.serverTimestamp(),
+            createdAt: now,
           });
 
           return {
@@ -353,38 +442,20 @@ const admin = await requireAdmin();
           };
         }
 
+        // --------------------------------------
         // APPROVE
-
-        if (submission.submittedBy === admin.uid) {
-          return {
-            httpStatus: 403,
-            error:
-              "You cannot approve your own submission.",
-          };
-        }
-
-        const kind = submission.kind;
-        const operation = submission.operation;
-
-        if (
-          operation !== "create" &&
-          operation !== "update"
-        ) {
-          return {
-            httpStatus: 409,
-            error: "Invalid submission operation.",
-          };
-        }
+        // --------------------------------------
 
         const collectionName =
           CMS_COLLECTIONS[kind];
 
         let targetId: string;
 
-        if (operation === "update") {
-          if (
-            !isCMSDocumentId(submission.targetId)
-          ) {
+        if (
+          operation === "update" ||
+          operation === "delete"
+        ) {
+          if (!isCMSDocumentId(submission.targetId)) {
             return {
               httpStatus: 409,
               error: "Invalid target ID.",
@@ -402,7 +473,11 @@ const admin = await requireAdmin();
           .collection(collectionName)
           .doc(targetId);
 
-        if (operation === "update") {
+        // Read target before performing any writes.
+        if (
+          operation === "update" ||
+          operation === "delete"
+        ) {
           const targetSnapshot =
             await transaction.get(targetRef);
 
@@ -424,7 +499,7 @@ const admin = await requireAdmin();
             return {
               httpStatus: 409,
               error:
-                "Published content changed. Submit a fresh revision.",
+                "Published content changed. Submit a fresh review request.",
             };
           }
         }
@@ -432,22 +507,39 @@ const admin = await requireAdmin();
         const now = FieldValue.serverTimestamp();
 
         if (operation === "create") {
+          if (!validatedContent) {
+            return {
+              httpStatus: 409,
+              error: "Invalid content.",
+            };
+          }
+
           transaction.create(targetRef, {
-            ...validated.content,
+            ...validatedContent,
             status: "published",
             createdAt: now,
             updatedAt: now,
             publishedAt: now,
             publishedBy: admin.uid,
           });
-        } else {
+        } else if (operation === "update") {
+          if (!validatedContent) {
+            return {
+              httpStatus: 409,
+              error: "Invalid content.",
+            };
+          }
+
           transaction.update(targetRef, {
-            ...validated.content,
+            ...validatedContent,
             status: "published",
             updatedAt: now,
             publishedAt: now,
             publishedBy: admin.uid,
           });
+        } else {
+          // DELETE: Remove only after reviewer approval.
+          transaction.delete(targetRef);
         }
 
         transaction.update(submissionRef, {
@@ -459,7 +551,10 @@ const admin = await requireAdmin();
         });
 
         transaction.create(auditRef, {
-          action: "cms_submission_approved",
+          action:
+            operation === "delete"
+              ? "cms_content_deletion_approved"
+              : "cms_submission_approved",
           actorUid: admin.uid,
           submissionId: id,
           collection: collectionName,
@@ -472,9 +567,14 @@ const admin = await requireAdmin();
           httpStatus: 200,
           success: true,
           submissionStatus: "approved",
-          publishedId: targetId,
+          publishedId:
+            operation === "delete" ? null : targetId,
+          deletedId:
+            operation === "delete" ? targetId : null,
           message:
-            "Content approved and published.",
+            operation === "delete"
+              ? "Deletion approved. Content removed."
+              : "Content approved and published.",
         };
       }
     );
