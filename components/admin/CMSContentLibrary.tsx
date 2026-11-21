@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
+
 import {
   AlertTriangle,
   CheckCircle2,
@@ -43,18 +44,39 @@ type CMSResponse = {
   limitPerCollection: number;
 };
 
+type SubmissionResponse = {
+  success: boolean;
+  submissionId: string;
+  status: string;
+  message: string;
+};
+
 type Notice = {
   type: "success" | "error";
   message: string;
 };
 
-const PROF_OPTIONS: { value: Prof; label: string }[] = [
+type Props = {
+  refreshKey?: number;
+  onReviewRequested?: () => void;
+};
+
+const PROF_OPTIONS: {
+  value: Prof;
+  label: string;
+}[] = [
   { value: "prof-1", label: "1st Professional" },
   { value: "prof-2", label: "2nd Professional" },
-  { value: "prof-3", label: "3rd / Final Professional" },
+  {
+    value: "prof-3",
+    label: "3rd / Final Professional",
+  },
 ];
 
-const DOC_OPTIONS: { value: DocType; label: string }[] = [
+const DOC_OPTIONS: {
+  value: DocType;
+  label: string;
+}[] = [
   { value: "notes", label: "Study Notes" },
   { value: "past_paper", label: "Past Paper" },
   { value: "template", label: "Template" },
@@ -127,61 +149,73 @@ function itemCategory(item: CMSItem) {
 
 export default function CMSContentLibrary({
   refreshKey = 0,
-}: {
-  refreshKey?: number;
-}) {
+  onReviewRequested,
+}: Props) {
   const [items, setItems] = useState<CMSItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState<Notice | null>(null);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | Kind>("all");
 
-  const [editing, setEditing] = useState<CMSItem | null>(
-    null
-  );
+  const [notice, setNotice] =
+    useState<Notice | null>(null);
+
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] =
+    useState<"all" | Kind>("all");
+
+  const [editing, setEditing] =
+    useState<CMSItem | null>(null);
+
   const [editTitle, setEditTitle] = useState("");
   const [editUrl, setEditUrl] = useState("");
-  const [editProf, setEditProf] = useState<Prof>("prof-2");
-  const [editType, setEditType] = useState<DocType>("notes");
+  const [editProf, setEditProf] =
+    useState<Prof>("prof-2");
+  const [editType, setEditType] =
+    useState<DocType>("notes");
 
-  const loadContent = useCallback(async () => {
-    setLoading(true);
+  const loadContent = useCallback(
+    async (clearNotice = false) => {
+      setLoading(true);
 
-    try {
-      const result = await request<CMSResponse>("GET");
+      try {
+        const result =
+          await request<CMSResponse>("GET");
 
-      if (
-        !result.success ||
-        !Array.isArray(result.videos) ||
-        !Array.isArray(result.documents)
-      ) {
-        throw new Error("Invalid CMS response.");
+        if (
+          !result.success ||
+          !Array.isArray(result.videos) ||
+          !Array.isArray(result.documents)
+        ) {
+          throw new Error("Invalid CMS response.");
+        }
+
+        const combined = [
+          ...result.videos,
+          ...result.documents,
+        ].sort(
+          (a, b) =>
+            new Date(b.createdAt ?? 0).getTime() -
+            new Date(a.createdAt ?? 0).getTime()
+        );
+
+        setItems(combined);
+
+        if (clearNotice) {
+          setNotice(null);
+        }
+      } catch (error) {
+        setNotice({
+          type: "error",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unable to load content.",
+        });
+      } finally {
+        setLoading(false);
       }
-
-      const combined = [
-        ...result.videos,
-        ...result.documents,
-      ].sort(
-        (a, b) =>
-          new Date(b.createdAt ?? 0).getTime() -
-          new Date(a.createdAt ?? 0).getTime()
-      );
-
-      setItems(combined);
-      setNotice(null);
-    } catch (error) {
-      setNotice({
-        type: "error",
-        message:
-          error instanceof Error
-            ? error.message
-            : "Unable to load content.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   useEffect(() => {
     void loadContent();
@@ -220,23 +254,34 @@ export default function CMSContentLibrary({
               type: editType,
             };
 
-      await request("PATCH", payload);
+      const result =
+        await request<SubmissionResponse>(
+          "PATCH",
+          payload
+        );
+
+      if (!result.success) {
+        throw new Error(
+          "Unable to submit changes for review."
+        );
+      }
 
       setEditing(null);
 
-      await loadContent();
-
       setNotice({
         type: "success",
-        message: "Changes submitted for review. Published content remains unchanged.",
+        message:
+          "Changes submitted for review. Published content remains unchanged until approval.",
       });
+
+      onReviewRequested?.();
     } catch (error) {
       setNotice({
         type: "error",
         message:
           error instanceof Error
             ? error.message
-            : "Unable to update content.",
+            : "Unable to submit changes.",
       });
     } finally {
       setBusy(false);
@@ -247,7 +292,9 @@ export default function CMSContentLibrary({
     if (busy) return;
 
     const confirmed = window.confirm(
-      `Permanently delete "${item.title}"?\n\nThis action cannot be undone.`
+      `Request removal of "${item.title}"?\n\n` +
+        "This will submit a deletion request for independent review.\n\n" +
+        "The published content will remain available until an authorized reviewer approves the request."
     );
 
     if (!confirmed) return;
@@ -256,24 +303,35 @@ export default function CMSContentLibrary({
     setNotice(null);
 
     try {
-      await request("DELETE", {
-        id: item.id,
-        kind: item.kind,
-      });
+      const result =
+        await request<SubmissionResponse>(
+          "DELETE",
+          {
+            id: item.id,
+            kind: item.kind,
+          }
+        );
 
-      await loadContent();
+      if (!result.success) {
+        throw new Error(
+          "Unable to submit deletion request."
+        );
+      }
 
       setNotice({
         type: "success",
-        message: "Content deleted successfully.",
+        message:
+          "Deletion submitted for review. Content remains published until approval.",
       });
+
+      onReviewRequested?.();
     } catch (error) {
       setNotice({
         type: "error",
         message:
           error instanceof Error
             ? error.message
-            : "Unable to delete content.",
+            : "Unable to request deletion.",
       });
     } finally {
       setBusy(false);
@@ -291,7 +349,9 @@ export default function CMSContentLibrary({
       !term ||
       item.title.toLowerCase().includes(term) ||
       item.url.toLowerCase().includes(term) ||
-      itemCategory(item).toLowerCase().includes(term)
+      itemCategory(item)
+        .toLowerCase()
+        .includes(term)
     );
   });
 
@@ -300,23 +360,30 @@ export default function CMSContentLibrary({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="flex items-center gap-2 text-lg font-bold text-white">
-            <DatabaseIcon />
+            <Film
+              size={19}
+              className="text-emerald-400"
+            />
             Published Content Library
           </h3>
+
           <p className="mt-1 text-sm text-zinc-500">
-            View, edit, and remove existing CMS records.
+            Manage published resources through
+            independent review and approval.
           </p>
         </div>
 
         <button
           type="button"
-          onClick={() => void loadContent()}
+          onClick={() => void loadContent(true)}
           disabled={loading || busy}
           className={buttonClass}
         >
           <RefreshCw
             size={16}
-            className={loading ? "animate-spin" : ""}
+            className={
+              loading ? "animate-spin" : ""
+            }
           />
           Refresh
         </button>
@@ -346,9 +413,12 @@ export default function CMSContentLibrary({
             size={17}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
           />
+
           <input
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) =>
+              setSearch(event.target.value)
+            }
             placeholder="Search published content..."
             className={`${inputClass} pl-10`}
           />
@@ -357,26 +427,34 @@ export default function CMSContentLibrary({
         <select
           value={filter}
           onChange={(event) =>
-            setFilter(event.target.value as "all" | Kind)
+            setFilter(
+              event.target.value as "all" | Kind
+            )
           }
           className={inputClass}
         >
           <option value="all">All Content</option>
           <option value="video">Video Reels</option>
-          <option value="document">Study Assets</option>
+          <option value="document">
+            Study Assets
+          </option>
         </select>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center gap-3 py-12 text-emerald-400">
-          <Loader2 size={20} className="animate-spin" />
+          <Loader2
+            size={20}
+            className="animate-spin"
+          />
           Loading content...
         </div>
       ) : (
         <>
           <p className="mb-4 text-xs text-zinc-500">
-            Showing {filteredItems.length} of {items.length} loaded records.
-            The API currently returns up to 50 per collection.
+            Showing {filteredItems.length} of{" "}
+            {items.length} loaded records.
+            The API returns up to 50 per collection.
           </p>
 
           <div className="space-y-3">
@@ -401,7 +479,8 @@ export default function CMSContentLibrary({
                     </h4>
 
                     <p className="mt-2 text-xs text-zinc-500">
-                      Created: {formatDate(item.createdAt)}
+                      Created:{" "}
+                      {formatDate(item.createdAt)}
                     </p>
 
                     <a
@@ -421,7 +500,9 @@ export default function CMSContentLibrary({
                     <button
                       type="button"
                       disabled={busy}
-                      onClick={() => beginEdit(item)}
+                      onClick={() =>
+                        beginEdit(item)
+                      }
                       className={buttonClass}
                       aria-label={`Edit ${item.title}`}
                     >
@@ -432,12 +513,14 @@ export default function CMSContentLibrary({
                     <button
                       type="button"
                       disabled={busy}
-                      onClick={() => void deleteItem(item)}
-                      className="inline-flex items-center gap-2 rounded-xl border border-red-900/60 px-4 py-2.5 text-sm text-red-400 transition hover:bg-red-950/40 disabled:opacity-40"
-                      aria-label={`Delete ${item.title}`}
+                      onClick={() =>
+                        void deleteItem(item)
+                      }
+                      className="inline-flex items-center gap-2 rounded-xl border border-red-900/60 px-4 py-2.5 text-sm text-red-400 transition hover:bg-red-950/40 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label={`Request deletion of ${item.title}`}
                     >
                       <Trash2 size={15} />
-                      Delete
+                      Request Removal
                     </button>
                   </div>
                 </div>
@@ -466,13 +549,18 @@ export default function CMSContentLibrary({
                 id="cms-edit-title"
                 className="text-lg font-bold text-white"
               >
-                Edit {editing.kind === "video" ? "Reel" : "Study Asset"}
+                Edit{" "}
+                {editing.kind === "video"
+                  ? "Reel"
+                  : "Study Asset"}
               </h3>
 
               <button
                 type="button"
                 disabled={busy}
-                onClick={() => setEditing(null)}
+                onClick={() =>
+                  setEditing(null)
+                }
                 aria-label="Close editor"
                 className="text-zinc-400 hover:text-white"
               >
@@ -495,22 +583,27 @@ export default function CMSContentLibrary({
                   >
                     Professional Year
                   </label>
+
                   <select
                     id="edit-prof"
                     value={editProf}
                     onChange={(event) =>
-                      setEditProf(event.target.value as Prof)
+                      setEditProf(
+                        event.target.value as Prof
+                      )
                     }
                     className={inputClass}
                   >
-                    {PROF_OPTIONS.map((option) => (
-                      <option
-                        key={option.value}
-                        value={option.value}
-                      >
-                        {option.label}
-                      </option>
-                    ))}
+                    {PROF_OPTIONS.map(
+                      (option) => (
+                        <option
+                          key={option.value}
+                          value={option.value}
+                        >
+                          {option.label}
+                        </option>
+                      )
+                    )}
                   </select>
                 </div>
               )}
@@ -522,6 +615,7 @@ export default function CMSContentLibrary({
                 >
                   Title
                 </label>
+
                 <input
                   id="edit-title"
                   required
@@ -529,7 +623,9 @@ export default function CMSContentLibrary({
                   maxLength={160}
                   value={editTitle}
                   onChange={(event) =>
-                    setEditTitle(event.target.value)
+                    setEditTitle(
+                      event.target.value
+                    )
                   }
                   className={inputClass}
                 />
@@ -542,6 +638,7 @@ export default function CMSContentLibrary({
                 >
                   Resource URL
                 </label>
+
                 <input
                   id="edit-url"
                   type="url"
@@ -549,7 +646,9 @@ export default function CMSContentLibrary({
                   maxLength={2048}
                   value={editUrl}
                   onChange={(event) =>
-                    setEditUrl(event.target.value)
+                    setEditUrl(
+                      event.target.value
+                    )
                   }
                   className={inputClass}
                 />
@@ -563,31 +662,45 @@ export default function CMSContentLibrary({
                   >
                     Resource Category
                   </label>
+
                   <select
                     id="edit-type"
                     value={editType}
                     onChange={(event) =>
-                      setEditType(event.target.value as DocType)
+                      setEditType(
+                        event.target.value as DocType
+                      )
                     }
                     className={inputClass}
                   >
-                    {DOC_OPTIONS.map((option) => (
-                      <option
-                        key={option.value}
-                        value={option.value}
-                      >
-                        {option.label}
-                      </option>
-                    ))}
+                    {DOC_OPTIONS.map(
+                      (option) => (
+                        <option
+                          key={option.value}
+                          value={option.value}
+                        >
+                          {option.label}
+                        </option>
+                      )
+                    )}
                   </select>
                 </div>
               )}
+
+              <p className="text-xs text-zinc-500">
+                Changes will be submitted for
+                independent review. The published
+                version stays unchanged until
+                approval.
+              </p>
 
               <div className="flex flex-wrap justify-end gap-3 pt-2">
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => setEditing(null)}
+                  onClick={() =>
+                    setEditing(null)
+                  }
                   className={buttonClass}
                 >
                   Cancel
@@ -606,7 +719,7 @@ export default function CMSContentLibrary({
                   ) : (
                     <Save size={16} />
                   )}
-                  Save Changes
+                  Submit for Review
                 </button>
               </div>
             </form>
@@ -615,8 +728,4 @@ export default function CMSContentLibrary({
       )}
     </section>
   );
-}
-
-function DatabaseIcon() {
-  return <Film size={19} className="text-emerald-400" />;
 }
