@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import Link from "next/link";
+import CMSReviewQueue from "../../components/admin/CMSReviewQueue";
 import CMSContentLibrary from "@/components/admin/CMSContentLibrary";
 import {
   Activity,
