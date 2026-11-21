@@ -19,9 +19,9 @@ export async function requireCMSReviewer() {
     user.customClaims?.reviewer !== true
   ) {
     throw new AdminAuthError(
-      "Reviewer access required.",
-      403
-    );
+  403,
+  "Reviewer access required."
+);
   }
 
   return admin;
