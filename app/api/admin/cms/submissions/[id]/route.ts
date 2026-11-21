@@ -27,6 +27,8 @@ import {
   validateCMSContent,
 } from "../../../../../../lib/cms/validation";
 
+import { requireCMSReviewer } from "../../../../../../lib/auth/cms-reviewer";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -151,8 +153,15 @@ export async function PATCH(
   context: Context
 ) {
   try {
-    const admin = await requireAdmin();
+const admin = await requireAdmin();
 
+    if (
+  data.action === "approve" ||
+  data.action === "reject"
+) {
+  await requireCMSReviewer();
+    }
+    
     if (!checkOrigin(request)) {
       return respond(
         { error: "Invalid request origin." },
