@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import Link from "next/link";
-import CMSReviewQueue from "../../components/admin/CMSReviewQueue";
+import CMSReviewQueue from "@/components/admin/CMSReviewQueue";
 import CMSContentLibrary from "@/components/admin/CMSContentLibrary";
 import {
   Activity,
@@ -66,16 +66,8 @@ type AnalyticsResponse = {
 };
 
 type CMSKind = "video" | "document";
-
-type BamsProf =
-  | "prof-1"
-  | "prof-2"
-  | "prof-3";
-
-type DocumentType =
-  | "past_paper"
-  | "notes"
-  | "template";
+type BamsProf = "prof-1" | "prof-2" | "prof-3";
+type DocumentType = "past_paper" | "notes" | "template";
 
 type Notice = {
   type: "success" | "error";
@@ -88,18 +80,9 @@ const PROF_OPTIONS: {
   value: BamsProf;
   label: string;
 }[] = [
-  {
-    value: "prof-1",
-    label: "BAMS 1st Professional",
-  },
-  {
-    value: "prof-2",
-    label: "BAMS 2nd Professional",
-  },
-  {
-    value: "prof-3",
-    label: "BAMS 3rd / Final Professional",
-  },
+  { value: "prof-1", label: "BAMS 1st Professional" },
+  { value: "prof-2", label: "BAMS 2nd Professional" },
+  { value: "prof-3", label: "BAMS 3rd / Final Professional" },
 ];
 
 async function apiRequest<T>(
@@ -118,9 +101,7 @@ async function apiRequest<T>(
     },
   });
 
-  const result: unknown = await response
-    .json()
-    .catch(() => null);
+  const result: unknown = await response.json().catch(() => null);
 
   if (!response.ok) {
     const message =
@@ -139,9 +120,7 @@ async function apiRequest<T>(
 
 function formatDate(value: string | null) {
   if (!value) return "Unknown";
-
   const date = new Date(value);
-
   return Number.isNaN(date.getTime())
     ? "Unknown"
     : date.toLocaleString();
@@ -177,15 +156,11 @@ function SectionHeading({
       <div className="rounded-xl border border-emerald-800/60 bg-emerald-950/50 p-3 text-emerald-400">
         <Icon size={20} />
       </div>
-
       <div>
         <h2 className="text-lg font-bold tracking-wide text-white">
           {title}
         </h2>
-
-        <p className="mt-1 text-sm text-zinc-400">
-          {subtitle}
-        </p>
+        <p className="mt-1 text-sm text-zinc-400">{subtitle}</p>
       </div>
     </div>
   );
@@ -194,113 +169,51 @@ function SectionHeading({
 function Spinner() {
   return (
     <div className="flex min-h-48 items-center justify-center gap-3 text-emerald-400">
-      <Loader2
-        className="animate-spin"
-        size={22}
-      />
-
-      <span className="text-sm">
-        Loading secure data...
-      </span>
+      <Loader2 className="animate-spin" size={22} />
+      <span className="text-sm">Loading secure data...</span>
     </div>
   );
 }
 
 export default function AdminPage() {
   const [tab, setTab] = useState<Tab>("users");
+  const [authorized, setAuthorized] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [accessError, setAccessError] = useState("");
+  const [notice, setNotice] = useState<Notice | null>(null);
 
-  const [authorized, setAuthorized] =
-    useState(false);
-
-  const [checking, setChecking] =
-    useState(true);
-
-  const [accessError, setAccessError] =
-    useState("");
-
-  const [notice, setNotice] =
-    useState<Notice | null>(null);
-
-  // ------------------------------------------
   // USER MANAGEMENT
-  // ------------------------------------------
-
-  const [users, setUsers] =
-    useState<AdminUser[]>([]);
-
-  const [usersLoading, setUsersLoading] =
-    useState(false);
-
-  const [usersLoaded, setUsersLoaded] =
-    useState(false);
-
-  const [usersError, setUsersError] =
-    useState("");
-
-  const [search, setSearch] =
-    useState("");
-
-  const [cursor, setCursor] =
-    useState<string | null>(null);
-
-  const [nextCursor, setNextCursor] =
-    useState<string | null>(null);
-
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [usersLoaded, setUsersLoaded] = useState(false);
+  const [usersError, setUsersError] = useState("");
+  const [search, setSearch] = useState("");
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [cursorHistory, setCursorHistory] =
     useState<Array<string | null>>([]);
-
-  const [page, setPage] =
-    useState(1);
-
+  const [page, setPage] = useState(1);
   const [updatingUser, setUpdatingUser] =
     useState<string | null>(null);
 
-  // ------------------------------------------
   // ANALYTICS
-  // ------------------------------------------
-
   const [analytics, setAnalytics] =
     useState<AnalyticsResponse | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsLoaded, setAnalyticsLoaded] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState("");
 
-  const [analyticsLoading, setAnalyticsLoading] =
-    useState(false);
-
-  const [analyticsLoaded, setAnalyticsLoaded] =
-    useState(false);
-
-  const [analyticsError, setAnalyticsError] =
-    useState("");
-
-  // ------------------------------------------
-  // CMS PUBLISHING
-  // ------------------------------------------
-
-  const [cmsKind, setCmsKind] =
-    useState<CMSKind>("video");
-
-  const [cmsProf, setCmsProf] =
-    useState<BamsProf>("prof-2");
-
-  const [cmsTitle, setCmsTitle] =
-    useState("");
-
-  const [cmsUrl, setCmsUrl] =
-    useState("");
-
+  // CMS SUBMISSIONS
+  const [cmsKind, setCmsKind] = useState<CMSKind>("video");
+  const [cmsProf, setCmsProf] = useState<BamsProf>("prof-2");
+  const [cmsTitle, setCmsTitle] = useState("");
+  const [cmsUrl, setCmsUrl] = useState("");
   const [cmsDocType, setCmsDocType] =
     useState<DocumentType>("notes");
+  const [publishing, setPublishing] = useState(false);
+  const [cmsRefreshKey, setCmsRefreshKey] = useState(0);
 
-  const [publishing, setPublishing] =
-    useState(false);
-
-  // Refresh Content Library after publishing.
-  const [cmsRefreshKey, setCmsRefreshKey] =
-    useState(0);
-
-  // ------------------------------------------
   // ADMINISTRATOR VERIFICATION
-  // ------------------------------------------
-
   const verifyAccess = useCallback(async () => {
     setChecking(true);
     setAccessError("");
@@ -311,10 +224,7 @@ export default function AdminPage() {
         admin: boolean;
       }>("/api/admin/session");
 
-      if (
-        !result.authenticated ||
-        !result.admin
-      ) {
+      if (!result.authenticated || !result.admin) {
         throw new Error(
           "Administrator authorization required."
         );
@@ -323,7 +233,6 @@ export default function AdminPage() {
       setAuthorized(true);
     } catch (error) {
       setAuthorized(false);
-
       setAccessError(
         error instanceof Error
           ? error.message
@@ -338,10 +247,7 @@ export default function AdminPage() {
     void verifyAccess();
   }, [verifyAccess]);
 
-  // ------------------------------------------
   // LOAD USERS
-  // ------------------------------------------
-
   const loadUsers = useCallback(
     async (selectedCursor: string | null) => {
       setUsersLoading(true);
@@ -366,11 +272,7 @@ export default function AdminPage() {
             ? result.users
             : []
         );
-
-        setNextCursor(
-          result.nextCursor ?? null
-        );
-
+        setNextCursor(result.nextCursor ?? null);
         setUsersLoaded(true);
       } catch (error) {
         setUsersError(
@@ -385,10 +287,7 @@ export default function AdminPage() {
     []
   );
 
-  // ------------------------------------------
   // LOAD ANALYTICS
-  // ------------------------------------------
-
   const loadAnalytics = useCallback(async () => {
     setAnalyticsLoading(true);
     setAnalyticsError("");
@@ -412,24 +311,15 @@ export default function AdminPage() {
     }
   }, []);
 
-  // ------------------------------------------
   // LAZY DATA LOADING
-  // ------------------------------------------
-
   useEffect(() => {
     if (!authorized) return;
 
-    if (
-      tab === "users" &&
-      !usersLoaded
-    ) {
+    if (tab === "users" && !usersLoaded) {
       void loadUsers(cursor);
     }
 
-    if (
-      tab === "analytics" &&
-      !analyticsLoaded
-    ) {
+    if (tab === "analytics" && !analyticsLoaded) {
       void loadAnalytics();
     }
   }, [
@@ -442,23 +332,15 @@ export default function AdminPage() {
     loadAnalytics,
   ]);
 
-  // ------------------------------------------
   // UPDATE PREMIUM
-  // ------------------------------------------
-
-  async function changePremium(
-    user: AdminUser
-  ) {
+  async function changePremium(user: AdminUser) {
     if (updatingUser) return;
 
-    const newValue =
-      !Boolean(user.isPremium);
+    const newValue = !Boolean(user.isPremium);
 
     const confirmed = window.confirm(
       `${newValue ? "Activate" : "Deactivate"} premium access for ${
-        user.email ||
-        user.displayName ||
-        user.id
+        user.email || user.displayName || user.id
       }?`
     );
 
@@ -468,32 +350,25 @@ export default function AdminPage() {
     setNotice(null);
 
     try {
-      await apiRequest(
-        "/api/admin/users",
-        {
-          method: "PATCH",
-          body: JSON.stringify({
-            userId: user.id,
-            isPremium: newValue,
-          }),
-        }
-      );
+      await apiRequest("/api/admin/users", {
+        method: "PATCH",
+        body: JSON.stringify({
+          userId: user.id,
+          isPremium: newValue,
+        }),
+      });
 
       setUsers((current) =>
         current.map((entry) =>
           entry.id === user.id
-            ? {
-                ...entry,
-                isPremium: newValue,
-              }
+            ? { ...entry, isPremium: newValue }
             : entry
         )
       );
 
       setNotice({
         type: "success",
-        message:
-          "Premium access updated successfully.",
+        message: "Premium access updated successfully.",
       });
     } catch (error) {
       setNotice({
@@ -508,10 +383,7 @@ export default function AdminPage() {
     }
   }
 
-  // ------------------------------------------
-  // PUBLISH CMS CONTENT
-  // ------------------------------------------
-
+  // SUBMIT CMS CONTENT FOR REVIEW
   async function publishContent(
     event: FormEvent<HTMLFormElement>
   ) {
@@ -530,42 +402,31 @@ export default function AdminPage() {
               title: cmsTitle.trim(),
               url: cmsUrl.trim(),
               prof: cmsProf,
+              operation: "create",
+              status: "review",
             }
           : {
               kind: "document",
               title: cmsTitle.trim(),
               url: cmsUrl.trim(),
               type: cmsDocType,
+              operation: "create",
+              status: "review",
             };
 
-      await apiRequest(
-        "/api/admin/cms",
-        {
-          method: "POST",
-          body: JSON.stringify(payload),
-        }
-      );
+      await apiRequest("/api/admin/cms/submissions", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
 
-      // Reload the published content library.
-      setCmsRefreshKey(
-        (value) => value + 1
-      );
-
+      setCmsRefreshKey((previous) => previous + 1);
       setCmsTitle("");
       setCmsUrl("");
-
-      const destination =
-        PROF_OPTIONS.find(
-          (item) =>
-            item.value === cmsProf
-        )?.label ?? cmsProf;
 
       setNotice({
         type: "success",
         message:
-          cmsKind === "video"
-            ? `Reel published successfully for ${destination}.`
-            : "Study asset published successfully.",
+          "Content submitted for review. It will become public only after approval.",
       });
     } catch (error) {
       setNotice({
@@ -573,99 +434,60 @@ export default function AdminPage() {
         message:
           error instanceof Error
             ? error.message
-            : "Publishing failed.",
+            : "Submission failed.",
       });
     } finally {
       setPublishing(false);
     }
   }
 
-  // ------------------------------------------
   // USER PAGINATION
-  // ------------------------------------------
-
   function goNext() {
-    if (
-      !nextCursor ||
-      usersLoading
-    ) {
-      return;
-    }
+    if (!nextCursor || usersLoading) return;
 
     setCursorHistory((history) => [
       ...history,
       cursor,
     ]);
-
     setCursor(nextCursor);
-
-    setPage(
-      (value) => value + 1
-    );
-
+    setPage((value) => value + 1);
     void loadUsers(nextCursor);
   }
 
   function goPrevious() {
-    if (
-      !cursorHistory.length ||
-      usersLoading
-    ) {
-      return;
-    }
+    if (!cursorHistory.length || usersLoading) return;
 
     const previous =
-      cursorHistory[
-        cursorHistory.length - 1
-      ];
+      cursorHistory[cursorHistory.length - 1];
 
     setCursorHistory((history) =>
       history.slice(0, -1)
     );
-
     setCursor(previous);
-
-    setPage(
-      (value) =>
-        Math.max(1, value - 1)
-    );
-
+    setPage((value) => Math.max(1, value - 1));
     void loadUsers(previous);
   }
 
-  // ------------------------------------------
   // DERIVED USER DATA
-  // ------------------------------------------
+  const filteredUsers = users.filter((user) => {
+    const query = search.trim().toLowerCase();
+    if (!query) return true;
 
-  const filteredUsers = users.filter(
-    (user) => {
-      const query =
-        search.trim().toLowerCase();
-
-      if (!query) return true;
-
-      return [
-        user.displayName,
-        user.email,
-        user.id,
-        user.role,
-      ]
-        .filter(Boolean)
-        .some((value) =>
-          String(value)
-            .toLowerCase()
-            .includes(query)
-        );
-    }
-  );
+    return [
+      user.displayName,
+      user.email,
+      user.id,
+      user.role,
+    ]
+      .filter(Boolean)
+      .some((value) =>
+        String(value).toLowerCase().includes(query)
+      );
+  });
 
   const premiumCount = users.filter(
     (user) => user.isPremium
   ).length;
-
-  // ------------------------------------------
-  // SHARED STYLES
-  // ------------------------------------------
 
   const inputClass =
     "w-full rounded-xl border border-emerald-900/60 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-emerald-500";
@@ -673,16 +495,12 @@ export default function AdminPage() {
   const buttonClass =
     "inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-700/60 bg-emerald-950/60 px-4 py-2.5 text-sm font-medium text-emerald-300 transition hover:bg-emerald-900/60 disabled:cursor-not-allowed disabled:opacity-40";
 
-  // ------------------------------------------
   // VERIFYING SCREEN
-  // ------------------------------------------
-
   if (checking) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#030807] text-emerald-400">
         <div className="text-center">
           <Shield className="mx-auto mb-5 h-12 w-12 animate-pulse" />
-
           <p className="font-mono text-sm tracking-[0.2em]">
             VERIFYING ADMIN CLEARANCE
           </p>
@@ -691,41 +509,29 @@ export default function AdminPage() {
     );
   }
 
-  // ------------------------------------------
   // ACCESS DENIED SCREEN
-  // ------------------------------------------
-
   if (!authorized) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#030807] px-4 text-white">
         <div className="w-full max-w-md rounded-2xl border border-red-900/50 bg-[#110909] p-8 text-center">
           <LockKeyhole className="mx-auto mb-5 h-12 w-12 text-red-400" />
-
           <h1 className="text-2xl font-bold">
             ACCESS RESTRICTED
           </h1>
-
           <p className="mt-3 text-sm text-zinc-400">
             {accessError ||
               "Administrator clearance required."}
           </p>
-
           <div className="mt-6 flex justify-center gap-3">
             <button
               type="button"
-              onClick={() =>
-                void verifyAccess()
-              }
+              onClick={() => void verifyAccess()}
               className={buttonClass}
             >
               <RefreshCw size={16} />
               Retry
             </button>
-
-            <Link
-              href="/profile"
-              className={buttonClass}
-            >
+            <Link href="/profile" className={buttonClass}>
               Return
             </Link>
           </div>
@@ -734,10 +540,7 @@ export default function AdminPage() {
     );
   }
 
-  // ------------------------------------------
   // BATCOMPUTER MAIN INTERFACE
-  // ------------------------------------------
-
   return (
     <main className="min-h-screen bg-[#030807] text-zinc-200">
       <div
@@ -749,21 +552,16 @@ export default function AdminPage() {
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-emerald-900/40 pb-6">
           <div className="flex items-center gap-4">
             <div className="rounded-2xl border border-emerald-700/50 bg-emerald-950/50 p-4">
-              <Terminal
-                size={28}
-                className="text-emerald-400"
-              />
+              <Terminal size={28} className="text-emerald-400" />
             </div>
 
             <div>
               <p className="font-mono text-[10px] tracking-[0.3em] text-emerald-500">
                 ATREYA MED / COMMAND CENTER
               </p>
-
               <h1 className="mt-1 text-2xl font-black tracking-wider text-white sm:text-3xl">
                 BATCOMPUTER
               </h1>
-
               <p className="mt-1 flex items-center gap-2 text-xs text-emerald-400">
                 <ShieldCheck size={14} />
                 ADMINISTRATOR AUTHORIZED
@@ -771,17 +569,13 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <Link
-            href="/profile"
-            className={buttonClass}
-          >
+          <Link href="/profile" className={buttonClass}>
             <ArrowLeft size={16} />
             Back to Profile
           </Link>
         </header>
 
         {/* MAIN NAVIGATION */}
-
         <nav
           aria-label="Admin sections"
           className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3"
@@ -806,8 +600,7 @@ export default function AdminPage() {
             ] as const
           ).map((item) => {
             const Icon = item.icon;
-            const active =
-              tab === item.id;
+            const active = tab === item.id;
 
             return (
               <button
@@ -832,7 +625,6 @@ export default function AdminPage() {
         </nav>
 
         {/* GLOBAL NOTIFICATION */}
-
         {notice && (
           <div
             role="status"
@@ -848,15 +640,11 @@ export default function AdminPage() {
               ) : (
                 <AlertTriangle size={18} />
               )}
-
               {notice.message}
             </div>
-
             <button
               type="button"
-              onClick={() =>
-                setNotice(null)
-              }
+              onClick={() => setNotice(null)}
               aria-label="Dismiss notification"
             >
               <X size={17} />
@@ -865,7 +653,6 @@ export default function AdminPage() {
         )}
 
         {/* USER PROTOCOLS */}
-
         {tab === "users" && (
           <Panel>
             <SectionHeading
@@ -879,7 +666,6 @@ export default function AdminPage() {
                 <p className="text-xs text-zinc-500">
                   Accounts on current page
                 </p>
-
                 <p className="mt-2 text-2xl font-bold text-white">
                   {users.length}
                 </p>
@@ -889,7 +675,6 @@ export default function AdminPage() {
                 <p className="text-xs text-zinc-500">
                   Premium on current page
                 </p>
-
                 <p className="mt-2 flex items-center gap-2 text-2xl font-bold text-amber-400">
                   <Crown size={20} />
                   {premiumCount}
@@ -903,7 +688,6 @@ export default function AdminPage() {
                   size={17}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
                 />
-
                 <input
                   value={search}
                   onChange={(event) =>
@@ -916,19 +700,13 @@ export default function AdminPage() {
 
               <button
                 type="button"
-                onClick={() =>
-                  void loadUsers(cursor)
-                }
+                onClick={() => void loadUsers(cursor)}
                 disabled={usersLoading}
                 className={buttonClass}
               >
                 <RefreshCw
                   size={16}
-                  className={
-                    usersLoading
-                      ? "animate-spin"
-                      : ""
-                  }
+                  className={usersLoading ? "animate-spin" : ""}
                 />
                 Refresh
               </button>
@@ -940,8 +718,7 @@ export default function AdminPage() {
               </p>
             )}
 
-            {usersLoading &&
-            !usersLoaded ? (
+            {usersLoading && !usersLoaded ? (
               <Spinner />
             ) : (
               <>
@@ -949,18 +726,9 @@ export default function AdminPage() {
                   <table className="w-full min-w-[650px] text-left text-sm">
                     <thead className="bg-emerald-950/30 text-xs uppercase tracking-wider text-emerald-400">
                       <tr>
-                        <th className="px-4 py-4">
-                          Scholar
-                        </th>
-
-                        <th className="px-4 py-4">
-                          Role
-                        </th>
-
-                        <th className="px-4 py-4">
-                          Access
-                        </th>
-
+                        <th className="px-4 py-4">Scholar</th>
+                        <th className="px-4 py-4">Role</th>
+                        <th className="px-4 py-4">Access</th>
                         <th className="px-4 py-4 text-right">
                           Action
                         </th>
@@ -968,82 +736,70 @@ export default function AdminPage() {
                     </thead>
 
                     <tbody>
-                      {filteredUsers.map(
-                        (user) => (
-                          <tr
-                            key={user.id}
-                            className="border-t border-zinc-800/80"
-                          >
-                            <td className="px-4 py-4">
-                              <p className="font-medium text-white">
-                                {user.displayName ||
-                                  "ATREYA Scholar"}
-                              </p>
+                      {filteredUsers.map((user) => (
+                        <tr
+                          key={user.id}
+                          className="border-t border-zinc-800/80"
+                        >
+                          <td className="px-4 py-4">
+                            <p className="font-medium text-white">
+                              {user.displayName ||
+                                "ATREYA Scholar"}
+                            </p>
+                            <p className="mt-1 text-xs text-zinc-500">
+                              {user.email || "No email"}
+                            </p>
+                            <p className="mt-1 font-mono text-[10px] text-zinc-600">
+                              {user.id}
+                            </p>
+                          </td>
 
-                              <p className="mt-1 text-xs text-zinc-500">
-                                {user.email ||
-                                  "No email"}
-                              </p>
+                          <td className="px-4 py-4">
+                            <span className="rounded-md border border-zinc-700 px-2 py-1 text-xs text-zinc-300">
+                              {user.role || "scholar"}
+                            </span>
+                          </td>
 
-                              <p className="mt-1 font-mono text-[10px] text-zinc-600">
-                                {user.id}
-                              </p>
-                            </td>
-
-                            <td className="px-4 py-4">
-                              <span className="rounded-md border border-zinc-700 px-2 py-1 text-xs text-zinc-300">
-                                {user.role ||
-                                  "scholar"}
+                          <td className="px-4 py-4">
+                            {user.isPremium ? (
+                              <span className="inline-flex items-center gap-1 text-amber-400">
+                                <Crown size={15} />
+                                Premium
                               </span>
-                            </td>
+                            ) : (
+                              <span className="text-zinc-500">
+                                Standard
+                              </span>
+                            )}
+                          </td>
 
-                            <td className="px-4 py-4">
-                              {user.isPremium ? (
-                                <span className="inline-flex items-center gap-1 text-amber-400">
-                                  <Crown size={15} />
-                                  Premium
-                                </span>
+                          <td className="px-4 py-4 text-right">
+                            <button
+                              type="button"
+                              disabled={
+                                updatingUser !== null ||
+                                user.role === "admin"
+                              }
+                              onClick={() =>
+                                void changePremium(user)
+                              }
+                              className={`${buttonClass} whitespace-nowrap`}
+                            >
+                              {updatingUser === user.id ? (
+                                <Loader2
+                                  size={15}
+                                  className="animate-spin"
+                                />
                               ) : (
-                                <span className="text-zinc-500">
-                                  Standard
-                                </span>
+                                <Crown size={15} />
                               )}
-                            </td>
-
-                            <td className="px-4 py-4 text-right">
-                              <button
-                                type="button"
-                                disabled={
-                                  updatingUser !==
-                                    null ||
-                                  user.role ===
-                                    "admin"
-                                }
-                                onClick={() =>
-                                  void changePremium(
-                                    user
-                                  )
-                                }
-                                className={`${buttonClass} whitespace-nowrap`}
-                              >
-                                {updatingUser ===
-                                user.id ? (
-                                  <Loader2
-                                    size={15}
-                                    className="animate-spin"
-                                  />
-                                ) : (
-                                  <Crown size={15} />
-                                )}
-
-                                {user.isPremium
-                                  ? "Revoke Premium"
-                                  : "Grant Premium"}
-                              </button>
-                            </td>
-                          </tr>
-                        )
-                      )}
+                              {user.isPremium
+                                ? "Revoke Premium"
+                                : "Grant Premium"}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
 
@@ -1056,31 +812,24 @@ export default function AdminPage() {
 
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                   <p className="text-xs text-zinc-500">
-                    Page {page} · Up to{" "}
-                    {PAGE_SIZE} accounts per page
+                    Page {page} · Up to {PAGE_SIZE} accounts per page
                   </p>
-
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={goPrevious}
                       disabled={
-                        !cursorHistory.length ||
-                        usersLoading
+                        !cursorHistory.length || usersLoading
                       }
                       className={buttonClass}
                     >
                       <ChevronLeft size={16} />
                       Previous
                     </button>
-
                     <button
                       type="button"
                       onClick={goNext}
-                      disabled={
-                        !nextCursor ||
-                        usersLoading
-                      }
+                      disabled={!nextCursor || usersLoading}
                       className={buttonClass}
                     >
                       Next
@@ -1094,7 +843,6 @@ export default function AdminPage() {
         )}
 
         {/* ANALYTICS NODE */}
-
         {tab === "analytics" && (
           <Panel>
             <SectionHeading
@@ -1106,18 +854,14 @@ export default function AdminPage() {
             <div className="mb-5 flex justify-end">
               <button
                 type="button"
-                onClick={() =>
-                  void loadAnalytics()
-                }
+                onClick={() => void loadAnalytics()}
                 disabled={analyticsLoading}
                 className={buttonClass}
               >
                 <RefreshCw
                   size={16}
                   className={
-                    analyticsLoading
-                      ? "animate-spin"
-                      : ""
+                    analyticsLoading ? "animate-spin" : ""
                   }
                 />
                 Refresh Analytics
@@ -1130,8 +874,7 @@ export default function AdminPage() {
               </p>
             )}
 
-            {analyticsLoading &&
-            !analytics ? (
+            {analyticsLoading && !analytics ? (
               <Spinner />
             ) : analytics ? (
               <>
@@ -1140,7 +883,6 @@ export default function AdminPage() {
                     <p className="text-xs text-zinc-500">
                       Recorded Views
                     </p>
-
                     <p className="mt-3 text-3xl font-bold text-emerald-400">
                       {analytics.totalViews.toLocaleString()}
                     </p>
@@ -1150,7 +892,6 @@ export default function AdminPage() {
                     <p className="text-xs text-zinc-500">
                       Unique IPs
                     </p>
-
                     <p className="mt-3 text-3xl font-bold text-white">
                       {analytics.uniqueIPs.toLocaleString()}
                     </p>
@@ -1160,7 +901,6 @@ export default function AdminPage() {
                     <p className="text-xs text-zinc-500">
                       Recent Records
                     </p>
-
                     <p className="mt-3 text-3xl font-bold text-white">
                       {analytics.recent.length}
                     </p>
@@ -1171,18 +911,11 @@ export default function AdminPage() {
                   <table className="w-full min-w-[600px] text-left text-sm">
                     <thead className="bg-emerald-950/30 text-xs uppercase text-emerald-400">
                       <tr>
-                        <th className="px-4 py-4">
-                          Visitor
-                        </th>
-
+                        <th className="px-4 py-4">Visitor</th>
                         <th className="px-4 py-4">
                           IP Address
                         </th>
-
-                        <th className="px-4 py-4">
-                          Visits
-                        </th>
-
+                        <th className="px-4 py-4">Visits</th>
                         <th className="px-4 py-4">
                           Last Recorded
                         </th>
@@ -1190,32 +923,25 @@ export default function AdminPage() {
                     </thead>
 
                     <tbody>
-                      {analytics.recent.map(
-                        (visitor) => (
-                          <tr
-                            key={visitor.id}
-                            className="border-t border-zinc-800/80"
-                          >
-                            <td className="px-4 py-4 text-white">
-                              {visitor.name}
-                            </td>
-
-                            <td className="px-4 py-4 font-mono text-xs text-zinc-400">
-                              {visitor.ip}
-                            </td>
-
-                            <td className="px-4 py-4">
-                              {visitor.visits}
-                            </td>
-
-                            <td className="px-4 py-4 text-xs text-zinc-400">
-                              {formatDate(
-                                visitor.time
-                              )}
-                            </td>
-                          </tr>
-                        )
-                      )}
+                      {analytics.recent.map((visitor) => (
+                        <tr
+                          key={visitor.id}
+                          className="border-t border-zinc-800/80"
+                        >
+                          <td className="px-4 py-4 text-white">
+                            {visitor.name}
+                          </td>
+                          <td className="px-4 py-4 font-mono text-xs text-zinc-400">
+                            {visitor.ip}
+                          </td>
+                          <td className="px-4 py-4">
+                            {visitor.visits}
+                          </td>
+                          <td className="px-4 py-4 text-xs text-zinc-400">
+                            {formatDate(visitor.time)}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
 
@@ -1227,10 +953,10 @@ export default function AdminPage() {
                 </div>
 
                 <p className="mt-4 text-xs text-zinc-500">
-                  Unique IPs are an approximation,
-                  not a count of unique people.
-                  Recent records are limited to
-                  the latest 100 returned by the API.
+                  Unique IPs are an approximation, not a
+                  count of unique people. Recent records
+                  are limited to the latest 100 returned
+                  by the API.
                 </p>
               </>
             ) : null}
@@ -1238,24 +964,19 @@ export default function AdminPage() {
         )}
 
         {/* MAINFRAME CMS */}
-
         {tab === "cms" && (
           <Panel>
             <SectionHeading
               icon={Database}
               title="Mainframe CMS"
-              subtitle="Publish and manage educational videos and study resources through protected administrator APIs."
+              subtitle="Submit educational videos and study resources for independent review before publication."
             />
 
             <div className="mb-6 grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() =>
-                  setCmsKind("video")
-                }
-                aria-pressed={
-                  cmsKind === "video"
-                }
+                onClick={() => setCmsKind("video")}
+                aria-pressed={cmsKind === "video"}
                 className={`flex items-center justify-center gap-2 rounded-xl border p-4 text-sm transition ${
                   cmsKind === "video"
                     ? "border-emerald-500 bg-emerald-950/50 text-emerald-300"
@@ -1268,12 +989,8 @@ export default function AdminPage() {
 
               <button
                 type="button"
-                onClick={() =>
-                  setCmsKind("document")
-                }
-                aria-pressed={
-                  cmsKind === "document"
-                }
+                onClick={() => setCmsKind("document")}
+                aria-pressed={cmsKind === "document"}
                 className={`flex items-center justify-center gap-2 rounded-xl border p-4 text-sm transition ${
                   cmsKind === "document"
                     ? "border-emerald-500 bg-emerald-950/50 text-emerald-300"
@@ -1299,7 +1016,6 @@ export default function AdminPage() {
                   >
                     BAMS Professional Year
                   </label>
-
                   <select
                     id="cms-prof"
                     required
@@ -1311,22 +1027,18 @@ export default function AdminPage() {
                     }
                     className={inputClass}
                   >
-                    {PROF_OPTIONS.map(
-                      (option) => (
-                        <option
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </option>
-                      )
-                    )}
+                    {PROF_OPTIONS.map((option) => (
+                      <option
+                        key={option.value}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
-
                   <p className="mt-2 text-xs text-zinc-500">
-                    The reel will appear only in
-                    the selected professional
-                    dashboard.
+                    After approval, the reel will appear
+                    in the selected professional dashboard.
                   </p>
                 </div>
               )}
@@ -1338,7 +1050,6 @@ export default function AdminPage() {
                 >
                   Content Title
                 </label>
-
                 <input
                   id="cms-title"
                   required
@@ -1346,9 +1057,7 @@ export default function AdminPage() {
                   maxLength={160}
                   value={cmsTitle}
                   onChange={(event) =>
-                    setCmsTitle(
-                      event.target.value
-                    )
+                    setCmsTitle(event.target.value)
                   }
                   placeholder={
                     cmsKind === "video"
@@ -1368,7 +1077,6 @@ export default function AdminPage() {
                     ? "YouTube URL"
                     : "Document URL"}
                 </label>
-
                 <input
                   id="cms-url"
                   type="url"
@@ -1376,9 +1084,7 @@ export default function AdminPage() {
                   maxLength={2048}
                   value={cmsUrl}
                   onChange={(event) =>
-                    setCmsUrl(
-                      event.target.value
-                    )
+                    setCmsUrl(event.target.value)
                   }
                   placeholder={
                     cmsKind === "video"
@@ -1397,7 +1103,6 @@ export default function AdminPage() {
                   >
                     Resource Category
                   </label>
-
                   <select
                     id="cms-type"
                     value={cmsDocType}
@@ -1411,11 +1116,9 @@ export default function AdminPage() {
                     <option value="notes">
                       Study Notes
                     </option>
-
                     <option value="past_paper">
                       Past Paper
                     </option>
-
                     <option value="template">
                       Template
                     </option>
@@ -1438,73 +1141,59 @@ export default function AdminPage() {
                 )}
 
                 {publishing
-                  ? "PUBLISHING..."
+                  ? "SUBMITTING..."
                   : cmsKind === "video"
-                  ? "PUBLISH REEL"
-                  : "PUBLISH STUDY ASSET"}
+                    ? "SUBMIT REEL FOR REVIEW"
+                    : "SUBMIT STUDY ASSET FOR REVIEW"}
               </button>
             </form>
 
-            {/* CONTENT LIBRARY: VIEW / EDIT / DELETE */}
+            {/* PUBLISHED CONTENT LIBRARY */}
+            <CMSContentLibrary
+              refreshKey={cmsRefreshKey}
+            />
 
-            
-{/* CONTENT LIBRARY: VIEW / EDIT / DELETE */}
-
-<CMSContentLibrary
-  refreshKey={cmsRefreshKey}
-/>
-
-{/* CMS REVIEW QUEUE: APPROVE / REJECT */}
-
-<CMSReviewQueue
-  refreshKey={cmsRefreshKey}
-  onPublished={() =>
-    setCmsRefreshKey((previous) => previous + 1)
-  }
-/>
-
-{/* CMS SECURITY INFORMATION */}
-
+            {/* PRIVATE CMS REVIEW QUEUE */}
+            <CMSReviewQueue
+              refreshKey={cmsRefreshKey}
+              onPublished={() =>
+                setCmsRefreshKey(
+                  (previous) => previous + 1
+                )
+              }
+            />
 
             {/* CMS SECURITY INFORMATION */}
-
             <div className="mt-8 rounded-xl border border-emerald-900/40 bg-black/30 p-4">
               <div className="flex items-center gap-2 text-sm text-emerald-400">
                 <ShieldCheck size={17} />
-                Secure Content Management Active
+                CMS Review Workflow
               </div>
 
               <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-                Administrator authentication is
-                verified by the server API.
-                Video reels are assigned to
-                their selected BAMS professional
-                year and saved to bams_reels.
-                Study assets are saved to
-                bams_assets. Content can be
-                edited or deleted through
-                protected administrator
-                endpoints with audit logging.
+                New content is stored privately in
+                cms_submissions. After approval, videos
+                are published to bams_reels and study
+                assets to bams_assets. Published content
+                remains publicly readable under the
+                current Firestore rules.
               </p>
 
               <p className="mt-3 text-xs leading-relaxed text-amber-500/80">
-                Published content is publicly
-                readable under the current
-                Firestore rules. Clinical
-                review and draft approval
-                controls are not yet enabled.
+                Publication requires approval by a
+                different authorized reviewer. Existing
+                published-content deletion still requires
+                migration to the review workflow.
               </p>
             </div>
           </Panel>
         )}
 
         {/* FOOTER */}
-
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-emerald-900/30 pt-5 font-mono text-[10px] tracking-wider text-zinc-600">
           <span>
             ATREYA MED · SECURE ADMIN MAINFRAME
           </span>
-
           <span className="flex items-center gap-2 text-emerald-700">
             <ShieldCheck size={13} />
             SERVER-VERIFIED ACCESS
