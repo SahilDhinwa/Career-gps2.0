@@ -1,10 +1,14 @@
 
 import { NextRequest, NextResponse } from "next/server";
+import { FieldValue } from "firebase-admin/firestore";
 import {
   AdminAuthError,
   requireAdmin,
 } from "../../../../lib/auth/admin";
-import { getAdminDb } from "../../../../lib/firebase-admin";
+import {
+  getAdminAuth,
+  getAdminDb,
+} from "../../../../lib/firebase-admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,18 +27,10 @@ function respond(data: unknown, status = 200) {
 
 function handleError(error: unknown) {
   if (error instanceof AdminAuthError) {
-    return respond(
-      { error: error.message },
-      error.status
-    );
+    return respond({ error: error.message }, error.status);
   }
 
-  console.error(
-    "Admin users API error:",
-    error instanceof Error
-      ? error.message
-      : "Unknown error"
-  );
+  console.error("Admin users API error:", error);
 
   return respond(
     { error: "Internal server error." },
@@ -57,8 +53,7 @@ export async function GET(request: NextRequest) {
   try {
     await requireAdmin();
 
-    const cursor =
-      request.nextUrl.searchParams.get("cursor");
+    const cursor = request.nextUrl.searchParams.get("cursor");
 
     if (cursor !== null && !validUserId(cursor)) {
       return respond({ error: "Invalid cursor." }, 400);
@@ -76,7 +71,6 @@ export async function GET(request: NextRequest) {
     }
 
     const snapshot = await query.get();
-
     const page = snapshot.docs.slice(0, 50);
 
     const users = page.map((document) => {
@@ -120,11 +114,9 @@ export async function PATCH(request: NextRequest) {
   try {
     const admin = await requireAdmin();
 
-    const origin = request.headers.get("origin");
-
     if (
-      !origin ||
-      origin !== request.nextUrl.origin
+      !request.headers.get("origin") ||
+      request.headers.get("origin") !== request.nextUrl.origin
     ) {
       return respond(
         { error: "Invalid request origin." },
@@ -147,10 +139,7 @@ export async function PATCH(request: NextRequest) {
     const raw = await request.text();
 
     if (raw.length > 1024) {
-      return respond(
-        { error: "Request too large." },
-        413
-      );
+      return respond({ error: "Request too large." }, 413);
     }
 
     let body: unknown;
@@ -158,10 +147,7 @@ export async function PATCH(request: NextRequest) {
     try {
       body = JSON.parse(raw);
     } catch {
-      return respond(
-        { error: "Invalid JSON." },
-        400
-      );
+      return respond({ error: "Invalid JSON." }, 400);
     }
 
     if (
@@ -169,10 +155,7 @@ export async function PATCH(request: NextRequest) {
       typeof body !== "object" ||
       Array.isArray(body)
     ) {
-      return respond(
-        { error: "Invalid request." },
-        400
-      );
+      return respond({ error: "Invalid request." }, 400);
     }
 
     const data = body as Record<string, unknown>;
@@ -181,9 +164,7 @@ export async function PATCH(request: NextRequest) {
       !validUserId(data.userId) ||
       typeof data.isPremium !== "boolean" ||
       Object.keys(data).some(
-        (key) =>
-          key !== "userId" &&
-          key !== "isPremium"
+        (key) => key !== "userId" && key !== "isPremium"
       )
     ) {
       return respond(
@@ -192,42 +173,85 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Protect the currently authenticated
-    // Master Administrator from accidental
-    // premium-status modifications.
-    if (data.userId === admin.uid) {
+    const userId = data.userId;
+    const isPremium = data.isPremium;
+
+    if (userId === admin.uid) {
       return respond(
-        {
-          error:
-            "Cannot modify your own premium status.",
-        },
+        { error: "Cannot modify your own premium status." },
+        403
+      );
+    }
+
+    // Firebase custom claims are authoritative.
+    let targetAuthUser;
+
+    try {
+      targetAuthUser = await getAdminAuth().getUser(userId);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        "code" in error &&
+        error.code === "auth/user-not-found"
+      ) {
+        return respond({ error: "User not found." }, 404);
+      }
+
+      throw error;
+    }
+
+    if (targetAuthUser.customClaims?.admin === true) {
+      return respond(
+        { error: "Administrator accounts are protected." },
         403
       );
     }
 
     const database = getAdminDb();
+    const userRef = database.collection("users").doc(userId);
+    const auditRef = database.collection("admin_audit_logs").doc();
 
-    const userRef = database
-      .collection("users")
-      .doc(data.userId);
+    const result = await database.runTransaction(
+      async (transaction) => {
+        const snapshot = await transaction.get(userRef);
 
-    const snapshot = await userRef.get();
+        if (!snapshot.exists) {
+          return "not_found" as const;
+        }
 
-    if (!snapshot.exists) {
-      return respond(
-        { error: "User not found." },
-        404
-      );
+        const previousStatus =
+          snapshot.data()?.isPremium === true;
+
+        if (previousStatus === isPremium) {
+          return "unchanged" as const;
+        }
+
+        transaction.update(userRef, {
+          isPremium,
+        });
+
+        transaction.create(auditRef, {
+          action: "premium_access_updated",
+          actorUid: admin.uid,
+          targetUid: userId,
+          previousStatus,
+          newStatus: isPremium,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+
+        return "updated" as const;
+      }
+    );
+
+    if (result === "not_found") {
+      return respond({ error: "User not found." }, 404);
     }
-
-    await userRef.update({
-      isPremium: data.isPremium,
-    });
 
     return respond({
       success: true,
-      userId: data.userId,
-      isPremium: data.isPremium,
+      userId,
+      isPremium,
+      changed: result === "updated",
     });
   } catch (error) {
     return handleError(error);
