@@ -40,7 +40,10 @@ export type CMSValidationResult =
       error: string;
     };
 
-export const CMS_COLLECTIONS: Record<CMSKind, string> = {
+export const CMS_COLLECTIONS: Record<
+  CMSKind,
+  string
+> = {
   video: "bams_reels",
   document: "bams_assets",
 };
@@ -76,7 +79,10 @@ export const CMS_STATUSES: readonly CMSStatus[] = [
 export function isCMSKind(
   value: unknown
 ): value is CMSKind {
-  return value === "video" || value === "document";
+  return (
+    value === "video" ||
+    value === "document"
+  );
 }
 
 export function isBamsProf(
@@ -116,6 +122,115 @@ export function isCMSDocumentId(
 // URL VALIDATION
 // ------------------------------------------
 
+function validYouTubeId(
+  value: string | null
+): boolean {
+  return (
+    typeof value === "string" &&
+    /^[A-Za-z0-9_-]{11}$/.test(value)
+  );
+}
+
+function validGoogleId(
+  value: string
+): boolean {
+  return /^[A-Za-z0-9_-]+$/.test(value);
+}
+
+function validVideoURL(
+  url: URL
+): boolean {
+  const host = url.hostname.toLowerCase();
+  const path = url.pathname;
+
+  if (host === "youtu.be") {
+    return validYouTubeId(
+      path.startsWith("/")
+        ? path.slice(1)
+        : null
+    );
+  }
+
+  const allowedHosts = [
+    "youtube.com",
+    "www.youtube.com",
+    "youtube-nocookie.com",
+    "www.youtube-nocookie.com",
+  ];
+
+  if (!allowedHosts.includes(host)) {
+    return false;
+  }
+
+  if (path === "/watch") {
+    const videoIds =
+      url.searchParams.getAll("v");
+
+    return (
+      videoIds.length === 1 &&
+      validYouTubeId(videoIds[0])
+    );
+  }
+
+  const match = path.match(
+    /^\/(?:embed|shorts|live)\/([A-Za-z0-9_-]{11})\/?$/
+  );
+
+  return (
+    match !== null &&
+    validYouTubeId(match[1])
+  );
+}
+
+function validDocumentURL(
+  url: URL
+): boolean {
+  const host = url.hostname.toLowerCase();
+  const path = url.pathname;
+
+  if (host === "drive.google.com") {
+    const match = path.match(
+      /^\/file\/d\/([A-Za-z0-9_-]+)(?:\/(?:view|preview))?\/?$/
+    );
+
+    return (
+      match !== null &&
+      validGoogleId(match[1])
+    );
+  }
+
+  if (host === "docs.google.com") {
+    const match = path.match(
+      /^\/(?:document|spreadsheets|presentation)\/d\/([A-Za-z0-9_-]+)(?:\/.*)?$/
+    );
+
+    return (
+      match !== null &&
+      validGoogleId(match[1])
+    );
+  }
+
+  if (
+    host ===
+    "firebasestorage.googleapis.com"
+  ) {
+    return /^\/v0\/b\/[^/]+\/o\/[^/]+/.test(
+      path
+    );
+  }
+
+  if (
+    host === "storage.googleapis.com"
+  ) {
+    return (
+      path.length > 2 &&
+      path !== "/"
+    );
+  }
+
+  return false;
+}
+
 export function isValidCMSURL(
   value: unknown,
   kind: CMSKind
@@ -123,7 +238,8 @@ export function isValidCMSURL(
   if (
     typeof value !== "string" ||
     value.length === 0 ||
-    value.length > 2048
+    value.length > 2048 ||
+    value !== value.trim()
   ) {
     return false;
   }
@@ -133,67 +249,25 @@ export function isValidCMSURL(
 
     if (
       url.protocol !== "https:" ||
-      url.username ||
-      url.password ||
-      url.port
+      url.username !== "" ||
+      url.password !== "" ||
+      url.port !== "" ||
+      url.hash !== ""
     ) {
       return false;
     }
 
-    const host = url.hostname.toLowerCase();
-
-    if (kind === "video") {
-      const idPattern = /^[a-zA-Z0-9_-]{11}$/;
-
-      if (host === "youtu.be") {
-        return idPattern.test(
-          url.pathname.slice(1)
-        );
-      }
-
-      if (
-        ![
-          "youtube.com",
-          "www.youtube.com",
-          "youtube-nocookie.com",
-          "www.youtube-nocookie.com",
-        ].includes(host)
-      ) {
-        return false;
-      }
-
-      if (url.pathname === "/watch") {
-        return idPattern.test(
-          url.searchParams.get("v") ?? ""
-        );
-      }
-
-      return /^\/(?:embed|shorts|live)\/[a-zA-Z0-9_-]{11}\/?$/.test(
-        url.pathname
-      );
+    // Reject ambiguous authority and path syntax.
+    if (
+      value.includes("\\") ||
+      url.hostname.endsWith(".")
+    ) {
+      return false;
     }
 
-    if (host === "drive.google.com") {
-      return /^\/file\/d\/[a-zA-Z0-9_-]+\/?(?:view|preview)?\/?$/.test(
-        url.pathname
-      );
-    }
-
-    if (host === "docs.google.com") {
-      return /^\/(?:document|spreadsheets|presentation)\/d\/[a-zA-Z0-9_-]+(?:\/.*)?$/.test(
-        url.pathname
-      );
-    }
-
-    if (host === "firebasestorage.googleapis.com") {
-      return url.pathname.startsWith("/v0/b/");
-    }
-
-    if (host === "storage.googleapis.com") {
-      return url.pathname.length > 2;
-    }
-
-    return false;
+    return kind === "video"
+      ? validVideoURL(url)
+      : validDocumentURL(url);
   } catch {
     return false;
   }
@@ -304,8 +378,8 @@ export function validateCMSContent(
 // STATUS TRANSITIONS
 // ------------------------------------------
 
-// These are workflow rules, not authorization.
-// Server routes must separately verify permissions.
+// Workflow rules only.
+// Authorization must be enforced by API routes.
 
 export function canTransitionCMSStatus(
   from: CMSStatus,
