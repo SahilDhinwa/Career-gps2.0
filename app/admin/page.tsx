@@ -1447,9 +1447,24 @@ export default function AdminPage() {
 
             {/* CONTENT LIBRARY: VIEW / EDIT / DELETE */}
 
-            <CMSContentLibrary
-              refreshKey={cmsRefreshKey}
-            />
+            
+{/* CONTENT LIBRARY: VIEW / EDIT / DELETE */}
+
+<CMSContentLibrary
+  refreshKey={cmsRefreshKey}
+/>
+
+{/* CMS REVIEW QUEUE: APPROVE / REJECT */}
+
+<CMSReviewQueue
+  refreshKey={cmsRefreshKey}
+  onPublished={() =>
+    setCmsRefreshKey((previous) => previous + 1)
+  }
+/>
+
+{/* CMS SECURITY INFORMATION */}
+
 
             {/* CMS SECURITY INFORMATION */}
 
