@@ -33,6 +33,11 @@ import {
   encodeCMSVersion,
 } from "../../../../lib/cms/version";
 
+import {
+  getCMSReviewLockRef,
+  createCMSReviewLock,
+} from "../../../../lib/cms/review-lock";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -196,9 +201,9 @@ export async function GET() {
     ]);
 
     const serialize = (
-  snapshot: typeof videos,
-  kind: CMSKind
-) => {
+      snapshot: typeof videos,
+      kind: CMSKind
+    ) => {
       return snapshot.docs.map((doc) => {
         const data = doc.data();
 
@@ -227,7 +232,7 @@ export async function GET() {
           updatedAt: dateToISO(data.updatedAt),
         };
       });
-    }
+    };
 
     return respond({
       success: true,
@@ -325,13 +330,17 @@ export async function PATCH(request: NextRequest) {
     }
 
     const db = getAdminDb();
-
-    const collectionName =
-      CMS_COLLECTIONS[kind];
+    const collectionName = CMS_COLLECTIONS[kind];
 
     const contentRef = db
       .collection(collectionName)
       .doc(id);
+
+    const lockRef = getCMSReviewLockRef(
+      db,
+      kind,
+      id
+    );
 
     const submissionRef = db
       .collection(CMS_SUBMISSIONS_COLLECTION)
@@ -343,13 +352,34 @@ export async function PATCH(request: NextRequest) {
 
     const outcome = await db.runTransaction(
       async (transaction) => {
-        const existing =
-          await transaction.get(contentRef);
+        const [existing, lock] =
+          await Promise.all([
+            transaction.get(contentRef),
+            transaction.get(lockRef),
+          ]);
 
         if (!existing.exists) {
           return {
             httpStatus: 404,
             error: "Content not found.",
+          };
+        }
+
+        if (lock.exists) {
+          return {
+            httpStatus: 409,
+            error:
+              "Review already pending for this content.",
+          };
+        }
+
+        if (
+          existing.data()?.status !== "published"
+        ) {
+          return {
+            httpStatus: 409,
+            error:
+              "Target content is not published.",
           };
         }
 
@@ -361,16 +391,14 @@ export async function PATCH(request: NextRequest) {
           };
         }
 
-        const targetVersion =
-          encodeCMSVersion(existing.updateTime);
-
         const now = FieldValue.serverTimestamp();
 
         transaction.create(submissionRef, {
           kind,
           operation: "update",
           targetId: id,
-          targetVersion,
+          targetVersion:
+            encodeCMSVersion(existing.updateTime),
           status: "review",
           content: validated.content,
           submittedBy: admin.uid,
@@ -379,6 +407,14 @@ export async function PATCH(request: NextRequest) {
           createdAt: now,
           updatedAt: now,
         });
+
+        createCMSReviewLock(
+          transaction,
+          lockRef,
+          submissionRef.id,
+          admin.uid,
+          "update"
+        );
 
         transaction.create(auditRef, {
           action: "cms_review_requested",
@@ -464,6 +500,12 @@ export async function DELETE(request: NextRequest) {
       .collection(collectionName)
       .doc(id);
 
+    const lockRef = getCMSReviewLockRef(
+      db,
+      kind,
+      id
+    );
+
     const submissionRef = db
       .collection(CMS_SUBMISSIONS_COLLECTION)
       .doc();
@@ -474,13 +516,34 @@ export async function DELETE(request: NextRequest) {
 
     const outcome = await db.runTransaction(
       async (transaction) => {
-        const existing =
-          await transaction.get(contentRef);
+        const [existing, lock] =
+          await Promise.all([
+            transaction.get(contentRef),
+            transaction.get(lockRef),
+          ]);
 
         if (!existing.exists) {
           return {
             httpStatus: 404,
             error: "Content not found.",
+          };
+        }
+
+        if (lock.exists) {
+          return {
+            httpStatus: 409,
+            error:
+              "Review already pending for this content.",
+          };
+        }
+
+        const previous = existing.data() ?? {};
+
+        if (previous.status !== "published") {
+          return {
+            httpStatus: 409,
+            error:
+              "Target content is not published.",
           };
         }
 
@@ -492,30 +555,24 @@ export async function DELETE(request: NextRequest) {
           };
         }
 
-        const previous = existing.data() ?? {};
-
-        const targetVersion =
-          encodeCMSVersion(existing.updateTime);
-
         const now = FieldValue.serverTimestamp();
 
         transaction.create(submissionRef, {
           kind,
           operation: "delete",
           targetId: id,
-          targetVersion,
+          targetVersion:
+            encodeCMSVersion(existing.updateTime),
           status: "review",
           content: {
             title: previous.title ?? null,
             url: previous.url ?? null,
             ...(kind === "video"
               ? {
-                  prof:
-                    previous.prof ?? null,
+                  prof: previous.prof ?? null,
                 }
               : {
-                  type:
-                    previous.type ?? null,
+                  type: previous.type ?? null,
                 }),
           },
           submittedBy: admin.uid,
@@ -524,6 +581,14 @@ export async function DELETE(request: NextRequest) {
           createdAt: now,
           updatedAt: now,
         });
+
+        createCMSReviewLock(
+          transaction,
+          lockRef,
+          submissionRef.id,
+          admin.uid,
+          "delete"
+        );
 
         transaction.create(auditRef, {
           action:
