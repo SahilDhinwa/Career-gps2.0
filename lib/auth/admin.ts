@@ -33,10 +33,12 @@ export async function requireAdmin(): Promise<VerifiedAdmin> {
     );
   }
 
+  const adminAuth = getAdminAuth();
+
   let decoded;
 
   try {
-    decoded = await getAdminAuth().verifySessionCookie(
+    decoded = await adminAuth.verifySessionCookie(
       sessionCookie,
       true
     );
@@ -54,9 +56,21 @@ export async function requireAdmin(): Promise<VerifiedAdmin> {
     );
   }
 
+  const user = await adminAuth.getUser(decoded.uid);
+
+  if (
+    user.disabled ||
+    user.customClaims?.admin !== true
+  ) {
+    throw new AdminAuthError(
+      403,
+      "Administrator access revoked."
+    );
+  }
+
   return {
-    uid: decoded.uid,
-    email: decoded.email ?? null,
+    uid: user.uid,
+    email: user.email ?? null,
     admin: true,
   };
 }
