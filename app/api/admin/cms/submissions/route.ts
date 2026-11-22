@@ -14,9 +14,16 @@ import {
 } from "../../../../../lib/auth/admin";
 
 import { getAdminDb } from "../../../../../lib/firebase-admin";
+
 import {
   encodeCMSVersion,
 } from "../../../../../lib/cms/version";
+
+import {
+  getCMSReviewLockRef,
+  createCMSReviewLock,
+} from "../../../../../lib/cms/review-lock";
+
 import {
   CMS_AUDIT_COLLECTION,
   CMS_COLLECTIONS,
@@ -357,10 +364,20 @@ export async function POST(request: NextRequest) {
             .doc(data.targetId as string)
         : null;
 
+    const lockRef =
+      operation === "update"
+        ? getCMSReviewLockRef(
+            db,
+            kind,
+            data.targetId as string
+          )
+        : null;
+
     const outcome = await db.runTransaction(
       async (transaction) => {
         let targetVersion: string | null = null;
 
+        // Read the target before performing writes.
         if (targetRef) {
           const target =
             await transaction.get(targetRef);
@@ -372,14 +389,41 @@ export async function POST(request: NextRequest) {
             };
           }
 
+          if (
+            target.data()?.status !== "published"
+          ) {
+            return {
+              httpStatus: 409,
+              error:
+                "Target content is not published.",
+            };
+          }
+
           if (!target.updateTime) {
             return {
               httpStatus: 409,
-              error: "Target version unavailable.",
+              error:
+                "Target version unavailable.",
             };
           }
-targetVersion =
-  encodeCMSVersion(target.updateTime);
+
+          targetVersion =
+            encodeCMSVersion(target.updateTime);
+        }
+
+        // Prevent duplicate pending reviews.
+        // Drafts do not acquire a lock.
+        if (lockRef && status === "review") {
+          const lock =
+            await transaction.get(lockRef);
+
+          if (lock.exists) {
+            return {
+              httpStatus: 409,
+              error:
+                "Review already pending for this content.",
+            };
+          }
         }
 
         const now = FieldValue.serverTimestamp();
@@ -400,6 +444,16 @@ targetVersion =
           createdAt: now,
           updatedAt: now,
         });
+
+        if (lockRef && status === "review") {
+          createCMSReviewLock(
+            transaction,
+            lockRef,
+            submissionRef.id,
+            admin.uid,
+            "update"
+          );
+        }
 
         transaction.create(auditRef, {
           action:
