@@ -2,8 +2,8 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "../../../../../../lib/auth/admin";
-import { getAdminAuth } from "../../../../../../lib/firebase-admin";
+import { requireAdmin } from "../../../../lib/auth/admin";
+import { getAdminAuth } from "../../../../lib/firebase-admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
