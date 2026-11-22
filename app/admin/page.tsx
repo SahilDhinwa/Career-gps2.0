@@ -1163,7 +1163,11 @@ export default function AdminPage() {
                 )
               }
             />
-
+<CMSLegacyMigration
+  onMigrated={() =>
+    setCmsRefreshKey((previous) => previous + 1)
+  }
+/>
             {/* CMS SECURITY INFORMATION */}
             <div className="mt-8 rounded-xl border border-emerald-900/40 bg-black/30 p-4">
               <div className="flex items-center gap-2 text-sm text-emerald-400">
