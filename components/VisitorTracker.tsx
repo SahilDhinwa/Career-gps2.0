@@ -26,7 +26,21 @@ type Coordinates = {
 };
 
 const NAME_KEY = "bams_user_name";
-const SESSION_KEY = "atreya_visitor_session_recorded";
+
+const SESSION_KEY =
+  "atreya_visitor_session_recorded";
+
+const SESSION_ID_KEY =
+  "atreya_visitor_session_id";
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+let fallbackSessionId: string | null = null;
+let fallbackVisitRecorded = false;
+
+let trackingQueue: Promise<unknown> =
+  Promise.resolve();
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -42,12 +56,87 @@ function getGreeting(): string {
   return "Good Evening";
 }
 
+function getSessionId(): string {
+  try {
+    const stored =
+      sessionStorage.getItem(SESSION_ID_KEY);
+
+    if (stored && UUID_PATTERN.test(stored)) {
+      fallbackSessionId = stored;
+      return stored;
+    }
+  } catch {
+    // Session storage may be unavailable.
+  }
+
+  if (!fallbackSessionId) {
+    fallbackSessionId = crypto.randomUUID();
+  }
+
+  try {
+    sessionStorage.setItem(
+      SESSION_ID_KEY,
+      fallbackSessionId
+    );
+  } catch {
+    // Use the in-memory session identifier.
+  }
+
+  return fallbackSessionId;
+}
+
+function hasRecordedVisit(): boolean {
+  if (fallbackVisitRecorded) {
+    return true;
+  }
+
+  try {
+    return (
+      sessionStorage.getItem(SESSION_KEY) ===
+      "true"
+    );
+  } catch {
+    return false;
+  }
+}
+
+function markVisitRecorded(): void {
+  fallbackVisitRecorded = true;
+
+  try {
+    sessionStorage.setItem(
+      SESSION_KEY,
+      "true"
+    );
+  } catch {
+    // In-memory tracking remains available.
+  }
+}
+
+function enqueueTracking<T>(
+  operation: () => Promise<T>
+): Promise<T> {
+  const next = trackingQueue.then(
+    operation,
+    operation
+  );
+
+  trackingQueue = next.then(
+    () => undefined,
+    () => undefined
+  );
+
+  return next;
+}
+
 async function sendTrackingEvent(
   event: TrackEvent,
   name: string,
   coords?: Coordinates
 ): Promise<boolean> {
   try {
+    const sessionId = getSessionId();
+
     const response = await fetch(
       "/api/track-visitor",
       {
@@ -60,12 +149,24 @@ async function sendTrackingEvent(
         body: JSON.stringify({
           event,
           name,
+          sessionId,
           ...(coords ? { coords } : {}),
         }),
       }
     );
 
-    return response.ok;
+    if (!response.ok) {
+      console.warn(
+        "Visitor tracking returned:",
+        response.status
+      );
+
+      return false;
+    }
+
+    const result = await response.json();
+
+    return result.success === true;
   } catch (error) {
     console.error(
       "Visitor tracking request failed:",
@@ -83,45 +184,40 @@ export function VisitorTracker() {
   const [isLoading, setIsLoading] = useState(true);
   const [greeting, setGreeting] = useState("Namaste");
 
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
   const [isSharingLocation, setIsSharingLocation] =
     useState(false);
 
   const [locationMessage, setLocationMessage] =
     useState("");
 
+  const [trackingMessage, setTrackingMessage] =
+    useState("");
+
   const initializationRef = useRef(false);
+  const submissionRef = useRef(false);
+  const locationRequestRef = useRef(false);
 
   const recordVisit = useCallback(
-    async (visitorName: string) => {
-      // One visit per browser tab session.
-      // Reloading the page does not create
-      // another visit event.
-      try {
-        if (
-          sessionStorage.getItem(SESSION_KEY) ===
-          "true"
-        ) {
-          return;
+    async (visitorName: string): Promise<boolean> => {
+      return enqueueTracking(async () => {
+        if (hasRecordedVisit()) {
+          return true;
         }
-      } catch {
-        // Session storage is optional.
-      }
 
-      const successful = await sendTrackingEvent(
-        "visit",
-        visitorName
-      );
+        const successful = await sendTrackingEvent(
+          "visit",
+          visitorName
+        );
 
-      if (successful) {
-        try {
-          sessionStorage.setItem(
-            SESSION_KEY,
-            "true"
-          );
-        } catch {
-          // Ignore unavailable session storage.
+        if (successful) {
+          markVisitRecorded();
         }
-      }
+
+        return successful;
+      });
     },
     []
   );
@@ -140,7 +236,8 @@ export function VisitorTracker() {
         localStorage.getItem(NAME_KEY);
 
       if (storedName?.trim()) {
-        const cleanName = storedName.trim();
+        const cleanName =
+          storedName.trim().slice(0, 80);
 
         setName(cleanName);
         setIsNameSet(true);
@@ -159,14 +256,18 @@ export function VisitorTracker() {
   ) => {
     event.preventDefault();
 
+    if (submissionRef.current) {
+      return;
+    }
+
+    submissionRef.current = true;
+    setIsSubmitting(true);
+
     const finalName =
       inputName.trim().slice(0, 80) ||
       "Anonymous Scholar";
 
-    const wasAlreadyRegistered = isNameSet;
-
-    setName(finalName);
-    setIsNameSet(true);
+    setTrackingMessage("");
     setLocationMessage("");
 
     try {
@@ -178,48 +279,69 @@ export function VisitorTracker() {
       // The greeting still works.
     }
 
-    if (wasAlreadyRegistered) {
-      await sendTrackingEvent(
-        "profile",
-        finalName
+    setName(finalName);
+    setIsNameSet(true);
+
+    try {
+      const successful = await enqueueTracking(
+        async () => {
+          if (hasRecordedVisit()) {
+            return sendTrackingEvent(
+              "profile",
+              finalName
+            );
+          }
+
+          const recorded = await sendTrackingEvent(
+            "visit",
+            finalName
+          );
+
+          if (recorded) {
+            markVisitRecorded();
+          }
+
+          return recorded;
+        }
       );
-    } else {
-      // If this is the first visit, create
-      // the record. If already recorded,
-      // update the name without counting
-      // another visit.
-      let alreadyRecorded = false;
 
-      try {
-        alreadyRecorded =
-          sessionStorage.getItem(SESSION_KEY) ===
-          "true";
-      } catch {
-        // Continue normally.
-      }
-
-      if (alreadyRecorded) {
-        await sendTrackingEvent(
-          "profile",
-          finalName
+      if (!successful) {
+        setTrackingMessage(
+          "Your name is saved locally. Server sync is unavailable."
         );
-      } else {
-        await recordVisit(finalName);
       }
+    } finally {
+      submissionRef.current = false;
+      setIsSubmitting(false);
     }
   };
 
   const handleEditClick = () => {
+    if (
+      submissionRef.current ||
+      locationRequestRef.current
+    ) {
+      return;
+    }
+
     setInputName(
       name === "Anonymous Scholar"
         ? ""
         : name
     );
 
+    setTrackingMessage("");
     setIsNameSet(false);
   };
 
   const handleShareLocation = () => {
+    if (
+      locationRequestRef.current ||
+      submissionRef.current
+    ) {
+      return;
+    }
+
     if (!navigator.geolocation) {
       setLocationMessage(
         "GPS location is unavailable on this device."
@@ -227,43 +349,66 @@ export function VisitorTracker() {
       return;
     }
 
+    locationRequestRef.current = true;
+
     setIsSharingLocation(true);
     setLocationMessage("");
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const coords: Coordinates = {
-          lat: Number(
-            position.coords.latitude.toFixed(4)
-          ),
-          lng: Number(
-            position.coords.longitude.toFixed(4)
-          ),
-          accuracy: Math.round(
-            position.coords.accuracy
-          ),
-        };
+        try {
+          const coords: Coordinates = {
+            lat: Number(
+              position.coords.latitude.toFixed(4)
+            ),
+            lng: Number(
+              position.coords.longitude.toFixed(4)
+            ),
+            accuracy: Math.round(
+              position.coords.accuracy
+            ),
+          };
 
-        const successful =
-          await sendTrackingEvent(
-            "location",
-            name,
-            coords
+          const successful = await enqueueTracking(
+            async () => {
+              if (!hasRecordedVisit()) {
+                const recorded =
+                  await sendTrackingEvent(
+                    "visit",
+                    name
+                  );
+
+                if (!recorded) {
+                  return false;
+                }
+
+                markVisitRecorded();
+              }
+
+              return sendTrackingEvent(
+                "location",
+                name,
+                coords
+              );
+            }
           );
 
-        setLocationMessage(
-          successful
-            ? "Location saved successfully."
-            : "Could not save location. Please retry."
-        );
-
-        setIsSharingLocation(false);
+          setLocationMessage(
+            successful
+              ? "Location saved successfully."
+              : "Could not save location. Please retry."
+          );
+        } finally {
+          locationRequestRef.current = false;
+          setIsSharingLocation(false);
+        }
       },
       () => {
         setLocationMessage(
           "Location permission was denied or unavailable."
         );
 
+        locationRequestRef.current = false;
         setIsSharingLocation(false);
       },
       {
@@ -301,6 +446,7 @@ export function VisitorTracker() {
               setInputName(event.target.value)
             }
             maxLength={80}
+            disabled={isSubmitting}
             placeholder="e.g. Dr. Strange"
             aria-label="Your name"
             className="min-w-0 flex-1 rounded-lg border border-[var(--theme-border)] bg-white px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-black"
@@ -308,10 +454,16 @@ export function VisitorTracker() {
 
           <button
             type="submit"
-            className="flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-amber-600"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-amber-600 disabled:opacity-50"
           >
             Enter
-            <ArrowRight className="h-4 w-4" />
+
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ArrowRight className="h-4 w-4" />
+            )}
           </button>
         </form>
       </div>
@@ -330,9 +482,12 @@ export function VisitorTracker() {
         <button
           type="button"
           onClick={handleEditClick}
+          disabled={
+            isSubmitting || isSharingLocation
+          }
           aria-label="Edit visitor name"
           title="Edit Name"
-          className="ml-1 rounded-full p-1 text-amber-600/60 transition-all hover:text-amber-600 focus:opacity-100 dark:text-amber-500/60 dark:hover:text-amber-500"
+          className="ml-1 rounded-full p-1 text-amber-600/60 transition-all hover:text-amber-600 focus:opacity-100 disabled:opacity-40 dark:text-amber-500/60 dark:hover:text-amber-500"
         >
           <Pencil className="h-3.5 w-3.5" />
         </button>
@@ -341,7 +496,9 @@ export function VisitorTracker() {
       <button
         type="button"
         onClick={handleShareLocation}
-        disabled={isSharingLocation}
+        disabled={
+          isSharingLocation || isSubmitting
+        }
         className="inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-500 underline-offset-2 hover:underline disabled:opacity-50 dark:text-neutral-400"
       >
         {isSharingLocation ? (
@@ -361,6 +518,15 @@ export function VisitorTracker() {
           className="max-w-xs text-center text-[11px] text-neutral-500 dark:text-neutral-400"
         >
           {locationMessage}
+        </p>
+      )}
+
+      {trackingMessage && (
+        <p
+          role="status"
+          className="max-w-xs text-center text-[11px] text-neutral-500 dark:text-neutral-400"
+        >
+          {trackingMessage}
         </p>
       )}
     </div>
