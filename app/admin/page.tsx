@@ -13,6 +13,7 @@ import Link from "next/link";
 
 import CMSReviewQueue from "@/components/admin/CMSReviewQueue";
 import CMSContentLibrary from "@/components/admin/CMSContentLibrary";
+import AnalyticsMigrationPanel from "../../components/admin/AnalyticsMigrationPanel";
 
 import {
   Activity,
