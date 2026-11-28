@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -13,7 +12,7 @@ import Link from "next/link";
 
 import CMSReviewQueue from "@/components/admin/CMSReviewQueue";
 import CMSContentLibrary from "@/components/admin/CMSContentLibrary";
-import AnalyticsMigrationPanel from "../../components/admin/AnalyticsMigrationPanel";
+import AnalyticsMigrationPanel from "@/components/admin/AnalyticsMigrationPanel";
 
 import {
   Activity,
@@ -1132,144 +1131,149 @@ export default function AdminPage() {
         {/* ANALYTICS NODE */}
 
         {tab === "analytics" && (
-          <Panel>
-            <SectionHeading
-              icon={Activity}
-              title="Analytics Node"
-              subtitle="Restricted visitor intelligence retrieved from the administrator API."
-            />
+          <div className="space-y-6">
+            <Panel>
+              <SectionHeading
+                icon={Activity}
+                title="Analytics Node"
+                subtitle="Restricted visitor intelligence retrieved from the administrator API."
+              />
 
-            <div className="mb-5 flex justify-end">
-              <button
-                type="button"
-                onClick={() =>
-                  void loadAnalytics()
-                }
-                disabled={analyticsLoading}
-                className={buttonClass}
-              >
-                <RefreshCw
-                  size={16}
-                  className={
-                    analyticsLoading
-                      ? "animate-spin"
-                      : ""
+              <div className="mb-5 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() =>
+                    void loadAnalytics()
                   }
-                />
-                Refresh Analytics
-              </button>
-            </div>
+                  disabled={analyticsLoading}
+                  className={buttonClass}
+                >
+                  <RefreshCw
+                    size={16}
+                    className={
+                      analyticsLoading
+                        ? "animate-spin"
+                        : ""
+                    }
+                  />
+                  Refresh Analytics
+                </button>
+              </div>
 
-            {analyticsError && (
-              <p className="mb-4 rounded-xl border border-red-900/50 p-4 text-sm text-red-400">
-                {analyticsError}
-              </p>
-            )}
-
-            {analyticsLoading &&
-            !analytics ? (
-              <Spinner />
-            ) : analytics ? (
-              <>
-                <div className="mb-6 grid gap-4 sm:grid-cols-3">
-                  <div className="rounded-xl border border-emerald-900/50 bg-black/30 p-5">
-                    <p className="text-xs text-zinc-500">
-                      Recorded Views
-                    </p>
-
-                    <p className="mt-3 text-3xl font-bold text-emerald-400">
-                      {analytics.totalViews.toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-emerald-900/50 bg-black/30 p-5">
-                    <p className="text-xs text-zinc-500">
-                      Unique IPs
-                    </p>
-
-                    <p className="mt-3 text-3xl font-bold text-white">
-                      {analytics.uniqueIPs.toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-emerald-900/50 bg-black/30 p-5">
-                    <p className="text-xs text-zinc-500">
-                      Recent Records
-                    </p>
-
-                    <p className="mt-3 text-3xl font-bold text-white">
-                      {analytics.recent.length}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="overflow-x-auto rounded-xl border border-zinc-800">
-                  <table className="w-full min-w-[600px] text-left text-sm">
-                    <thead className="bg-emerald-950/30 text-xs uppercase text-emerald-400">
-                      <tr>
-                        <th className="px-4 py-4">
-                          Visitor
-                        </th>
-                        <th className="px-4 py-4">
-                          IP Address
-                        </th>
-                        <th className="px-4 py-4">
-                          Visits
-                        </th>
-                        <th className="px-4 py-4">
-                          Last Recorded
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {analytics.recent.map(
-                        (visitor) => (
-                          <tr
-                            key={visitor.id}
-                            className="border-t border-zinc-800/80"
-                          >
-                            <td className="px-4 py-4 text-white">
-                              {visitor.name}
-                            </td>
-
-                            <td className="px-4 py-4 font-mono text-xs text-zinc-400">
-                              {visitor.ip}
-                            </td>
-
-                            <td className="px-4 py-4">
-                              {visitor.visits}
-                            </td>
-
-                            <td className="px-4 py-4 text-xs text-zinc-400">
-                              {formatDate(
-                                visitor.time
-                              )}
-                            </td>
-                          </tr>
-                        )
-                      )}
-                    </tbody>
-                  </table>
-
-                  {analytics.recent.length ===
-                    0 && (
-                    <p className="p-8 text-center text-zinc-500">
-                      No visitor records available.
-                    </p>
-                  )}
-                </div>
-
-                <p className="mt-4 text-xs text-zinc-500">
-                  Unique IPs are an approximation,
-                  not a count of unique people.
-                  Recent records are limited to
-                  the latest 100 returned by
-                  the API.
+              {analyticsError && (
+                <p className="mb-4 rounded-xl border border-red-900/50 p-4 text-sm text-red-400">
+                  {analyticsError}
                 </p>
-              </>
-            ) : null}
-          </Panel>
+              )}
+
+              {analyticsLoading &&
+              !analytics ? (
+                <Spinner />
+              ) : analytics ? (
+                <>
+                  <div className="mb-6 grid gap-4 sm:grid-cols-3">
+                    <div className="rounded-xl border border-emerald-900/50 bg-black/30 p-5">
+                      <p className="text-xs text-zinc-500">
+                        Recorded Views
+                      </p>
+
+                      <p className="mt-3 text-3xl font-bold text-emerald-400">
+                        {analytics.totalViews.toLocaleString()}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-emerald-900/50 bg-black/30 p-5">
+                      <p className="text-xs text-zinc-500">
+                        Unique IPs
+                      </p>
+
+                      <p className="mt-3 text-3xl font-bold text-white">
+                        {analytics.uniqueIPs.toLocaleString()}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-emerald-900/50 bg-black/30 p-5">
+                      <p className="text-xs text-zinc-500">
+                        Recent Records
+                      </p>
+
+                      <p className="mt-3 text-3xl font-bold text-white">
+                        {analytics.recent.length}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto rounded-xl border border-zinc-800">
+                    <table className="w-full min-w-[600px] text-left text-sm">
+                      <thead className="bg-emerald-950/30 text-xs uppercase text-emerald-400">
+                        <tr>
+                          <th className="px-4 py-4">
+                            Visitor
+                          </th>
+                          <th className="px-4 py-4">
+                            IP Address
+                          </th>
+                          <th className="px-4 py-4">
+                            Visits
+                          </th>
+                          <th className="px-4 py-4">
+                            Last Recorded
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {analytics.recent.map(
+                          (visitor) => (
+                            <tr
+                              key={visitor.id}
+                              className="border-t border-zinc-800/80"
+                            >
+                              <td className="px-4 py-4 text-white">
+                                {visitor.name}
+                              </td>
+
+                              <td className="px-4 py-4 font-mono text-xs text-zinc-400">
+                                {visitor.ip}
+                              </td>
+
+                              <td className="px-4 py-4">
+                                {visitor.visits}
+                              </td>
+
+                              <td className="px-4 py-4 text-xs text-zinc-400">
+                                {formatDate(
+                                  visitor.time
+                                )}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+
+                    {analytics.recent.length ===
+                      0 && (
+                      <p className="p-8 text-center text-zinc-500">
+                        No visitor records available.
+                      </p>
+                    )}
+                  </div>
+
+                  <p className="mt-4 text-xs text-zinc-500">
+                    Unique IPs are an approximation,
+                    not a count of unique people.
+                    Recent records are limited to
+                    the latest 100 returned by
+                    the API.
+                  </p>
+                </>
+              ) : null}
+            </Panel>
+
+            {/* ANALYTICS NODE 2.0 — HISTORICAL DATA MIGRATION CONTROLS */}
+            <AnalyticsMigrationPanel />
+          </div>
         )}
 
         {/* MAINFRAME CMS */}
