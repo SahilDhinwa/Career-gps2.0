@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 
 import {
@@ -15,6 +14,8 @@ import {
   ANALYTICS_COLLECTIONS,
   ANALYTICS_CONFIG,
   getAnalyticsDb,
+  getAnalyticsDailyRef,
+  getAnalyticsDateKey,
   getAnalyticsSummaryRef,
   getVisitorRef,
   getAnalyticsSessionRef,
@@ -61,9 +62,7 @@ function errorResponse(
   );
 }
 
-function getClientIP(
-  request: NextRequest
-): string {
+function getClientIP(request: NextRequest): string {
   const forwardedIP =
     request.headers.get("x-vercel-forwarded-for") ??
     request.headers.get("x-forwarded-for");
@@ -139,9 +138,7 @@ async function readLimitedBody(
   }
 }
 
-export async function POST(
-  request: NextRequest
-) {
+export async function POST(request: NextRequest) {
   try {
     // ----------------------------------------
     // REQUEST SECURITY
@@ -149,10 +146,7 @@ export async function POST(
 
     const origin = request.headers.get("origin");
 
-    if (
-      !origin ||
-      origin !== request.nextUrl.origin
-    ) {
+    if (!origin || origin !== request.nextUrl.origin) {
       return errorResponse(
         "Invalid request origin.",
         403
@@ -175,10 +169,7 @@ export async function POST(
     const rawBody = await readLimitedBody(request);
 
     if (rawBody === null) {
-      return errorResponse(
-        "Request too large.",
-        413
-      );
+      return errorResponse("Request too large.", 413);
     }
 
     let parsed: unknown;
@@ -186,10 +177,7 @@ export async function POST(
     try {
       parsed = JSON.parse(rawBody);
     } catch {
-      return errorResponse(
-        "Invalid JSON.",
-        400
-      );
+      return errorResponse("Invalid JSON.", 400);
     }
 
     if (
@@ -254,26 +242,20 @@ export async function POST(
       data.event === "location" &&
       !isValidCoordinates(data.coords)
     ) {
-      return errorResponse(
-        "Invalid coordinates.",
-        400
-      );
+      return errorResponse("Invalid coordinates.", 400);
     }
 
     const payload = data as TrackingPayload;
     const event = payload.event;
-
-    const name = normalizeVisitorName(
-      payload.name
-    );
+    const name = normalizeVisitorName(payload.name);
 
     // ----------------------------------------
     // VISITOR IDENTITY
     // ----------------------------------------
 
-    const existingVisitorId = request.cookies
-      .get(ANALYTICS_CONFIG.visitorCookieName)
-      ?.value;
+    const existingVisitorId = request.cookies.get(
+      ANALYTICS_CONFIG.visitorCookieName
+    )?.value;
 
     const visitorId = isValidAnalyticsId(
       existingVisitorId
@@ -282,21 +264,15 @@ export async function POST(
       : randomUUID();
 
     const sessionId = payload.sessionId;
-
     const ip = getClientIP(request);
 
     const database = getAnalyticsDb();
-
     const visitorRef = getVisitorRef(visitorId);
-
     const summaryRef = getAnalyticsSummaryRef();
 
     const sessionRef =
       event === "visit" && sessionId
-        ? getAnalyticsSessionRef(
-            visitorId,
-            sessionId
-          )
+        ? getAnalyticsSessionRef(visitorId, sessionId)
         : null;
 
     // ----------------------------------------
@@ -304,22 +280,18 @@ export async function POST(
     // ----------------------------------------
 
     const now = Date.now();
+    const todayKey = getAnalyticsDateKey(new Date(now));
+    const dailyRef = getAnalyticsDailyRef(todayKey);
 
-    const windowMs =
-      ANALYTICS_CONFIG.rateLimitWindowMs;
-
-    const windowId = Math.floor(
-      now / windowMs
-    );
+    const windowMs = ANALYTICS_CONFIG.rateLimitWindowMs;
+    const windowId = Math.floor(now / windowMs);
 
     const rateLimitId = createHash("sha256")
       .update(`${ip}:${windowId}`)
       .digest("hex");
 
     const rateLimitRef = database
-      .collection(
-        ANALYTICS_COLLECTIONS.rateLimits
-      )
+      .collection(ANALYTICS_COLLECTIONS.rateLimits)
       .doc(rateLimitId);
 
     // ----------------------------------------
@@ -328,6 +300,7 @@ export async function POST(
 
     const result = await database.runTransaction(
       async (transaction) => {
+        // All transaction reads precede writes.
         const rateSnapshot =
           await transaction.get(rateLimitRef);
 
@@ -341,18 +314,29 @@ export async function POST(
         ) {
           return {
             rateLimited: true,
+            paused: false,
             duplicate: false,
             counted: false,
           };
         }
 
-        // All transaction reads precede writes.
+        const summarySnapshot =
+          await transaction.get(summaryRef);
+
+        const summary = summarySnapshot.data();
+
+        // Temporarily halt tracking writes during final migration reconciliation.
+        if (summary?.trackingPaused === true) {
+          return {
+            rateLimited: false,
+            paused: true,
+            duplicate: false,
+            counted: false,
+          };
+        }
 
         const visitorSnapshot =
           await transaction.get(visitorRef);
-
-        const summarySnapshot =
-          await transaction.get(summaryRef);
 
         const sessionSnapshot = sessionRef
           ? await transaction.get(sessionRef)
@@ -369,11 +353,9 @@ export async function POST(
         const shouldCountVisit =
           event === "visit" && !duplicate;
 
-        const isNewVisitor =
-          !visitorSnapshot.exists;
+        const isNewVisitor = !visitorSnapshot.exists;
 
-        const timestamp =
-          FieldValue.serverTimestamp();
+        const timestamp = FieldValue.serverTimestamp();
 
         // ------------------------------------
         // RECORD RATE LIMIT
@@ -401,8 +383,7 @@ export async function POST(
             visits: shouldCountVisit ? 1 : 0,
 
             coordinates:
-              event === "location" &&
-              payload.coords
+              event === "location" && payload.coords
                 ? {
                     lat: payload.coords.lat,
                     lng: payload.coords.lng,
@@ -420,9 +401,7 @@ export async function POST(
             visitedAt: timestamp,
 
             locationUpdatedAt:
-              event === "location"
-                ? timestamp
-                : null,
+              event === "location" ? timestamp : null,
           });
         } else {
           const updates: Record<string, unknown> = {
@@ -434,11 +413,10 @@ export async function POST(
           }
 
           if (shouldCountVisit) {
-            const previousVisits =
-              normalizeVisitCount(
-                visitorSnapshot.data()?.visits,
-                1
-              );
+            const previousVisits = normalizeVisitCount(
+              visitorSnapshot.data()?.visits,
+              1
+            );
 
             updates.visits = Math.min(
               Number.MAX_SAFE_INTEGER,
@@ -448,18 +426,13 @@ export async function POST(
             updates.visitedAt = timestamp;
           }
 
-          if (
-            event === "location" &&
-            payload.coords
-          ) {
+          if (event === "location" && payload.coords) {
             updates.coordinates = {
               lat: payload.coords.lat,
               lng: payload.coords.lng,
-              ...(payload.coords.accuracy !==
-              undefined
+              ...(payload.coords.accuracy !== undefined
                 ? {
-                    accuracy:
-                      payload.coords.accuracy,
+                    accuracy: payload.coords.accuracy,
                   }
                 : {}),
             };
@@ -467,38 +440,25 @@ export async function POST(
             updates.locationUpdatedAt = timestamp;
           }
 
-          transaction.update(
-            visitorRef,
-            updates
-          );
+          transaction.update(visitorRef, updates);
         }
 
         // ------------------------------------
         // SESSION DEDUPLICATION
         // ------------------------------------
 
-        if (
-          sessionRef &&
-          shouldCountVisit
-        ) {
+        if (sessionRef && shouldCountVisit) {
           transaction.set(sessionRef, {
             createdAt: timestamp,
-
             expiresAt: Timestamp.fromMillis(
-              now +
-                ANALYTICS_CONFIG.sessionRetentionMs
+              now + ANALYTICS_CONFIG.sessionRetentionMs
             ),
           });
         }
 
         // ------------------------------------
-        // AGGREGATED ANALYTICS
+        // AGGREGATED ANALYTICS + DAILY ROLLUP
         // ------------------------------------
-
-        // Historical migration must complete
-        // before live aggregate updates begin.
-
-        const summary = summarySnapshot.data();
 
         if (
           summary?.migrationComplete === true &&
@@ -506,21 +466,35 @@ export async function POST(
             ANALYTICS_CONFIG.schemaVersion &&
           (shouldCountVisit || isNewVisitor)
         ) {
+          const visitDelta = shouldCountVisit ? 1 : 0;
+          const uniqueDelta = isNewVisitor ? 1 : 0;
+
           transaction.update(summaryRef, {
-            totalVisits: FieldValue.increment(
-              shouldCountVisit ? 1 : 0
-            ),
-
-            uniqueVisitors: FieldValue.increment(
-              isNewVisitor ? 1 : 0
-            ),
-
+            totalVisits: FieldValue.increment(visitDelta),
+            uniqueVisitors:
+              FieldValue.increment(uniqueDelta),
             updatedAt: timestamp,
           });
+
+          transaction.set(
+            dailyRef,
+            {
+              date: todayKey,
+              schemaVersion:
+                ANALYTICS_CONFIG.schemaVersion,
+              totalVisits:
+                FieldValue.increment(visitDelta),
+              uniqueVisitors:
+                FieldValue.increment(uniqueDelta),
+              updatedAt: timestamp,
+            },
+            { merge: true }
+          );
         }
 
         return {
           rateLimited: false,
+          paused: false,
           duplicate,
           counted: shouldCountVisit,
         };
@@ -528,8 +502,18 @@ export async function POST(
     );
 
     // ----------------------------------------
-    // RATE LIMIT RESPONSE
+    // PAUSED / RATE LIMIT RESPONSES
     // ----------------------------------------
+
+    if (result.paused) {
+      return errorResponse(
+        "Analytics tracking is temporarily paused for migration.",
+        503,
+        {
+          "Retry-After": "5",
+        }
+      );
+    }
 
     if (result.rateLimited) {
       const retryAfter = Math.max(
@@ -570,21 +554,16 @@ export async function POST(
       visitorId,
       {
         httpOnly: true,
-        secure:
-          process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
-        maxAge:
-          ANALYTICS_CONFIG.visitorCookieMaxAge,
+        maxAge: ANALYTICS_CONFIG.visitorCookieMaxAge,
       }
     );
 
     return response;
   } catch (error) {
-    console.error(
-      "Visitor tracking failed:",
-      error
-    );
+    console.error("Visitor tracking failed:", error);
 
     return errorResponse(
       "Failed to update visitor record.",
