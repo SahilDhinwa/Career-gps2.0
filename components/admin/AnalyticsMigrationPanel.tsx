@@ -178,28 +178,32 @@ export default function AnalyticsMigrationPanel() {
   const isBusy = activeAction !== null || loadingStatus;
 
   return (
-    <section className="my-6 rounded-2xl border border-surfaceBorder bg-surface p-4 sm:p-6 shadow-sm space-y-5">
+    <section className="rounded-2xl border border-emerald-900/50 bg-[#09120f]/95 p-5 shadow-[0_0_35px_rgba(16,185,129,0.04)] space-y-5">
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-surfaceBorder pb-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-            <Database className="w-3.5 h-3.5" />
-            <span>Analytics Node 2.0 • Phase 4</span>
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-emerald-900/40 pb-4">
+        <div className="flex items-start gap-3">
+          <div className="rounded-xl border border-emerald-800/60 bg-emerald-950/50 p-3 text-emerald-400">
+            <Database size={20} />
           </div>
-          <h2 className="mt-1 text-lg sm:text-xl font-extrabold text-foreground">
-            Historical Data Migration Controls
-          </h2>
-          <p className="mt-0.5 text-xs text-foreground/65">
-            Run a read-only dry run first, verify totals match your dashboard,
-            then execute the migration once.
-          </p>
+          <div>
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-amber-400">
+              Analytics Node 2.0 · Phase 4
+            </p>
+            <h2 className="mt-1 text-lg font-bold tracking-wide text-white">
+              Historical Data Migration Controls
+            </h2>
+            <p className="mt-0.5 text-xs text-zinc-400">
+              Run a read-only dry run first, verify totals match Recorded Views
+              above, then execute the migration once.
+            </p>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={() => void fetchStatus()}
           disabled={isBusy}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-surfaceBorder bg-background px-3 py-2 text-xs font-bold text-foreground hover:border-primary/50 disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-xl border border-emerald-700/60 bg-emerald-950/60 px-3.5 py-2 text-xs font-medium text-emerald-300 transition hover:bg-emerald-900/60 disabled:opacity-40 cursor-pointer"
         >
           <RefreshCw
             className={`w-3.5 h-3.5 ${loadingStatus ? "animate-spin" : ""}`}
@@ -210,21 +214,19 @@ export default function AnalyticsMigrationPanel() {
 
       {/* Live Status Bar */}
       {statusError ? (
-        <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-xs font-semibold text-rose-500 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+        <div className="rounded-xl border border-red-900/60 bg-red-950/30 p-3.5 text-xs font-medium text-red-300 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 shrink-0 text-red-400" />
           <span>{statusError}</span>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-xl border border-surfaceBorder bg-background p-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-foreground/55 block">
+          <div className="rounded-xl border border-zinc-800 bg-black/40 p-3.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block">
               Migration State
             </span>
             <span
-              className={`mt-1 inline-flex items-center gap-1 text-xs font-extrabold ${
-                isMigrated
-                  ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-amber-600 dark:text-amber-400"
+              className={`mt-1.5 inline-flex items-center gap-1.5 text-xs font-bold ${
+                isMigrated ? "text-emerald-400" : "text-amber-400"
               }`}
             >
               {isMigrated ? (
@@ -239,49 +241,51 @@ export default function AnalyticsMigrationPanel() {
             </span>
           </div>
 
-          <div className="rounded-xl border border-surfaceBorder bg-background p-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-foreground/55 block">
+          <div className="rounded-xl border border-zinc-800 bg-black/40 p-3.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block">
               Live Tracking
             </span>
             <span
-              className={`mt-1 block text-xs font-extrabold ${
-                status?.trackingPaused
-                  ? "text-rose-500"
-                  : "text-emerald-600 dark:text-emerald-400"
+              className={`mt-1.5 block text-xs font-bold ${
+                status?.trackingPaused ? "text-red-400" : "text-emerald-400"
               }`}
             >
               {status?.trackingPaused ? "Paused" : "Active"}
             </span>
           </div>
 
-          <div className="rounded-xl border border-surfaceBorder bg-background p-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-foreground/55 block">
+          <div className="rounded-xl border border-zinc-800 bg-black/40 p-3.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block">
               Global Visits
             </span>
-            <span className="mt-1 block text-sm font-black text-foreground">
-              {status?.summary ? status.summary.totalVisits : "—"}
+            <span className="mt-1.5 block text-sm font-bold text-white">
+              {status?.summary
+                ? status.summary.totalVisits.toLocaleString()
+                : "—"}
             </span>
           </div>
 
-          <div className="rounded-xl border border-surfaceBorder bg-background p-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-foreground/55 block">
+          <div className="rounded-xl border border-zinc-800 bg-black/40 p-3.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block">
               Unique Visitors
             </span>
-            <span className="mt-1 block text-sm font-black text-foreground">
-              {status?.summary ? status.summary.uniqueVisitors : "—"}
+            <span className="mt-1.5 block text-sm font-bold text-white">
+              {status?.summary
+                ? status.summary.uniqueVisitors.toLocaleString()
+                : "—"}
             </span>
           </div>
         </div>
       )}
 
-      {/* Action 1: Read-Only Dry Run */}
-      <div className="rounded-xl border border-surfaceBorder bg-background p-4 space-y-3">
+      {/* Step 1: Read-Only Dry Run */}
+      <div className="rounded-xl border border-emerald-900/50 bg-black/30 p-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-primary">
-              Step 1 • Safe Preview
+            <p className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-400">
+              Step 1 · Safe Preview
             </p>
-            <p className="text-xs text-foreground/70 mt-0.5">
+            <p className="text-xs text-zinc-400 mt-1">
               Scans all historical visitor records in bounded batches without
               writing to Firestore.
             </p>
@@ -291,7 +295,7 @@ export default function AnalyticsMigrationPanel() {
             type="button"
             onClick={() => void runMigrationRequest("dry_run")}
             disabled={isBusy}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-xs font-extrabold text-white hover:bg-primaryHover disabled:opacity-50 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-emerald-700/30 px-4 py-3 text-xs font-bold text-emerald-200 transition hover:bg-emerald-700/50 disabled:opacity-40 cursor-pointer"
           >
             {activeAction === "dry_run" ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -307,21 +311,23 @@ export default function AnalyticsMigrationPanel() {
         </div>
       </div>
 
-      {/* Action 2: Confirmed Live Migration (or Repeat-Lock Test once complete) */}
+      {/* Step 2: Execute Migration or Repeat-Lock Test */}
       {!isMigrated ? (
-        <div className="rounded-xl border border-amber-500/40 bg-amber-500/5 p-4 space-y-3">
+        <div className="rounded-xl border border-amber-800/60 bg-amber-950/20 p-4 space-y-3">
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-              Step 2 • Execute Live Migration (One-Time)
+            <p className="font-mono text-xs font-bold uppercase tracking-wider text-amber-400">
+              Step 2 · Execute Live Migration (One-Time)
             </p>
-            <p className="text-xs text-foreground/75 mt-0.5">
+            <p className="text-xs text-zinc-300 mt-1">
               Temporarily pauses tracking writes, seeds{" "}
-              <code className="font-mono text-[11px]">
+              <code className="font-mono text-[11px] text-amber-300">
                 analytics_stats/global
               </code>{" "}
               and{" "}
-              <code className="font-mono text-[11px]">analytics_daily/*</code>,
-              then resumes live counters automatically.
+              <code className="font-mono text-[11px] text-amber-300">
+                analytics_daily/*
+              </code>
+              , then resumes live counters automatically.
             </p>
           </div>
 
@@ -335,14 +341,14 @@ export default function AnalyticsMigrationPanel() {
               autoCorrect="off"
               spellCheck={false}
               disabled={isBusy}
-              className="flex-1 rounded-xl border border-surfaceBorder bg-background px-3.5 py-2.5 font-mono text-xs text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-amber-500"
+              className="flex-1 rounded-xl border border-amber-900/60 bg-black/50 px-3.5 py-2.5 font-mono text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500"
             />
 
             <button
               type="button"
               onClick={() => void runMigrationRequest("migrate")}
               disabled={isBusy || !isConfirmValid}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-xs font-extrabold text-black hover:bg-amber-400 disabled:opacity-40 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-xs font-extrabold text-black transition hover:bg-amber-400 disabled:opacity-40 cursor-pointer"
             >
               {activeAction === "migrate" ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -358,13 +364,13 @@ export default function AnalyticsMigrationPanel() {
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <p className="text-xs font-extrabold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+        <div className="rounded-xl border border-emerald-700/60 bg-emerald-950/30 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4" />
               <span>Migration Complete &amp; Live Counters Active</span>
             </p>
-            <p className="text-[11px] text-foreground/70">
+            <p className="text-[11px] text-zinc-400">
               Completed{" "}
               {status?.summary?.migratedAt
                 ? new Date(status.summary.migratedAt).toLocaleString()
@@ -377,7 +383,7 @@ export default function AnalyticsMigrationPanel() {
             type="button"
             onClick={() => void runMigrationRequest("repeat_test")}
             disabled={isBusy}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-500/40 bg-background px-3.5 py-2.5 text-xs font-bold text-foreground hover:border-emerald-500 disabled:opacity-50 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-700/60 bg-black/40 px-3.5 py-2.5 text-xs font-bold text-emerald-300 transition hover:bg-emerald-950/60 disabled:opacity-40 cursor-pointer"
           >
             {activeAction === "repeat_test" ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -389,85 +395,85 @@ export default function AnalyticsMigrationPanel() {
         </div>
       )}
 
-      {/* Last Run Output Box */}
+      {/* Last Run Output */}
       {lastResult && (
         <div
           className={`rounded-xl border p-4 space-y-3 ${
             lastResult.success
-              ? "border-emerald-500/40 bg-emerald-500/5"
+              ? "border-emerald-700/60 bg-emerald-950/20"
               : lastResult.httpStatus === 409
-              ? "border-amber-500/40 bg-amber-500/10"
-              : "border-rose-500/40 bg-rose-500/10"
+              ? "border-amber-700/60 bg-amber-950/20"
+              : "border-red-900/60 bg-red-950/20"
           }`}
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-foreground">
-              Response • HTTP {lastResult.httpStatus || "ERR"} (
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">
+              Response · HTTP {lastResult.httpStatus || "ERR"} (
               {lastResult.mode || "status"})
             </span>
             {lastResult.durationMs !== undefined && (
-              <span className="font-mono text-[11px] text-foreground/65">
-                {lastResult.batchesProcessed ?? 0} batch(es) •{" "}
+              <span className="font-mono text-[11px] text-zinc-400">
+                {lastResult.batchesProcessed ?? 0} batch(es) ·{" "}
                 {lastResult.durationMs}ms
               </span>
             )}
           </div>
 
           {lastResult.error && (
-            <p className="text-xs font-semibold text-foreground/90">
+            <p className="text-xs font-medium text-amber-200">
               {lastResult.error}
             </p>
           )}
 
           {lastResult.totals && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-              <div className="rounded-lg bg-background/80 border border-surfaceBorder p-2.5">
-                <span className="text-[10px] uppercase text-foreground/55 block">
+              <div className="rounded-lg bg-black/50 border border-zinc-800 p-2.5">
+                <span className="text-[10px] font-mono uppercase text-zinc-500 block">
                   Total Visits
                 </span>
-                <span className="font-black text-foreground">
-                  {lastResult.totals.totalVisits}
+                <span className="font-bold text-emerald-400">
+                  {lastResult.totals.totalVisits.toLocaleString()}
                 </span>
               </div>
-              <div className="rounded-lg bg-background/80 border border-surfaceBorder p-2.5">
-                <span className="text-[10px] uppercase text-foreground/55 block">
+              <div className="rounded-lg bg-black/50 border border-zinc-800 p-2.5">
+                <span className="text-[10px] font-mono uppercase text-zinc-500 block">
                   Unique Visitors
                 </span>
-                <span className="font-black text-foreground">
-                  {lastResult.totals.uniqueVisitors}
+                <span className="font-bold text-white">
+                  {lastResult.totals.uniqueVisitors.toLocaleString()}
                 </span>
               </div>
-              <div className="rounded-lg bg-background/80 border border-surfaceBorder p-2.5">
-                <span className="text-[10px] uppercase text-foreground/55 block">
+              <div className="rounded-lg bg-black/50 border border-zinc-800 p-2.5">
+                <span className="text-[10px] font-mono uppercase text-zinc-500 block">
                   Unique IPs
                 </span>
-                <span className="font-black text-foreground">
-                  {lastResult.totals.uniqueIPs}
+                <span className="font-bold text-white">
+                  {lastResult.totals.uniqueIPs.toLocaleString()}
                 </span>
               </div>
-              <div className="rounded-lg bg-background/80 border border-surfaceBorder p-2.5">
-                <span className="text-[10px] uppercase text-foreground/55 block">
+              <div className="rounded-lg bg-black/50 border border-zinc-800 p-2.5">
+                <span className="text-[10px] font-mono uppercase text-zinc-500 block">
                   Daily Buckets
                 </span>
-                <span className="font-black text-foreground">
+                <span className="font-bold text-white">
                   {lastResult.totals.dailyBucketsWritten ??
                     lastResult.totals.dailyBucketsCount ??
                     0}
                 </span>
               </div>
-              <div className="rounded-lg bg-background/80 border border-surfaceBorder p-2.5">
-                <span className="text-[10px] uppercase text-foreground/55 block">
+              <div className="rounded-lg bg-black/50 border border-zinc-800 p-2.5">
+                <span className="text-[10px] font-mono uppercase text-zinc-500 block">
                   Undated Docs
                 </span>
-                <span className="font-black text-foreground">
+                <span className="font-bold text-zinc-300">
                   {lastResult.totals.undatedDocuments}
                 </span>
               </div>
-              <div className="rounded-lg bg-background/80 border border-surfaceBorder p-2.5">
-                <span className="text-[10px] uppercase text-foreground/55 block">
+              <div className="rounded-lg bg-black/50 border border-zinc-800 p-2.5">
+                <span className="text-[10px] font-mono uppercase text-zinc-500 block">
                   Undated Visits
                 </span>
-                <span className="font-black text-foreground">
+                <span className="font-bold text-zinc-300">
                   {lastResult.totals.undatedVisits}
                 </span>
               </div>
@@ -476,20 +482,20 @@ export default function AnalyticsMigrationPanel() {
 
           {lastResult.recentDailyPreview &&
             lastResult.recentDailyPreview.length > 0 && (
-              <div className="pt-2 border-t border-surfaceBorder">
-                <p className="text-[11px] font-bold text-foreground/70 mb-2 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
+              <div className="pt-2 border-t border-zinc-800">
+                <p className="text-[11px] font-bold text-zinc-300 mb-2 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Recent Daily Buckets Preview (UTC)</span>
                 </p>
-                <div className="max-h-40 overflow-y-auto space-y-1 font-mono text-[11px]">
+                <div className="max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] text-zinc-300">
                   {lastResult.recentDailyPreview.map((day) => (
                     <div
                       key={day.date}
-                      className="flex items-center justify-between rounded-md bg-background/70 px-2.5 py-1.5 border border-surfaceBorder/60"
+                      className="flex items-center justify-between rounded-md bg-black/50 px-2.5 py-1.5 border border-zinc-800"
                     >
-                      <span>{day.date}</span>
+                      <span className="text-emerald-300">{day.date}</span>
                       <span>
-                        {day.totalVisits} visits • {day.uniqueVisitors} unique
+                        {day.totalVisits} visits · {day.uniqueVisitors} unique
                       </span>
                     </div>
                   ))}
@@ -501,21 +507,21 @@ export default function AnalyticsMigrationPanel() {
 
       {/* Recent Migration Audits */}
       {status?.recentAudits && status.recentAudits.length > 0 && (
-        <div className="pt-2 border-t border-surfaceBorder">
-          <p className="text-[11px] font-extrabold uppercase tracking-wider text-foreground/55 mb-2">
+        <div className="pt-3 border-t border-emerald-900/40">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">
             Recent Migration Audit Logs
           </p>
           <div className="space-y-1.5">
             {status.recentAudits.slice(0, 5).map((audit) => (
               <div
                 key={audit.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-surfaceBorder bg-background px-3 py-2 text-[11px]"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-zinc-800 bg-black/40 px-3 py-2 text-[11px]"
               >
-                <span className="font-mono font-bold text-foreground">
-                  {audit.mode} • {audit.status}
+                <span className="font-mono font-bold text-emerald-300">
+                  {audit.mode} · {audit.status}
                 </span>
-                <span className="text-foreground/60">
-                  {audit.durationMs}ms •{" "}
+                <span className="text-zinc-400">
+                  {audit.durationMs}ms ·{" "}
                   {audit.completedAt
                     ? new Date(audit.completedAt).toLocaleString()
                     : "pending"}
