@@ -1,4 +1,3 @@
-
 import "server-only";
 
 import { createHash } from "node:crypto";
@@ -8,8 +7,10 @@ import { getAdminDb } from "../firebase-admin";
 export const ANALYTICS_COLLECTIONS = {
   visitors: "visitors",
   statistics: "analytics_stats",
+  daily: "analytics_daily",
   sessions: "analytics_sessions",
   rateLimits: "analytics_rate_limits",
+  migrationAudit: "analytics_migration_logs",
 } as const;
 
 export const ANALYTICS_SUMMARY_ID = "global";
@@ -24,6 +25,11 @@ export const ANALYTICS_CONFIG = {
   rateLimitMaxRequests: 30,
   maxNameLength: 80,
   maxPayloadBytes: 2048,
+  migrationBatchSize: 250,
+  writeBatchSize: 400,
+  migrationSettleMs: 1500,
+  migrationLockTimeoutMs: 10 * 60 * 1000,
+  maxUniqueIpSampleSize: 50000,
 } as const;
 
 export type TrackEvent =
@@ -42,7 +48,15 @@ export interface AnalyticsSummary {
   totalVisits: number;
   uniqueVisitors: number;
   migrationComplete: boolean;
+  dailyRollupsEnabled?: boolean;
+  trackingPaused?: boolean;
+  migrationInProgress?: boolean;
+  undatedDocuments?: number;
+  undatedVisits?: number;
+  migratedBy?: string;
 }
+
+const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export function getAnalyticsDb() {
   return getAdminDb();
@@ -52,6 +66,37 @@ export function getAnalyticsSummaryRef() {
   return getAnalyticsDb()
     .collection(ANALYTICS_COLLECTIONS.statistics)
     .doc(ANALYTICS_SUMMARY_ID);
+}
+
+export function getAnalyticsDateKey(
+  date: Date = new Date()
+): string {
+  return date.toISOString().slice(0, 10);
+}
+
+export function isValidAnalyticsDateKey(
+  value: unknown
+): value is string {
+  return (
+    typeof value === "string" &&
+    DATE_KEY_PATTERN.test(value)
+  );
+}
+
+export function getAnalyticsDailyRef(dateKey: string) {
+  if (!isValidAnalyticsDateKey(dateKey)) {
+    throw new Error("Invalid analytics date key.");
+  }
+
+  return getAnalyticsDb()
+    .collection(ANALYTICS_COLLECTIONS.daily)
+    .doc(dateKey);
+}
+
+export function getMigrationAuditCollection() {
+  return getAnalyticsDb().collection(
+    ANALYTICS_COLLECTIONS.migrationAudit
+  );
 }
 
 export function isValidAnalyticsId(
@@ -146,14 +191,10 @@ export function isValidCoordinates(
     Number.isFinite(coords.lng) &&
     coords.lng >= -180 &&
     coords.lng <= 180 &&
-    (
-      coords.accuracy === undefined ||
-      (
-        typeof coords.accuracy === "number" &&
+    (coords.accuracy === undefined ||
+      (typeof coords.accuracy === "number" &&
         Number.isFinite(coords.accuracy) &&
-        coords.accuracy >= 0
-      )
-    )
+        coords.accuracy >= 0))
   );
 }
 
